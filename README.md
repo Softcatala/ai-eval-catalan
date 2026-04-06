@@ -1,6 +1,7 @@
 # Eines d'avaluació de models LLM i ASR
 
 Aquest repositori conté eines per avaluar les capacitats de models de llenguatge gran (LLM) i de reconeixement automàtic de la parla (ASR), amb focus especial en la llengua catalana.
+Els resultats estan compartits a https://www.softcatala.org/models-dintelligencia-artificial-en-catala-per-usar-en-local/
 
 ## Estructura del projecte
 
