@@ -1,0 +1,37 @@
+{
+  "model": "bartowski/openai_gpt-oss-20b-GGUF:Q4_K_M",
+  "benchmarks": {
+    "catcola": {
+      "mcc": 0.058,
+      "accuracy": 0.26,
+      "n": 400
+    },
+    "club_qa": {
+      "exact_match_approx": 0.5075,
+      "n": 400
+    },
+    "iberbench": {
+      "error": "simple_evaluate() got an unexpected keyword argument 'trust_remote_code'"
+    },
+    "flores": {
+      "catalan_bench_flores_en-ca": {
+        "alias": "catalan_bench_flores_en-ca",
+        "bleu,none": 0.08255579295402926,
+        "bleu_stderr,none": 0.04493327398795477,
+        "ter,none": 104.2212518195051,
+        "ter_stderr,none": 1.7944270526143624,
+        "chrf,none": 1.5057757733216834,
+        "chrf_stderr,none": 0.23288475889857582
+      },
+      "catalan_bench_flores_ca-en": {
+        "alias": "catalan_bench_flores_ca-en",
+        "bleu,none": 0.22144737278301674,
+        "bleu_stderr,none": 0.11822259072613354,
+        "ter,none": 130.2994576750766,
+        "ter_stderr,none": 6.100135117562424,
+        "chrf,none": 4.325204286579303,
+        "chrf_stderr,none": 0.41442172107876873
+      }
+    }
+  }
+}

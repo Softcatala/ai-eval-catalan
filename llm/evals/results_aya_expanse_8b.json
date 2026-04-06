@@ -1,0 +1,34 @@
+{
+  "model": "bartowski/aya-expanse-8b-GGUF:Q8_0",
+  "benchmarks": {
+    "veritasqa": {
+      "accuracy": 1.0,
+      "n": 353
+    },
+    "sts_ca": {
+      "pearson": 0.5861,
+      "n": 400
+    },
+    "casum": {
+      "rouge1": 0.4152,
+      "rouge2": 0.2268,
+      "rougeL": 0.347,
+      "n": 400
+    },
+    "catcola": {
+      "mcc": 0.0827,
+      "accuracy": 0.7225,
+      "n": 400
+    },
+    "club_qa": {
+      "exact_match_approx": 0.7875,
+      "n": 400
+    },
+    "iberbench": {
+      "error": "aya-expanse-8b is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`"
+    },
+    "flores": {
+      "error": "aya-expanse-8b is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`"
+    }
+  }
+}

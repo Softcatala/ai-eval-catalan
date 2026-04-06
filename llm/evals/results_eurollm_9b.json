@@ -1,0 +1,34 @@
+{
+  "model": "bartowski/EuroLLM-9B-Instruct-GGUF:Q8_0",
+  "benchmarks": {
+    "veritasqa": {
+      "accuracy": 1.0,
+      "n": 353
+    },
+    "sts_ca": {
+      "pearson": 0.5516,
+      "n": 400
+    },
+    "casum": {
+      "rouge1": 0.3775,
+      "rouge2": 0.2129,
+      "rougeL": 0.316,
+      "n": 400
+    },
+    "catcola": {
+      "mcc": 0.0409,
+      "accuracy": 0.255,
+      "n": 400
+    },
+    "club_qa": {
+      "exact_match_approx": 0.7425,
+      "n": 400
+    },
+    "iberbench": {
+      "error": "EuroLLM-9B-Instruct is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`"
+    },
+    "flores": {
+      "error": "EuroLLM-9B-Instruct is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "model": "bartowski/Qwen_Qwen3-14B-GGUF:Q8_0",
+  "benchmarks": {
+    "catcola": {
+      "mcc": 0.1971,
+      "accuracy": 0.3975,
+      "n": 400
+    },
+    "club_qa": {
+      "exact_match_approx": 0.82,
+      "n": 400
+    },
+    "iberbench": {
+      "error": "No module named 'transformers'"
+    },
+    "flores": {
+      "error": "No module named 'transformers'"
+    }
+  }
+}

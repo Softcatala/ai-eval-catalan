@@ -1,0 +1,52 @@
+<h2>Transcripció local amb Whisper: eines amb interfície gràfica</h2>
+
+<p>Whisper és el model de reconeixement de veu d'OpenAI, disponible de forma gratuïta i que s'executa completament en local, sense enviar dades a cap servidor extern. Si prefereixes evitar la línia de comandes, aquí tens les principals opcions amb interfície gràfica.</p>
+
+<h3>Whisper Desktop</h3>
+
+<p>Aplicació per a Windows i macOS basada en <strong>whisper.cpp</strong>. Permet carregar un fitxer d'àudio o vídeo i obtenir la transcripció amb uns quants clics, sense necessitat d'instal·lar Python ni cap dependència addicional.</p>
+
+<ul>
+<li>Interfície senzilla i minimalista</li>
+<li>Permet triar el model i l'idioma</li>
+<li>Exporta la transcripció en text pla o SRT</li>
+<li>Funciona bé a la CPU, sense GPU</li>
+</ul>
+
+<h3>Subtitle Edit</h3>
+
+<p>Editor de subtítols molt complet per a Windows (funciona també a Linux via Wine o .NET). Té integració directa amb Whisper per generar subtítols automàticament a partir d'àudio o vídeo.</p>
+
+<ul>
+<li>Ideal si el resultat final ha de ser un fitxer de subtítols (SRT, VTT, ASS...)</li>
+<li>Permet editar i sincronitzar subtítols manualment</li>
+<li>Suporta diversos models de Whisper</li>
+<li>Molt útil per a contingut de vídeo</li>
+</ul>
+
+<h3>Transcribro</h3>
+
+<p>Aplicació de codi obert per a <strong>Linux</strong> amb interfície gràfica GTK. Pensada específicament per a l'escriptori GNOME, permet transcriure àudio de forma còmoda sense obrir cap terminal.</p>
+
+<ul>
+<li>Integrada a l'escriptori Linux</li>
+<li>Suporta múltiples idiomes, inclòs el català</li>
+<li>Exporta el resultat en text pla</li>
+</ul>
+
+<h3>Whisper al navegador (sense instal·lació)</h3>
+
+<p>Existeixen implementacions de Whisper que s'executen directament al navegador web, sense instal·lar res. Utilitzen WebAssembly o WebGPU per córrer el model localment al teu ordinador, de manera que l'àudio no surt mai del dispositiu.</p>
+
+<ul>
+<li>Sense instal·lació ni configuració</li>
+<li>Privacitat garantida: tot es processa al teu dispositiu</li>
+<li>Velocitat limitada comparada amb aplicacions natives</li>
+<li>Recomanat per a transcripcions ocasionals</li>
+</ul>
+
+<hr>
+
+<h3>Opció per a usuaris avançats: faster-whisper</h3>
+
+<p>Si et mous còmodament amb Python i vols més control, <strong>faster-whisper</strong> és la millor opció per línia de comandes. És una reimplementació optimitzada de Whisper que pot ser fins a quatre vegades més ràpida que l'original, amb un consum de memòria molt inferior. Compatible amb CPU i GPU, i ideal per integrar en scripts o automatitzacions.</p>

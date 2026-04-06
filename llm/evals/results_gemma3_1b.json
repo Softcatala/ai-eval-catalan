@@ -1,0 +1,58 @@
+{
+  "model": "bartowski/google_gemma-3-1b-it-GGUF:Q8_0",
+  "benchmarks": {
+    "catcola": {
+      "mcc": 0.0323,
+      "accuracy": 0.625,
+      "n": 400
+    },
+    "club_qa": {
+      "exact_match_approx": 0.53,
+      "n": 400
+    },
+    "iberbench": {
+      "catcola": {
+        "alias": "catcola",
+        "acc,none": 0.25,
+        "acc_stderr,none": 0.021677749238103,
+        "mcc,none": 0.0,
+        "mcc_stderr,none": 0.0
+      },
+      "xnli_ca": {
+        "alias": "xnli_ca",
+        "acc,none": 0.3325,
+        "acc_stderr,none": 0.02358495283014151
+      },
+      "wnli_ca": {
+        "alias": "wnli_ca",
+        "acc,none": 0.5633802816901409,
+        "acc_stderr,none": 0.05927935558412972
+      },
+      "teca": {
+        "alias": "teca",
+        "acc,none": 0.3725,
+        "acc_stderr,none": 0.024203800008203106
+      }
+    },
+    "flores": {
+      "catalan_bench_flores_en-ca": {
+        "alias": "catalan_bench_flores_en-ca",
+        "bleu,none": 22.767746286110295,
+        "bleu_stderr,none": 0.8351485211723879,
+        "ter,none": 68.33021418174256,
+        "ter_stderr,none": 2.0108384076851977,
+        "chrf,none": 51.46274718806936,
+        "chrf_stderr,none": 0.7480074514322761
+      },
+      "catalan_bench_flores_ca-en": {
+        "alias": "catalan_bench_flores_ca-en",
+        "bleu,none": 31.527737195803027,
+        "bleu_stderr,none": 0.8989651138385868,
+        "ter,none": 55.87125677906154,
+        "ter_stderr,none": 0.941855261011829,
+        "chrf,none": 59.86370970499158,
+        "chrf_stderr,none": 0.6445974880466524
+      }
+    }
+  }
+}

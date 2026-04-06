@@ -1,0 +1,27 @@
+[project]
+name = "model-eval"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "torch",
+    "datasets>=2.16.0,<3.0.0",
+    "transformers",
+    "scikit-learn",
+    "sacrebleu",
+    "lm-eval[api]",
+    "google-generativeai",
+    "accelerate",
+]
+
+[project.scripts]
+model-eval = "model:main"
+
+[tool.ruff.lint]
+# E402: imports after env-var setup in model.py are intentional (must run before datasets loads)
+ignore = ["E402"]
+
+[dependency-groups]
+dev = [
+    "black>=26.3.1",
+    "ruff>=0.15.9",
+]
