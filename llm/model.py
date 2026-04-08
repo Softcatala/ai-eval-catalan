@@ -512,7 +512,7 @@ def run_iberbench(
 ) -> dict:
     """
     Runs Catalan IberBench tasks via lm-evaluation-harness.
-    Supports llama-server (via base_url) with an explicit tokenizer HF repo.
+    Supports llama-server (via base_url) or HF. Requires log-probabilities — not usable with chat APIs.
     """
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
@@ -575,19 +575,23 @@ def run_flores(
     base_url: str | None = None,
     tokenizer: str | None = None,
     n_samples: int | None = None,
+    openai_model: str | None = None,
 ) -> dict:
     """
     Translation evaluation on FLORES+ devtest split via lm-evaluation-harness.
     Tests: English → Catalan and Catalan → English.
     Metric: BLEU, TER, chrF (computed by lm-eval).
-    Supports llama-server (via base_url) with an explicit tokenizer HF repo.
+    Supports llama-server (via base_url), OpenAI API (via openai_model), or HF.
     """
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
 
     print("\n[7/7] Running FLORES+ (EN↔CA translation) via lm-evaluation-harness …")
 
-    if base_url:
+    if openai_model:
+        lm_model = "openai-chat-completions"
+        lm_model_args = f"model={openai_model}"
+    elif base_url:
         tok = tokenizer or model_name
         lm_model = "local-chat-completions"
         lm_model_args = (
@@ -879,32 +883,33 @@ def main():
         if "iberbench" in to_run:
             if args.model in ("gemini", "openai"):
                 print(
-                    "\n[3/4] IberBench skipped — lm-evaluation-harness does not support API models."
+                    "\n[6/7] IberBench skipped — tasks require log-probabilities not available via chat API."
                 )
                 results["benchmarks"]["iberbench"] = {
-                    "note": "requires llama-server model, not API"
+                    "note": "requires llama-server model (log-prob tasks)"
                 }
             else:
                 try:
                     results["benchmarks"]["iberbench"] = run_iberbench(
-                        args.model, lm_eval_base_url, tokenizer_id, args.n_samples
+                        args.model, lm_eval_base_url, tokenizer_id, args.n_samples,
                     )
                 except Exception as e:
                     print(f"[warn] IberBench failed: {e}")
                     results["benchmarks"]["iberbench"] = {"error": str(e)}
 
         if "flores" in to_run:
-            if args.model in ("gemini", "openai"):
+            if args.model == "gemini":
                 print(
-                    "\n[4/4] FLORES skipped — lm-evaluation-harness does not support API models."
+                    "\n[4/4] FLORES skipped — lm-evaluation-harness does not support Gemini API."
                 )
                 results["benchmarks"]["flores"] = {
-                    "note": "requires llama-server model, not API"
+                    "note": "requires llama-server or OpenAI-compatible model"
                 }
             else:
                 try:
                     results["benchmarks"]["flores"] = run_flores(
-                        args.model, lm_eval_base_url, tokenizer_id, args.n_samples
+                        args.model, lm_eval_base_url, tokenizer_id, args.n_samples,
+                        openai_model=args.openai_model if args.model == "openai" else None,
                     )
                 except Exception as e:
                     print(f"[warn] FLORES failed: {e}")
