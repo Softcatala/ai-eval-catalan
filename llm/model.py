@@ -107,9 +107,19 @@ def _hf_tokenizer_from_gguf(model_spec: str) -> str:
     Derive the HuggingFace tokenizer repo from a bartowski GGUF spec.
     e.g. "bartowski/google_gemma-3-1b-it-GGUF:Q8_0" -> "google/gemma-3-1b-it"
     """
+    # Models whose names don't encode the HF org — map them explicitly.
+    _KNOWN = {
+        "aya-expanse-8b": "CohereForAI/aya-expanse-8b",
+        "EuroLLM-9B-Instruct": "utter-project/EuroLLM-9B-Instruct",
+    }
+
     repo = model_spec.rsplit(":", 1)[0]  # strip :Q8_0
     name = repo.split("/")[-1]  # google_gemma-3-1b-it-GGUF
     name = name.replace("-GGUF", "")  # google_gemma-3-1b-it
+
+    if name in _KNOWN:
+        return _KNOWN[name]
+
     # bartowski prefixes the original org with an underscore
     if "_" in name:
         org, model = name.split("_", 1)

@@ -6,13 +6,13 @@
       "n": 353
     },
     "sts_ca": {
-      "pearson": 0.5516,
+      "pearson": 0.5525,
       "n": 400
     },
     "casum": {
-      "rouge1": 0.3775,
-      "rouge2": 0.2129,
-      "rougeL": 0.316,
+      "rouge1": 0.3751,
+      "rouge2": 0.2122,
+      "rougeL": 0.3156,
       "n": 400
     },
     "catcola": {

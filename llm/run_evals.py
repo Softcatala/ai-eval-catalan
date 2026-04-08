@@ -78,6 +78,28 @@ MODELS = [
         "ram_gb": 8,
     },
     {
+        "label": "aya-expanse-8b",
+        "output": "evals/results_aya_expanse_8b.json",
+        "args": [
+            "--model",
+            "bartowski/aya-expanse-8b-GGUF:Q8_0",
+            "--device",
+            "cuda",
+        ],
+        "ram_gb": 8,
+    },
+    {
+        "label": "eurollm-9b",
+        "output": "evals/results_eurollm_9b.json",
+        "args": [
+            "--model",
+            "bartowski/EuroLLM-9B-Instruct-GGUF:Q8_0",
+            "--device",
+            "cuda",
+        ],
+        "ram_gb": 9,
+    },
+    {
         "label": "gemma4-26b-a4b-q4",
         "output": "evals/results_gemma4_26b_a4b_q4.json",
         "args": [
@@ -86,7 +108,7 @@ MODELS = [
             "--device",
             "cuda",
         ],
-        "ram_gb": 14,
+        "ram_gb": 24,
     },
 ]
 
