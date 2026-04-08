@@ -251,7 +251,7 @@ class OpenAIModel:
             response = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=effective_tokens,
+                max_completion_tokens=effective_tokens,
                 temperature=0,
             )
             return (response.choices[0].message.content or "").strip()
