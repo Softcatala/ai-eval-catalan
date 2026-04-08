@@ -157,6 +157,18 @@ MODELS = [
         "needs_api_key": True,
         "ram_gb": 0,
     },
+    {
+        "label": "gpt-5.4",
+        "output": "evals/results_gpt_5_4.json",
+        "args": [
+            "--model",
+            "openai",
+            "--openai-model",
+            "gpt-5.4",
+        ],
+        "needs_openai_api_key": True,
+        "ram_gb": 0,
+    },
 ]
 
 # Base port for llama-server (8080 is taken by Jupyter)
@@ -184,6 +196,7 @@ def main():
     args = parser.parse_args()
 
     google_api_key = os.environ.get("GOOGLE_API_KEY")
+    openai_api_key = os.environ.get("OPENAI_API_KEY")
 
     python = sys.executable
 
@@ -196,6 +209,10 @@ def main():
 
         if model.get("needs_api_key") and not google_api_key:
             print(f"[SKIP] {model['label']} — GOOGLE_API_KEY env var required but not set")
+            continue
+
+        if model.get("needs_openai_api_key") and not openai_api_key:
+            print(f"[SKIP] {model['label']} — OPENAI_API_KEY env var required but not set")
             continue
 
         cmd = [

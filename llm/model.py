@@ -236,6 +236,38 @@ class GeminiModel:
         return 0  # fallback
 
 
+class OpenAIModel:
+    """OpenAI-compatible API wrapper (works with OpenAI and OpenRouter)."""
+
+    def __init__(self, api_key: str, model_name: str, base_url: str | None = None):
+        from openai import OpenAI
+
+        self.model_name = model_name
+        self.client = OpenAI(api_key=api_key, base_url=base_url)
+
+    def generate(self, prompt: str, max_new_tokens: int = 256) -> str:
+        effective_tokens = max(max_new_tokens, 1024)
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=effective_tokens,
+                temperature=0,
+            )
+            return (response.choices[0].message.content or "").strip()
+        except Exception as e:
+            print(f"[error] API call failed: {e}")
+            time.sleep(2)
+            return ""
+
+    def score_options(self, prompt: str, options: list[str]) -> int:
+        answer = self.generate(prompt + "\nAnswer with only A, B, C, or D.")
+        for i, opt in enumerate(options):
+            if opt.strip().lower() in answer.lower():
+                return i
+        return 0
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # 1. VeritasQA — Generative / Open-ended QA in Catalan
 # ──────────────────────────────────────────────────────────────────────────────
@@ -745,7 +777,7 @@ def main():
     parser.add_argument(
         "--model",
         default="bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0",
-        help="Model spec: GGUF (e.g. 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0') or 'gemini'",
+        help="Model spec: GGUF (e.g. 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0'), 'gemini', or 'openai'",
     )
     parser.add_argument(
         "--api-key",
@@ -756,6 +788,16 @@ def main():
         "--gemini-model",
         default="gemma-3-27b-it",
         help="Gemini/Gemma model name for API calls (default: gemma-3-27b-it)",
+    )
+    parser.add_argument(
+        "--openai-model",
+        default=None,
+        help="OpenAI model name for API calls (required when --model openai)",
+    )
+    parser.add_argument(
+        "--openai-base-url",
+        default=None,
+        help="Base URL for OpenAI-compatible API (e.g. OpenRouter)",
     )
     parser.add_argument(
         "--benchmarks",
@@ -806,10 +848,10 @@ def main():
     )
 
     # ── Validate model spec ───────────────────────────────────────────────────
-    if args.model != "gemini" and not _is_gguf_model(args.model):
+    if args.model not in ("gemini", "openai") and not _is_gguf_model(args.model):
         raise ValueError(
             f"Only GGUF models are supported. Got: {args.model}\n"
-            "Use a GGUF spec like 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0' or '--model gemini'."
+            "Use a GGUF spec like 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0', '--model gemini', or '--model openai'."
         )
 
     tokenizer_id = (
@@ -835,7 +877,7 @@ def main():
             results["benchmarks"]["club_qa"] = run_club_qa(model, args.n_samples)
 
         if "iberbench" in to_run:
-            if args.model == "gemini":
+            if args.model in ("gemini", "openai"):
                 print(
                     "\n[3/4] IberBench skipped — lm-evaluation-harness does not support API models."
                 )
@@ -852,7 +894,7 @@ def main():
                     results["benchmarks"]["iberbench"] = {"error": str(e)}
 
         if "flores" in to_run:
-            if args.model == "gemini":
+            if args.model in ("gemini", "openai"):
                 print(
                     "\n[4/4] FLORES skipped — lm-evaluation-harness does not support API models."
                 )
@@ -876,6 +918,18 @@ def main():
         if not args.api_key:
             raise ValueError("--api-key is required when using --model gemini")
         model = GeminiModel(api_key=args.api_key, model_name=args.gemini_model)
+        results = _run_benchmarks(model)
+    elif args.model == "openai":
+        openai_api_key = os.environ.get("OPENAI_API_KEY")
+        if not openai_api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is required when using --model openai")
+        if not args.openai_model:
+            raise ValueError("--openai-model is required when using --model openai")
+        model = OpenAIModel(
+            api_key=openai_api_key,
+            model_name=args.openai_model,
+            base_url=args.openai_base_url,
+        )
         results = _run_benchmarks(model)
     else:
         server_extra = ["--reasoning", "off"] if _is_thinking_model(args.model) else None
