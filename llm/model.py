@@ -201,15 +201,27 @@ class GeminiModel:
         self.model_name = model_name
 
     def generate(self, prompt: str, max_new_tokens: int = 256) -> str:
+        # Thinking models (gemini-3.x) consume tokens for internal reasoning before
+        # producing output — a small budget leaves nothing for the actual response.
+        effective_tokens = max(max_new_tokens, 1024)
         try:
             response = self.model.generate_content(
                 prompt,
                 generation_config={
-                    "max_output_tokens": max_new_tokens,
+                    "max_output_tokens": effective_tokens,
                     "temperature": 0,
                 },
             )
-            return response.text.strip()
+            candidate = response.candidates[0] if response.candidates else None
+            if candidate is None:
+                return ""
+            # finish_reason: 1=STOP (normal), 2=SAFETY, 3=RECITATION, etc.
+            # Even with finish_reason=1 the response can have no parts (empty output).
+            parts = getattr(candidate.content, "parts", None) if candidate.content else None
+            if not parts:
+                return ""
+            text = "".join(p.text for p in parts if hasattr(p, "text"))
+            return text.strip()
         except Exception as e:
             print(f"[error] API call failed: {e}")
             time.sleep(2)
@@ -292,7 +304,7 @@ def run_sts_ca(model, n_samples: int = 100) -> dict:
             "Respon només amb el número.\n\n"
             f"Frase 1: {s1}\nFrase 2: {s2}\nPuntuació:"
         )
-        raw = model.generate(prompt, max_new_tokens=5).strip()
+        raw = model.generate(prompt, max_new_tokens=16).strip()
         # Extract first number found in the response
         m = re.search(r"[0-5](?:\.[0-9]+)?", raw)
         score = float(m.group()) if m else 2.5  # fallback to midpoint
@@ -343,7 +355,7 @@ def run_catcola(model, n_samples: int = 200) -> dict:
             "Respon nomes amb 'si' o 'no'.\n\n"
             f"Frase: {sentence}\nResposta:"
         )
-        answer = model.generate(prompt, max_new_tokens=5).lower()
+        answer = model.generate(prompt, max_new_tokens=16).lower()
         pred = 1 if "si" in answer or "sí" in answer else 0
 
         preds.append(pred)

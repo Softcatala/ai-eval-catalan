@@ -12,6 +12,7 @@ Usage:
 """
 
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -132,6 +133,30 @@ MODELS = [
         ],
         "ram_gb": 26,
     },
+    {
+        "label": "gemini-3-1-preview",
+        "output": "evals/results_gemini_3_1_preview.json",
+        "args": [
+            "--model",
+            "gemini",
+            "--gemini-model",
+            "gemini-3.1-pro-preview",
+        ],
+        "needs_api_key": True,
+        "ram_gb": 0,
+    },
+    {
+        "label": "gemini-3-flash-preview",
+        "output": "evals/results_gemini_3_flash_preview.json",
+        "args": [
+            "--model",
+            "gemini",
+            "--gemini-model",
+            "gemini-3-flash-preview",
+        ],
+        "needs_api_key": True,
+        "ram_gb": 0,
+    },
 ]
 
 # Base port for llama-server (8080 is taken by Jupyter)
@@ -140,9 +165,6 @@ BASE_PORT = 8090
 
 def main():
     parser = argparse.ArgumentParser(description="Run evals for all models")
-    parser.add_argument(
-        "--api-key", help="Google AI API key (required for gemini models)"
-    )
     parser.add_argument("--n-samples", type=int, default=400)
     parser.add_argument(
         "--benchmarks",
@@ -161,6 +183,8 @@ def main():
     )
     args = parser.parse_args()
 
+    google_api_key = os.environ.get("GOOGLE_API_KEY")
+
     python = sys.executable
 
     for model in MODELS:
@@ -170,8 +194,8 @@ def main():
             print(f"[SKIP] {model['label']} — {output_path} already exists")
             continue
 
-        if model.get("needs_api_key") and not args.api_key:
-            print(f"[SKIP] {model['label']} — --api-key required but not provided")
+        if model.get("needs_api_key") and not google_api_key:
+            print(f"[SKIP] {model['label']} — GOOGLE_API_KEY env var required but not set")
             continue
 
         cmd = [
@@ -190,7 +214,7 @@ def main():
         ]
 
         if model.get("needs_api_key"):
-            cmd += ["--api-key", args.api_key]
+            cmd += ["--api-key", google_api_key]
 
         print(f"\n[RUN] {model['label']}: {' '.join(cmd)}\n{'='*60}")
         result = subprocess.run(cmd, cwd=SCRIPT_DIR)
