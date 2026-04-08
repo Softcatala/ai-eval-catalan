@@ -100,15 +100,15 @@ MODELS = [
         "ram_gb": 9,
     },
     {
-        "label": "gemma4-26b-a4b-q4",
-        "output": "evals/results_gemma4_26b_a4b_q4.json",
+        "label": "gemma4-e4b",
+        "output": "evals/results_gemma4_e4b.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q4_K_M",
+            "bartowski/google_gemma-4-E4B-it-GGUF:Q8_0",
             "--device",
             "cuda",
         ],
-        "ram_gb": 24,
+        "ram_gb": 5,
     },
 ]
 

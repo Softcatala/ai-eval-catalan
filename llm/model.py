@@ -529,17 +529,11 @@ def run_flores(
 
     if base_url:
         tok = tokenizer or model_name
-        lm_model = "local-completions"
-        mistral_fix = (
-            ",tokenizer_kwargs={fix_mistral_regex:True}"
-            if "mistral" in tok.lower()
-            else ""
-        )
+        lm_model = "local-chat-completions"
         lm_model_args = (
             f"model={tok},"
-            f"base_url={base_url}/completions,"
-            f"tokenizer={tok},"
-            f"num_concurrent=1,max_retries=3,tokenized_requests=False{mistral_fix}"
+            f"base_url={base_url}/chat/completions,"
+            f"num_concurrent=1,max_retries=3,tokenized_requests=False"
         )
     else:
         lm_model = "hf"
@@ -556,6 +550,8 @@ def run_flores(
         model_args=lm_model_args,
         tasks=flores_tasks,
         num_fewshot=2,
+        apply_chat_template=True,
+        fewshot_as_multiturn=True,
         batch_size=1,
         log_samples=False,
         limit=n_samples,
@@ -597,8 +593,14 @@ def _wait_for_port(port: int, timeout: float = 300.0):
     )
 
 
+def _is_thinking_model(model_spec: str) -> bool:
+    """Return True for models known to emit thinking tokens (e.g. Gemma-4 E4B)."""
+    lower = model_spec.lower()
+    return "gemma-4" in lower or "gemma4" in lower or "-e4b" in lower
+
+
 @contextmanager
-def llama_server_context(model_spec: str, port: int, device: str = "cpu"):
+def llama_server_context(model_spec: str, port: int, device: str = "cpu", extra_args: list | None = None):
     """
     Download the GGUF file via huggingface_hub, spawn llama-server, and yield the base_url.
     """
@@ -683,6 +685,8 @@ def llama_server_context(model_spec: str, port: int, device: str = "cpu"):
     ]
     if device == "cuda":
         cmd += ["--n-gpu-layers", "99"]
+    if extra_args:
+        cmd += extra_args
     log_file = open(log_path, "w")
     # Pass current env (HF_HOME already stripped at startup if /mnt/sda1 missing)
     env = os.environ.copy()
@@ -846,8 +850,9 @@ def main():
         model = GeminiModel(api_key=args.api_key, model_name=args.gemini_model)
         results = _run_benchmarks(model)
     else:
+        server_extra = ["--reasoning", "off"] if _is_thinking_model(args.model) else None
         with llama_server_context(
-            args.model, args.llama_server_port, args.device
+            args.model, args.llama_server_port, args.device, extra_args=server_extra
         ) as base_url:
             model = LlamaServerModel(args.model, base_url)
             results = _run_benchmarks(model, base_url)
