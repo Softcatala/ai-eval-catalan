@@ -71,6 +71,8 @@ def extract_metrics(data: dict) -> dict:
 def shorten_model_label(label: str) -> str:
     """bartowski/ModelName-GGUF:Q8_0  →  ModelName"""
     import re
+    # Extract quantization suffix (e.g. "Q4_K_M" or "Q8_0") before stripping
+    quant = label.split(":")[-1] if ":" in label else ""
     # Strip leading path (e.g. "bartowski/")
     name = label.split("/")[-1]
     # Strip quantization suffix (e.g. ":Q8_0")
@@ -79,6 +81,10 @@ def shorten_model_label(label: str) -> str:
     name = re.sub(r"-GGUF$", "", name)
     # Strip "-Instruct" and trailing version numbers
     name = re.sub(r"-Instruct(?:-\d+)?$", "", name)
+    # For gemma-4 models, append Q4 when quantized to Q4 (Q8 is assumed)
+    is_gemma4 = "gemma-4" in name.lower() or "gemma4" in name.lower()
+    if is_gemma4 and quant.upper().startswith("Q4"):
+        name += " Q4"
     return name
 
 
