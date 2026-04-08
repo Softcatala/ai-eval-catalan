@@ -6,22 +6,22 @@
       "n": 353
     },
     "sts_ca": {
-      "pearson": 0.1749,
+      "pearson": 0.7043,
       "n": 400
     },
     "casum": {
-      "rouge1": 0.2239,
-      "rouge2": 0.0867,
-      "rougeL": 0.1934,
+      "rouge1": 0.4816,
+      "rouge2": 0.2864,
+      "rougeL": 0.4268,
       "n": 400
     },
     "catcola": {
-      "mcc": 0.0932,
-      "accuracy": 0.315,
+      "mcc": 0.1829,
+      "accuracy": 0.5525,
       "n": 400
     },
     "club_qa": {
-      "exact_match_approx": 0.495,
+      "exact_match_approx": 0.84,
       "n": 400
     },
     "iberbench": {

@@ -159,9 +159,25 @@ class LlamaServerModel:
         with urllib.request.urlopen(req) as resp:
             return json.loads(resp.read())
 
+    def _chat_completions(self, prompt: str, max_tokens: int) -> dict:
+        payload = json.dumps(
+            {
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": max_tokens,
+                "temperature": 0,
+            }
+        ).encode()
+        req = urllib.request.Request(
+            f"{self.base_url}/chat/completions",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req) as resp:
+            return json.loads(resp.read())
+
     def generate(self, prompt: str, max_new_tokens: int = 256) -> str:
-        data = self._completions(prompt, max_tokens=max_new_tokens)
-        return data["choices"][0]["text"].strip()
+        data = self._chat_completions(prompt, max_tokens=max_new_tokens)
+        return data["choices"][0]["message"]["content"].strip()
 
     def score_options(self, prompt: str, options: list[str]) -> int:
         """Pick the option with the highest token log-probability sum."""
