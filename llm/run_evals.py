@@ -110,6 +110,28 @@ MODELS = [
         ],
         "ram_gb": 5,
     },
+    {
+        "label": "gemma4-26b-q4",
+        "output": "evals/results_gemma4_26b_q4.json",
+        "args": [
+            "--model",
+            "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q4_K_M",
+            "--device",
+            "cuda",
+        ],
+        "ram_gb": 14,
+    },
+    {
+        "label": "gemma4-26b-q8",
+        "output": "evals/results_gemma4_26b_q8.json",
+        "args": [
+            "--model",
+            "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q8_0",
+            "--device",
+            "cuda",
+        ],
+        "ram_gb": 26,
+    },
 ]
 
 # Base port for llama-server (8080 is taken by Jupyter)
