@@ -81,10 +81,12 @@ def shorten_model_label(label: str) -> str:
     name = re.sub(r"-GGUF$", "", name)
     # Strip "-Instruct" and trailing version numbers
     name = re.sub(r"-Instruct(?:-\d+)?$", "", name)
-    # For gemma-4 models, append Q4 when quantized to Q4 (Q8 is assumed)
+    # For gemma-4 models, append quantization suffix for clarity
     is_gemma4 = "gemma-4" in name.lower() or "gemma4" in name.lower()
     if is_gemma4 and quant.upper().startswith("Q4"):
         name += " Q4"
+    elif is_gemma4 and quant.upper().startswith("Q8"):
+        name += " Q8"
     return name
 
 
