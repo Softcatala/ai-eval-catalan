@@ -576,6 +576,8 @@ def run_flores(
     tokenizer: str | None = None,
     n_samples: int | None = None,
     openai_model: str | None = None,
+    gemini_model: str | None = None,
+    gemini_api_key: str | None = None,
 ) -> dict:
     """
     Translation evaluation on FLORES+ devtest split via lm-evaluation-harness.
@@ -588,7 +590,15 @@ def run_flores(
 
     print("\n[7/7] Running FLORES+ (EN↔CA translation) via lm-evaluation-harness …")
 
-    if openai_model:
+    if gemini_model:
+        lm_model = "openai-chat-completions"
+        lm_model_args = f"model={gemini_model}"
+        _gemini_base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
+        _orig_api_key = os.environ.get("OPENAI_API_KEY")
+        _orig_base_url = os.environ.get("OPENAI_BASE_URL")
+        os.environ["OPENAI_API_KEY"] = gemini_api_key or ""
+        os.environ["OPENAI_BASE_URL"] = _gemini_base_url
+    elif openai_model:
         lm_model = "openai-chat-completions"
         lm_model_args = f"model={openai_model}"
     elif base_url:
@@ -609,18 +619,29 @@ def run_flores(
         lm_model_args = f"pretrained={model_name}{mistral_fix}"
 
     flores_tasks = ["catalan_bench_flores_en-ca", "catalan_bench_flores_ca-en"]
-    results = lm_eval.simple_evaluate(
-        model=lm_model,
-        model_args=lm_model_args,
-        tasks=flores_tasks,
-        num_fewshot=2,
-        apply_chat_template=True,
-        fewshot_as_multiturn=True,
-        batch_size=1,
-        log_samples=False,
-        limit=n_samples,
-        confirm_run_unsafe_code=True,
-    )
+    try:
+        results = lm_eval.simple_evaluate(
+            model=lm_model,
+            model_args=lm_model_args,
+            tasks=flores_tasks,
+            num_fewshot=2,
+            apply_chat_template=True,
+            fewshot_as_multiturn=True,
+            batch_size=1,
+            log_samples=False,
+            limit=n_samples,
+            confirm_run_unsafe_code=True,
+        )
+    finally:
+        if gemini_model:
+            if _orig_api_key is None:
+                os.environ.pop("OPENAI_API_KEY", None)
+            else:
+                os.environ["OPENAI_API_KEY"] = _orig_api_key
+            if _orig_base_url is None:
+                os.environ.pop("OPENAI_BASE_URL", None)
+            else:
+                os.environ["OPENAI_BASE_URL"] = _orig_base_url
 
     scores = {
         task: results["results"][task]
@@ -863,7 +884,10 @@ def main():
     )
 
     def _run_benchmarks(model, lm_eval_base_url: str | None = None):
-        results = {"model": args.model, "benchmarks": {}}
+        model_label = args.gemini_model if args.model == "gemini" else (
+            args.openai_model if args.model == "openai" else args.model
+        )
+        results = {"model": model_label, "benchmarks": {}}
 
         if "veritasqa" in to_run:
             results["benchmarks"]["veritasqa"] = run_veritasqa(model, args.n_samples)
@@ -898,22 +922,16 @@ def main():
                     results["benchmarks"]["iberbench"] = {"error": str(e)}
 
         if "flores" in to_run:
-            if args.model == "gemini":
-                print(
-                    "\n[4/4] FLORES skipped — lm-evaluation-harness does not support Gemini API."
+            try:
+                results["benchmarks"]["flores"] = run_flores(
+                    args.model, lm_eval_base_url, tokenizer_id, args.n_samples,
+                    openai_model=args.openai_model if args.model == "openai" else None,
+                    gemini_model=args.gemini_model if args.model == "gemini" else None,
+                    gemini_api_key=args.api_key if args.model == "gemini" else None,
                 )
-                results["benchmarks"]["flores"] = {
-                    "note": "requires llama-server or OpenAI-compatible model"
-                }
-            else:
-                try:
-                    results["benchmarks"]["flores"] = run_flores(
-                        args.model, lm_eval_base_url, tokenizer_id, args.n_samples,
-                        openai_model=args.openai_model if args.model == "openai" else None,
-                    )
-                except Exception as e:
-                    print(f"[warn] FLORES failed: {e}")
-                    results["benchmarks"]["flores"] = {"error": str(e)}
+            except Exception as e:
+                print(f"[warn] FLORES failed: {e}")
+                results["benchmarks"]["flores"] = {"error": str(e)}
 
         return results
 

@@ -52,7 +52,10 @@ def extract_metrics(data: dict) -> dict:
             if task in ("catcola", "wnli_ca", "xnli_ca", "teca"):
                 continue
             if isinstance(task_metrics, dict):
-                acc = task_metrics.get("acc,none") or task_metrics.get("acc") or task_metrics.get("accuracy")
+                acc = next(
+                    (task_metrics[k] for k in ("acc,none", "acc", "accuracy") if k in task_metrics),
+                    None,
+                )
                 if acc is not None:
                     metrics[f"iberbench_{task}"] = acc
 
