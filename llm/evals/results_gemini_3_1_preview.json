@@ -1,0 +1,51 @@
+{
+  "model": "gemini-3.1-pro-preview",
+  "benchmarks": {
+    "veritasqa": {
+      "accuracy": 1.0,
+      "n": 353
+    },
+    "sts_ca": {
+      "pearson": 0.8214,
+      "n": 400
+    },
+    "casum": {
+      "rouge1": 0.5467,
+      "rouge2": 0.3547,
+      "rougeL": 0.4881,
+      "n": 400
+    },
+    "catcola": {
+      "mcc": 0.5196,
+      "accuracy": 0.83,
+      "n": 400
+    },
+    "club_qa": {
+      "exact_match_approx": 0.865,
+      "n": 400
+    },
+    "iberbench": {
+      "note": "requires llama-server model (log-prob tasks)"
+    },
+    "flores": {
+      "catalan_bench_flores_en-ca": {
+        "alias": "catalan_bench_flores_en-ca",
+        "bleu,none": 47.71134913299692,
+        "bleu_stderr,none": 0.7848245344333001,
+        "ter,none": 39.62362237471408,
+        "ter_stderr,none": 0.7664599072948305,
+        "chrf,none": 69.87138683609228,
+        "chrf_stderr,none": 0.5571633864155893
+      },
+      "catalan_bench_flores_ca-en": {
+        "alias": "catalan_bench_flores_ca-en",
+        "bleu,none": 49.87943034138571,
+        "bleu_stderr,none": 1.0218227341252504,
+        "ter,none": 37.361471351096434,
+        "ter_stderr,none": 0.9786565390444851,
+        "chrf,none": 73.71833207504937,
+        "chrf_stderr,none": 0.6105784536407415
+      }
+    }
+  }
+}

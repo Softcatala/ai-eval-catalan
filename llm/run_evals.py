@@ -12,6 +12,7 @@ Usage:
 """
 
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -78,8 +79,41 @@ MODELS = [
         "ram_gb": 8,
     },
     {
-        "label": "gemma4-26b-a4b-q4",
-        "output": "evals/results_gemma4_26b_a4b_q4.json",
+        "label": "aya-expanse-8b",
+        "output": "evals/results_aya_expanse_8b.json",
+        "args": [
+            "--model",
+            "bartowski/aya-expanse-8b-GGUF:Q8_0",
+            "--device",
+            "cuda",
+        ],
+        "ram_gb": 8,
+    },
+    {
+        "label": "eurollm-9b",
+        "output": "evals/results_eurollm_9b.json",
+        "args": [
+            "--model",
+            "bartowski/EuroLLM-9B-Instruct-GGUF:Q8_0",
+            "--device",
+            "cuda",
+        ],
+        "ram_gb": 9,
+    },
+    {
+        "label": "gemma4-e4b",
+        "output": "evals/results_gemma4_e4b.json",
+        "args": [
+            "--model",
+            "bartowski/google_gemma-4-E4B-it-GGUF:Q8_0",
+            "--device",
+            "cuda",
+        ],
+        "ram_gb": 5,
+    },
+    {
+        "label": "gemma4-26b-q4",
+        "output": "evals/results_gemma4_26b_q4.json",
         "args": [
             "--model",
             "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q4_K_M",
@@ -87,6 +121,53 @@ MODELS = [
             "cuda",
         ],
         "ram_gb": 14,
+    },
+    {
+        "label": "gemma4-26b-q8",
+        "output": "evals/results_gemma4_26b_q8.json",
+        "args": [
+            "--model",
+            "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q8_0",
+            "--device",
+            "cuda",
+        ],
+        "ram_gb": 26,
+    },
+    {
+        "label": "gemini-3-1-preview",
+        "output": "evals/results_gemini_3_1_preview.json",
+        "args": [
+            "--model",
+            "gemini",
+            "--gemini-model",
+            "gemini-3.1-pro-preview",
+        ],
+        "needs_api_key": True,
+        "ram_gb": 0,
+    },
+    {
+        "label": "gemini-3-flash-preview",
+        "output": "evals/results_gemini_3_flash_preview.json",
+        "args": [
+            "--model",
+            "gemini",
+            "--gemini-model",
+            "gemini-3-flash-preview",
+        ],
+        "needs_api_key": True,
+        "ram_gb": 0,
+    },
+    {
+        "label": "gpt-5.4",
+        "output": "evals/results_gpt_5_4.json",
+        "args": [
+            "--model",
+            "openai",
+            "--openai-model",
+            "gpt-5.4",
+        ],
+        "needs_openai_api_key": True,
+        "ram_gb": 0,
     },
 ]
 
@@ -96,9 +177,6 @@ BASE_PORT = 8090
 
 def main():
     parser = argparse.ArgumentParser(description="Run evals for all models")
-    parser.add_argument(
-        "--api-key", help="Google AI API key (required for gemini models)"
-    )
     parser.add_argument("--n-samples", type=int, default=400)
     parser.add_argument(
         "--benchmarks",
@@ -117,6 +195,9 @@ def main():
     )
     args = parser.parse_args()
 
+    google_api_key = os.environ.get("GOOGLE_API_KEY")
+    openai_api_key = os.environ.get("OPENAI_API_KEY")
+
     python = sys.executable
 
     for model in MODELS:
@@ -126,8 +207,12 @@ def main():
             print(f"[SKIP] {model['label']} — {output_path} already exists")
             continue
 
-        if model.get("needs_api_key") and not args.api_key:
-            print(f"[SKIP] {model['label']} — --api-key required but not provided")
+        if model.get("needs_api_key") and not google_api_key:
+            print(f"[SKIP] {model['label']} — GOOGLE_API_KEY env var required but not set")
+            continue
+
+        if model.get("needs_openai_api_key") and not openai_api_key:
+            print(f"[SKIP] {model['label']} — OPENAI_API_KEY env var required but not set")
             continue
 
         cmd = [
@@ -146,7 +231,7 @@ def main():
         ]
 
         if model.get("needs_api_key"):
-            cmd += ["--api-key", args.api_key]
+            cmd += ["--api-key", google_api_key]
 
         print(f"\n[RUN] {model['label']}: {' '.join(cmd)}\n{'='*60}")
         result = subprocess.run(cmd, cwd=SCRIPT_DIR)

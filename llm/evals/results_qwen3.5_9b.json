@@ -1,27 +1,27 @@
 {
-  "model": "bartowski/openai_gpt-oss-20b-GGUF:Q4_K_M",
+  "model": "bartowski/Qwen_Qwen3.5-9B-GGUF:Q8_0",
   "benchmarks": {
     "veritasqa": {
       "accuracy": 1.0,
       "n": 353
     },
     "sts_ca": {
-      "pearson": 0.1573,
+      "pearson": 0.5105,
       "n": 400
     },
     "casum": {
-      "rouge1": 0.2123,
-      "rouge2": 0.0869,
-      "rougeL": 0.174,
+      "rouge1": 0.3541,
+      "rouge2": 0.1865,
+      "rougeL": 0.2885,
       "n": 400
     },
     "catcola": {
-      "mcc": 0.058,
-      "accuracy": 0.26,
+      "mcc": 0.0,
+      "accuracy": 0.25,
       "n": 400
     },
     "club_qa": {
-      "exact_match_approx": 0.5125,
+      "exact_match_approx": 0.8425,
       "n": 400
     },
     "iberbench": {
@@ -46,21 +46,21 @@
     "flores": {
       "catalan_bench_flores_en-ca": {
         "alias": "catalan_bench_flores_en-ca",
-        "bleu,none": 0.015534127657042925,
-        "bleu_stderr,none": 0.003947445883245913,
-        "ter,none": 102.70326471199833,
-        "ter_stderr,none": 1.517716324539869,
-        "chrf,none": 1.2731112917482859,
-        "chrf_stderr,none": 0.15364801128731656
+        "bleu,none": 39.78506718137669,
+        "bleu_stderr,none": 0.8874118181542008,
+        "ter,none": 47.11998336452485,
+        "ter_stderr,none": 0.8327863924057934,
+        "chrf,none": 63.95429700295341,
+        "chrf_stderr,none": 0.640931018772916
       },
       "catalan_bench_flores_ca-en": {
         "alias": "catalan_bench_flores_ca-en",
-        "bleu,none": 0.5041395291299408,
-        "bleu_stderr,none": 0.20081750929604555,
-        "ter,none": 123.17849563782126,
-        "ter_stderr,none": 5.044540934822766,
-        "chrf,none": 4.417518039136352,
-        "chrf_stderr,none": 0.4586117303711731
+        "bleu,none": 45.59798436091775,
+        "bleu_stderr,none": 1.0056270474630402,
+        "ter,none": 40.94553171421835,
+        "ter_stderr,none": 0.9281357331629512,
+        "chrf,none": 70.10153144092214,
+        "chrf_stderr,none": 0.6037119605299537
       }
     }
   }

@@ -3,32 +3,49 @@
   "benchmarks": {
     "veritasqa": {
       "accuracy": 1.0,
-      "n": 353
+      "n": 100
     },
     "sts_ca": {
-      "pearson": 0.5861,
-      "n": 400
+      "pearson": 0.5955,
+      "n": 100
     },
     "casum": {
-      "rouge1": 0.4152,
-      "rouge2": 0.2268,
-      "rougeL": 0.347,
-      "n": 400
+      "rouge1": 0.4013,
+      "rouge2": 0.2088,
+      "rougeL": 0.3421,
+      "n": 100
     },
     "catcola": {
-      "mcc": 0.0827,
-      "accuracy": 0.7225,
-      "n": 400
+      "mcc": 0.1159,
+      "accuracy": 0.67,
+      "n": 100
     },
     "club_qa": {
-      "exact_match_approx": 0.7875,
-      "n": 400
+      "exact_match_approx": 0.84,
+      "n": 100
     },
     "iberbench": {
-      "error": "aya-expanse-8b is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`"
+      "error": "You are trying to access a gated repo.\nMake sure to have access to it at https://huggingface.co/CohereForAI/aya-expanse-8b.\n403 Client Error. (Request ID: Root=1-69d6446f-0d6745d72c107bbb138cf060;e065f4a6-4129-443f-b1c7-8d5bfec227f0)\n\nCannot access gated repo for url https://huggingface.co/CohereForAI/aya-expanse-8b/resolve/main/config.json.\nAccess to model CohereLabs/aya-expanse-8b is restricted and you are not in the authorized list. Visit https://huggingface.co/CohereLabs/aya-expanse-8b to ask for access."
     },
     "flores": {
-      "error": "aya-expanse-8b is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`"
+      "catalan_bench_flores_en-ca": {
+        "alias": "catalan_bench_flores_en-ca",
+        "bleu,none": 20.325896550308766,
+        "bleu_stderr,none": 1.2143395637252419,
+        "ter,none": 59.69021533811863,
+        "ter_stderr,none": 2.9507302374357667,
+        "chrf,none": 56.6124530822077,
+        "chrf_stderr,none": 1.1922685840106992
+      },
+      "catalan_bench_flores_ca-en": {
+        "alias": "catalan_bench_flores_ca-en",
+        "bleu,none": 28.037830055069804,
+        "bleu_stderr,none": 1.3413677876913035,
+        "ter,none": 47.57709251101321,
+        "ter_stderr,none": 1.6088004263781772,
+        "chrf,none": 66.26213564656976,
+        "chrf_stderr,none": 1.1262089110605706
+      }
     }
   }
 }

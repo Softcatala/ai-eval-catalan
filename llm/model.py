@@ -107,9 +107,19 @@ def _hf_tokenizer_from_gguf(model_spec: str) -> str:
     Derive the HuggingFace tokenizer repo from a bartowski GGUF spec.
     e.g. "bartowski/google_gemma-3-1b-it-GGUF:Q8_0" -> "google/gemma-3-1b-it"
     """
+    # Models whose names don't encode the HF org — map them explicitly.
+    _KNOWN = {
+        "aya-expanse-8b": "CohereForAI/aya-expanse-8b",
+        "EuroLLM-9B-Instruct": "utter-project/EuroLLM-9B-Instruct",
+    }
+
     repo = model_spec.rsplit(":", 1)[0]  # strip :Q8_0
     name = repo.split("/")[-1]  # google_gemma-3-1b-it-GGUF
     name = name.replace("-GGUF", "")  # google_gemma-3-1b-it
+
+    if name in _KNOWN:
+        return _KNOWN[name]
+
     # bartowski prefixes the original org with an underscore
     if "_" in name:
         org, model = name.split("_", 1)
@@ -149,9 +159,25 @@ class LlamaServerModel:
         with urllib.request.urlopen(req) as resp:
             return json.loads(resp.read())
 
+    def _chat_completions(self, prompt: str, max_tokens: int) -> dict:
+        payload = json.dumps(
+            {
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": max_tokens,
+                "temperature": 0,
+            }
+        ).encode()
+        req = urllib.request.Request(
+            f"{self.base_url}/chat/completions",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req) as resp:
+            return json.loads(resp.read())
+
     def generate(self, prompt: str, max_new_tokens: int = 256) -> str:
-        data = self._completions(prompt, max_tokens=max_new_tokens)
-        return data["choices"][0]["text"].strip()
+        data = self._chat_completions(prompt, max_tokens=max_new_tokens)
+        return data["choices"][0]["message"]["content"].strip()
 
     def score_options(self, prompt: str, options: list[str]) -> int:
         """Pick the option with the highest token log-probability sum."""
@@ -175,15 +201,27 @@ class GeminiModel:
         self.model_name = model_name
 
     def generate(self, prompt: str, max_new_tokens: int = 256) -> str:
+        # Thinking models (gemini-3.x) consume tokens for internal reasoning before
+        # producing output — a small budget leaves nothing for the actual response.
+        effective_tokens = max(max_new_tokens, 1024)
         try:
             response = self.model.generate_content(
                 prompt,
                 generation_config={
-                    "max_output_tokens": max_new_tokens,
+                    "max_output_tokens": effective_tokens,
                     "temperature": 0,
                 },
             )
-            return response.text.strip()
+            candidate = response.candidates[0] if response.candidates else None
+            if candidate is None:
+                return ""
+            # finish_reason: 1=STOP (normal), 2=SAFETY, 3=RECITATION, etc.
+            # Even with finish_reason=1 the response can have no parts (empty output).
+            parts = getattr(candidate.content, "parts", None) if candidate.content else None
+            if not parts:
+                return ""
+            text = "".join(p.text for p in parts if hasattr(p, "text"))
+            return text.strip()
         except Exception as e:
             print(f"[error] API call failed: {e}")
             time.sleep(2)
@@ -196,6 +234,38 @@ class GeminiModel:
             if opt.strip().lower() in answer.lower():
                 return i
         return 0  # fallback
+
+
+class OpenAIModel:
+    """OpenAI-compatible API wrapper (works with OpenAI and OpenRouter)."""
+
+    def __init__(self, api_key: str, model_name: str, base_url: str | None = None):
+        from openai import OpenAI
+
+        self.model_name = model_name
+        self.client = OpenAI(api_key=api_key, base_url=base_url)
+
+    def generate(self, prompt: str, max_new_tokens: int = 256) -> str:
+        effective_tokens = max(max_new_tokens, 1024)
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=[{"role": "user", "content": prompt}],
+                max_completion_tokens=effective_tokens,
+                temperature=0,
+            )
+            return (response.choices[0].message.content or "").strip()
+        except Exception as e:
+            print(f"[error] API call failed: {e}")
+            time.sleep(2)
+            return ""
+
+    def score_options(self, prompt: str, options: list[str]) -> int:
+        answer = self.generate(prompt + "\nAnswer with only A, B, C, or D.")
+        for i, opt in enumerate(options):
+            if opt.strip().lower() in answer.lower():
+                return i
+        return 0
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -266,7 +336,7 @@ def run_sts_ca(model, n_samples: int = 100) -> dict:
             "Respon només amb el número.\n\n"
             f"Frase 1: {s1}\nFrase 2: {s2}\nPuntuació:"
         )
-        raw = model.generate(prompt, max_new_tokens=5).strip()
+        raw = model.generate(prompt, max_new_tokens=16).strip()
         # Extract first number found in the response
         m = re.search(r"[0-5](?:\.[0-9]+)?", raw)
         score = float(m.group()) if m else 2.5  # fallback to midpoint
@@ -317,7 +387,7 @@ def run_catcola(model, n_samples: int = 200) -> dict:
             "Respon nomes amb 'si' o 'no'.\n\n"
             f"Frase: {sentence}\nResposta:"
         )
-        answer = model.generate(prompt, max_new_tokens=5).lower()
+        answer = model.generate(prompt, max_new_tokens=16).lower()
         pred = 1 if "si" in answer or "sí" in answer else 0
 
         preds.append(pred)
@@ -442,7 +512,7 @@ def run_iberbench(
 ) -> dict:
     """
     Runs Catalan IberBench tasks via lm-evaluation-harness.
-    Supports llama-server (via base_url) with an explicit tokenizer HF repo.
+    Supports llama-server (via base_url) or HF. Requires log-probabilities — not usable with chat APIs.
     """
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
@@ -505,31 +575,42 @@ def run_flores(
     base_url: str | None = None,
     tokenizer: str | None = None,
     n_samples: int | None = None,
+    openai_model: str | None = None,
+    gemini_model: str | None = None,
+    gemini_api_key: str | None = None,
 ) -> dict:
     """
     Translation evaluation on FLORES+ devtest split via lm-evaluation-harness.
     Tests: English → Catalan and Catalan → English.
     Metric: BLEU, TER, chrF (computed by lm-eval).
-    Supports llama-server (via base_url) with an explicit tokenizer HF repo.
+    Supports llama-server (via base_url), OpenAI API (via openai_model), or HF.
     """
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
 
     print("\n[7/7] Running FLORES+ (EN↔CA translation) via lm-evaluation-harness …")
 
-    if base_url:
+    if gemini_model:
+        lm_model = "openai-chat-completions"
+        _gemini_base_url = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+        # max_gen_toks must be large enough for thinking models (gemini-3.x) that
+        # consume tokens for internal reasoning before producing the translation.
+        # The default of 256 is too small and causes mid-sentence truncation.
+        lm_model_args = f"model={gemini_model},base_url={_gemini_base_url},max_gen_toks=2048"
+        _orig_api_key = os.environ.get("OPENAI_API_KEY")
+        _orig_base_url = os.environ.get("OPENAI_BASE_URL")
+        os.environ["OPENAI_API_KEY"] = gemini_api_key or ""
+        os.environ["OPENAI_BASE_URL"] = _gemini_base_url
+    elif openai_model:
+        lm_model = "openai-chat-completions"
+        lm_model_args = f"model={openai_model}"
+    elif base_url:
         tok = tokenizer or model_name
-        lm_model = "local-completions"
-        mistral_fix = (
-            ",tokenizer_kwargs={fix_mistral_regex:True}"
-            if "mistral" in tok.lower()
-            else ""
-        )
+        lm_model = "local-chat-completions"
         lm_model_args = (
             f"model={tok},"
-            f"base_url={base_url}/completions,"
-            f"tokenizer={tok},"
-            f"num_concurrent=1,max_retries=3,tokenized_requests=False{mistral_fix}"
+            f"base_url={base_url}/chat/completions,"
+            f"num_concurrent=1,max_retries=3,tokenized_requests=False"
         )
     else:
         lm_model = "hf"
@@ -541,16 +622,29 @@ def run_flores(
         lm_model_args = f"pretrained={model_name}{mistral_fix}"
 
     flores_tasks = ["catalan_bench_flores_en-ca", "catalan_bench_flores_ca-en"]
-    results = lm_eval.simple_evaluate(
-        model=lm_model,
-        model_args=lm_model_args,
-        tasks=flores_tasks,
-        num_fewshot=2,
-        batch_size=1,
-        log_samples=False,
-        limit=n_samples,
-        confirm_run_unsafe_code=True,
-    )
+    try:
+        results = lm_eval.simple_evaluate(
+            model=lm_model,
+            model_args=lm_model_args,
+            tasks=flores_tasks,
+            num_fewshot=2,
+            apply_chat_template=True,
+            fewshot_as_multiturn=True,
+            batch_size=1,
+            log_samples=False,
+            limit=n_samples,
+            confirm_run_unsafe_code=True,
+        )
+    finally:
+        if gemini_model:
+            if _orig_api_key is None:
+                os.environ.pop("OPENAI_API_KEY", None)
+            else:
+                os.environ["OPENAI_API_KEY"] = _orig_api_key
+            if _orig_base_url is None:
+                os.environ.pop("OPENAI_BASE_URL", None)
+            else:
+                os.environ["OPENAI_BASE_URL"] = _orig_base_url
 
     scores = {
         task: results["results"][task]
@@ -587,8 +681,14 @@ def _wait_for_port(port: int, timeout: float = 300.0):
     )
 
 
+def _is_thinking_model(model_spec: str) -> bool:
+    """Return True for models known to emit thinking tokens (e.g. Gemma-4 E4B)."""
+    lower = model_spec.lower()
+    return "gemma-4" in lower or "gemma4" in lower or "-e4b" in lower
+
+
 @contextmanager
-def llama_server_context(model_spec: str, port: int, device: str = "cpu"):
+def llama_server_context(model_spec: str, port: int, device: str = "cpu", extra_args: list | None = None):
     """
     Download the GGUF file via huggingface_hub, spawn llama-server, and yield the base_url.
     """
@@ -673,6 +773,8 @@ def llama_server_context(model_spec: str, port: int, device: str = "cpu"):
     ]
     if device == "cuda":
         cmd += ["--n-gpu-layers", "99"]
+    if extra_args:
+        cmd += extra_args
     log_file = open(log_path, "w")
     # Pass current env (HF_HOME already stripped at startup if /mnt/sda1 missing)
     env = os.environ.copy()
@@ -703,7 +805,7 @@ def main():
     parser.add_argument(
         "--model",
         default="bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0",
-        help="Model spec: GGUF (e.g. 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0') or 'gemini'",
+        help="Model spec: GGUF (e.g. 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0'), 'gemini', or 'openai'",
     )
     parser.add_argument(
         "--api-key",
@@ -714,6 +816,16 @@ def main():
         "--gemini-model",
         default="gemma-3-27b-it",
         help="Gemini/Gemma model name for API calls (default: gemma-3-27b-it)",
+    )
+    parser.add_argument(
+        "--openai-model",
+        default=None,
+        help="OpenAI model name for API calls (required when --model openai)",
+    )
+    parser.add_argument(
+        "--openai-base-url",
+        default=None,
+        help="Base URL for OpenAI-compatible API (e.g. OpenRouter)",
     )
     parser.add_argument(
         "--benchmarks",
@@ -764,10 +876,10 @@ def main():
     )
 
     # ── Validate model spec ───────────────────────────────────────────────────
-    if args.model != "gemini" and not _is_gguf_model(args.model):
+    if args.model not in ("gemini", "openai") and not _is_gguf_model(args.model):
         raise ValueError(
             f"Only GGUF models are supported. Got: {args.model}\n"
-            "Use a GGUF spec like 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0' or '--model gemini'."
+            "Use a GGUF spec like 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0', '--model gemini', or '--model openai'."
         )
 
     tokenizer_id = (
@@ -775,7 +887,10 @@ def main():
     )
 
     def _run_benchmarks(model, lm_eval_base_url: str | None = None):
-        results = {"model": args.model, "benchmarks": {}}
+        model_label = args.gemini_model if args.model == "gemini" else (
+            args.openai_model if args.model == "openai" else args.model
+        )
+        results = {"model": model_label, "benchmarks": {}}
 
         if "veritasqa" in to_run:
             results["benchmarks"]["veritasqa"] = run_veritasqa(model, args.n_samples)
@@ -793,38 +908,33 @@ def main():
             results["benchmarks"]["club_qa"] = run_club_qa(model, args.n_samples)
 
         if "iberbench" in to_run:
-            if args.model == "gemini":
+            if args.model in ("gemini", "openai"):
                 print(
-                    "\n[3/4] IberBench skipped — lm-evaluation-harness does not support API models."
+                    "\n[6/7] IberBench skipped — tasks require log-probabilities not available via chat API."
                 )
                 results["benchmarks"]["iberbench"] = {
-                    "note": "requires llama-server model, not API"
+                    "note": "requires llama-server model (log-prob tasks)"
                 }
             else:
                 try:
                     results["benchmarks"]["iberbench"] = run_iberbench(
-                        args.model, lm_eval_base_url, tokenizer_id, args.n_samples
+                        args.model, lm_eval_base_url, tokenizer_id, args.n_samples,
                     )
                 except Exception as e:
                     print(f"[warn] IberBench failed: {e}")
                     results["benchmarks"]["iberbench"] = {"error": str(e)}
 
         if "flores" in to_run:
-            if args.model == "gemini":
-                print(
-                    "\n[4/4] FLORES skipped — lm-evaluation-harness does not support API models."
+            try:
+                results["benchmarks"]["flores"] = run_flores(
+                    args.model, lm_eval_base_url, tokenizer_id, args.n_samples,
+                    openai_model=args.openai_model if args.model == "openai" else None,
+                    gemini_model=args.gemini_model if args.model == "gemini" else None,
+                    gemini_api_key=args.api_key if args.model == "gemini" else None,
                 )
-                results["benchmarks"]["flores"] = {
-                    "note": "requires llama-server model, not API"
-                }
-            else:
-                try:
-                    results["benchmarks"]["flores"] = run_flores(
-                        args.model, lm_eval_base_url, tokenizer_id, args.n_samples
-                    )
-                except Exception as e:
-                    print(f"[warn] FLORES failed: {e}")
-                    results["benchmarks"]["flores"] = {"error": str(e)}
+            except Exception as e:
+                print(f"[warn] FLORES failed: {e}")
+                results["benchmarks"]["flores"] = {"error": str(e)}
 
         return results
 
@@ -835,9 +945,22 @@ def main():
             raise ValueError("--api-key is required when using --model gemini")
         model = GeminiModel(api_key=args.api_key, model_name=args.gemini_model)
         results = _run_benchmarks(model)
+    elif args.model == "openai":
+        openai_api_key = os.environ.get("OPENAI_API_KEY")
+        if not openai_api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is required when using --model openai")
+        if not args.openai_model:
+            raise ValueError("--openai-model is required when using --model openai")
+        model = OpenAIModel(
+            api_key=openai_api_key,
+            model_name=args.openai_model,
+            base_url=args.openai_base_url,
+        )
+        results = _run_benchmarks(model)
     else:
+        server_extra = ["--reasoning", "off"] if _is_thinking_model(args.model) else None
         with llama_server_context(
-            args.model, args.llama_server_port, args.device
+            args.model, args.llama_server_port, args.device, extra_args=server_extra
         ) as base_url:
             model = LlamaServerModel(args.model, base_url)
             results = _run_benchmarks(model, base_url)

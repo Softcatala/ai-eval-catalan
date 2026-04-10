@@ -11,6 +11,7 @@ dependencies = [
     "lm-eval[api]",
     "google-generativeai",
     "accelerate",
+    "openai>=2.31.0",
 ]
 
 [project.scripts]

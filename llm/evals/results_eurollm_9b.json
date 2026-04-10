@@ -3,32 +3,49 @@
   "benchmarks": {
     "veritasqa": {
       "accuracy": 1.0,
-      "n": 353
+      "n": 100
     },
     "sts_ca": {
-      "pearson": 0.5516,
-      "n": 400
+      "pearson": 0.7713,
+      "n": 100
     },
     "casum": {
-      "rouge1": 0.3775,
-      "rouge2": 0.2129,
-      "rougeL": 0.316,
-      "n": 400
+      "rouge1": 0.4759,
+      "rouge2": 0.2866,
+      "rougeL": 0.4131,
+      "n": 100
     },
     "catcola": {
-      "mcc": 0.0409,
-      "accuracy": 0.255,
-      "n": 400
+      "mcc": 0.154,
+      "accuracy": 0.58,
+      "n": 100
     },
     "club_qa": {
-      "exact_match_approx": 0.7425,
-      "n": 400
+      "exact_match_approx": 0.83,
+      "n": 100
     },
     "iberbench": {
-      "error": "EuroLLM-9B-Instruct is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`"
+      "error": "You are trying to access a gated repo.\nMake sure to have access to it at https://huggingface.co/utter-project/EuroLLM-9B-Instruct.\n403 Client Error. (Request ID: Root=1-69d6418c-3e9a3426702225040c4c0af3;06c6e99c-0f59-4b5e-a6a2-c7aeefc90f84)\n\nCannot access gated repo for url https://huggingface.co/utter-project/EuroLLM-9B-Instruct/resolve/main/config.json.\nAccess to model utter-project/EuroLLM-9B-Instruct is restricted and you are not in the authorized list. Visit https://huggingface.co/utter-project/EuroLLM-9B-Instruct to ask for access."
     },
     "flores": {
-      "error": "EuroLLM-9B-Instruct is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`"
+      "catalan_bench_flores_en-ca": {
+        "alias": "catalan_bench_flores_en-ca",
+        "bleu,none": 42.998873327730564,
+        "bleu_stderr,none": 2.0110263479552253,
+        "ter,none": 43.218738194182095,
+        "ter_stderr,none": 1.9316020128540714,
+        "chrf,none": 68.34324379834744,
+        "chrf_stderr,none": 1.3440445078207328
+      },
+      "catalan_bench_flores_ca-en": {
+        "alias": "catalan_bench_flores_ca-en",
+        "bleu,none": 43.25902796976996,
+        "bleu_stderr,none": 1.6397412329599765,
+        "ter,none": 41.98237885462555,
+        "ter_stderr,none": 1.806914737243204,
+        "chrf,none": 71.54925414271284,
+        "chrf_stderr,none": 1.0532851025617866
+      }
     }
   }
 }
