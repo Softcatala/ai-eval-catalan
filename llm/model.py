@@ -593,7 +593,10 @@ def run_flores(
     if gemini_model:
         lm_model = "openai-chat-completions"
         _gemini_base_url = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
-        lm_model_args = f"model={gemini_model},base_url={_gemini_base_url}"
+        # max_gen_toks must be large enough for thinking models (gemini-3.x) that
+        # consume tokens for internal reasoning before producing the translation.
+        # The default of 256 is too small and causes mid-sentence truncation.
+        lm_model_args = f"model={gemini_model},base_url={_gemini_base_url},max_gen_toks=2048"
         _orig_api_key = os.environ.get("OPENAI_API_KEY")
         _orig_base_url = os.environ.get("OPENAI_BASE_URL")
         os.environ["OPENAI_API_KEY"] = gemini_api_key or ""
