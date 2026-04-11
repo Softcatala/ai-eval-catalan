@@ -228,6 +228,7 @@ def evaluate_language(
         locale,
         split="test",
         streaming=True,
+        trust_remote_code=True,
     )
 
     print(f"Evaluating on {num_samples} samples...")
