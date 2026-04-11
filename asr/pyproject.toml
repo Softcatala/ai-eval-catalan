@@ -1,0 +1,17 @@
+[project]
+name = "asr-eval"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "torch",
+    "torchaudio",
+    "datasets",
+    "jiwer",
+    "tqdm",
+    "transformers",
+]
+
+[tool.uv]
+# omnilingual_asr is a local/private package not available on PyPI.
+# Install it separately before running: pip install -e /path/to/omnilingual_asr
