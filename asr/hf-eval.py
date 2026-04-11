@@ -76,12 +76,16 @@ WHISPER_MODELS = [
     "projecte-aina/whisper-large-v3-ca-3catparla",
 ]
 
+VIBEVOICE_MODELS = [
+    "microsoft/VibeVoice-ASR",
+]
+
 GEMMA_MODELS = [
     "gemma-4-E4B",
     "gemma-4-E2B",
 ]
 
-ALL_MODELS = OMNILINGUAL_MODELS + WHISPER_MODELS + GEMMA_MODELS
+ALL_MODELS = OMNILINGUAL_MODELS + WHISPER_MODELS + VIBEVOICE_MODELS + GEMMA_MODELS
 
 
 class ASRModel(Protocol):
@@ -151,6 +155,71 @@ class WhisperWrapper:
             generate_kwargs={"language": lang},
         )
         return result["text"] if result else ""
+
+
+class VibeVoiceWrapper:
+    """Wrapper for Microsoft VibeVoice-ASR (custom library required)."""
+
+    def __init__(self, model_name: str, device: str):
+        from vibevoice.modular.modeling_vibevoice_asr import VibeVoiceASRForConditionalGeneration
+        from vibevoice.processor.vibevoice_asr_processor import VibeVoiceASRProcessor
+
+        self.processor = VibeVoiceASRProcessor.from_pretrained(
+            model_name,
+            language_model_pretrained_name="Qwen/Qwen2.5-7B",
+        )
+        self.model = VibeVoiceASRForConditionalGeneration.from_pretrained(
+            model_name,
+            dtype=torch.bfloat16,
+            attn_implementation="sdpa",
+            trust_remote_code=True,
+        ).to(device)
+        self.model.eval()
+        self.device = device
+        self.model_name = model_name
+
+    def transcribe(self, waveform: torch.Tensor, sample_rate: int, lang: str) -> str:
+        # Processor expects audio at 24kHz; resample if needed
+        target_sr = self.processor.target_sample_rate
+        if sample_rate != target_sr:
+            resampler = torchaudio.transforms.Resample(sample_rate, target_sr)
+            waveform = resampler(waveform.unsqueeze(0)).squeeze(0)
+
+        inputs = self.processor(
+            audio=[waveform.numpy()],
+            sampling_rate=target_sr,
+            return_tensors="pt",
+            padding=True,
+            add_generation_prompt=True,
+            context_info="The audio is in Catalan language.",
+        )
+        inputs = {k: v.to(self.device) if isinstance(v, torch.Tensor) else v for k, v in inputs.items()}
+
+        with torch.no_grad():
+            output_ids = self.model.generate(
+                **inputs,
+                max_new_tokens=512,
+                pad_token_id=self.processor.pad_id,
+                eos_token_id=self.processor.tokenizer.eos_token_id,
+                do_sample=False,
+            )
+
+        input_length = inputs["input_ids"].shape[1]
+        generated_ids = output_ids[0, input_length:]
+        eos_pos = (generated_ids == self.processor.tokenizer.eos_token_id).nonzero(as_tuple=True)[0]
+        if len(eos_pos) > 0:
+            generated_ids = generated_ids[: eos_pos[0] + 1]
+        raw_text = self.processor.decode(generated_ids, skip_special_tokens=True)
+
+        PLACEHOLDERS = {"[Silence]", "[Unintelligible Speech]", "[noise]", "[music]"}
+        try:
+            segments = self.processor.post_process_transcription(raw_text)
+            if segments:
+                texts = [seg.get("text", "") for seg in segments if seg.get("text", "") not in PLACEHOLDERS]
+                return " ".join(texts).strip()
+        except Exception:
+            pass
+        return raw_text
 
 
 class Gemma4Wrapper:
@@ -239,6 +308,9 @@ def load_model(model_name: str, device: str) -> ASRModel:
     elif model_name in WHISPER_MODELS:
         print(f"Loading Whisper model: {model_name}")
         return WhisperWrapper(model_name, device)
+    elif model_name in VIBEVOICE_MODELS:
+        print(f"Loading VibeVoice model: {model_name}")
+        return VibeVoiceWrapper(model_name, device)
     elif model_name in GEMMA_MODELS:
         print(f"Loading Gemma 4 model: {model_name}")
         return Gemma4Wrapper(model_name, device)
@@ -489,6 +561,9 @@ def main():
             print(f"  - {m}")
         print("\nWhisper:")
         for m in WHISPER_MODELS:
+            print(f"  - {m}")
+        print("\nVibeVoice (custom library required):")
+        for m in VIBEVOICE_MODELS:
             print(f"  - {m}")
         print("\nGemma 4 (audio, max 30s):")
         for m in GEMMA_MODELS:

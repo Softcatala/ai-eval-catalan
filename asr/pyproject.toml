@@ -20,3 +20,7 @@ dependencies = [
 [tool.uv]
 # omnilingual_asr is a local/private package not available on PyPI.
 # Install it separately before running: pip install -e /path/to/omnilingual_asr
+#
+# VibeVoice is also not on PyPI. Clone and install before using microsoft/VibeVoice-ASR:
+#   git clone https://github.com/microsoft/VibeVoice
+#   uv pip install -e VibeVoice
