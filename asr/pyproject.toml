@@ -12,6 +12,9 @@ dependencies = [
     "jiwer",
     "tqdm",
     "transformers",
+    "pillow>=12.2.0",
+    "torchvision>=0.26.0",
+    "accelerate>=1.13.0",
 ]
 
 [tool.uv]
