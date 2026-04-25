@@ -49,6 +49,14 @@
             "rtf": 0.0048
         },
         {
+            "model": "microsoft/VibeVoice-ASR",
+            "params_b": 9.0,
+            "memory_gb": 18.0,
+            "wer": 0.0984,
+            "cer": 0.0469,
+            "rtf": 0.0
+        },
+        {
             "model": "omniASR_LLM_300M",
             "params_b": 1.6,
             "memory_gb": 3.26,
@@ -111,14 +119,6 @@
             "wer": 0.3806,
             "cer": 0.1328,
             "rtf": 0.0326
-        },
-        {
-            "model": "microsoft/VibeVoice-ASR",
-            "params_b": 9.0,
-            "memory_gb": 18.0,
-            "wer": 1.0,
-            "cer": 1.0,
-            "rtf": 0.0
         }
     ]
 }
