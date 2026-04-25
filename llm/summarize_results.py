@@ -120,7 +120,7 @@ COLUMN_LABELS = {
     "memory_gb": "Memory (GB)",
     "sts_ca": "STS",
     "catcola_mcc": "CatCoLA MCC",
-    "club_qa_em": "CLUB QA EM",
+    "club_qa_em": "CLUB QA",
     "casum_rougeL": "CaSum",
     "flores_en2ca": "EN→CA",
     "flores_ca2en": "CA→EN",
