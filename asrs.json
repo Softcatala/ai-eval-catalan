@@ -31,10 +31,34 @@
             "rtf": 0.1289
         },
         {
+            "model": "omniASR_CTC_3B",
+            "wer": 0.0976,
+            "cer": 0.0298,
+            "rtf": 0.0048
+        },
+        {
+            "model": "omniASR_LLM_300M",
+            "wer": 0.1093,
+            "cer": 0.0382,
+            "rtf": 0.2123
+        },
+        {
+            "model": "omniASR_CTC_1B",
+            "wer": 0.1149,
+            "cer": 0.0359,
+            "rtf": 0.0039
+        },
+        {
             "model": "whisper-small",
             "wer": 0.1312,
             "cer": 0.0424,
             "rtf": 0.0711
+        },
+        {
+            "model": "omniASR_CTC_300M",
+            "wer": 0.2023,
+            "cer": 0.054,
+            "rtf": 0.0027
         },
         {
             "model": "gemma-4-E4B",
@@ -59,6 +83,12 @@
             "wer": 0.3806,
             "cer": 0.1328,
             "rtf": 0.0326
+        },
+        {
+            "model": "microsoft/VibeVoice-ASR",
+            "wer": 1.0,
+            "cer": 1.0,
+            "rtf": 0.0
         }
     ]
 }
