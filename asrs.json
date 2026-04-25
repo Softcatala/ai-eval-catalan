@@ -1,0 +1,70 @@
+{
+    "text": {
+        "model": "Model",
+        "wer": "WER",
+        "cer": "CER",
+        "rtf": "RTF"
+    },
+    "data": [
+        {
+            "model": "whisper-large-v3",
+            "wer": 0.0441,
+            "cer": 0.0146,
+            "rtf": 0.1659
+        },
+        {
+            "model": "whisper-large-v2",
+            "wer": 0.046,
+            "cer": 0.0164,
+            "rtf": 0.1694
+        },
+        {
+            "model": "whisper-large-v3-turbo",
+            "wer": 0.0476,
+            "cer": 0.0153,
+            "rtf": 0.0343
+        },
+        {
+            "model": "projecte-aina/whisper-large-v3-ca-3catparla",
+            "wer": 0.0633,
+            "cer": 0.034,
+            "rtf": 0.161
+        },
+        {
+            "model": "whisper-medium",
+            "wer": 0.0711,
+            "cer": 0.0245,
+            "rtf": 0.1289
+        },
+        {
+            "model": "whisper-small",
+            "wer": 0.1312,
+            "cer": 0.0424,
+            "rtf": 0.0711
+        },
+        {
+            "model": "gemma-4-E4B",
+            "wer": 0.2385,
+            "cer": 0.199,
+            "rtf": 0.3284
+        },
+        {
+            "model": "whisper-base",
+            "wer": 0.2431,
+            "cer": 0.0793,
+            "rtf": 0.0414
+        },
+        {
+            "model": "gemma-4-E2B",
+            "wer": 0.2859,
+            "cer": 0.2179,
+            "rtf": 0.2638
+        },
+        {
+            "model": "whisper-tiny",
+            "wer": 0.3806,
+            "cer": 0.1328,
+            "rtf": 0.0326
+        }
+    ]
+}
