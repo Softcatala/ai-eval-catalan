@@ -66,7 +66,7 @@
             "calm_pct": 55.85
         },
         {
-            "model": "Qwen_Qwen3.5-9B",
+            "model": "Qwen3.5-9B",
             "cloud": false,
             "params_b": 9.0,
             "memory_gb": 9.6,
@@ -144,7 +144,7 @@
             "calm_pct": 49.87
         },
         {
-            "model": "Qwen_Qwen3-14B",
+            "model": "Qwen3-14B",
             "cloud": false,
             "params_b": 14.0,
             "memory_gb": 14.9,
