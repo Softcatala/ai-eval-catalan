@@ -23,9 +23,9 @@ jobs:
       - name: Install dependencies
         run: pip install jinja2
 
-      - name: Generate llms.json
+      - name: Generate llms.json and llms_table.html
         working-directory: llm
-        run: python summarize_results.py --json-norm llms.json
+        run: python summarize_results.py --json-norm llms.json --table-out llms_table.html
 
       - name: Checkout prod-data branch
         uses: actions/checkout@v4
@@ -33,14 +33,16 @@ jobs:
           ref: prod-data
           path: prod_data_branch
 
-      - name: Copy llms.json to prod-data
-        run: cp llm/llms.json prod_data_branch/llms.json
+      - name: Copy files to prod-data
+        run: |
+          cp llm/llms.json prod_data_branch/llms.json
+          cp llm/llms_table.html prod_data_branch/llms_table.html
 
       - name: Commit and push to prod-data
         working-directory: prod_data_branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add llms.json
-          git diff --cached --quiet || git commit -m "Update llms.json from main@${{ github.sha }}"
+          git add llms.json llms_table.html
+          git diff --cached --quiet || git commit -m "Update llms.json and llms_table.html from main@${{ github.sha }}"
           git push

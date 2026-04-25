@@ -1,0 +1,20 @@
+<table style="border-collapse: collapse; width: auto;">
+<thead>
+<tr>
+<th>Model</th>
+<th>Params (mem)</th>
+{% for col in norm_cols %}<th>{{ col }}</th>{% endfor %}
+<th>CALM%</th>
+</tr>
+</thead>
+<tbody>
+{% for row in rows %}{% set label, metrics, cloud, params_b, memory_gb = row %}
+<tr>
+<td>{% if cloud %}<b>{{ label }}</b>{% else %}{{ label }}{% endif %}</td>
+<td>{{ row | fmt_params }}</td>
+{% for col in norm_cols %}<td>{{ metrics.get(col) | norm(col) | fmt }}</td>{% endfor %}
+<td>{{ metrics | calm }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
