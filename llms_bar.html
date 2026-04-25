@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LLM Evaluation — Catalan</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f4f4f4;
+    padding: 28px;
+    color: #222;
+    margin: 0;
+  }
+  .charts-wrapper {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .chart-panel {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px 22px 16px;
+    flex: 1;
+    min-width: 360px;
+    box-sizing: border-box;
+  }
+  .chart-title {
+    font-weight: 700;
+    font-size: 14.5px;
+    margin: 0 0 2px;
+    color: #1a1a1a;
+  }
+  .chart-subtitle {
+    color: #c62828;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  .chart-body {
+    position: relative;
+    margin-top: 20px;
+  }
+  .chart-row {
+    display: flex;
+    align-items: center;
+    height: 23px;
+    margin-bottom: 2px;
+  }
+  .row-label {
+    width: 182px;
+    min-width: 182px;
+    text-align: right;
+    font-size: 12px;
+    padding-right: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #333;
+  }
+  .bar-area {
+    flex: 1;
+    height: 100%;
+    background: #ececec;
+    border-radius: 2px;
+    position: relative;
+    overflow: visible;
+  }
+  .bar {
+    height: 100%;
+    border-radius: 2px;
+    min-width: 3px;
+  }
+  .row-value {
+    width: 48px;
+    min-width: 48px;
+    font-size: 12px;
+    color: #555;
+    padding-left: 6px;
+    text-align: left;
+  }
+  .threshold-line {
+    position: absolute;
+    top: -18px;
+    bottom: 0;
+    width: 0;
+    border-left: 2px dashed #c62828;
+    z-index: 5;
+    pointer-events: none;
+    display: none;
+  }
+  .threshold-line-label {
+    position: absolute;
+    top: 0;
+    left: 5px;
+    font-size: 11px;
+    color: #c62828;
+    white-space: nowrap;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .chart-caption {
+    font-size: 11px;
+    color: #777;
+    font-style: italic;
+    margin: 10px 0 0;
+  }
+</style>
+</head>
+<body>
+<div class="charts-wrapper">
+  
+  <div class="chart-panel" data-threshold-pct="81.7394">
+    <div class="chart-title">CLAIM % — LLMs on Catalan</div>
+    <div class="chart-subtitle">50% usable</div>
+    <div class="chart-body">
+      <div class="threshold-line">
+        <span class="threshold-line-label">50% usable</span>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="gemini-3.1-pro-preview">gemini-3.1-pro-preview</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 100.00%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">61.2%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="gemini-3-flash-preview">gemini-3-flash-preview</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 98.25%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">60.1%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="gpt-5.4">gpt-5.4</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 93.54%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">57.2%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="Qwen3.6-27B">Qwen3.6-27B</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 91.30%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">55.9%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="Qwen3.5-9B">Qwen3.5-9B</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 85.71%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">52.4%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="gemma-3-12b">gemma-3-12b</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 84.29%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">51.6%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="Mistral-Small-3.1-24B">Mistral-Small-3.1-24B</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 83.68%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">51.2%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="gemma-4-26B-A4B-it Q8">gemma-4-26B-A4B-it Q8</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 82.72%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">50.6%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="EuroLLM-9B">EuroLLM-9B</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 82.59%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">50.5%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="gemma-4-26B-A4B-it Q4">gemma-4-26B-A4B-it Q4</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 81.53%; background-color: #f9a825;"></div>
+        </div>
+        <div class="row-value">49.9%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="Qwen3-14B">Qwen3-14B</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 81.53%; background-color: #f9a825;"></div>
+        </div>
+        <div class="row-value">49.9%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="gemma-4-E4B-it Q8">gemma-4-E4B-it Q8</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 73.34%; background-color: #f9a825;"></div>
+        </div>
+        <div class="row-value">44.9%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="-_salamandra-7b-instruct-gguf">-_salamandra-7b-instruct-gguf</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 73.09%; background-color: #f9a825;"></div>
+        </div>
+        <div class="row-value">44.7%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="Meta-Llama-3.1-8B">Meta-Llama-3.1-8B</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 69.33%; background-color: #f9a825;"></div>
+        </div>
+        <div class="row-value">42.4%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="aya-expanse-8b">aya-expanse-8b</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 64.77%; background-color: #c62828;"></div>
+        </div>
+        <div class="row-value">39.6%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="gpt-oss-20b">gpt-oss-20b</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 24.72%; background-color: #c62828;"></div>
+        </div>
+        <div class="row-value">15.1%</div>
+      </div>
+      
+    </div>
+    <p class="chart-caption"><em>Dashed line at 50% = "usable for Catalan tasks"</em></p>
+  </div>
+  
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.chart-panel').forEach(function (panel) {
+    var thresholdPct = parseFloat(panel.dataset.thresholdPct);
+    var barAreas = panel.querySelectorAll('.bar-area');
+    var line = panel.querySelector('.threshold-line');
+    var body = panel.querySelector('.chart-body');
+    if (!barAreas.length || !line || !body) return;
+    var firstBar = barAreas[0];
+    var bodyRect = body.getBoundingClientRect();
+    var barRect = firstBar.getBoundingClientRect();
+    var lineX = (barRect.left - bodyRect.left) + (thresholdPct / 100) * barRect.width;
+    line.style.left = lineX + 'px';
+    line.style.display = 'block';
+  });
+});
+</script>
+</body>
+</html>

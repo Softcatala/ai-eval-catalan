@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ASR Evaluation — Catalan</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f4f4f4;
+    padding: 28px;
+    color: #222;
+    margin: 0;
+  }
+  .charts-wrapper {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .chart-panel {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px 22px 16px;
+    flex: 1;
+    min-width: 360px;
+    box-sizing: border-box;
+  }
+  .chart-title {
+    font-weight: 700;
+    font-size: 14.5px;
+    margin: 0 0 2px;
+    color: #1a1a1a;
+  }
+  .chart-subtitle {
+    color: #c62828;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  .chart-body {
+    position: relative;
+    margin-top: 20px;
+  }
+  .chart-row {
+    display: flex;
+    align-items: center;
+    height: 23px;
+    margin-bottom: 2px;
+  }
+  .row-label {
+    width: 182px;
+    min-width: 182px;
+    text-align: right;
+    font-size: 12px;
+    padding-right: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #333;
+  }
+  .bar-area {
+    flex: 1;
+    height: 100%;
+    background: #ececec;
+    border-radius: 2px;
+    position: relative;
+    overflow: visible;
+  }
+  .bar {
+    height: 100%;
+    border-radius: 2px;
+    min-width: 3px;
+  }
+  .row-value {
+    width: 48px;
+    min-width: 48px;
+    font-size: 12px;
+    color: #555;
+    padding-left: 6px;
+    text-align: left;
+  }
+  .threshold-line {
+    position: absolute;
+    top: -18px;
+    bottom: 0;
+    width: 0;
+    border-left: 2px dashed #c62828;
+    z-index: 5;
+    pointer-events: none;
+    display: none;
+  }
+  .threshold-line-label {
+    position: absolute;
+    top: 0;
+    left: 5px;
+    font-size: 11px;
+    color: #c62828;
+    white-space: nowrap;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .chart-caption {
+    font-size: 11px;
+    color: #777;
+    font-style: italic;
+    margin: 10px 0 0;
+  }
+</style>
+</head>
+<body>
+<div class="charts-wrapper">
+  
+  <div class="chart-panel" data-threshold-pct="26.2743">
+    <div class="chart-title">WER — ASR models on Catalan (lower = better)</div>
+    <div class="chart-subtitle">10% near-human</div>
+    <div class="chart-body">
+      <div class="threshold-line">
+        <span class="threshold-line-label">10% near-human</span>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="whisper-large-v3">whisper-large-v3</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 11.59%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">4.41%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="whisper-large-v3-turbo">whisper-large-v3-turbo</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 12.51%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">4.76%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="whisper-large-v3-ca-3catparla">whisper-large-v3-ca-3catparla</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 16.63%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">6.33%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="whisper-medium">whisper-medium</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 18.68%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">7.11%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="omniASR_CTC_3B">omniASR_CTC_3B</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 25.64%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">9.76%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="omniASR_LLM_300M">omniASR_LLM_300M</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 28.72%; background-color: #f9a825;"></div>
+        </div>
+        <div class="row-value">10.93%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="omniASR_CTC_1B">omniASR_CTC_1B</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 30.19%; background-color: #f9a825;"></div>
+        </div>
+        <div class="row-value">11.49%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="whisper-small">whisper-small</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 34.47%; background-color: #f9a825;"></div>
+        </div>
+        <div class="row-value">13.12%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="omniASR_CTC_300M">omniASR_CTC_300M</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 53.15%; background-color: #c62828;"></div>
+        </div>
+        <div class="row-value">20.23%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="gemma-4-E4B">gemma-4-E4B</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 62.66%; background-color: #c62828;"></div>
+        </div>
+        <div class="row-value">23.85%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="whisper-base">whisper-base</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 63.87%; background-color: #c62828;"></div>
+        </div>
+        <div class="row-value">24.31%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="gemma-4-E2B">gemma-4-E2B</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 75.12%; background-color: #c62828;"></div>
+        </div>
+        <div class="row-value">28.59%</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="whisper-tiny">whisper-tiny</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 100.00%; background-color: #c62828;"></div>
+        </div>
+        <div class="row-value">38.06%</div>
+      </div>
+      
+    </div>
+    <p class="chart-caption"><em>Dashed line at 10% ≈ "near-human transcription"</em></p>
+  </div>
+  
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.chart-panel').forEach(function (panel) {
+    var thresholdPct = parseFloat(panel.dataset.thresholdPct);
+    var barAreas = panel.querySelectorAll('.bar-area');
+    var line = panel.querySelector('.threshold-line');
+    var body = panel.querySelector('.chart-body');
+    if (!barAreas.length || !line || !body) return;
+    var firstBar = barAreas[0];
+    var bodyRect = body.getBoundingClientRect();
+    var barRect = firstBar.getBoundingClientRect();
+    var lineX = (barRect.left - bodyRect.left) + (thresholdPct / 100) * barRect.width;
+    line.style.left = lineX + 'px';
+    line.style.display = 'block';
+  });
+});
+</script>
+</body>
+</html>
