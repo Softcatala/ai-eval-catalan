@@ -118,12 +118,12 @@ COLUMN_LABELS = {
     "cloud": "Cloud",
     "params_b": "Parameters (B)",
     "memory_gb": "Memory (GB)",
-    "sts_ca": "STS-ca",
+    "sts_ca": "STS",
     "catcola_mcc": "CatCoLA MCC",
     "club_qa_em": "CLUB QA EM",
-    "casum_rougeL": "CaSum RougeL",
-    "flores_en2ca": "Flores EN→CA",
-    "flores_ca2en": "Flores CA→EN",
+    "casum_rougeL": "CaSum",
+    "flores_en2ca": "EN→CA",
+    "flores_ca2en": "CA→EN",
     "calm_pct": "CALM%",
 }
 
