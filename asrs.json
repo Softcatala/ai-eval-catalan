@@ -13,12 +13,6 @@
             "rtf": 0.1659
         },
         {
-            "model": "whisper-large-v2",
-            "wer": 0.046,
-            "cer": 0.0164,
-            "rtf": 0.1694
-        },
-        {
             "model": "whisper-large-v3-turbo",
             "wer": 0.0476,
             "cer": 0.0153,
