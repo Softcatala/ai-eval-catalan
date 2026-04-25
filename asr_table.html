@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ASR Eval Results</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  h2 { margin-top: 30px; }
+  table { border-collapse: collapse; font-family: monospace; font-size: 13px; }
+  td, th { border: 1px solid #ddd; padding: 8px; }
+  thead { background: #f2f2f2; }
+</style>
+</head>
+<body>
+<h2>ASR Results — FLEURS Catalan</h2>
+<table>
+  <thead>
+    <tr><th>Model</th><th>WER</th><th>CER</th><th>RTF</th><th>Real-time</th><th>N</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>whisper-large-v3</td><td>0.0441</td><td>0.0146</td><td>0.1659</td><td>6.0x</td><td>200</td></tr>
+    <tr><td>whisper-large-v2</td><td>0.0460</td><td>0.0164</td><td>0.1694</td><td>5.9x</td><td>200</td></tr>
+    <tr><td>whisper-large-v3-turbo</td><td>0.0476</td><td>0.0153</td><td>0.0343</td><td>29.2x</td><td>200</td></tr>
+    <tr><td>projecte-aina/whisper-large-v3-ca-3catparla</td><td>0.0633</td><td>0.0340</td><td>0.1610</td><td>6.2x</td><td>200</td></tr>
+    <tr><td>whisper-medium</td><td>0.0711</td><td>0.0245</td><td>0.1289</td><td>7.8x</td><td>200</td></tr>
+    <tr><td>whisper-small</td><td>0.1312</td><td>0.0424</td><td>0.0711</td><td>14.1x</td><td>200</td></tr>
+    <tr><td>gemma-4-E4B</td><td>0.2385</td><td>0.1990</td><td>0.3284</td><td>3.0x</td><td>200</td></tr>
+    <tr><td>whisper-base</td><td>0.2431</td><td>0.0793</td><td>0.0414</td><td>24.2x</td><td>200</td></tr>
+    <tr><td>gemma-4-E2B</td><td>0.2859</td><td>0.2179</td><td>0.2638</td><td>3.8x</td><td>200</td></tr>
+    <tr><td>whisper-tiny</td><td>0.3806</td><td>0.1328</td><td>0.0326</td><td>30.7x</td><td>200</td></tr>
+  </tbody>
+</table>
+</body>
+</html>
