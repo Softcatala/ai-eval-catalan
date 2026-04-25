@@ -170,7 +170,7 @@
             "calm_pct": 44.86
         },
         {
-            "model": "BSC-LT_-_salamandra-7b-instruct-gguf",
+            "model": "BSC-LT_-_salamandra-7b-instruct",
             "cloud": false,
             "params_b": 7.0,
             "memory_gb": 7.4,
