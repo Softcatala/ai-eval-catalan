@@ -27,6 +27,19 @@
             "calm_pct": 61.17
         },
         {
+            "model": "gpt-5.5",
+            "cloud": true,
+            "params_b": null,
+            "memory_gb": null,
+            "sts_ca": 0.824,
+            "catcola_mcc": 0.5643,
+            "club_qa_em": 0.85,
+            "casum_rougeL": 0.4677,
+            "flores_en2ca": 0.4313,
+            "flores_ca2en": 0.4813,
+            "calm_pct": 60.31
+        },
+        {
             "model": "gemini-3-flash-preview",
             "cloud": true,
             "params_b": null,
@@ -38,19 +51,6 @@
             "flores_en2ca": 0.4686,
             "flores_ca2en": 0.4984,
             "calm_pct": 60.1
-        },
-        {
-            "model": "gpt-5.4",
-            "cloud": true,
-            "params_b": null,
-            "memory_gb": null,
-            "sts_ca": 0.7998,
-            "catcola_mcc": 0.457,
-            "club_qa_em": 0.85,
-            "casum_rougeL": 0.4586,
-            "flores_en2ca": 0.4105,
-            "flores_ca2en": 0.4574,
-            "calm_pct": 57.22
         },
         {
             "model": "Qwen3.6-27B",
