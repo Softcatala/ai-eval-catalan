@@ -10,7 +10,7 @@
         "casum_rougeL": "CaSum",
         "flores_en2ca": "EN→CA",
         "flores_ca2en": "CA→EN",
-        "calm_pct": "CALM%"
+        "clam_pct": "CLAM%"
     },
     "data": [
         {
@@ -24,7 +24,7 @@
             "casum_rougeL": 0.4881,
             "flores_en2ca": 0.4771,
             "flores_ca2en": 0.4988,
-            "calm_pct": 61.17
+            "clam_pct": 61.17
         },
         {
             "model": "gpt-5.5",
@@ -37,7 +37,7 @@
             "casum_rougeL": 0.4677,
             "flores_en2ca": 0.4313,
             "flores_ca2en": 0.4813,
-            "calm_pct": 60.31
+            "clam_pct": 60.31
         },
         {
             "model": "gemini-3-flash-preview",
@@ -50,7 +50,7 @@
             "casum_rougeL": 0.46,
             "flores_en2ca": 0.4686,
             "flores_ca2en": 0.4984,
-            "calm_pct": 60.1
+            "clam_pct": 60.1
         },
         {
             "model": "Qwen3.6-27B",
@@ -63,7 +63,7 @@
             "casum_rougeL": 0.4512,
             "flores_en2ca": 0.3894,
             "flores_ca2en": 0.4499,
-            "calm_pct": 55.85
+            "clam_pct": 55.85
         },
         {
             "model": "Qwen3.5-9B",
@@ -76,7 +76,7 @@
             "casum_rougeL": 0.4255,
             "flores_en2ca": 0.3913,
             "flores_ca2en": 0.4311,
-            "calm_pct": 52.43
+            "clam_pct": 52.43
         },
         {
             "model": "google_gemma-3-12b-it",
@@ -89,7 +89,7 @@
             "casum_rougeL": 0.3707,
             "flores_en2ca": 0.4242,
             "flores_ca2en": 0.4697,
-            "calm_pct": 51.56
+            "clam_pct": 51.56
         },
         {
             "model": "mistralai_Mistral-Small-3.1-24B",
@@ -102,7 +102,7 @@
             "casum_rougeL": 0.4332,
             "flores_en2ca": 0.4191,
             "flores_ca2en": 0.4654,
-            "calm_pct": 51.19
+            "clam_pct": 51.19
         },
         {
             "model": "google_gemma-4-26B-A4B-it Q8",
@@ -115,7 +115,7 @@
             "casum_rougeL": 0.4268,
             "flores_en2ca": 0.4044,
             "flores_ca2en": 0.4442,
-            "calm_pct": 50.6
+            "clam_pct": 50.6
         },
         {
             "model": "EuroLLM-9B",
@@ -128,7 +128,7 @@
             "casum_rougeL": 0.4131,
             "flores_en2ca": 0.43,
             "flores_ca2en": 0.4326,
-            "calm_pct": 50.52
+            "clam_pct": 50.52
         },
         {
             "model": "google_gemma-4-26B-A4B-it Q4",
@@ -141,7 +141,7 @@
             "casum_rougeL": 0.4268,
             "flores_en2ca": 0.3982,
             "flores_ca2en": 0.44,
-            "calm_pct": 49.87
+            "clam_pct": 49.87
         },
         {
             "model": "Qwen3-14B",
@@ -154,7 +154,7 @@
             "casum_rougeL": 0.2602,
             "flores_en2ca": 0.3471,
             "flores_ca2en": 0.4462,
-            "calm_pct": 49.87
+            "clam_pct": 49.87
         },
         {
             "model": "google_gemma-4-E4B-it Q8",
@@ -167,7 +167,7 @@
             "casum_rougeL": 0.2379,
             "flores_en2ca": 0.3697,
             "flores_ca2en": 0.425,
-            "calm_pct": 44.86
+            "clam_pct": 44.86
         },
         {
             "model": "BSC-LT_-_salamandra-7b-instruct",
@@ -180,7 +180,7 @@
             "casum_rougeL": 0.4235,
             "flores_en2ca": 0.4014,
             "flores_ca2en": 0.4495,
-            "calm_pct": 44.71
+            "clam_pct": 44.71
         },
         {
             "model": "Meta-Llama-3.1-8B",
@@ -193,7 +193,7 @@
             "casum_rougeL": 0.2908,
             "flores_en2ca": 0.3711,
             "flores_ca2en": 0.4328,
-            "calm_pct": 42.41
+            "clam_pct": 42.41
         },
         {
             "model": "aya-expanse-8b",
@@ -206,7 +206,7 @@
             "casum_rougeL": 0.3421,
             "flores_en2ca": 0.2033,
             "flores_ca2en": 0.2804,
-            "calm_pct": 39.62
+            "clam_pct": 39.62
         },
         {
             "model": "openai_gpt-oss-20b",
@@ -219,7 +219,7 @@
             "casum_rougeL": 0.174,
             "flores_en2ca": 0.0002,
             "flores_ca2en": 0.005,
-            "calm_pct": 15.12
+            "clam_pct": 15.12
         }
     ]
 }
