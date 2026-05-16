@@ -14,6 +14,19 @@
     },
     "data": [
         {
+            "model": "claude",
+            "cloud": true,
+            "params_b": null,
+            "memory_gb": null,
+            "sts_ca": 0.8283,
+            "catcola_mcc": 0.6107,
+            "club_qa_em": 0.8475,
+            "casum_rougeL": 0.5108,
+            "flores_en2ca": null,
+            "flores_ca2en": null,
+            "clam_pct": 69.93
+        },
+        {
             "model": "gemini-3.1-pro-preview",
             "cloud": true,
             "params_b": null,
