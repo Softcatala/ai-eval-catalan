@@ -14,7 +14,7 @@
     },
     "data": [
         {
-            "model": "claude",
+            "model": "claude-opus-4-7",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
@@ -22,9 +22,9 @@
             "catcola_mcc": 0.6107,
             "club_qa_em": 0.8475,
             "casum_rougeL": 0.5108,
-            "flores_en2ca": null,
-            "flores_ca2en": null,
-            "clam_pct": 69.93
+            "flores_en2ca": 0.469,
+            "flores_ca2en": 0.6732,
+            "clam_pct": 65.66
         },
         {
             "model": "gemini-3.1-pro-preview",
