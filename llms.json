@@ -79,6 +79,19 @@
             "clam_pct": 52.43
         },
         {
+            "model": "google_gemma-3-12b-it",
+            "cloud": false,
+            "params_b": 12.0,
+            "memory_gb": 12.8,
+            "sts_ca": 0.6823,
+            "catcola_mcc": 0.332,
+            "club_qa_em": 0.815,
+            "casum_rougeL": 0.3707,
+            "flores_en2ca": 0.4242,
+            "flores_ca2en": 0.4697,
+            "clam_pct": 51.56
+        },
+        {
             "model": "mistralai_Mistral-Small-3.1-24B",
             "cloud": false,
             "params_b": 24.0,
