@@ -66,6 +66,19 @@
             "clam_pct": 60.1
         },
         {
+            "model": "gpt-5.4-mini",
+            "cloud": true,
+            "params_b": null,
+            "memory_gb": null,
+            "sts_ca": 0.7655,
+            "catcola_mcc": 0.4626,
+            "club_qa_em": 0.815,
+            "casum_rougeL": 0.4346,
+            "flores_en2ca": 0.4401,
+            "flores_ca2en": 0.4704,
+            "clam_pct": 56.47
+        },
+        {
             "model": "Qwen3.6-27B",
             "cloud": false,
             "params_b": 27.0,
