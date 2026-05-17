@@ -23,8 +23,8 @@
             "club_qa_em": 0.8475,
             "casum_rougeL": 0.5108,
             "flores_en2ca": 0.469,
-            "flores_ca2en": 0.6732,
-            "clam_pct": 65.66
+            "flores_ca2en": 0.5206,
+            "clam_pct": 63.11
         },
         {
             "model": "gemini-3.1-pro-preview",
