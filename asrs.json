@@ -10,6 +10,7 @@
     "data": [
         {
             "model": "gpt-4o-transcribe",
+            "cloud": true,
             "params_b": null,
             "memory_gb": null,
             "wer": 0.0309,
@@ -18,6 +19,7 @@
         },
         {
             "model": "whisper-large-v3",
+            "cloud": false,
             "params_b": 1.55,
             "memory_gb": 3.1,
             "wer": 0.0441,
@@ -26,6 +28,7 @@
         },
         {
             "model": "whisper-large-v3-turbo",
+            "cloud": false,
             "params_b": 0.809,
             "memory_gb": 1.62,
             "wer": 0.0476,
@@ -34,6 +37,7 @@
         },
         {
             "model": "projecte-aina/whisper-large-v3-ca-3catparla",
+            "cloud": false,
             "params_b": 1.55,
             "memory_gb": 3.1,
             "wer": 0.0633,
@@ -42,6 +46,7 @@
         },
         {
             "model": "whisper-medium",
+            "cloud": false,
             "params_b": 0.769,
             "memory_gb": 1.54,
             "wer": 0.0711,
@@ -50,6 +55,7 @@
         },
         {
             "model": "omniASR_CTC_3B",
+            "cloud": false,
             "params_b": 3.0,
             "memory_gb": 6.0,
             "wer": 0.0976,
@@ -58,6 +64,7 @@
         },
         {
             "model": "microsoft/VibeVoice-ASR",
+            "cloud": false,
             "params_b": 9.0,
             "memory_gb": 18.0,
             "wer": 0.0984,
@@ -66,6 +73,7 @@
         },
         {
             "model": "omniASR_LLM_300M",
+            "cloud": false,
             "params_b": 1.6,
             "memory_gb": 3.26,
             "wer": 0.1093,
@@ -74,6 +82,7 @@
         },
         {
             "model": "omniASR_CTC_1B",
+            "cloud": false,
             "params_b": 1.0,
             "memory_gb": 2.0,
             "wer": 0.1149,
@@ -82,6 +91,7 @@
         },
         {
             "model": "whisper-small",
+            "cloud": false,
             "params_b": 0.244,
             "memory_gb": 0.49,
             "wer": 0.1312,
@@ -90,6 +100,7 @@
         },
         {
             "model": "omniASR_CTC_300M",
+            "cloud": false,
             "params_b": 0.3,
             "memory_gb": 0.6,
             "wer": 0.2023,
@@ -98,6 +109,7 @@
         },
         {
             "model": "gemma-4-E4B",
+            "cloud": false,
             "params_b": 4.5,
             "memory_gb": 9.0,
             "wer": 0.2385,
@@ -106,6 +118,7 @@
         },
         {
             "model": "whisper-base",
+            "cloud": false,
             "params_b": 0.074,
             "memory_gb": 0.15,
             "wer": 0.2431,
@@ -114,6 +127,7 @@
         },
         {
             "model": "gemma-4-E2B",
+            "cloud": false,
             "params_b": 2.3,
             "memory_gb": 4.6,
             "wer": 0.2859,
@@ -122,6 +136,7 @@
         },
         {
             "model": "whisper-tiny",
+            "cloud": false,
             "params_b": 0.039,
             "memory_gb": 0.08,
             "wer": 0.3806,
