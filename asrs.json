@@ -9,6 +9,14 @@
     },
     "data": [
         {
+            "model": "gpt-4o-transcribe",
+            "params_b": null,
+            "memory_gb": null,
+            "wer": 0.0309,
+            "cer": 0.0154,
+            "rtf": null
+        },
+        {
             "model": "whisper-large-v3",
             "params_b": 1.55,
             "memory_gb": 3.1,
