@@ -18,6 +18,15 @@
             "rtf": null
         },
         {
+            "model": "gemini-3.5-flash",
+            "cloud": true,
+            "params_b": null,
+            "memory_gb": null,
+            "wer": 0.0439,
+            "cer": 0.0191,
+            "rtf": null
+        },
+        {
             "model": "whisper-large-v3",
             "cloud": false,
             "params_b": 1.55,
@@ -34,6 +43,15 @@
             "wer": 0.0476,
             "cer": 0.0153,
             "rtf": 0.0343
+        },
+        {
+            "model": "gemini-3-pro-preview",
+            "cloud": true,
+            "params_b": null,
+            "memory_gb": null,
+            "wer": 0.0487,
+            "cer": 0.031,
+            "rtf": null
         },
         {
             "model": "projecte-aina/whisper-large-v3-ca-3catparla",
