@@ -10,7 +10,6 @@
         "casum_rougeL": "CaSum",
         "flores_en2ca": "EN→CA",
         "flores_ca2en": "CA→EN",
-        "ifeval_prompt_strict": "IFEval",
         "clam_pct": "CLAM%"
     },
     "data": [
@@ -25,22 +24,7 @@
             "casum_rougeL": 0.5108,
             "flores_en2ca": 0.469,
             "flores_ca2en": 0.5206,
-            "ifeval_prompt_strict": 0.795,
-            "clam_pct": 65.45
-        },
-        {
-            "model": "gpt-5.5",
-            "cloud": true,
-            "params_b": null,
-            "memory_gb": null,
-            "sts_ca": 0.824,
-            "catcola_mcc": 0.5643,
-            "club_qa_em": 0.85,
-            "casum_rougeL": 0.4677,
-            "flores_en2ca": 0.4313,
-            "flores_ca2en": 0.4813,
-            "ifeval_prompt_strict": 0.82,
-            "clam_pct": 63.41
+            "clam_pct": 63.11
         },
         {
             "model": "gemini-3.1-pro-preview",
@@ -53,8 +37,20 @@
             "casum_rougeL": 0.4881,
             "flores_en2ca": 0.4771,
             "flores_ca2en": 0.4988,
-            "ifeval_prompt_strict": null,
             "clam_pct": 61.17
+        },
+        {
+            "model": "gpt-5.5",
+            "cloud": true,
+            "params_b": null,
+            "memory_gb": null,
+            "sts_ca": 0.824,
+            "catcola_mcc": 0.5643,
+            "club_qa_em": 0.85,
+            "casum_rougeL": 0.4677,
+            "flores_en2ca": 0.4313,
+            "flores_ca2en": 0.4813,
+            "clam_pct": 60.31
         },
         {
             "model": "gemini-3.5-flash",
@@ -67,22 +63,7 @@
             "casum_rougeL": 0.4973,
             "flores_en2ca": 0.4653,
             "flores_ca2en": 0.4905,
-            "ifeval_prompt_strict": null,
             "clam_pct": 60.23
-        },
-        {
-            "model": "gemini-3-flash-preview",
-            "cloud": true,
-            "params_b": null,
-            "memory_gb": null,
-            "sts_ca": 0.8042,
-            "catcola_mcc": 0.5298,
-            "club_qa_em": 0.845,
-            "casum_rougeL": 0.46,
-            "flores_en2ca": 0.4686,
-            "flores_ca2en": 0.4984,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 60.1
         },
         {
             "model": "gpt-5.4-mini",
@@ -95,8 +76,7 @@
             "casum_rougeL": 0.4346,
             "flores_en2ca": 0.4401,
             "flores_ca2en": 0.4704,
-            "ifeval_prompt_strict": 0.805,
-            "clam_pct": 59.9
+            "clam_pct": 56.47
         },
         {
             "model": "Qwen3.6-27B",
@@ -109,7 +89,6 @@
             "casum_rougeL": 0.4512,
             "flores_en2ca": 0.3894,
             "flores_ca2en": 0.4499,
-            "ifeval_prompt_strict": null,
             "clam_pct": 55.85
         },
         {
@@ -123,7 +102,6 @@
             "casum_rougeL": 0.4255,
             "flores_en2ca": 0.3913,
             "flores_ca2en": 0.4311,
-            "ifeval_prompt_strict": null,
             "clam_pct": 52.43
         },
         {
@@ -137,7 +115,6 @@
             "casum_rougeL": 0.3707,
             "flores_en2ca": 0.4242,
             "flores_ca2en": 0.4697,
-            "ifeval_prompt_strict": null,
             "clam_pct": 51.56
         },
         {
@@ -151,7 +128,6 @@
             "casum_rougeL": 0.4332,
             "flores_en2ca": 0.4191,
             "flores_ca2en": 0.4654,
-            "ifeval_prompt_strict": null,
             "clam_pct": 51.19
         },
         {
@@ -165,7 +141,6 @@
             "casum_rougeL": 0.4268,
             "flores_en2ca": 0.4044,
             "flores_ca2en": 0.4442,
-            "ifeval_prompt_strict": null,
             "clam_pct": 50.6
         },
         {
@@ -179,7 +154,6 @@
             "casum_rougeL": 0.4131,
             "flores_en2ca": 0.43,
             "flores_ca2en": 0.4326,
-            "ifeval_prompt_strict": null,
             "clam_pct": 50.52
         },
         {
@@ -193,7 +167,6 @@
             "casum_rougeL": 0.4268,
             "flores_en2ca": 0.3982,
             "flores_ca2en": 0.44,
-            "ifeval_prompt_strict": null,
             "clam_pct": 49.87
         },
         {
@@ -207,7 +180,6 @@
             "casum_rougeL": 0.2602,
             "flores_en2ca": 0.3471,
             "flores_ca2en": 0.4462,
-            "ifeval_prompt_strict": null,
             "clam_pct": 49.87
         },
         {
@@ -221,7 +193,6 @@
             "casum_rougeL": 0.2379,
             "flores_en2ca": 0.3697,
             "flores_ca2en": 0.425,
-            "ifeval_prompt_strict": null,
             "clam_pct": 44.86
         },
         {
@@ -235,7 +206,6 @@
             "casum_rougeL": 0.4235,
             "flores_en2ca": 0.4014,
             "flores_ca2en": 0.4495,
-            "ifeval_prompt_strict": null,
             "clam_pct": 44.71
         },
         {
@@ -249,7 +219,6 @@
             "casum_rougeL": 0.2908,
             "flores_en2ca": 0.3711,
             "flores_ca2en": 0.4328,
-            "ifeval_prompt_strict": null,
             "clam_pct": 42.41
         },
         {
@@ -263,7 +232,6 @@
             "casum_rougeL": 0.3421,
             "flores_en2ca": 0.2033,
             "flores_ca2en": 0.2804,
-            "ifeval_prompt_strict": null,
             "clam_pct": 39.62
         },
         {
@@ -277,7 +245,6 @@
             "casum_rougeL": 0.174,
             "flores_en2ca": 0.0002,
             "flores_ca2en": 0.005,
-            "ifeval_prompt_strict": null,
             "clam_pct": 15.12
         }
     ]
