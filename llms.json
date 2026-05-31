@@ -43,20 +43,6 @@
             "clam_pct": 63.41
         },
         {
-            "model": "gemini-3.1-pro-preview",
-            "cloud": true,
-            "params_b": null,
-            "memory_gb": null,
-            "sts_ca": 0.8214,
-            "catcola_mcc": 0.5196,
-            "club_qa_em": 0.865,
-            "casum_rougeL": 0.4881,
-            "flores_en2ca": 0.4771,
-            "flores_ca2en": 0.4988,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 61.17
-        },
-        {
             "model": "gemini-3.5-flash",
             "cloud": true,
             "params_b": null,
@@ -83,6 +69,20 @@
             "flores_ca2en": 0.4704,
             "ifeval_prompt_strict": 0.805,
             "clam_pct": 59.9
+        },
+        {
+            "model": "gemini-3.1-pro-preview",
+            "cloud": true,
+            "params_b": null,
+            "memory_gb": null,
+            "sts_ca": 0.8214,
+            "catcola_mcc": 0.5196,
+            "club_qa_em": 0.865,
+            "casum_rougeL": 0.4881,
+            "flores_en2ca": 0.4771,
+            "flores_ca2en": 0.4988,
+            "ifeval_prompt_strict": 0.3725,
+            "clam_pct": 57.75
         },
         {
             "model": "Qwen3.6-27B",
