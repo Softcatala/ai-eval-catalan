@@ -43,20 +43,6 @@
             "clam_pct": 63.41
         },
         {
-            "model": "gemini-3.5-flash",
-            "cloud": true,
-            "params_b": null,
-            "memory_gb": null,
-            "sts_ca": 0.7959,
-            "catcola_mcc": 0.5101,
-            "club_qa_em": 0.855,
-            "casum_rougeL": 0.4973,
-            "flores_en2ca": 0.4653,
-            "flores_ca2en": 0.4905,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 60.23
-        },
-        {
             "model": "gpt-5.4-mini",
             "cloud": true,
             "params_b": null,
@@ -97,6 +83,20 @@
             "flores_ca2en": 0.4988,
             "ifeval_prompt_strict": 0.3725,
             "clam_pct": 57.75
+        },
+        {
+            "model": "gemini-3.5-flash",
+            "cloud": true,
+            "params_b": null,
+            "memory_gb": null,
+            "sts_ca": 0.7959,
+            "catcola_mcc": 0.5101,
+            "club_qa_em": 0.855,
+            "casum_rougeL": 0.4973,
+            "flores_en2ca": 0.4653,
+            "flores_ca2en": 0.4905,
+            "ifeval_prompt_strict": 0.38,
+            "clam_pct": 57.06
         },
         {
             "model": "google_gemma-3-12b-it",
