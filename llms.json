@@ -71,6 +71,20 @@
             "clam_pct": 59.9
         },
         {
+            "model": "Qwen3.6-27B",
+            "cloud": false,
+            "params_b": 27.0,
+            "memory_gb": 28.7,
+            "sts_ca": 0.8013,
+            "catcola_mcc": 0.399,
+            "club_qa_em": 0.86,
+            "casum_rougeL": 0.4512,
+            "flores_en2ca": 0.3894,
+            "flores_ca2en": 0.4499,
+            "ifeval_prompt_strict": 0.8025,
+            "clam_pct": 59.33
+        },
+        {
             "model": "gemini-3.1-pro-preview",
             "cloud": true,
             "params_b": null,
@@ -85,18 +99,74 @@
             "clam_pct": 57.75
         },
         {
-            "model": "Qwen3.6-27B",
+            "model": "google_gemma-3-12b-it",
             "cloud": false,
-            "params_b": 27.0,
-            "memory_gb": 28.7,
-            "sts_ca": 0.8013,
-            "catcola_mcc": 0.399,
-            "club_qa_em": 0.86,
-            "casum_rougeL": 0.4512,
-            "flores_en2ca": 0.3894,
-            "flores_ca2en": 0.4499,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 55.85
+            "params_b": 12.0,
+            "memory_gb": 12.8,
+            "sts_ca": 0.6823,
+            "catcola_mcc": 0.332,
+            "club_qa_em": 0.815,
+            "casum_rougeL": 0.3707,
+            "flores_en2ca": 0.4242,
+            "flores_ca2en": 0.4697,
+            "ifeval_prompt_strict": 0.75,
+            "clam_pct": 54.91
+        },
+        {
+            "model": "google_gemma-4-26B-A4B-it Q8",
+            "cloud": false,
+            "params_b": 26.0,
+            "memory_gb": 27.6,
+            "sts_ca": 0.7229,
+            "catcola_mcc": 0.2001,
+            "club_qa_em": 0.8375,
+            "casum_rougeL": 0.4268,
+            "flores_en2ca": 0.4044,
+            "flores_ca2en": 0.4442,
+            "ifeval_prompt_strict": 0.7025,
+            "clam_pct": 53.4
+        },
+        {
+            "model": "Qwen3-14B",
+            "cloud": false,
+            "params_b": 14.0,
+            "memory_gb": 14.9,
+            "sts_ca": 0.7497,
+            "catcola_mcc": 0.3814,
+            "club_qa_em": 0.8075,
+            "casum_rougeL": 0.2602,
+            "flores_en2ca": 0.3471,
+            "flores_ca2en": 0.4462,
+            "ifeval_prompt_strict": 0.735,
+            "clam_pct": 53.24
+        },
+        {
+            "model": "google_gemma-4-26B-A4B-it Q4",
+            "cloud": false,
+            "params_b": 26.0,
+            "memory_gb": 14.6,
+            "sts_ca": 0.7043,
+            "catcola_mcc": 0.1829,
+            "club_qa_em": 0.84,
+            "casum_rougeL": 0.4268,
+            "flores_en2ca": 0.3982,
+            "flores_ca2en": 0.44,
+            "ifeval_prompt_strict": 0.705,
+            "clam_pct": 52.82
+        },
+        {
+            "model": "mistralai_Mistral-Small-3.1-24B",
+            "cloud": false,
+            "params_b": 24.0,
+            "memory_gb": 13.5,
+            "sts_ca": 0.7553,
+            "catcola_mcc": 0.1835,
+            "club_qa_em": 0.815,
+            "casum_rougeL": 0.4332,
+            "flores_en2ca": 0.4191,
+            "flores_ca2en": 0.4654,
+            "ifeval_prompt_strict": 0.615,
+            "clam_pct": 52.66
         },
         {
             "model": "Qwen3.5-9B",
@@ -113,48 +183,6 @@
             "clam_pct": 52.43
         },
         {
-            "model": "google_gemma-3-12b-it",
-            "cloud": false,
-            "params_b": 12.0,
-            "memory_gb": 12.8,
-            "sts_ca": 0.6823,
-            "catcola_mcc": 0.332,
-            "club_qa_em": 0.815,
-            "casum_rougeL": 0.3707,
-            "flores_en2ca": 0.4242,
-            "flores_ca2en": 0.4697,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 51.56
-        },
-        {
-            "model": "mistralai_Mistral-Small-3.1-24B",
-            "cloud": false,
-            "params_b": 24.0,
-            "memory_gb": 13.5,
-            "sts_ca": 0.7553,
-            "catcola_mcc": 0.1835,
-            "club_qa_em": 0.815,
-            "casum_rougeL": 0.4332,
-            "flores_en2ca": 0.4191,
-            "flores_ca2en": 0.4654,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 51.19
-        },
-        {
-            "model": "google_gemma-4-26B-A4B-it Q8",
-            "cloud": false,
-            "params_b": 26.0,
-            "memory_gb": 27.6,
-            "sts_ca": 0.7229,
-            "catcola_mcc": 0.2001,
-            "club_qa_em": 0.8375,
-            "casum_rougeL": 0.4268,
-            "flores_en2ca": 0.4044,
-            "flores_ca2en": 0.4442,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 50.6
-        },
-        {
             "model": "EuroLLM-9B",
             "cloud": false,
             "params_b": 9.0,
@@ -165,36 +193,8 @@
             "casum_rougeL": 0.4131,
             "flores_en2ca": 0.43,
             "flores_ca2en": 0.4326,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 50.52
-        },
-        {
-            "model": "google_gemma-4-26B-A4B-it Q4",
-            "cloud": false,
-            "params_b": 26.0,
-            "memory_gb": 14.6,
-            "sts_ca": 0.7043,
-            "catcola_mcc": 0.1829,
-            "club_qa_em": 0.84,
-            "casum_rougeL": 0.4268,
-            "flores_en2ca": 0.3982,
-            "flores_ca2en": 0.44,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 49.87
-        },
-        {
-            "model": "Qwen3-14B",
-            "cloud": false,
-            "params_b": 14.0,
-            "memory_gb": 14.9,
-            "sts_ca": 0.7497,
-            "catcola_mcc": 0.3814,
-            "club_qa_em": 0.8075,
-            "casum_rougeL": 0.2602,
-            "flores_en2ca": 0.3471,
-            "flores_ca2en": 0.4462,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 49.87
+            "ifeval_prompt_strict": 0.4675,
+            "clam_pct": 49.98
         },
         {
             "model": "google_gemma-4-E4B-it Q8",
@@ -207,22 +207,8 @@
             "casum_rougeL": 0.2379,
             "flores_en2ca": 0.3697,
             "flores_ca2en": 0.425,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 44.86
-        },
-        {
-            "model": "BSC-LT_-_salamandra-7b-instruct",
-            "cloud": false,
-            "params_b": 7.0,
-            "memory_gb": 7.4,
-            "sts_ca": 0.5104,
-            "catcola_mcc": 0.0905,
-            "club_qa_em": 0.8075,
-            "casum_rougeL": 0.4235,
-            "flores_en2ca": 0.4014,
-            "flores_ca2en": 0.4495,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 44.71
+            "ifeval_prompt_strict": 0.67,
+            "clam_pct": 48.02
         },
         {
             "model": "Meta-Llama-3.1-8B",
@@ -235,8 +221,22 @@
             "casum_rougeL": 0.2908,
             "flores_en2ca": 0.3711,
             "flores_ca2en": 0.4328,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 42.41
+            "ifeval_prompt_strict": 0.5375,
+            "clam_pct": 44.03
+        },
+        {
+            "model": "BSC-LT_-_salamandra-7b-instruct",
+            "cloud": false,
+            "params_b": 7.0,
+            "memory_gb": 7.4,
+            "sts_ca": 0.5104,
+            "catcola_mcc": 0.0905,
+            "club_qa_em": 0.8075,
+            "casum_rougeL": 0.4235,
+            "flores_en2ca": 0.4014,
+            "flores_ca2en": 0.4495,
+            "ifeval_prompt_strict": 0.1825,
+            "clam_pct": 40.93
         },
         {
             "model": "aya-expanse-8b",
@@ -249,8 +249,8 @@
             "casum_rougeL": 0.3421,
             "flores_en2ca": 0.2033,
             "flores_ca2en": 0.2804,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 39.62
+            "ifeval_prompt_strict": 0.33,
+            "clam_pct": 38.67
         },
         {
             "model": "openai_gpt-oss-20b",
