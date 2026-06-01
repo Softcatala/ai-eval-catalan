@@ -99,6 +99,20 @@
             "clam_pct": 57.06
         },
         {
+            "model": "Qwen3.5-9B",
+            "cloud": false,
+            "params_b": 9.0,
+            "memory_gb": 9.6,
+            "sts_ca": 0.71,
+            "catcola_mcc": 0.3379,
+            "club_qa_em": 0.85,
+            "casum_rougeL": 0.4255,
+            "flores_en2ca": 0.3913,
+            "flores_ca2en": 0.4311,
+            "ifeval_prompt_strict": 0.72,
+            "clam_pct": 55.22
+        },
+        {
             "model": "google_gemma-3-12b-it",
             "cloud": false,
             "params_b": 12.0,
@@ -167,20 +181,6 @@
             "flores_ca2en": 0.4654,
             "ifeval_prompt_strict": 0.615,
             "clam_pct": 52.66
-        },
-        {
-            "model": "Qwen3.5-9B",
-            "cloud": false,
-            "params_b": 9.0,
-            "memory_gb": 9.6,
-            "sts_ca": 0.71,
-            "catcola_mcc": 0.3379,
-            "club_qa_em": 0.85,
-            "casum_rougeL": 0.4255,
-            "flores_en2ca": 0.3913,
-            "flores_ca2en": 0.4311,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 52.43
         },
         {
             "model": "EuroLLM-9B",
