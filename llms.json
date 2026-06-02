@@ -251,20 +251,6 @@
             "flores_ca2en": 0.2804,
             "ifeval_prompt_strict": 0.33,
             "clam_pct": 38.67
-        },
-        {
-            "model": "openai_gpt-oss-20b",
-            "cloud": false,
-            "params_b": 20.0,
-            "memory_gb": 11.2,
-            "sts_ca": 0.1573,
-            "catcola_mcc": 0.058,
-            "club_qa_em": 0.5125,
-            "casum_rougeL": 0.174,
-            "flores_en2ca": 0.0002,
-            "flores_ca2en": 0.005,
-            "ifeval_prompt_strict": null,
-            "clam_pct": 15.12
         }
     ]
 }
