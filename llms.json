@@ -57,7 +57,7 @@
             "clam_pct": 59.9
         },
         {
-            "model": "Qwen3.6-27B",
+            "model": "qwen3.6-27b",
             "cloud": false,
             "params_b": 27.0,
             "memory_gb": 28.7,
@@ -71,7 +71,7 @@
             "clam_pct": 59.33
         },
         {
-            "model": "gemini-3.1-pro-preview",
+            "model": "gemini-3-1-preview",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
@@ -85,7 +85,7 @@
             "clam_pct": 57.75
         },
         {
-            "model": "gemini-3.5-flash",
+            "model": "gemini-3-5-flash",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
@@ -99,7 +99,7 @@
             "clam_pct": 57.06
         },
         {
-            "model": "Qwen3.5-9B",
+            "model": "qwen3.5-9b",
             "cloud": false,
             "params_b": 9.0,
             "memory_gb": 9.6,
@@ -113,7 +113,7 @@
             "clam_pct": 55.22
         },
         {
-            "model": "google_gemma-3-12b-it",
+            "model": "gemma3-12b",
             "cloud": false,
             "params_b": 12.0,
             "memory_gb": 12.8,
@@ -127,7 +127,7 @@
             "clam_pct": 54.91
         },
         {
-            "model": "google_gemma-4-26B-A4B-it Q8",
+            "model": "gemma4-26b-q8",
             "cloud": false,
             "params_b": 26.0,
             "memory_gb": 27.6,
@@ -141,7 +141,7 @@
             "clam_pct": 53.4
         },
         {
-            "model": "Qwen3-14B",
+            "model": "qwen3-14b",
             "cloud": false,
             "params_b": 14.0,
             "memory_gb": 14.9,
@@ -155,7 +155,7 @@
             "clam_pct": 53.24
         },
         {
-            "model": "google_gemma-4-26B-A4B-it Q4",
+            "model": "gemma4-26b-q4",
             "cloud": false,
             "params_b": 26.0,
             "memory_gb": 14.6,
@@ -169,7 +169,7 @@
             "clam_pct": 52.82
         },
         {
-            "model": "mistralai_Mistral-Small-3.1-24B",
+            "model": "mistral-small-24b",
             "cloud": false,
             "params_b": 24.0,
             "memory_gb": 13.5,
@@ -183,7 +183,7 @@
             "clam_pct": 52.66
         },
         {
-            "model": "EuroLLM-9B",
+            "model": "eurollm-9b",
             "cloud": false,
             "params_b": 9.0,
             "memory_gb": 9.6,
@@ -197,7 +197,7 @@
             "clam_pct": 49.98
         },
         {
-            "model": "google_gemma-4-E4B-it Q8",
+            "model": "gemma4-e4b",
             "cloud": false,
             "params_b": 4.0,
             "memory_gb": 4.2,
@@ -211,7 +211,7 @@
             "clam_pct": 48.02
         },
         {
-            "model": "Meta-Llama-3.1-8B",
+            "model": "llama3.1-8b",
             "cloud": false,
             "params_b": 8.0,
             "memory_gb": 8.5,
@@ -225,7 +225,7 @@
             "clam_pct": 44.03
         },
         {
-            "model": "BSC-LT_-_salamandra-7b-instruct",
+            "model": "salamandra-7b",
             "cloud": false,
             "params_b": 7.0,
             "memory_gb": 7.4,
