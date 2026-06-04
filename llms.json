@@ -193,8 +193,8 @@
             "casum_rougeL": 0.3979,
             "flores_en2ca": 0.3696,
             "flores_ca2en": 0.4259,
-            "ifeval_prompt_strict": 0.6025,
-            "clam_pct": 51.34
+            "ifeval_prompt_strict": 0.6,
+            "clam_pct": 51.3
         },
         {
             "model": "eurollm-9b",
