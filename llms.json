@@ -186,7 +186,7 @@
             "model": "gemma4-12b",
             "cloud": false,
             "params_b": 12.0,
-            "memory_gb": null,
+            "memory_gb": 13.0,
             "sts_ca": 0.6999,
             "catcola_mcc": 0.2578,
             "club_qa_em": 0.84,
