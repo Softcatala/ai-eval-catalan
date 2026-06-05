@@ -225,6 +225,20 @@
             "clam_pct": 51.11
         },
         {
+            "model": "gemma4-12b-q4",
+            "cloud": false,
+            "params_b": 12.0,
+            "memory_gb": 6.8,
+            "sts_ca": 0.7022,
+            "catcola_mcc": 0.2657,
+            "club_qa_em": 0.8375,
+            "casum_rougeL": 0.3931,
+            "flores_en2ca": 0.3702,
+            "flores_ca2en": 0.424,
+            "ifeval_prompt_strict": 0.585,
+            "clam_pct": 51.11
+        },
+        {
             "model": "gemma3-4b-q4",
             "cloud": false,
             "params_b": 4.0,
