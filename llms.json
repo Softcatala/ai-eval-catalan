@@ -143,7 +143,7 @@
             "clam_pct": 54.91
         },
         {
-            "model": "gemma4-26b-q8",
+            "model": "gemma4-26b",
             "cloud": false,
             "params_b": 26.0,
             "memory_gb": 27.6,
