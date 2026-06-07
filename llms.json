@@ -287,22 +287,6 @@
             "clam_pct": 51.11
         },
         {
-            "model": "gemma3-4b-q4",
-            "cloud": false,
-            "params_b": 4.0,
-            "memory_gb": 2.2,
-            "quantized_analysis_only": true,
-            "quantization": "q4",
-            "sts_ca": 0.6995,
-            "catcola_mcc": 0.2538,
-            "club_qa_em": 0.8425,
-            "casum_rougeL": 0.3966,
-            "flores_en2ca": 0.3702,
-            "flores_ca2en": 0.424,
-            "ifeval_prompt_strict": 0.585,
-            "clam_pct": 51.02
-        },
-        {
             "model": "gemma3-12b-q2",
             "cloud": false,
             "params_b": 12.0,
@@ -317,6 +301,22 @@
             "flores_ca2en": 0.4383,
             "ifeval_prompt_strict": 0.68,
             "clam_pct": 50.67
+        },
+        {
+            "model": "gemma3-4b-q4",
+            "cloud": false,
+            "params_b": 4.0,
+            "memory_gb": 2.2,
+            "quantized_analysis_only": true,
+            "quantization": "q4",
+            "sts_ca": 0.6995,
+            "catcola_mcc": 0.2538,
+            "club_qa_em": 0.8425,
+            "casum_rougeL": 0.3966,
+            "flores_en2ca": 0.3463,
+            "flores_ca2en": 0.3937,
+            "ifeval_prompt_strict": 0.585,
+            "clam_pct": 50.25
         },
         {
             "model": "eurollm-9b",
