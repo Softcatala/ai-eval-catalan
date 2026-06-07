@@ -143,6 +143,22 @@
             "clam_pct": 55.22
         },
         {
+            "model": "gemma3-27b-q4",
+            "cloud": false,
+            "params_b": 27.0,
+            "memory_gb": 15.2,
+            "quantized_analysis_only": false,
+            "quantization": "",
+            "sts_ca": 0.7544,
+            "catcola_mcc": 0.3453,
+            "club_qa_em": 0.81,
+            "casum_rougeL": 0.279,
+            "flores_en2ca": 0.4416,
+            "flores_ca2en": 0.4652,
+            "ifeval_prompt_strict": 0.77,
+            "clam_pct": 55.22
+        },
+        {
             "model": "gemma3-12b",
             "cloud": false,
             "params_b": 12.0,
@@ -157,6 +173,22 @@
             "flores_ca2en": 0.4697,
             "ifeval_prompt_strict": 0.75,
             "clam_pct": 54.91
+        },
+        {
+            "model": "gemma3-12b-q4",
+            "cloud": false,
+            "params_b": 12.0,
+            "memory_gb": 6.8,
+            "quantized_analysis_only": true,
+            "quantization": "",
+            "sts_ca": 0.6986,
+            "catcola_mcc": 0.3661,
+            "club_qa_em": 0.8025,
+            "casum_rougeL": 0.3309,
+            "flores_en2ca": 0.4159,
+            "flores_ca2en": 0.4535,
+            "ifeval_prompt_strict": 0.7275,
+            "clam_pct": 54.21
         },
         {
             "model": "gemma4-26b",
@@ -253,22 +285,6 @@
             "flores_ca2en": 0.4259,
             "ifeval_prompt_strict": 0.6,
             "clam_pct": 51.3
-        },
-        {
-            "model": "gemma3-12b-q4",
-            "cloud": false,
-            "params_b": 12.0,
-            "memory_gb": 6.8,
-            "quantized_analysis_only": true,
-            "quantization": "q4",
-            "sts_ca": 0.7022,
-            "catcola_mcc": 0.2657,
-            "club_qa_em": 0.8375,
-            "casum_rougeL": 0.3931,
-            "flores_en2ca": 0.3702,
-            "flores_ca2en": 0.424,
-            "ifeval_prompt_strict": 0.585,
-            "clam_pct": 51.11
         },
         {
             "model": "gemma3-4b",
@@ -429,22 +445,6 @@
             "flores_ca2en": 0.3585,
             "ifeval_prompt_strict": 0.43,
             "clam_pct": 38.22
-        },
-        {
-            "model": "gemma3-27b-q4",
-            "cloud": false,
-            "params_b": 27.0,
-            "memory_gb": 15.2,
-            "quantized_analysis_only": false,
-            "quantization": "",
-            "sts_ca": 0.0,
-            "catcola_mcc": 0.0,
-            "club_qa_em": 0.0,
-            "casum_rougeL": 0.0,
-            "flores_en2ca": 0.0,
-            "flores_ca2en": 0.0,
-            "ifeval_prompt_strict": 0.0,
-            "clam_pct": 0.0
         }
     ]
 }
