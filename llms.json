@@ -413,6 +413,22 @@
             "flores_ca2en": 0.3585,
             "ifeval_prompt_strict": 0.43,
             "clam_pct": 38.22
+        },
+        {
+            "model": "gemma3-27b-q4",
+            "cloud": false,
+            "params_b": 27.0,
+            "memory_gb": 15.2,
+            "quantized_analysis_only": false,
+            "quantization": "",
+            "sts_ca": 0.0,
+            "catcola_mcc": 0.0,
+            "club_qa_em": 0.0,
+            "casum_rougeL": 0.0,
+            "flores_en2ca": 0.0,
+            "flores_ca2en": 0.0,
+            "ifeval_prompt_strict": 0.0,
+            "clam_pct": 0.0
         }
     ]
 }
