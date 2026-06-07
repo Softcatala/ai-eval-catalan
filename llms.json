@@ -324,7 +324,7 @@
             "params_b": 27.0,
             "memory_gb": 28.7,
             "quantized_analysis_only": true,
-            "quantization": "",
+            "quantization": "q2",
             "sts_ca": 0.7022,
             "catcola_mcc": 0.3415,
             "club_qa_em": 0.7925,
