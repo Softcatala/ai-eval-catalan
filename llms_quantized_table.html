@@ -1,0 +1,72 @@
+<style>
+  .eval-table { border-collapse: collapse; width: auto; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; color: #222; background: #fff; }
+  .eval-table th { background: #fff; border: 1px solid #ddd; padding: 7px 12px; font-weight: 600; color: #1a1a1a; text-align: left; }
+  .eval-table td { border: 1px solid #ddd; padding: 6px 12px; background: #fff; }
+  .eval-table tbody tr:hover td { background: #f9f9f9; }
+</style>
+<table class="eval-table">
+<thead>
+<tr>
+<th>Model</th>
+<th>Params (mem)</th>
+<th>Quantization</th><th>STS</th><th>CatCoLA MCC</th><th>CLUB QA</th><th>CaSum</th><th>EN→CA</th><th>CA→EN</th><th>IFEval</th><th>CLAM%</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td>gemma3-27b</td>
+<td>27B (28.7GB)</td>
+<td>q8</td><td>0.7564</td><td>0.3865</td><td>0.8175</td><td>0.2716</td><td>0.4382</td><td>0.4656</td><td>0.7675</td><td>55.8%</td>
+</tr>
+
+<tr>
+<td>gemma3-27b-q4</td>
+<td>27B (15.2GB)</td>
+<td>q4</td><td>0.7544</td><td>0.3453</td><td>0.8100</td><td>0.2790</td><td>0.4416</td><td>0.4652</td><td>0.7700</td><td>55.2%</td>
+</tr>
+
+<tr>
+<td>gemma3-27b-q2</td>
+<td>27B (9.0GB)</td>
+<td>q2</td><td>0.7022</td><td>0.3415</td><td>0.7925</td><td>0.2705</td><td>0.4207</td><td>0.4500</td><td>0.7000</td><td>52.5%</td>
+</tr>
+
+<tr>
+<td>gemma3-12b</td>
+<td>12B (12.8GB)</td>
+<td>q8</td><td>0.6823</td><td>0.3320</td><td>0.8150</td><td>0.3707</td><td>0.4242</td><td>0.4697</td><td>0.7500</td><td>54.9%</td>
+</tr>
+
+<tr>
+<td>gemma3-12b-q4</td>
+<td>12B (6.8GB)</td>
+<td>q4</td><td>0.6986</td><td>0.3661</td><td>0.8025</td><td>0.3309</td><td>0.4159</td><td>0.4535</td><td>0.7275</td><td>54.2%</td>
+</tr>
+
+<tr>
+<td>gemma3-12b-q2</td>
+<td>12B (4.0GB)</td>
+<td>q2</td><td>0.6555</td><td>0.3426</td><td>0.7725</td><td>0.2770</td><td>0.3813</td><td>0.4383</td><td>0.6800</td><td>50.7%</td>
+</tr>
+
+<tr>
+<td>gemma3-4b</td>
+<td>4B (4.2GB)</td>
+<td>q8</td><td>0.7022</td><td>0.2657</td><td>0.8375</td><td>0.3931</td><td>0.3702</td><td>0.4240</td><td>0.5850</td><td>51.1%</td>
+</tr>
+
+<tr>
+<td>gemma3-4b-q4</td>
+<td>4B (2.2GB)</td>
+<td>q4</td><td>0.6995</td><td>0.2538</td><td>0.8425</td><td>0.3966</td><td>0.3463</td><td>0.3937</td><td>0.5850</td><td>50.2%</td>
+</tr>
+
+<tr>
+<td>gemma3-4b-q2</td>
+<td>4B (1.3GB)</td>
+<td>q2</td><td>0.3973</td><td>0.2179</td><td>0.7300</td><td>0.2430</td><td>0.2989</td><td>0.3585</td><td>0.4300</td><td>38.2%</td>
+</tr>
+
+</tbody>
+</table>
