@@ -239,22 +239,6 @@
             "clam_pct": 52.82
         },
         {
-            "model": "mistral-small-24b",
-            "cloud": false,
-            "params_b": 24.0,
-            "memory_gb": 13.5,
-            "quantized_analysis_only": false,
-            "quantization": "q4",
-            "sts_ca": 0.7553,
-            "catcola_mcc": 0.1835,
-            "club_qa_em": 0.815,
-            "casum_rougeL": 0.4332,
-            "flores_en2ca": 0.4191,
-            "flores_ca2en": 0.4654,
-            "ifeval_prompt_strict": 0.615,
-            "clam_pct": 52.66
-        },
-        {
             "model": "gemma3-27b-q2",
             "cloud": false,
             "params_b": 27.0,
@@ -269,6 +253,22 @@
             "flores_ca2en": 0.45,
             "ifeval_prompt_strict": 0.7,
             "clam_pct": 52.53
+        },
+        {
+            "model": "mistral-small-24b",
+            "cloud": false,
+            "params_b": 24.0,
+            "memory_gb": 25.5,
+            "quantized_analysis_only": false,
+            "quantization": "",
+            "sts_ca": 0.696,
+            "catcola_mcc": 0.2706,
+            "club_qa_em": 0.8275,
+            "casum_rougeL": 0.4205,
+            "flores_en2ca": 0.3836,
+            "flores_ca2en": 0.4252,
+            "ifeval_prompt_strict": 0.635,
+            "clam_pct": 52.26
         },
         {
             "model": "gemma4-12b",
@@ -381,6 +381,22 @@
             "flores_ca2en": 0.425,
             "ifeval_prompt_strict": 0.67,
             "clam_pct": 48.02
+        },
+        {
+            "model": "gemma4-e4b-q4",
+            "cloud": false,
+            "params_b": 4.0,
+            "memory_gb": 2.2,
+            "quantized_analysis_only": true,
+            "quantization": "",
+            "sts_ca": 0.6556,
+            "catcola_mcc": 0.1536,
+            "club_qa_em": 0.8225,
+            "casum_rougeL": 0.2117,
+            "flores_en2ca": 0.3678,
+            "flores_ca2en": 0.4245,
+            "ifeval_prompt_strict": 0.645,
+            "clam_pct": 46.87
         },
         {
             "model": "llama3.1-8b",
