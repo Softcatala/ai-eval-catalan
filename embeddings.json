@@ -13,6 +13,7 @@
   "data": [
     {
       "model": "google-gemini-embedding-001",
+      "repo_url": "https://ai.google.dev/gemini-api/docs/embeddings",
       "cloud": true,
       "dim": 3072,
       "casum_ndcg_at_10": 0.9973,
@@ -36,6 +37,7 @@
     },
     {
       "model": "multilingual-e5-large",
+      "repo_url": "https://huggingface.co/intfloat/multilingual-e5-large",
       "cloud": false,
       "dim": 1024,
       "casum_ndcg_at_10": 0.9938,
@@ -59,6 +61,7 @@
     },
     {
       "model": "nomic-embed-text-v2-moe",
+      "repo_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v2-moe",
       "cloud": false,
       "dim": 768,
       "casum_ndcg_at_10": 0.9976,
@@ -82,6 +85,7 @@
     },
     {
       "model": "openai-text-embedding-3-large",
+      "repo_url": "https://platform.openai.com/docs/models/text-embedding-3-large",
       "cloud": true,
       "dim": 3072,
       "casum_ndcg_at_10": 0.9948,
@@ -105,6 +109,7 @@
     },
     {
       "model": "multilingual-e5-base",
+      "repo_url": "https://huggingface.co/intfloat/multilingual-e5-base",
       "cloud": false,
       "dim": 768,
       "casum_ndcg_at_10": 0.9873,
@@ -128,6 +133,7 @@
     },
     {
       "model": "multilingual-e5-small",
+      "repo_url": "https://huggingface.co/intfloat/multilingual-e5-small",
       "cloud": false,
       "dim": 384,
       "casum_ndcg_at_10": 0.971,
@@ -151,6 +157,7 @@
     },
     {
       "model": "openai-text-embedding-3-small",
+      "repo_url": "https://platform.openai.com/docs/models/text-embedding-3-small",
       "cloud": true,
       "dim": 1536,
       "casum_ndcg_at_10": 0.9788,
@@ -174,6 +181,7 @@
     },
     {
       "model": "LaBSE",
+      "repo_url": "https://huggingface.co/sentence-transformers/LaBSE",
       "cloud": false,
       "dim": 768,
       "casum_ndcg_at_10": 0.9492,
@@ -197,6 +205,7 @@
     },
     {
       "model": "paraphrase-multilingual-mpnet-base-v2",
+      "repo_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "cloud": false,
       "dim": 768,
       "casum_ndcg_at_10": 0.9391,
@@ -220,6 +229,7 @@
     },
     {
       "model": "distiluse-base-multilingual-cased-v2",
+      "repo_url": "https://huggingface.co/sentence-transformers/distiluse-base-multilingual-cased-v2",
       "cloud": false,
       "dim": 512,
       "casum_ndcg_at_10": 0.9129,
@@ -243,6 +253,7 @@
     },
     {
       "model": "paraphrase-multilingual-MiniLM-L12-v2",
+      "repo_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "cloud": false,
       "dim": 384,
       "casum_ndcg_at_10": 0.8717,
@@ -266,6 +277,7 @@
     },
     {
       "model": "bge-m3",
+      "repo_url": "https://huggingface.co/BAAI/bge-m3",
       "cloud": false,
       "dim": 1024,
       "casum_ndcg_at_10": 0.9973,
@@ -280,6 +292,7 @@
     },
     {
       "model": "snowflake-arctic-embed-l-v2.0",
+      "repo_url": "https://huggingface.co/Snowflake/snowflake-arctic-embed-l-v2.0",
       "cloud": false,
       "dim": 1024,
       "casum_ndcg_at_10": 0.9914,
