@@ -6,7 +6,6 @@
     "xquad_ndcg_at_10": "XQuAD nDCG@10",
     "sts_ca_spearman": "STS-ca Sp",
     "tecla_macro_f1": "TeCla F1",
-    "casum_ndcg_at_10": "CaSum nDCG@10",
     "composite": "Puntuació composta"
   },
   "data": [
@@ -15,11 +14,6 @@
       "repo_url": "https://ai.google.dev/gemini-api/docs/embeddings",
       "cloud": true,
       "dim": 3072,
-      "casum_ndcg_at_10": 0.9973,
-      "casum_ndcg_at_10_ci": [
-        0.9959,
-        0.9986
-      ],
       "xquad_ndcg_at_10": 0.9816,
       "xquad_ndcg_at_10_ci": [
         0.9764,
@@ -31,7 +25,6 @@
         0.8256
       ],
       "tecla_macro_f1": 0.9329,
-      "throughput_sps": 46.75,
       "composite": 0.9013
     },
     {
@@ -39,11 +32,6 @@
       "repo_url": "https://huggingface.co/intfloat/multilingual-e5-large",
       "cloud": false,
       "dim": 1024,
-      "casum_ndcg_at_10": 0.9938,
-      "casum_ndcg_at_10_ci": [
-        0.9913,
-        0.9961
-      ],
       "xquad_ndcg_at_10": 0.9735,
       "xquad_ndcg_at_10_ci": [
         0.9665,
@@ -55,7 +43,6 @@
         0.7421
       ],
       "tecla_macro_f1": 0.9218,
-      "throughput_sps": 14.47,
       "composite": 0.864
     },
     {
@@ -63,11 +50,6 @@
       "repo_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v2-moe",
       "cloud": false,
       "dim": 768,
-      "casum_ndcg_at_10": 0.9976,
-      "casum_ndcg_at_10_ci": [
-        0.9962,
-        0.9989
-      ],
       "xquad_ndcg_at_10": 0.967,
       "xquad_ndcg_at_10_ci": [
         0.9592,
@@ -79,7 +61,6 @@
         0.7342
       ],
       "tecla_macro_f1": 0.9324,
-      "throughput_sps": 36.38,
       "composite": 0.8621
     },
     {
@@ -87,11 +68,6 @@
       "repo_url": "https://platform.openai.com/docs/models/text-embedding-3-large",
       "cloud": true,
       "dim": 3072,
-      "casum_ndcg_at_10": 0.9948,
-      "casum_ndcg_at_10_ci": [
-        0.9925,
-        0.9968
-      ],
       "xquad_ndcg_at_10": 0.9492,
       "xquad_ndcg_at_10_ci": [
         0.9396,
@@ -103,7 +79,6 @@
         0.7151
       ],
       "tecla_macro_f1": 0.9413,
-      "throughput_sps": 92.27,
       "composite": 0.8534
     },
     {
@@ -111,11 +86,6 @@
       "repo_url": "https://huggingface.co/intfloat/multilingual-e5-base",
       "cloud": false,
       "dim": 768,
-      "casum_ndcg_at_10": 0.9873,
-      "casum_ndcg_at_10_ci": [
-        0.9834,
-        0.9907
-      ],
       "xquad_ndcg_at_10": 0.9669,
       "xquad_ndcg_at_10_ci": [
         0.9597,
@@ -127,7 +97,6 @@
         0.7202
       ],
       "tecla_macro_f1": 0.9171,
-      "throughput_sps": 38.86,
       "composite": 0.8521
     },
     {
@@ -135,11 +104,6 @@
       "repo_url": "https://huggingface.co/intfloat/multilingual-e5-small",
       "cloud": false,
       "dim": 384,
-      "casum_ndcg_at_10": 0.971,
-      "casum_ndcg_at_10_ci": [
-        0.9652,
-        0.976
-      ],
       "xquad_ndcg_at_10": 0.9492,
       "xquad_ndcg_at_10_ci": [
         0.9395,
@@ -151,7 +115,6 @@
         0.7365
       ],
       "tecla_macro_f1": 0.9121,
-      "throughput_sps": 62.6,
       "composite": 0.8508
     },
     {
@@ -159,11 +122,6 @@
       "repo_url": "https://platform.openai.com/docs/models/text-embedding-3-small",
       "cloud": true,
       "dim": 1536,
-      "casum_ndcg_at_10": 0.9788,
-      "casum_ndcg_at_10_ci": [
-        0.9739,
-        0.9833
-      ],
       "xquad_ndcg_at_10": 0.933,
       "xquad_ndcg_at_10_ci": [
         0.922,
@@ -175,7 +133,6 @@
         0.7152
       ],
       "tecla_macro_f1": 0.9328,
-      "throughput_sps": 137.2,
       "composite": 0.8448
     },
     {
@@ -183,11 +140,6 @@
       "repo_url": "https://huggingface.co/sentence-transformers/LaBSE",
       "cloud": false,
       "dim": 768,
-      "casum_ndcg_at_10": 0.9492,
-      "casum_ndcg_at_10_ci": [
-        0.9415,
-        0.9561
-      ],
       "xquad_ndcg_at_10": 0.8286,
       "xquad_ndcg_at_10_ci": [
         0.8111,
@@ -199,7 +151,6 @@
         0.7082
       ],
       "tecla_macro_f1": 0.9147,
-      "throughput_sps": 77.58,
       "composite": 0.8002
     },
     {
@@ -207,11 +158,6 @@
       "repo_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "cloud": false,
       "dim": 768,
-      "casum_ndcg_at_10": 0.9391,
-      "casum_ndcg_at_10_ci": [
-        0.9301,
-        0.9472
-      ],
       "xquad_ndcg_at_10": 0.8598,
       "xquad_ndcg_at_10_ci": [
         0.8445,
@@ -223,7 +169,6 @@
         0.6819
       ],
       "tecla_macro_f1": 0.9023,
-      "throughput_sps": 39.59,
       "composite": 0.7956
     },
     {
@@ -231,11 +176,6 @@
       "repo_url": "https://huggingface.co/sentence-transformers/distiluse-base-multilingual-cased-v2",
       "cloud": false,
       "dim": 512,
-      "casum_ndcg_at_10": 0.9129,
-      "casum_ndcg_at_10_ci": [
-        0.9024,
-        0.923
-      ],
       "xquad_ndcg_at_10": 0.846,
       "xquad_ndcg_at_10_ci": [
         0.83,
@@ -247,7 +187,6 @@
         0.6598
       ],
       "tecla_macro_f1": 0.8892,
-      "throughput_sps": 74.93,
       "composite": 0.7801
     },
     {
@@ -255,11 +194,6 @@
       "repo_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "cloud": false,
       "dim": 384,
-      "casum_ndcg_at_10": 0.8717,
-      "casum_ndcg_at_10_ci": [
-        0.859,
-        0.8839
-      ],
       "xquad_ndcg_at_10": 0.8274,
       "xquad_ndcg_at_10_ci": [
         0.8109,
@@ -271,7 +205,6 @@
         0.6273
       ],
       "tecla_macro_f1": 0.8842,
-      "throughput_sps": 613.22,
       "composite": 0.7607
     },
     {
@@ -279,14 +212,11 @@
       "repo_url": "https://huggingface.co/BAAI/bge-m3",
       "cloud": false,
       "dim": 1024,
-      "casum_ndcg_at_10": 0.9973,
-      "casum_ndcg_at_10_ci": null,
       "xquad_ndcg_at_10": null,
       "xquad_ndcg_at_10_ci": null,
       "sts_ca_spearman": 0.6859,
       "sts_ca_spearman_ci": null,
       "tecla_macro_f1": null,
-      "throughput_sps": null,
       "composite": 0.6859
     },
     {
@@ -294,14 +224,11 @@
       "repo_url": "https://huggingface.co/Snowflake/snowflake-arctic-embed-l-v2.0",
       "cloud": false,
       "dim": 1024,
-      "casum_ndcg_at_10": 0.9914,
-      "casum_ndcg_at_10_ci": null,
       "xquad_ndcg_at_10": null,
       "xquad_ndcg_at_10_ci": null,
       "sts_ca_spearman": 0.6309,
       "sts_ca_spearman_ci": null,
       "tecla_macro_f1": null,
-      "throughput_sps": null,
       "composite": 0.6309
     }
   ]
