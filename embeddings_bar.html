@@ -1,0 +1,234 @@
+<style>
+  .charts-wrapper {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .chart-panel {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px 22px 16px;
+    width: 1200px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .chart-title {
+    font-weight: 700;
+    font-size: 14.5px;
+    margin: 0 0 2px;
+    color: #1a1a1a;
+  }
+  .chart-subtitle {
+    color: #c62828;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  .chart-body {
+    position: relative;
+    margin-top: 20px;
+  }
+  .chart-row {
+    display: flex;
+    align-items: center;
+    height: 23px;
+    margin-bottom: 2px;
+  }
+  .row-label {
+    width: 182px;
+    min-width: 182px;
+    text-align: right;
+    font-size: 12px;
+    padding-right: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #333;
+  }
+  .bar-area {
+    flex: 1;
+    height: 100%;
+    background: #ececec;
+    border-radius: 2px;
+    position: relative;
+    overflow: visible;
+  }
+  .bar {
+    height: 100%;
+    border-radius: 2px;
+    min-width: 3px;
+  }
+  .row-value {
+    width: 48px;
+    min-width: 48px;
+    font-size: 12px;
+    color: #555;
+    padding-left: 6px;
+    text-align: left;
+  }
+  .threshold-line {
+    position: absolute;
+    top: -18px;
+    bottom: 0;
+    width: 0;
+    border-left: 2px dashed #c62828;
+    z-index: 5;
+    pointer-events: none;
+    display: none;
+  }
+  .threshold-line-label {
+    position: absolute;
+    top: 0;
+    left: 5px;
+    font-size: 11px;
+    color: #c62828;
+    white-space: nowrap;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .chart-caption {
+    font-size: 11px;
+    color: #777;
+    font-style: italic;
+    margin: 10px 0 0;
+  }
+</style>
+<div class="charts-wrapper">
+  
+  <div class="chart-panel" data-threshold-pct="94.3082">
+    <div class="chart-title">Embeddings — Composite (XQuAD nDCG@10 + STS-ca Spearman + TeCla F1)</div>
+    <div class="chart-subtitle">0.85 high quality</div>
+    <div class="chart-body">
+      <div class="threshold-line">
+        <span class="threshold-line-label">≥ 0.85 alta qualitat</span>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="google-gemini-embedding-001"><b>google-gemini-embedding-001</b></div>
+        <div class="bar-area">
+          <div class="bar" style="width: 100.00%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">0.9013</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="multilingual-e5-large">multilingual-e5-large</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 95.86%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">0.8640</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="nomic-embed-text-v2-moe">nomic-embed-text-v2-moe</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 95.65%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">0.8621</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="openai-text-embedding-3-large"><b>openai-text-embedding-3-large</b></div>
+        <div class="bar-area">
+          <div class="bar" style="width: 94.69%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">0.8534</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="multilingual-e5-base">multilingual-e5-base</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 94.54%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">0.8521</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="multilingual-e5-small">multilingual-e5-small</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 94.40%; background-color: #388e3c;"></div>
+        </div>
+        <div class="row-value">0.8508</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="openai-text-embedding-3-small"><b>openai-text-embedding-3-small</b></div>
+        <div class="bar-area">
+          <div class="bar" style="width: 93.73%; background-color: #f9a825;"></div>
+        </div>
+        <div class="row-value">0.8448</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="LaBSE">LaBSE</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 88.78%; background-color: #f9a825;"></div>
+        </div>
+        <div class="row-value">0.8002</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="paraphrase-multilingual-mpnet-base-v2">paraphrase-multilingual-mpnet-base-v2</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 88.27%; background-color: #c62828;"></div>
+        </div>
+        <div class="row-value">0.7956</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="distiluse-base-multilingual-cased-v2">distiluse-base-multilingual-cased-v2</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 86.55%; background-color: #c62828;"></div>
+        </div>
+        <div class="row-value">0.7801</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="paraphrase-multilingual-MiniLM-L12-v2">paraphrase-multilingual-MiniLM-L12-v2</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 84.40%; background-color: #c62828;"></div>
+        </div>
+        <div class="row-value">0.7607</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="bge-m3">bge-m3</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 76.10%; background-color: #c62828;"></div>
+        </div>
+        <div class="row-value">0.6859</div>
+      </div>
+      
+      <div class="chart-row">
+        <div class="row-label" title="snowflake-arctic-embed-l-v2.0">snowflake-arctic-embed-l-v2.0</div>
+        <div class="bar-area">
+          <div class="bar" style="width: 70.00%; background-color: #c62828;"></div>
+        </div>
+        <div class="row-value">0.6309</div>
+      </div>
+      
+    </div>
+    <p class="chart-caption"><em>Línia discontínua a 0.85 = "alta qualitat per a tasques en català"</em></p>
+  </div>
+  
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.chart-panel').forEach(function (panel) {
+    var thresholdPct = parseFloat(panel.dataset.thresholdPct);
+    var barAreas = panel.querySelectorAll('.bar-area');
+    var line = panel.querySelector('.threshold-line');
+    var body = panel.querySelector('.chart-body');
+    if (!barAreas.length || !line || !body) return;
+    var firstBar = barAreas[0];
+    var bodyRect = body.getBoundingClientRect();
+    var barRect = firstBar.getBoundingClientRect();
+    var lineX = (barRect.left - bodyRect.left) + (thresholdPct / 100) * barRect.width;
+    line.style.left = lineX + 'px';
+    line.style.display = 'block';
+  });
+});
+</script>
