@@ -7,8 +7,7 @@
     "sts_ca_spearman": "STS-ca Sp",
     "tecla_macro_f1": "TeCla F1",
     "casum_ndcg_at_10": "CaSum nDCG@10",
-    "throughput_sps": "Throughput (s/s)",
-    "composite": "Composite"
+    "composite": "Puntuació composta"
   },
   "data": [
     {
