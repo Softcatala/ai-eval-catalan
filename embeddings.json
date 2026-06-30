@@ -8,6 +8,21 @@
     "tecla_macro_f1": "TeCla F1",
     "composite": "Puntuació composta"
   },
+  "thresholds": {
+    "metric": "composite",
+    "direction": "higher_is_better",
+    "success": {
+      "min": 0.85,
+      "color": "#388e3c"
+    },
+    "warning": {
+      "min": 0.8,
+      "color": "#f9a825"
+    },
+    "error": {
+      "color": "#c62828"
+    }
+  },
   "data": [
     {
       "model": "google-gemini-embedding-001",

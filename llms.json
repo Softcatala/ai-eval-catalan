@@ -13,6 +13,21 @@
         "ifeval_prompt_strict": "IFEval",
         "clam_pct": "CLAM%"
     },
+    "thresholds": {
+        "metric": "clam_pct",
+        "direction": "higher_is_better",
+        "success": {
+            "min": 50,
+            "color": "#388e3c"
+        },
+        "warning": {
+            "min": 40,
+            "color": "#f9a825"
+        },
+        "error": {
+            "color": "#c62828"
+        }
+    },
     "data": [
         {
             "model": "claude-opus-4-7",
