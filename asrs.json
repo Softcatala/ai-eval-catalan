@@ -7,21 +7,6 @@
         "cer": "CER",
         "rtf": "RTF"
     },
-    "thresholds": {
-        "metric": "wer",
-        "direction": "lower_is_better",
-        "success": {
-            "max": 0.1,
-            "color": "#388e3c"
-        },
-        "warning": {
-            "max": 0.2,
-            "color": "#f9a825"
-        },
-        "error": {
-            "color": "#c62828"
-        }
-    },
     "data": [
         {
             "model": "gpt-4o-transcribe",
