@@ -101,7 +101,7 @@ uv run python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0" --dev
 
 ```bash
 uv run python model.py --model gemini --api-key "LA_TEVA_CLAU" --gemini-model gemini-3.5-flash
-uv run python model.py --model openai --api-key "LA_TEVA_CLAU" --openai-model gpt-4o
+OPENAI_API_KEY="LA_TEVA_CLAU" uv run python model.py --model openai --openai-model gpt-4o
 ```
 
 **Avaluar benchmarks específics:**
@@ -132,8 +132,7 @@ Requereix [uv](https://docs.astral.sh/uv/).
 
 ```bash
 cd asr
-uv init
-uv add torch torchaudio transformers datasets jiwer tqdm numpy
+uv sync
 ```
 
 Si vols avaluar models Omnilingual ASR, instal·la també:
@@ -154,7 +153,7 @@ uv run python hf-eval.py --list-models
 
 ```bash
 uv run python hf-eval.py whisper-large-v3 --device cuda --num_samples 500
-uv run python hf-eval.py whisper-small omniASR_CTC_300M --output results.csv
+uv run python hf-eval.py whisper-small --output evals/results_whisper_small.json
 ```
 
 
