@@ -97,6 +97,24 @@
       "composite": 0.8534
     },
     {
+      "model": "Qwen3-Embedding-8B",
+      "repo_url": "https://huggingface.co/Qwen/Qwen3-Embedding-8B",
+      "cloud": false,
+      "dim": 4096,
+      "xquad_ndcg_at_10": 0.9621,
+      "xquad_ndcg_at_10_ci": [
+        0.9543,
+        0.9695
+      ],
+      "sts_ca_spearman": 0.6629,
+      "sts_ca_spearman_ci": [
+        0.61,
+        0.7144
+      ],
+      "tecla_macro_f1": 0.9339,
+      "composite": 0.853
+    },
+    {
       "model": "multilingual-e5-base",
       "repo_url": "https://huggingface.co/intfloat/multilingual-e5-base",
       "cloud": false,
@@ -133,6 +151,24 @@
       "composite": 0.8508
     },
     {
+      "model": "Qwen3-Embedding-4B",
+      "repo_url": "https://huggingface.co/Qwen/Qwen3-Embedding-4B",
+      "cloud": false,
+      "dim": 2560,
+      "xquad_ndcg_at_10": 0.9596,
+      "xquad_ndcg_at_10_ci": [
+        0.9509,
+        0.9674
+      ],
+      "sts_ca_spearman": 0.6552,
+      "sts_ca_spearman_ci": [
+        0.6016,
+        0.7089
+      ],
+      "tecla_macro_f1": 0.9308,
+      "composite": 0.8485
+    },
+    {
       "model": "openai-text-embedding-3-small",
       "repo_url": "https://platform.openai.com/docs/models/text-embedding-3-small",
       "cloud": true,
@@ -164,6 +200,24 @@
       "sts_ca_spearman_ci": null,
       "tecla_macro_f1": 0.9266,
       "composite": 0.8331
+    },
+    {
+      "model": "Qwen3-Embedding-0.6B",
+      "repo_url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
+      "cloud": false,
+      "dim": 1024,
+      "xquad_ndcg_at_10": 0.9186,
+      "xquad_ndcg_at_10_ci": [
+        0.9064,
+        0.9305
+      ],
+      "sts_ca_spearman": 0.648,
+      "sts_ca_spearman_ci": [
+        0.5945,
+        0.7015
+      ],
+      "tecla_macro_f1": 0.9186,
+      "composite": 0.8284
     },
     {
       "model": "LaBSE",
