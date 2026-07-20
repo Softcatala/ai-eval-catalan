@@ -3,7 +3,7 @@ name: Publish llms.json
 on:
   push:
     branches:
-      - '*'
+      - main
 
 jobs:
   publish:
