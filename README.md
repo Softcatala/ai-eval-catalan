@@ -1,4 +1,4 @@
-# Eines d'avaluació de models LLM i ASR
+# Eines d'avaluació de models LLM, ASR i Embeddings
 
 Aquest repositori conté eines per avaluar les capacitats de models de llenguatge gran (LLM) i de reconeixement automàtic de la parla (ASR), amb focus especial en la llengua catalana.
 Els resultats estan compartits a https://www.softcatala.org/ia-local/models-en-catala/
@@ -74,7 +74,7 @@ El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models de l
 | **VeritasQA** | Preguntes obertes en català | Accuracy |
 | **STS-ca** | Similitud semàntica de frases | Correlació de Pearson |
 | **CatCoLA** | Acceptabilitat gramatical | MCC |
-| **CLUB / VilaQuAD** | Comprensió lectora i QA | Exact Match |
+| **CLUB / VilaQuAD** | Comprensió lectora (QA) | Exact Match |
 | **CaSum** | Resum de notícies en català | ROUGE-1/2/L |
 | **IberBench** | Múltiples tasques NLP (via lm-eval) | Diverses |
 | **FLORES+** | Traducció automàtica EN↔CA | BLEU |
@@ -97,10 +97,11 @@ cd llm
 uv run python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0" --device cuda
 ```
 
-**Avaluar amb l'API de Google AI (Gemma/Gemini):**
+**Avaluar amb l'API de Google AI o OpenAI:**
 
 ```bash
-uv run python model.py --model gemini --api-key "LA_TEVA_CLAU" --gemini-model gemma-3-27b-it
+uv run python model.py --model gemini --api-key "LA_TEVA_CLAU" --gemini-model gemini-3.5-flash
+uv run python model.py --model openai --api-key "LA_TEVA_CLAU" --openai-model gpt-4o
 ```
 
 **Avaluar benchmarks específics:**
@@ -109,7 +110,7 @@ uv run python model.py --model gemini --api-key "LA_TEVA_CLAU" --gemini-model ge
 uv run python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0" --benchmarks catcola flores
 ```
 
-**Executar tots els models de la llista (orquestrador):**
+**Executar l'orquestrador per a múltiples models:**
 
 ```bash
 uv run python run_evals.py
@@ -155,6 +156,50 @@ uv run python hf-eval.py --list-models
 uv run python hf-eval.py whisper-large-v3 --device cuda --num_samples 500
 uv run python hf-eval.py whisper-small omniASR_CTC_300M --output results.csv
 ```
+
+
+## Embeddings — Avaluació de models d'embeddings
+
+El pipeline `embeddings/model.py` avalua models de representació vectorial (Sentence Transformers o APIs de núvol) sobre benchmarks de català:
+
+| Benchmark | Tasca | Mètrica |
+|-----------|-------|---------|
+| **STS-ca** | Similitud semàntica de frases | Correlació de Spearman |
+| **XQuAD-ca** | Recuperació de context (Retrieval) | nDCG@10 |
+| **TeCla** | Classificació temàtica (Linear probe) | Macro F1 |
+
+### Instal·lació (Embeddings)
+
+Requereix [uv](https://docs.astral.sh/uv/).
+
+```bash
+cd embeddings
+uv sync
+```
+
+### Execució (Embeddings)
+
+**Avaluar un model de Hugging Face / Sentence Transformers:**
+
+```bash
+cd embeddings
+uv run python model.py --model "<nom_model>" --output evals/<nom_model>.json
+```
+
+**Avaluar amb l'API d'OpenAI o Google:**
+
+```bash
+uv run python model.py --cloud-provider openai --model text-embedding-3-large --output evals/results_openai_text_embedding_3_large.json
+uv run python model.py --cloud-provider google --model embedding-001 --output evals/results_google_gemini_embedding_001.json
+```
+
+**Executar l'orquestrador per a múltiples models:**
+
+```bash
+uv run python run_evals.py
+```
+
+Els resultats es desen com a JSON a `embeddings/evals/`.
 
 ---
 

@@ -1,0 +1,31 @@
+{
+  "model": "Qwen/Qwen3-Embedding-0.6B",
+  "display_name": "Qwen3-Embedding-0.6B",
+  "cloud": false,
+  "embedding_dim": 1024,
+  "benchmarks": {
+    "xquad_ca_retrieval": {
+      "ndcg_at_10": 0.9186,
+      "ndcg_at_10_ci": [
+        0.9064,
+        0.9305
+      ],
+      "n_queries": 1189,
+      "n_corpus": 240
+    },
+    "sts_ca": {
+      "spearman": 0.648,
+      "spearman_ci": [
+        0.5945,
+        0.7015
+      ],
+      "n_pairs": 500
+    },
+    "tecla_classification": {
+      "macro_f1": 0.9186,
+      "n_train": 10000,
+      "n_test": 17007,
+      "n_classes": 4
+    }
+  }
+}

@@ -8,11 +8,13 @@ dependencies = [
     "numpy",
     "scipy",
     "einops>=0.8.2",
-    "xformers>=0.0.35",
 ]
 
 [project.optional-dependencies]
 cloud = [
     "openai>=1.0.0",
     "google-genai>=0.3.0",
+]
+cuda = [
+    "xformers>=0.0.35; platform_system == 'Linux' and platform_machine == 'x86_64'",
 ]
