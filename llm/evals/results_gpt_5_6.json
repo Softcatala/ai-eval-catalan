@@ -1,0 +1,74 @@
+{
+  "model": "gpt-5.6",
+  "display_name": "gpt-5.6",
+  "cloud": true,
+  "params_b": null,
+  "memory_gb": null,
+  "benchmarks": {
+    "veritasqa": {
+      "accuracy": 1.0,
+      "n": 353
+    },
+    "sts_ca": {
+      "pearson": 0.812,
+      "n": 400
+    },
+    "casum": {
+      "rouge1": 0.5202,
+      "rouge2": 0.3253,
+      "rougeL": 0.464,
+      "n": 400
+    },
+    "catcola": {
+      "mcc": 0.513,
+      "accuracy": 0.825,
+      "n": 400
+    },
+    "club_qa": {
+      "exact_match_approx": 0.7775,
+      "n": 400
+    },
+    "iberbench": {
+      "note": "requires llama-server model (log-prob tasks)"
+    },
+    "flores": {
+      "catalan_bench_flores_en-ca": {
+        "alias": "catalan_bench_flores_en-ca",
+        "bleu,none": 40.06048126980258,
+        "bleu_stderr,none": 0.8561043037865267,
+        "ter,none": 46.371386982740695,
+        "ter_stderr,none": 0.8799212915731278,
+        "chrf,none": 65.73354228518885,
+        "chrf_stderr,none": 0.6662122451119397
+      },
+      "catalan_bench_flores_ca-en": {
+        "alias": "catalan_bench_flores_ca-en",
+        "bleu,none": 46.7219153276946,
+        "bleu_stderr,none": 1.0375545301452296,
+        "ter,none": 39.18887054939872,
+        "ter_stderr,none": 0.9683661398859339,
+        "chrf,none": 71.82529257932866,
+        "chrf_stderr,none": 0.679121476232679
+      }
+    },
+    "ifeval": {
+      "alias": "ifeval_ca",
+      "prompt_level_strict_acc,none": 0.8025,
+      "prompt_level_strict_acc_stderr,none": 0.019930565561694997,
+      "inst_level_strict_acc,none": 0.8219633943427621,
+      "inst_level_strict_acc_stderr,none": "N/A",
+      "prompt_level_loose_acc,none": 0.815,
+      "prompt_level_loose_acc_stderr,none": 0.01943919251187622,
+      "inst_level_loose_acc,none": 0.831946755407654,
+      "inst_level_loose_acc_stderr,none": "N/A"
+    }
+  },
+  "usage": {
+    "prompt_tokens": 311077,
+    "completion_tokens": 99346,
+    "total_tokens": 410423,
+    "api_errors": 0,
+    "failed_generations": 0
+  },
+  "quantization": ""
+}

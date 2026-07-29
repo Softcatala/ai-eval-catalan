@@ -361,13 +361,13 @@ MODELS = [
         "quantization": "",
     },
     {
-        "display_name": "gpt-5.5",
-        "output": "evals/results_gpt_5_5.json",
+        "display_name": "gpt-5.6",
+        "output": "evals/results_gpt_5_6.json",
         "args": [
             "--model",
             "openai",
             "--openai-model",
-            "gpt-5.5",
+            "gpt-5.6",
         ],
         "cloud": True,
         "needs_openai_api_key": True,
