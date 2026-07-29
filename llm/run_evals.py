@@ -331,21 +331,6 @@ MODELS = [
         "quantization": "",
     },
     {
-        "display_name": "gemini-3-flash-preview",
-        "output": "evals/results_gemini_3_flash_preview.json",
-        "args": [
-            "--model",
-            "gemini",
-            "--gemini-model",
-            "gemini-3-flash-preview",
-        ],
-        "cloud": True,
-        "needs_api_key": True,
-        "ram_gb": 0,
-        "params_b": None,
-        "quantization": "",
-    },
-    {
         "display_name": "gemini-3-5-flash",
         "output": "evals/results_gemini_3_5_flash.json",
         "args": [
