@@ -132,7 +132,16 @@ def normalize_score(key: str, raw) -> float | None:
 
 def clam_score(metrics: dict) -> float | None:
     """Compute CLAM composite score (0–100) as mean of normalized task scores."""
-    normalized = [normalize_score(k, metrics.get(k)) for k in CLAM_TASKS]
+    translation_keys = ("flores_en2ca", "flores_ca2en")
+    normalized = [
+        normalize_score(k, metrics.get(k))
+        for k in CLAM_TASKS
+        if k not in translation_keys
+    ]
+    translation = [normalize_score(k, metrics.get(k)) for k in translation_keys]
+    translation = [v for v in translation if v is not None]
+    if translation:
+        normalized.append(sum(translation) / len(translation))
     valid = [v for v in normalized if v is not None]
     if not valid:
         return None
