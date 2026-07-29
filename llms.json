@@ -31,20 +31,20 @@
             "clam_pct": 65.45
         },
         {
-            "model": "gpt-5.5",
+            "model": "gpt-5.6",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
             "quantized_analysis_only": false,
             "quantization": "",
-            "sts_ca": 0.824,
-            "catcola_mcc": 0.5643,
-            "club_qa_em": 0.85,
-            "casum_rougeL": 0.4677,
-            "flores_en2ca": 0.4313,
-            "flores_ca2en": 0.4813,
-            "ifeval_prompt_strict": 0.82,
-            "clam_pct": 63.41
+            "sts_ca": 0.812,
+            "catcola_mcc": 0.513,
+            "club_qa_em": 0.7775,
+            "casum_rougeL": 0.464,
+            "flores_en2ca": 0.4006,
+            "flores_ca2en": 0.4672,
+            "ifeval_prompt_strict": 0.8025,
+            "clam_pct": 60.53
         },
         {
             "model": "gpt-5.4-mini",
