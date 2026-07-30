@@ -79,6 +79,22 @@
             "clam_pct": 62.23
         },
         {
+            "model": "gemini-3-6-flash",
+            "cloud": true,
+            "params_b": null,
+            "memory_gb": null,
+            "quantized_analysis_only": false,
+            "quantization": "",
+            "sts_ca": 0.8136,
+            "catcola_mcc": 0.5351,
+            "club_qa_em": 0.8675,
+            "casum_rougeL": 0.5014,
+            "flores_en2ca": 0.4621,
+            "flores_ca2en": 0.4997,
+            "ifeval_prompt_strict": 0.425,
+            "clam_pct": 60.39
+        },
+        {
             "model": "gemini-3-1-preview",
             "cloud": true,
             "params_b": null,
@@ -93,22 +109,6 @@
             "flores_ca2en": 0.4988,
             "ifeval_prompt_strict": 0.3725,
             "clam_pct": 59.24
-        },
-        {
-            "model": "gemini-3-5-flash",
-            "cloud": true,
-            "params_b": null,
-            "memory_gb": null,
-            "quantized_analysis_only": false,
-            "quantization": "",
-            "sts_ca": 0.7959,
-            "catcola_mcc": 0.5101,
-            "club_qa_em": 0.855,
-            "casum_rougeL": 0.4973,
-            "flores_en2ca": 0.4653,
-            "flores_ca2en": 0.4905,
-            "ifeval_prompt_strict": 0.38,
-            "clam_pct": 58.6
         },
         {
             "model": "qwen3.5-9b",
