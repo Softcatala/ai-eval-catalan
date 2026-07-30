@@ -1,0 +1,66 @@
+{
+  "model": "gemini-3.6-flash",
+  "display_name": "gemini-3-6-flash",
+  "cloud": true,
+  "params_b": null,
+  "memory_gb": null,
+  "benchmarks": {
+    "veritasqa": {
+      "accuracy": 1,
+      "n": 353
+    },
+    "sts_ca": {
+      "pearson": 0.8136,
+      "n": 400
+    },
+    "casum": {
+      "rouge1": 0.5598,
+      "rouge2": 0.3719,
+      "rougeL": 0.5014,
+      "n": 400
+    },
+    "catcola": {
+      "mcc": 0.5351,
+      "accuracy": 0.83,
+      "n": 400
+    },
+    "club_qa": {
+      "exact_match_approx": 0.8675,
+      "n": 400
+    },
+    "iberbench": {
+      "note": "requires llama-server model (log-prob tasks)"
+    },
+    "flores": {
+      "catalan_bench_flores_en-ca": {
+        "alias": "catalan_bench_flores_en-ca",
+        "bleu,none": 46.20612032435006,
+        "bleu_stderr,none": 0.8282120506628753,
+        "ter,none": 41.00644624662092,
+        "ter_stderr,none": 0.7668198675324776,
+        "chrf,none": 69.40016005112007,
+        "chrf_stderr,none": 0.5359631844910262
+      },
+      "catalan_bench_flores_ca-en": {
+        "alias": "catalan_bench_flores_ca-en",
+        "bleu,none": 49.972270926598505,
+        "bleu_stderr,none": 0.922903386084902,
+        "ter,none": 37.019570855930205,
+        "ter_stderr,none": 0.8849471870781462,
+        "chrf,none": 73.491806763667,
+        "chrf_stderr,none": 0.5846559456558527
+      }
+    },
+    "ifeval": {
+      "alias": "ifeval_ca",
+      "prompt_level_strict_acc,none": 0.425,
+      "prompt_level_strict_acc_stderr,none": 0.02474810440577618,
+      "inst_level_strict_acc,none": 0.49750415973377704,
+      "inst_level_strict_acc_stderr,none": "N/A",
+      "prompt_level_loose_acc,none": 0.43,
+      "prompt_level_loose_acc_stderr,none": 0.02478478796128207,
+      "inst_level_loose_acc,none": 0.5074875207986689,
+      "inst_level_loose_acc_stderr,none": "N/A"
+    }
+  }
+}

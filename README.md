@@ -100,7 +100,7 @@ uv run python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0" --dev
 **Avaluar amb l'API de Google AI o OpenAI:**
 
 ```bash
-uv run python model.py --model gemini --api-key "LA_TEVA_CLAU" --gemini-model gemini-3.5-flash
+uv run python model.py --model gemini --api-key "LA_TEVA_CLAU" --gemini-model gemini-3.6-flash
 OPENAI_API_KEY="LA_TEVA_CLAU" uv run python model.py --model openai --openai-model gpt-4o
 ```
 
