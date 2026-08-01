@@ -226,7 +226,7 @@ MODELS = [
         "output": "evals/results_salamandra_7b.json",
         "args": [
             "--model",
-            "RichardErkhov/BSC-LT_-_salamandra-7b-instruct-gguf:Q8_0",
+            "mradermacher/salamandra-7b-instruct-2606-GGUF:Q8_0",
             "--device",
             "cuda",
         ],

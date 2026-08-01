@@ -21,6 +21,7 @@ def _hf_tokenizer_from_gguf(model_spec: str) -> str:
         "aya-expanse-8b": "CohereForAI/aya-expanse-8b",
         "EuroLLM-9B-Instruct": "utter-project/EuroLLM-9B-Instruct",
         "BSC-LT_-_salamandra-7b-instruct-gguf": "BSC-LT/salamandra-7b-instruct",
+        "salamandra-7b-instruct-2606": "BSC-LT/salamandra-7b-instruct-2606",
         "gemma-4-12b-it": "google/gemma-4-12b-it",
     }
 
@@ -77,55 +78,80 @@ class LlamaServerModel:
       e.g. "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0"
     """
 
-    def __init__(self, model_spec: str, base_url: str):
+    def __init__(
+        self,
+        model_spec: str,
+        base_url: str,
+        request_model: str | None = None,
+        timeout: float = 120.0,
+        max_retries: int = 1,
+    ):
         self.model_spec = model_spec
         self.base_url = base_url.rstrip("/")
+        self.request_model = request_model
+        self.timeout = timeout
+        self.max_retries = max_retries
+
+    def _post_json(self, path: str, payload_data: dict) -> dict:
+        payload = json.dumps(payload_data).encode()
+        req = urllib.request.Request(
+            f"{self.base_url}{path}",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+        )
+        last_error = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+                    return json.loads(resp.read())
+            except Exception as e:
+                last_error = e
+                if attempt < self.max_retries:
+                    print(f"[warn] llama-server request failed, retrying: {e}", flush=True)
+                    time.sleep(1)
+        raise last_error
 
     def _completions(self, prompt: str, max_tokens: int, **kwargs) -> dict:
-        payload = json.dumps(
-            {
-                "prompt": prompt,
-                "max_tokens": max_tokens,
-                "temperature": 0,
-                **kwargs,
-            }
-        ).encode()
-        req = urllib.request.Request(
-            f"{self.base_url}/completions",
-            data=payload,
-            headers={"Content-Type": "application/json"},
-        )
-        with urllib.request.urlopen(req) as resp:
-            return json.loads(resp.read())
+        payload_data = {
+            "prompt": prompt,
+            "max_tokens": max_tokens,
+            "temperature": 0,
+            **kwargs,
+        }
+        if self.request_model:
+            payload_data["model"] = self.request_model
+        return self._post_json("/completions", payload_data)
 
     def _chat_completions(self, prompt: str, max_tokens: int) -> dict:
-        payload = json.dumps(
-            {
-                "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": max_tokens,
-                "temperature": 0,
-            }
-        ).encode()
-        req = urllib.request.Request(
-            f"{self.base_url}/chat/completions",
-            data=payload,
-            headers={"Content-Type": "application/json"},
-        )
-        with urllib.request.urlopen(req) as resp:
-            return json.loads(resp.read())
+        payload_data = {
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": max_tokens,
+            "temperature": 0,
+        }
+        if self.request_model:
+            payload_data["model"] = self.request_model
+        return self._post_json("/chat/completions", payload_data)
 
     def generate(self, prompt: str, max_new_tokens: int = 256) -> str:
-        data = self._chat_completions(prompt, max_tokens=max_new_tokens)
-        return data["choices"][0]["message"]["content"].strip()
+        try:
+            data = self._chat_completions(prompt, max_tokens=max_new_tokens)
+            return data["choices"][0]["message"]["content"].strip()
+        except Exception as e:
+            print(f"[warn] llama-server generation failed: {e}", flush=True)
+            return ""
 
     def score_options(self, prompt: str, options: list[str]) -> int:
         """Pick the option with the highest token log-probability sum."""
         scores = []
         for opt in options:
-            data = self._completions(prompt + opt, max_tokens=1, echo=True, logprobs=1)
-            token_logprobs = data["choices"][0]["logprobs"]["token_logprobs"]
-            valid = [lp for lp in token_logprobs if lp is not None]
-            scores.append(sum(valid))
+            try:
+                data = self._completions(prompt + opt, max_tokens=1, echo=True, logprobs=1)
+                token_logprobs = data["choices"][0]["logprobs"]["token_logprobs"]
+                valid = [lp for lp in token_logprobs if lp is not None]
+                scores.append(sum(valid))
+            except Exception as e:
+                print(f"[warn] llama-server option scoring failed: {e}", flush=True)
+                scores.append(float("-inf"))
         return scores.index(max(scores))
 
 
@@ -143,6 +169,7 @@ def llama_server_context(model_spec: str, port: int, device: str = "cpu", extra_
 
     _FILENAME_OVERRIDES = {
         "RichardErkhov/BSC-LT_-_salamandra-7b-instruct-gguf": "salamandra-7b-instruct.{quant}.gguf",
+        "mradermacher/salamandra-7b-instruct-2606-GGUF": "salamandra-7b-instruct-2606.{quant}.gguf",
     }
     if repo in _FILENAME_OVERRIDES:
         filename = _FILENAME_OVERRIDES[repo].format(quant=quant)

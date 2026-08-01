@@ -469,7 +469,7 @@ def run_iberbench(
             else ""
         )
         lm_model_args = (
-            f"model={tok},"
+            f"model={model_name},"
             f"base_url={base_url}/completions,"
             f"tokenizer={tok},"
             f"num_concurrent=1,max_retries=3,tokenized_requests=False,"
@@ -570,10 +570,9 @@ def run_flores(
             f"num_concurrent=1,max_retries=3,tokenized_requests=False"
         )
     elif base_url:
-        tok = tokenizer or model_name
         lm_model = "local-chat-completions"
         lm_model_args = (
-            f"model={tok},"
+            f"model={model_name},"
             f"base_url={base_url}/chat/completions,"
             f"num_concurrent=1,max_retries=3,tokenized_requests=False"
         )
@@ -693,10 +692,9 @@ def run_ifeval(
             f"num_concurrent=8,max_retries=3,timeout=120,tokenized_requests=False"
         )
     elif base_url:
-        tok = tokenizer or model_name
         lm_model = "local-chat-completions"
         lm_model_args = (
-            f"model={tok},"
+            f"model={model_name},"
             f"base_url={base_url}/chat/completions,"
             f"num_concurrent=1,max_retries=3,timeout=120,tokenized_requests=False"
         )
@@ -811,6 +809,16 @@ def main():
         help="Port for llama-server when running IberBench/FLORES with a GGUF model (default: 8080)",
     )
     parser.add_argument(
+        "--llama-server-url",
+        default=None,
+        help="Reuse an existing llama-server OpenAI-compatible base URL instead of starting one (e.g. http://127.0.0.1:9090/v1)",
+    )
+    parser.add_argument(
+        "--llama-server-model",
+        default=None,
+        help="Model id to send to an existing multi-model llama-server (defaults to --model)",
+    )
+    parser.add_argument(
         "--device",
         choices=["cpu", "cuda"],
         default="cpu",
@@ -880,6 +888,7 @@ def main():
         model_label = args.gemini_model if args.model == "gemini" else (
             args.openai_model if args.model in ("openai", "claude") else args.model
         )
+        lm_eval_model_name = args.llama_server_model or args.model
         memory_gb = _estimate_memory_gb(args.params_b, args.model)
         results = {
             "model": model_label,
@@ -916,7 +925,7 @@ def main():
             else:
                 try:
                     results["benchmarks"]["iberbench"] = run_iberbench(
-                        args.model, lm_eval_base_url, tokenizer_id, args.n_samples,
+                        lm_eval_model_name, lm_eval_base_url, tokenizer_id, args.n_samples,
                     )
                 except Exception as e:
                     print(f"[warn] IberBench failed: {e}")
@@ -925,7 +934,7 @@ def main():
         if "flores" in to_run:
             try:
                 results["benchmarks"]["flores"] = run_flores(
-                    args.model, lm_eval_base_url, tokenizer_id, args.n_samples,
+                    lm_eval_model_name, lm_eval_base_url, tokenizer_id, args.n_samples,
                     openai_model=args.openai_model if args.model == "openai" else None,
                     gemini_model=args.gemini_model if args.model == "gemini" else None,
                     gemini_api_key=args.api_key if args.model == "gemini" else None,
@@ -939,7 +948,7 @@ def main():
         if "ifeval" in to_run:
             try:
                 results["benchmarks"]["ifeval"] = run_ifeval(
-                    args.model, lm_eval_base_url, tokenizer_id, args.n_samples,
+                    lm_eval_model_name, lm_eval_base_url, tokenizer_id, args.n_samples,
                     openai_model=args.openai_model if args.model == "openai" else None,
                     gemini_model=args.gemini_model if args.model == "gemini" else None,
                     gemini_api_key=args.api_key if args.model == "gemini" else None,
@@ -982,12 +991,20 @@ def main():
         )
         results = _run_benchmarks(model,args.openai_base_url)
     else:
-        server_extra = ["--reasoning", "off"] if _is_thinking_model(args.model) else None
-        with llama_server_context(
-            args.model, args.llama_server_port, args.device, extra_args=server_extra
-        ) as base_url:
-            model = LlamaServerModel(args.model, base_url)
-            results = _run_benchmarks(model, base_url)
+        if args.llama_server_url:
+            model = LlamaServerModel(
+                args.model,
+                args.llama_server_url,
+                request_model=args.llama_server_model or args.model,
+            )
+            results = _run_benchmarks(model, args.llama_server_url.rstrip("/"))
+        else:
+            server_extra = ["--reasoning", "off"] if _is_thinking_model(args.model) else None
+            with llama_server_context(
+                args.model, args.llama_server_port, args.device, extra_args=server_extra
+            ) as base_url:
+                model = LlamaServerModel(args.model, base_url)
+                results = _run_benchmarks(model, base_url)
 
     # ── Save & print summary ──────────────────────────────────────────────────
     output_path = Path(args.output)
