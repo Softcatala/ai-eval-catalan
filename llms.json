@@ -415,6 +415,22 @@
             "clam_pct": 44.67
         },
         {
+            "model": "salamandra-7b",
+            "cloud": false,
+            "params_b": 7.0,
+            "memory_gb": 7.4,
+            "quantized_analysis_only": false,
+            "quantization": "",
+            "sts_ca": 0.1528,
+            "catcola_mcc": 0.1058,
+            "club_qa_em": 0.82,
+            "casum_rougeL": 0.3562,
+            "flores_en2ca": 0.4258,
+            "flores_ca2en": 0.439,
+            "ifeval_prompt_strict": 0.645,
+            "clam_pct": 41.87
+        },
+        {
             "model": "aya-expanse-8b",
             "cloud": false,
             "params_b": 8.0,
@@ -429,22 +445,6 @@
             "flores_ca2en": 0.2804,
             "ifeval_prompt_strict": 0.33,
             "clam_pct": 41.09
-        },
-        {
-            "model": "salamandra-7b",
-            "cloud": false,
-            "params_b": 7.0,
-            "memory_gb": 7.4,
-            "quantized_analysis_only": false,
-            "quantization": "q8",
-            "sts_ca": 0.5104,
-            "catcola_mcc": 0.0905,
-            "club_qa_em": 0.8075,
-            "casum_rougeL": 0.4235,
-            "flores_en2ca": 0.4014,
-            "flores_ca2en": 0.4495,
-            "ifeval_prompt_strict": 0.1825,
-            "clam_pct": 40.66
         },
         {
             "model": "gemma3-4b-q2",
