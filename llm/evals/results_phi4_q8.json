@@ -1,0 +1,59 @@
+{
+  "model": "bartowski/phi-4-GGUF:Q8_0",
+  "display_name": "phi-4",
+  "cloud": false,
+  "params_b": 14.0,
+  "memory_gb": 14.9,
+  "benchmarks": {
+    "sts_ca": {
+      "pearson": 0.6291,
+      "n": 400
+    },
+    "casum": {
+      "rouge1": 0.4434,
+      "rouge2": 0.2357,
+      "rougeL": 0.3733,
+      "n": 400
+    },
+    "catcola": {
+      "mcc": 0.2791,
+      "accuracy": 0.735,
+      "n": 400
+    },
+    "club_qa": {
+      "exact_match_approx": 0.8125,
+      "n": 400
+    },
+    "flores": {
+      "catalan_bench_flores_en-ca": {
+        "alias": "catalan_bench_flores_en-ca",
+        "bleu,none": 35.00971031465101,
+        "bleu_stderr,none": 0.8270739634206101,
+        "ter,none": 51.67394468704513,
+        "ter_stderr,none": 0.9346243289894691,
+        "chrf,none": 62.07336664850869,
+        "chrf_stderr,none": 0.5822585657894195
+      },
+      "catalan_bench_flores_ca-en": {
+        "alias": "catalan_bench_flores_ca-en",
+        "bleu,none": 42.71562045045349,
+        "bleu_stderr,none": 1.0101957856425714,
+        "ter,none": 44.14053289318557,
+        "ter_stderr,none": 1.0912039449690536,
+        "chrf,none": 69.28997109398519,
+        "chrf_stderr,none": 0.6393832323167101
+      }
+    },
+    "ifeval": {
+      "alias": "ifeval_ca",
+      "prompt_level_strict_acc,none": 0.4975,
+      "prompt_level_strict_acc_stderr,none": 0.025030995822773395,
+      "inst_level_strict_acc,none": 0.6189683860232945,
+      "inst_level_strict_acc_stderr,none": "N/A",
+      "prompt_level_loose_acc,none": 0.5675,
+      "prompt_level_loose_acc_stderr,none": 0.024802162065186362,
+      "inst_level_loose_acc,none": 0.6688851913477537,
+      "inst_level_loose_acc_stderr,none": "N/A"
+    }
+  }
+}

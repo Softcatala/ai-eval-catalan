@@ -238,6 +238,10 @@ def main():
         Path(m["output"]).name: m.get("quantized_analysis_only", False)
         for m in MODELS
     }
+    quantization_by_output = {
+        Path(m["output"]).name: m.get("quantization", "")
+        for m in MODELS
+    }
 
     rows = []
     all_metric_keys = []
@@ -251,7 +255,7 @@ def main():
         display = data.get("display_name") or label
         cloud = data.get("cloud", False)
         quantized_analysis_only = quantized_only_by_output.get(path.name, False)
-        quantization = data.get("quantization", "")
+        quantization = data.get("quantization") or quantization_by_output.get(path.name, "")
         rows.append((display, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization))
         for k in metrics:
             if k not in all_metric_keys:

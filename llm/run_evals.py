@@ -167,6 +167,19 @@ MODELS = [
         "quantization": "q8",
     },
     {
+        "display_name": "phi-4",
+        "output": "evals/results_phi4_q8.json",
+        "args": [
+            "--model",
+            "bartowski/phi-4-GGUF:Q8_0",
+        ],
+        "external_llama_server": True,
+        "llama_server_model": "phi-4-Q8_0",
+        "ram_gb": 15,
+        "params_b": 14.0,
+        "quantization": "q8",
+    },
+    {
         "display_name": "qwen3.5-9b",
         "output": "evals/results_qwen3.5_9b.json",
         "args": ["--model", "bartowski/Qwen_Qwen3.5-9B-GGUF:Q8_0", "--device", "cuda"],
@@ -393,7 +406,19 @@ MODELS = [
 ]
 
 # Base port for llama-server (8080 is taken by Jupyter)
-BASE_PORT = 8090
+DEFAULT_BASE_PORT = 8090
+
+
+def _llama_server_url_from_env() -> str | None:
+    url = os.environ.get("LLAMA_SERVER_URL")
+    if url:
+        return url.rstrip("/")
+
+    port = os.environ.get("LLAMA_SERVER_PORT") or os.environ.get("LLAMA_CPP_PORT")
+    if port:
+        return f"http://127.0.0.1:{port}/v1"
+
+    return None
 
 
 def main():
@@ -418,6 +443,12 @@ def main():
     google_api_key = os.environ.get("GOOGLE_API_KEY")
     openai_api_key = os.environ.get("OPENAI_API_KEY")
     openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
+    llama_server_url = _llama_server_url_from_env()
+    llama_server_port = (
+        os.environ.get("LLAMA_SERVER_PORT")
+        or os.environ.get("LLAMA_CPP_PORT")
+        or str(DEFAULT_BASE_PORT)
+    )
 
     python = sys.executable
 
@@ -441,6 +472,12 @@ def main():
             print(f"[SKIP] {name} — OPENROUTER_API_KEY env var required but not set")
             continue
 
+        if model.get("external_llama_server") and not llama_server_url:
+            print(
+                f"[SKIP] {name} — set LLAMA_SERVER_URL or LLAMA_SERVER_PORT/LLAMA_CPP_PORT"
+            )
+            continue
+
         cmd = [
             python,
             "-u",
@@ -453,8 +490,14 @@ def main():
             "--benchmarks",
             *args.benchmarks,
             "--llama-server-port",
-            str(BASE_PORT),
+            str(llama_server_port),
         ]
+
+        if model.get("external_llama_server"):
+            cmd += ["--llama-server-url", llama_server_url]
+            if model.get("llama_server_model"):
+                cmd += ["--llama-server-model", model["llama_server_model"]]
+
         if model.get("params_b") is not None:
             cmd += ["--params-b", str(model["params_b"])]
 

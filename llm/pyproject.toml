@@ -12,6 +12,12 @@ dependencies = [
     "google-generativeai",
     "accelerate",
     "openai>=2.31.0",
+    "langdetect>=1.0.9",
+    "spacy>=3.8.14",
+    "ca-core-news-sm",
+    "es-core-news-sm",
+    "xx-sent-ud-sm",
+    "iso639-lang>=2.6.3",
 ]
 
 [project.scripts]
@@ -20,6 +26,11 @@ model-eval = "model:main"
 [tool.ruff.lint]
 # E402: imports after env-var setup in model.py are intentional (must run before datasets loads)
 ignore = ["E402"]
+
+[tool.uv.sources]
+ca-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/ca_core_news_sm-3.8.0/ca_core_news_sm-3.8.0-py3-none-any.whl" }
+es-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.8.0/es_core_news_sm-3.8.0-py3-none-any.whl" }
+xx-sent-ud-sm = { url = "https://github.com/explosion/spacy-models/releases/download/xx_sent_ud_sm-3.8.0/xx_sent_ud_sm-3.8.0-py3-none-any.whl" }
 
 [dependency-groups]
 dev = [
