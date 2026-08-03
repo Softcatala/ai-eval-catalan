@@ -150,7 +150,7 @@ MODELS = [
         "output": "evals/results_mistral_small_24b.json",
         "args": [
             "--model",
-            "bartowski/mistralai_Mistral-Small-3.1-24B-Instruct-2503-GGUF:Q8_0",
+            "bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q8_0",
             "--device",
             "cuda",
         ],
