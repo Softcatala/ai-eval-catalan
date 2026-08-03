@@ -76,8 +76,8 @@ El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models de l
 | **CatCoLA** | Acceptabilitat gramatical | MCC |
 | **CLUB / VilaQuAD** | Comprensió lectora (QA) | Exact Match |
 | **CaSum** | Resum de notícies en català | ROUGE-1/2/L |
-| **IberBench** | Múltiples tasques NLP (via lm-eval) | Diverses |
 | **FLORES+** | Traducció automàtica EN↔CA | BLEU |
+| **IFEval-ca** | Seguiment d'instruccions | Accuracy |
 
 ### Instal·lació (LLM)
 
@@ -209,5 +209,5 @@ Volem expressar el nostre agraïment als proveïdors dels datasets usats en l'av
 - **[Projecte AINA](https://www.projecteaina.cat/)** (Barcelona Supercomputing Center) pels datasets [VeritasQA](https://huggingface.co/datasets/projecte-aina/veritasQA), [STS-ca](https://huggingface.co/datasets/projecte-aina/sts-ca), [VilaQuAD](https://huggingface.co/datasets/projecte-aina/vilaquad) i [CaSum](https://huggingface.co/datasets/projecte-aina/casum), que han fet possible l'avaluació de models en català.
 - **[nbel](https://huggingface.co/nbel)** pel dataset [CatCoLA](https://huggingface.co/datasets/nbel/CatCoLA), corpus d'acceptabilitat lingüística en català.
 - **[Google](https://ai.google/research/)** pel dataset [FLEURS](https://huggingface.co/datasets/google/fleurs) (Few-shot Learning Evaluation of Universal Representations of Speech), usat per avaluar models ASR en català.
-- **[IberBench](https://github.com/iberbench)** i l'equip de **[lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)** pels benchmarks de tasques NLP per al català.
+- L'equip de **[lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)** pel motor d'avaluació usat en benchmarks generatius.
 - **[Meta AI](https://ai.meta.com/)** pel benchmark [FLORES+](https://huggingface.co/datasets/facebook/flores) de traducció automàtica.

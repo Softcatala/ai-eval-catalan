@@ -49,19 +49,6 @@ def extract_metrics(data: dict) -> dict:
         if "rougeL" in casum:
             metrics["casum_rougeL"] = casum["rougeL"]
 
-    iberbench = benchmarks.get("iberbench", {})
-    if iberbench:
-        for task, task_metrics in iberbench.items():
-            if task in ("catcola", "wnli_ca", "xnli_ca", "teca"):
-                continue
-            if isinstance(task_metrics, dict):
-                acc = next(
-                    (task_metrics[k] for k in ("acc,none", "acc", "accuracy") if k in task_metrics),
-                    None,
-                )
-                if acc is not None:
-                    metrics[f"iberbench_{task}"] = acc
-
     flores = benchmarks.get("flores", {})
     if flores:
         en2ca = flores.get("catalan_bench_flores_en-ca", {})

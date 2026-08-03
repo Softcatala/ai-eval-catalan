@@ -409,7 +409,6 @@ def main():
             "catcola",
             "club",
             "casum",
-            "iberbench",
             "flores",
             "ifeval",
             "all",

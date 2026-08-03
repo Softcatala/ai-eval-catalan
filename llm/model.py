@@ -1,10 +1,13 @@
 """
 Catalan Linguistic Competency Evaluation Pipeline
-Evaluates GGUF models on 4 key Catalan benchmarks:
-  1. CatCoLA  – grammatical acceptability
-  2. CLUB     – NER, STS, QA (core NLP tasks)
-  3. IberBench – broad NLP via lm-evaluation-harness
-  4. FLORES+  – machine translation quality
+Evaluates GGUF and API models on key Catalan benchmarks:
+  1. VeritasQA – open-ended QA
+  2. STS-ca    – semantic textual similarity
+  3. CatCoLA   – grammatical acceptability
+  4. CLUB      – reading comprehension QA
+  5. CaSum     – summarization
+  6. FLORES+   – machine translation quality
+  7. IFEval-ca – instruction following
 
 Requirements:
   pip install datasets scikit-learn sacrebleu lm_eval huggingface_hub
@@ -47,7 +50,7 @@ os.environ.setdefault("HF_DATASETS_TRUST_REMOTE_CODE", "1")
 from datasets import load_dataset
 from sklearn.metrics import matthews_corrcoef, accuracy_score
 
-# ── Optional: lm_eval for IberBench tasks ─────────────────────────────────────
+# ── Optional: lm_eval for lm-evaluation-harness tasks ─────────────────────────
 try:
     import lm_eval
     import lm_eval.models.openai_completions as _lm_oai
@@ -104,7 +107,7 @@ try:
     HAS_LM_EVAL = True
 except ImportError:
     HAS_LM_EVAL = False
-    print("[warn] lm_eval not found – IberBench tasks will be skipped.")
+    print("[warn] lm_eval not found – lm-evaluation-harness tasks will be skipped.")
     print("       Install with: pip install lm_eval")
 
 
@@ -434,79 +437,7 @@ def run_casum(model, n_samples: int = 100) -> dict:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 4. IberBench — via lm-evaluation-harness (Catalan tasks)
-# ──────────────────────────────────────────────────────────────────────────────
-
-IBERBENCH_CATALAN_TASKS = [
-    "catcola",  # grammatical acceptability
-    "wnli_ca",  # Winograd NLI
-    "teca",  # text classification
-]
-
-
-def run_iberbench(
-    model_name: str,
-    base_url: str | None = None,
-    tokenizer: str | None = None,
-    n_samples: int | None = None,
-) -> dict:
-    """
-    Runs Catalan IberBench tasks via lm-evaluation-harness.
-    Supports llama-server (via base_url) or HF. Requires log-probabilities — not usable with chat APIs.
-    """
-    if not HAS_LM_EVAL:
-        return {"error": "lm_eval not installed"}
-
-    print("\n[6/7] Running IberBench tasks via lm-evaluation-harness …")
-    print(f"    Tasks: {', '.join(IBERBENCH_CATALAN_TASKS)}")
-
-    if base_url:
-        tok = tokenizer or model_name
-        lm_model = "local-completions"
-        mistral_fix = (
-            ",tokenizer_kwargs={fix_mistral_regex:True}"
-            if "mistral" in tok.lower()
-            else ""
-        )
-        lm_model_args = (
-            f"model={model_name},"
-            f"base_url={base_url}/completions,"
-            f"tokenizer={tok},"
-            f"num_concurrent=1,max_retries=3,tokenized_requests=False,"
-            f"add_bos_token=True{mistral_fix}"
-        )
-    else:
-        lm_model = "hf"
-        mistral_fix = (
-            ",tokenizer_kwargs={fix_mistral_regex:True}"
-            if "mistral" in model_name.lower()
-            else ""
-        )
-        lm_model_args = f"pretrained={model_name}{mistral_fix}"
-
-    results = lm_eval.simple_evaluate(
-        model=lm_model,
-        model_args=lm_model_args,
-        tasks=IBERBENCH_CATALAN_TASKS,
-        num_fewshot=0,
-        batch_size=1,
-        log_samples=False,
-        limit=n_samples,
-        confirm_run_unsafe_code=True,
-    )
-
-    scores = {
-        task: results["results"][task]
-        for task in IBERBENCH_CATALAN_TASKS
-        if task in results.get("results", {})
-    }
-    for task, score in scores.items():
-        print(f"    ✓ {task}: {score}")
-    return scores
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 4. FLORES+ — Machine Translation (English ↔ Catalan)
+# 6. FLORES+ — Machine Translation (English ↔ Catalan)
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -530,7 +461,7 @@ def run_flores(
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
 
-    print("\n[7/7] Running FLORES+ (EN↔CA translation) via lm-evaluation-harness …")
+    print("\n[6/7] Running FLORES+ (EN↔CA translation) via lm-evaluation-harness …")
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
 
@@ -622,7 +553,7 @@ def run_flores(
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 8. IFEval-ca — Instruction Following (Catalan)
+# 7. IFEval-ca — Instruction Following (Catalan)
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -646,7 +577,7 @@ def run_ifeval(
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
 
-    print("\n[8/8] Running IFEval-ca (instruction following) via lm-evaluation-harness …")
+    print("\n[7/7] Running IFEval-ca (instruction following) via lm-evaluation-harness …")
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
     _orig_api_key = None
@@ -783,7 +714,6 @@ def main():
             "catcola",
             "club",
             "casum",
-            "iberbench",
             "flores",
             "ifeval",
             "all",
@@ -806,7 +736,7 @@ def main():
         "--llama-server-port",
         type=int,
         default=8080,
-        help="Port for llama-server when running IberBench/FLORES with a GGUF model (default: 8080)",
+        help="Port for llama-server when running GGUF benchmarks that need the local server (default: 8080)",
     )
     parser.add_argument(
         "--llama-server-url",
@@ -870,7 +800,7 @@ def main():
     to_run = (
         set(args.benchmarks)
         if not run_all
-        else {"veritasqa", "sts_ca", "catcola", "club", "casum", "iberbench", "flores", "ifeval"}
+        else {"veritasqa", "sts_ca", "catcola", "club", "casum", "flores", "ifeval"}
     )
 
     # ── Validate model spec ───────────────────────────────────────────────────
@@ -913,23 +843,6 @@ def main():
 
         if "club" in to_run:
             results["benchmarks"]["club_qa"] = run_club_qa(model, args.n_samples)
-
-        if "iberbench" in to_run:
-            if args.model in ("gemini", "openai", "claude"):
-                print(
-                    "\n[6/7] IberBench skipped — tasks require log-probabilities not available via chat API."
-                )
-                results["benchmarks"]["iberbench"] = {
-                    "note": "requires llama-server model (log-prob tasks)"
-                }
-            else:
-                try:
-                    results["benchmarks"]["iberbench"] = run_iberbench(
-                        lm_eval_model_name, lm_eval_base_url, tokenizer_id, args.n_samples,
-                    )
-                except Exception as e:
-                    print(f"[warn] IberBench failed: {e}")
-                    results["benchmarks"]["iberbench"] = {"error": str(e)}
 
         if "flores" in to_run:
             try:
