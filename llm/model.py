@@ -1,13 +1,12 @@
 """
 Catalan Linguistic Competency Evaluation Pipeline
 Evaluates GGUF and API models on key Catalan benchmarks:
-  1. VeritasQA – open-ended QA
-  2. STS-ca    – semantic textual similarity
-  3. CatCoLA   – grammatical acceptability
-  4. CLUB      – reading comprehension QA
-  5. CaSum     – summarization
-  6. FLORES+   – machine translation quality
-  7. IFEval-ca – instruction following
+  1. STS-ca    – semantic textual similarity
+  2. CatCoLA   – grammatical acceptability
+  3. CLUB      – reading comprehension QA
+  4. CaSum     – summarization
+  5. FLORES+   – machine translation quality
+  6. IFEval-ca – instruction following
 
 Requirements:
   pip install datasets scikit-learn sacrebleu lm_eval huggingface_hub
@@ -212,48 +211,7 @@ class OpenAIModel:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 1. VeritasQA — Generative / Open-ended QA in Catalan
-# ──────────────────────────────────────────────────────────────────────────────
-
-
-def run_veritasqa(model, n_samples: int = 100) -> dict:
-    """
-    Open-ended truthfulness QA in Catalan.
-    The model generates a free-form answer; it is scored as correct if it
-    matches any of the accepted correct answers (case-insensitive substring).
-    Metric: Accuracy.
-    Dataset: projecte-aina/veritasQA (test split, Catalan rows).
-    """
-    print("\n[1/7] Running VeritasQA (generative QA) …")
-    ds = load_dataset("projecte-aina/veritasQA", "ca", split="test")
-    ca_rows = list(ds)
-    limit = min(n_samples, len(ca_rows))
-
-    correct = 0
-    for i in range(limit):
-        item = ca_rows[i]
-        question = item["question"]
-        correct_answers = item.get("correct_answers") or [item.get("best_answer", "")]
-
-        prompt = (
-            f"Respon la següent pregunta en català amb una resposta breu.\n\n"
-            f"Pregunta: {question}\nResposta:"
-        )
-        pred = model.generate(prompt, max_new_tokens=64).strip().lower()
-        if any(ans.strip().lower() in pred for ans in correct_answers if ans):
-            correct += 1
-
-    del ds
-    gc.collect()
-
-    acc = round(correct / limit, 4) if limit else 0.0
-    result = {"accuracy": acc, "n": limit}
-    print(f"    ✓ Accuracy={acc:.4f}  (n={limit})")
-    return result
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 2. STS-ca — Semantic Textual Similarity (Paraphrase proxy)
+# 1. STS-ca — Semantic Textual Similarity (Paraphrase proxy)
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -264,7 +222,7 @@ def run_sts_ca(model, n_samples: int = 100) -> dict:
     Metric: Pearson correlation between predicted and gold scores.
     Dataset: projecte-aina/sts-ca (test split).
     """
-    print("\n[2/7] Running STS-ca (paraphrase / similarity) …")
+    print("\n[1/6] Running STS-ca (paraphrase / similarity) …")
     ds = load_dataset("projecte-aina/sts-ca", split="test")
     limit = min(n_samples, len(ds))
 
@@ -305,7 +263,7 @@ def run_sts_ca(model, n_samples: int = 100) -> dict:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 3. CatCoLA — Catalan Corpus of Linguistic Acceptability
+# 2. CatCoLA — Catalan Corpus of Linguistic Acceptability
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -315,7 +273,7 @@ def run_catcola(model, n_samples: int = 200) -> dict:
     Metric: Matthews Correlation Coefficient (MCC), as per CoLA standard.
     Dataset: nbel/CatCoLA on HuggingFace.
     """
-    print("\n[3/7] Running CatCoLA …")
+    print("\n[2/6] Running CatCoLA …")
     ds = load_dataset("nbel/CatCoLA", split="validation")
     limit = min(n_samples, len(ds))
 
@@ -347,7 +305,7 @@ def run_catcola(model, n_samples: int = 200) -> dict:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 4. CLUB — Catalan Language Understanding Benchmark (QA slice)
+# 3. CLUB — Catalan Language Understanding Benchmark (QA slice)
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -357,7 +315,7 @@ def run_club_qa(model, n_samples: int = 100) -> dict:
     Metric: Exact Match (EM) and token-level F1.
     Dataset: projecte-aina/vilaquad on HuggingFace.
     """
-    print("\n[4/7] Running CLUB / VilaQuAD (QA) …")
+    print("\n[3/6] Running CLUB / VilaQuAD (QA) …")
     ds = load_dataset("projecte-aina/vilaquad", split="validation")
 
     def _iter_qa_pairs(dataset, limit):
@@ -392,7 +350,7 @@ def run_club_qa(model, n_samples: int = 100) -> dict:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 3. CaSum — Catalan Summarization
+# 4. CaSum — Catalan Summarization
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -404,7 +362,7 @@ def run_casum(model, n_samples: int = 100) -> dict:
     """
     from rouge_score import rouge_scorer
 
-    print("\n[5/7] Running CaSum (summarization) …")
+    print("\n[4/6] Running CaSum (summarization) …")
     ds = load_dataset("projecte-aina/casum", split="test")
     limit = min(n_samples, len(ds))
     scorer = rouge_scorer.RougeScorer(["rouge1", "rouge2", "rougeL"], use_stemmer=False)
@@ -437,7 +395,7 @@ def run_casum(model, n_samples: int = 100) -> dict:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 6. FLORES+ — Machine Translation (English ↔ Catalan)
+# 5. FLORES+ — Machine Translation (English ↔ Catalan)
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -461,7 +419,7 @@ def run_flores(
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
 
-    print("\n[6/7] Running FLORES+ (EN↔CA translation) via lm-evaluation-harness …")
+    print("\n[5/6] Running FLORES+ (EN↔CA translation) via lm-evaluation-harness …")
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
 
@@ -553,7 +511,7 @@ def run_flores(
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 7. IFEval-ca — Instruction Following (Catalan)
+# 6. IFEval-ca — Instruction Following (Catalan)
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -577,7 +535,7 @@ def run_ifeval(
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
 
-    print("\n[7/7] Running IFEval-ca (instruction following) via lm-evaluation-harness …")
+    print("\n[6/6] Running IFEval-ca (instruction following) via lm-evaluation-harness …")
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
     _orig_api_key = None
@@ -709,7 +667,6 @@ def main():
         "--benchmarks",
         nargs="+",
         choices=[
-            "veritasqa",
             "sts_ca",
             "catcola",
             "club",
@@ -800,7 +757,7 @@ def main():
     to_run = (
         set(args.benchmarks)
         if not run_all
-        else {"veritasqa", "sts_ca", "catcola", "club", "casum", "flores", "ifeval"}
+        else {"sts_ca", "catcola", "club", "casum", "flores", "ifeval"}
     )
 
     # ── Validate model spec ───────────────────────────────────────────────────
@@ -828,9 +785,6 @@ def main():
             "memory_gb": memory_gb,
             "benchmarks": {},
         }
-
-        if "veritasqa" in to_run:
-            results["benchmarks"]["veritasqa"] = run_veritasqa(model, args.n_samples)
 
         if "sts_ca" in to_run:
             results["benchmarks"]["sts_ca"] = run_sts_ca(model, args.n_samples)

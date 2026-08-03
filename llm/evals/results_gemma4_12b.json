@@ -3,10 +3,6 @@
   "params_b": 12.0,
   "memory_gb": 13.0,
   "benchmarks": {
-    "veritasqa": {
-      "accuracy": 1.0,
-      "n": 353
-    },
     "sts_ca": {
       "pearson": 0.6999,
       "n": 400

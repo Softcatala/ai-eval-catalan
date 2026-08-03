@@ -71,7 +71,6 @@ El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models de l
 
 | Benchmark | Tasca | Mètrica |
 |-----------|-------|---------|
-| **VeritasQA** | Preguntes obertes en català | Accuracy |
 | **STS-ca** | Similitud semàntica de frases | Correlació de Pearson |
 | **CatCoLA** | Acceptabilitat gramatical | MCC |
 | **CLUB / VilaQuAD** | Comprensió lectora (QA) | Exact Match |
@@ -206,7 +205,7 @@ Els resultats es desen com a JSON a `embeddings/evals/`.
 
 Volem expressar el nostre agraïment als proveïdors dels datasets usats en l'avaluació:
 
-- **[Projecte AINA](https://www.projecteaina.cat/)** (Barcelona Supercomputing Center) pels datasets [VeritasQA](https://huggingface.co/datasets/projecte-aina/veritasQA), [STS-ca](https://huggingface.co/datasets/projecte-aina/sts-ca), [VilaQuAD](https://huggingface.co/datasets/projecte-aina/vilaquad) i [CaSum](https://huggingface.co/datasets/projecte-aina/casum), que han fet possible l'avaluació de models en català.
+- **[Projecte AINA](https://www.projecteaina.cat/)** (Barcelona Supercomputing Center) pels datasets [STS-ca](https://huggingface.co/datasets/projecte-aina/sts-ca), [VilaQuAD](https://huggingface.co/datasets/projecte-aina/vilaquad) i [CaSum](https://huggingface.co/datasets/projecte-aina/casum), que han fet possible l'avaluació de models en català.
 - **[nbel](https://huggingface.co/nbel)** pel dataset [CatCoLA](https://huggingface.co/datasets/nbel/CatCoLA), corpus d'acceptabilitat lingüística en català.
 - **[Google](https://ai.google/research/)** pel dataset [FLEURS](https://huggingface.co/datasets/google/fleurs) (Few-shot Learning Evaluation of Universal Representations of Speech), usat per avaluar models ASR en català.
 - L'equip de **[lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)** pel motor d'avaluació usat en benchmarks generatius.

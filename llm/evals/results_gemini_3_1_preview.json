@@ -5,10 +5,6 @@
   "params_b": null,
   "memory_gb": null,
   "benchmarks": {
-    "veritasqa": {
-      "accuracy": 1.0,
-      "n": 353
-    },
     "sts_ca": {
       "pearson": 0.8214,
       "n": 400

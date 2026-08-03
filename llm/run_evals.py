@@ -404,7 +404,6 @@ def main():
         nargs="+",
         default=["all"],
         choices=[
-            "veritasqa",
             "sts_ca",
             "catcola",
             "club",

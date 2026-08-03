@@ -6,10 +6,6 @@
   "memory_gb": 9.0,
   "quantization": "q2",
   "benchmarks": {
-    "veritasqa": {
-      "accuracy": 1.0,
-      "n": 353
-    },
     "sts_ca": {
       "pearson": 0.7022,
       "n": 400
