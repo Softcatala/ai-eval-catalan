@@ -20,8 +20,8 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.0,
-      "accuracy": 0.25,
+      "mcc": 0.2936,
+      "accuracy": 0.7175,
       "n": 400
     },
     "club_qa": {
