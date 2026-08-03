@@ -239,22 +239,6 @@
             "clam_pct": 54.63
         },
         {
-            "model": "mistral-small-24b",
-            "cloud": false,
-            "params_b": 24.0,
-            "memory_gb": 25.5,
-            "quantized_analysis_only": false,
-            "quantization": "",
-            "sts_ca": 0.696,
-            "catcola_mcc": 0.2706,
-            "club_qa_em": 0.8275,
-            "casum_rougeL": 0.4205,
-            "flores_en2ca": 0.3836,
-            "flores_ca2en": 0.4252,
-            "ifeval_prompt_strict": 0.635,
-            "clam_pct": 54.23
-        },
-        {
             "model": "gemma3-27b-q2",
             "cloud": false,
             "params_b": 27.0,
@@ -461,6 +445,22 @@
             "flores_ca2en": 0.3585,
             "ifeval_prompt_strict": 0.43,
             "clam_pct": 39.12
+        },
+        {
+            "model": "mistral-small-24b",
+            "cloud": false,
+            "params_b": 24.0,
+            "memory_gb": 25.5,
+            "quantized_analysis_only": false,
+            "quantization": "",
+            "sts_ca": 0.032,
+            "catcola_mcc": 0.0,
+            "club_qa_em": 0.755,
+            "casum_rougeL": 0.3787,
+            "flores_en2ca": 0.4088,
+            "flores_ca2en": 0.4503,
+            "ifeval_prompt_strict": 0.66,
+            "clam_pct": 37.59
         }
     ]
 }
