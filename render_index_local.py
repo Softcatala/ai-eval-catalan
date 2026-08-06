@@ -1,5 +1,5 @@
 """
-Assemble index_local.html by inlining the four rendered HTML fragments.
+Assemble index_local.html by inlining the four rendered HTML table fragments.
 Produces a self-contained file that works when opened directly via file://.
 """
 
@@ -8,11 +8,8 @@ from pathlib import Path
 FRAGMENTS = [
     ("LLM — Taula",              "llm/llms_table.html"),
     ("LLM — Taula Quantitzada",  "llm/llms_quantized_table.html"),
-    ("LLM — Bar Chart",          "llm/llms_bar.html"),
     ("ASR — Taula",              "asr/asrs_table.html"),
-    ("ASR — Bar Chart",          "asr/asrs_bar.html"),
     ("Embeddings — Taula",       "embeddings/embeddings_table.html"),
-    ("Embeddings — Bar Chart",   "embeddings/embeddings_bar.html"),
 ]
 
 STYLE = """
