@@ -15,7 +15,7 @@
     },
     "data": [
         {
-            "model": "claude-opus-4-7",
+            "model": "(*) claude-opus-4-7",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
@@ -31,7 +31,7 @@
             "clam_pct": 68.12
         },
         {
-            "model": "gpt-5.6",
+            "model": "(*) gpt-5.6",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
@@ -47,7 +47,7 @@
             "clam_pct": 63.38
         },
         {
-            "model": "gpt-5.4-mini",
+            "model": "(*) gpt-5.4-mini",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
@@ -79,7 +79,7 @@
             "clam_pct": 62.23
         },
         {
-            "model": "gemini-3-6-flash",
+            "model": "(*) gemini-3-6-flash",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
@@ -95,7 +95,7 @@
             "clam_pct": 60.39
         },
         {
-            "model": "gemini-3-1-preview",
+            "model": "(*) gemini-3-1-preview",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,

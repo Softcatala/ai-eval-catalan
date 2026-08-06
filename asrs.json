@@ -9,7 +9,7 @@
     },
     "data": [
         {
-            "model": "gpt-4o-transcribe",
+            "model": "(*) gpt-4o-transcribe",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
@@ -36,7 +36,7 @@
             "rtf": 0.0343
         },
         {
-            "model": "gemini-3-pro-preview",
+            "model": "(*) gemini-3-pro-preview",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
@@ -45,7 +45,7 @@
             "rtf": null
         },
         {
-            "model": "gemini-3.6-flash",
+            "model": "(*) gemini-3.6-flash",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,

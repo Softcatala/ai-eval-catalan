@@ -10,7 +10,7 @@
   },
   "data": [
     {
-      "model": "google-gemini-embedding-001",
+      "model": "(*) google-gemini-embedding-001",
       "repo_url": "https://ai.google.dev/gemini-api/docs/embeddings",
       "cloud": true,
       "dim": 3072,
@@ -79,7 +79,7 @@
       "composite": 0.858
     },
     {
-      "model": "openai-text-embedding-3-large",
+      "model": "(*) openai-text-embedding-3-large",
       "repo_url": "https://platform.openai.com/docs/models/text-embedding-3-large",
       "cloud": true,
       "dim": 3072,
@@ -169,7 +169,7 @@
       "composite": 0.8485
     },
     {
-      "model": "openai-text-embedding-3-small",
+      "model": "(*) openai-text-embedding-3-small",
       "repo_url": "https://platform.openai.com/docs/models/text-embedding-3-small",
       "cloud": true,
       "dim": 1536,
