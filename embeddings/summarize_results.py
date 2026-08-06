@@ -105,7 +105,10 @@ def main():
     print("Note: composite gaps under ~0.015 are within sampling noise — treat clustered "
           "middle ranks as tied. Per-model 95% bootstrap CIs are in embeddings.json.")
 
-    out = {"text": COL_LABELS, "data": rows}
+    out = {
+        "text": COL_LABELS,
+        "data": [{**r, "model": f"(*) {r['model']}"} if r["cloud"] else r for r in rows],
+    }
     Path(args.json_out).write_text(json.dumps(out, indent=2, ensure_ascii=False))
 
 

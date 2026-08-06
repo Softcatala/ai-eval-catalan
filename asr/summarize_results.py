@@ -92,7 +92,7 @@ def main():
     json_text = {k: COLUMN_LABELS.get(k, k) for k in ["model", "params_b", "memory_gb"] + METRICS}
     json_rows = [
         {
-            "model": r["model"],
+            "model": f"(*) {r['model']}" if r.get("cloud", False) else r["model"],
             "cloud": r.get("cloud", False),
             "params_b": r.get("params_b"),
             "memory_gb": r.get("memory_gb"),

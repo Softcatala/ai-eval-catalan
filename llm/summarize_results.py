@@ -333,7 +333,7 @@ def main():
     json_rows = []
     for label, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization in rows:
         entry = {
-            "model": label,
+            "model": f"(*) {label}" if cloud else label,
             "cloud": cloud,
             "params_b": params_b,
             "memory_gb": memory_gb,
