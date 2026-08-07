@@ -330,6 +330,17 @@ def main():
         **{k: COLUMN_LABELS.get(k, k) for k in norm_keys},
         "clam_pct": COLUMN_LABELS["clam_pct"],
     }
+    json_metrics = {
+        "clam_pct": {
+            "direction": "higher_is_better",
+            "subtitle": "50% usable",
+            "label": "> 50% el considerem usable",
+            "caption": "Línia discontínua al 50% = \"usable per a tasques en català\"",
+            "success": {"min": 50, "color": "#388e3c"},
+            "warning": {"min": 40, "color": "#f9a825"},
+            "error": {"color": "#c62828"},
+        }
+    }
     json_rows = []
     for label, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization in rows:
         entry = {
@@ -344,7 +355,14 @@ def main():
         }
         json_rows.append(entry)
     json_path = Path(args.json_norm)
-    json_path.write_text(json.dumps({"text": json_text, "data": json_rows}, indent=4, ensure_ascii=False), encoding="utf-8")
+    json_path.write_text(
+        json.dumps(
+            {"text": json_text, "metrics": json_metrics, "data": json_rows},
+            indent=4,
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
     print(f"Normalized JSON saved to {json_path}")
 
 

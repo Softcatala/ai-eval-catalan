@@ -107,6 +107,17 @@ def main():
 
     out = {
         "text": COL_LABELS,
+        "metrics": {
+            "composite": {
+                "direction": "higher_is_better",
+                "subtitle": "0.85 alta qualitat",
+                "label": "≥ 0.85 alta qualitat",
+                "caption": "Línia discontínua a 0.85 = \"alta qualitat per a tasques en català\"",
+                "success": {"min": 0.85, "color": "#388e3c"},
+                "warning": {"min": 0.8, "color": "#f9a825"},
+                "error": {"color": "#c62828"},
+            }
+        },
         "data": [{**r, "model": f"(*) {r['model']}"} if r["cloud"] else r for r in rows],
     }
     Path(args.json_out).write_text(json.dumps(out, indent=2, ensure_ascii=False))

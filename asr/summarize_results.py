@@ -90,6 +90,17 @@ def main():
 
     # ── JSON export ───────────────────────────────────────────────────────────
     json_text = {k: COLUMN_LABELS.get(k, k) for k in ["model", "params_b", "memory_gb"] + METRICS}
+    json_metrics = {
+        "wer": {
+            "direction": "lower_is_better",
+            "subtitle": "10% habilitat d'un humà",
+            "label": "10% habilitat d'un humà",
+            "caption": "Línia discontínua al 10% ≈ \"habilitat d'un humà\"",
+            "success": {"max": 0.1, "color": "#388e3c"},
+            "warning": {"max": 0.2, "color": "#f9a825"},
+            "error": {"color": "#c62828"},
+        }
+    }
     json_rows = [
         {
             "model": f"(*) {r['model']}" if r.get("cloud", False) else r["model"],
@@ -102,7 +113,11 @@ def main():
     ]
     json_path = Path(args.json_out)
     json_path.write_text(
-        json.dumps({"text": json_text, "data": json_rows}, indent=4, ensure_ascii=False),
+        json.dumps(
+            {"text": json_text, "metrics": json_metrics, "data": json_rows},
+            indent=4,
+            ensure_ascii=False,
+        ),
         encoding="utf-8",
     )
     print(f"JSON saved to {json_path}")
