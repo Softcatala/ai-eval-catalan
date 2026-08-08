@@ -86,8 +86,8 @@ CLAM_TASKS = list(RANDOM_BASELINES.keys())
 COLUMN_LABELS = {
     "model": "Model",
     "cloud": "Cloud",
-    "params_b": "Parameters (B)",
-    "memory_gb": "Memory (GB)",
+    "params_b": "Paràmetres (B)",
+    "memory_gb": "Memòria (GB)",
     "sts_ca": "STS",
     "catcola_mcc": "CatCoLA MCC",
     "club_qa_em": "CLUB QA",

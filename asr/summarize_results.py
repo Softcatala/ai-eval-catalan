@@ -16,8 +16,8 @@ from jinja2 import Environment
 
 COLUMN_LABELS = {
     "model": "Model",
-    "params_b": "Parameters (B)",
-    "memory_gb": "Memory (GB)",
+    "params_b": "Paràmetres (B)",
+    "memory_gb": "Memòria (GB)",
     "wer": "WER",
     "cer": "CER",
     "rtf": "RTF",
