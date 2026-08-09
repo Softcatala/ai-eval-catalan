@@ -6,9 +6,10 @@ Models:
   - google/gemma-3-1b-it -> results_gemma3_1b.json
 
 Usage:
-  python run_evals.py
-  python run_evals.py --n-samples 200
-  python run_evals.py --benchmarks catcola flores
+  python run_evals.py --models gemma3-12b
+  python run_evals.py --models gemma3-12b --n-samples 200
+  python run_evals.py --models gemma3-12b --benchmarks catcola flores
+  python run_evals.py --server-url http://localhost:9090/v1 --models gemma3-12b
 """
 
 import argparse
@@ -407,6 +408,7 @@ MODELS = [
 
 # Base port for llama-server (8080 is taken by Jupyter)
 DEFAULT_BASE_PORT = 8090
+DEFAULT_LOCAL_SERVER_URL = "http://localhost:9090/v1"
 
 
 def _llama_server_url_from_env() -> str | None:
@@ -418,11 +420,11 @@ def _llama_server_url_from_env() -> str | None:
     if port:
         return f"http://127.0.0.1:{port}/v1"
 
-    return None
+    return DEFAULT_LOCAL_SERVER_URL
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run evals for all models")
+    parser = argparse.ArgumentParser(description="Run evals for configured models")
     parser.add_argument("--n-samples", type=int, default=400)
     parser.add_argument(
         "--benchmarks",
@@ -438,12 +440,58 @@ def main():
             "all",
         ],
     )
+    parser.add_argument(
+        "--models",
+        nargs="+",
+        help="Optional display-name subset from MODELS (e.g. gemma3-12b)",
+    )
+    parser.add_argument(
+        "--llama-server-url",
+        "--server-url",
+        dest="llama_server_url",
+        default=_llama_server_url_from_env(),
+        help=(
+            "Reuse an existing llama-server/OpenAI-compatible base URL for local "
+            "GGUF models instead of starting one per run. Also configurable with "
+            "LLAMA_SERVER_URL, LLAMA_SERVER_PORT, or LLAMA_CPP_PORT."
+        ),
+    )
+    parser.add_argument(
+        "--llama-server-model",
+        "--server-model",
+        dest="llama_server_model",
+        default=None,
+        help=(
+            "Request model id for the existing server. Only valid with one selected "
+            "local GGUF model."
+        ),
+    )
     args = parser.parse_args()
+
+    selected = set(args.models) if args.models else None
+    if selected:
+        known = {model["display_name"] for model in MODELS}
+        unknown = sorted(selected - known)
+        if unknown:
+            parser.error(f"unknown model display name(s): {', '.join(unknown)}")
+        models = [model for model in MODELS if model["display_name"] in selected]
+    else:
+        models = MODELS
+
+    local_models = [model for model in models if not model.get("cloud")]
+    if args.llama_server_url and len(local_models) > 1:
+        parser.error(
+            "using one local llama-server requires exactly one selected local model; "
+            "pass --models <display_name>"
+        )
+    if args.llama_server_model and len(local_models) != 1:
+        parser.error(
+            "--llama-server-model requires exactly one selected local GGUF model"
+        )
 
     google_api_key = os.environ.get("GOOGLE_API_KEY")
     openai_api_key = os.environ.get("OPENAI_API_KEY")
     openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
-    llama_server_url = _llama_server_url_from_env()
     llama_server_port = (
         os.environ.get("LLAMA_SERVER_PORT")
         or os.environ.get("LLAMA_CPP_PORT")
@@ -452,8 +500,8 @@ def main():
 
     python = sys.executable
 
-    for model in MODELS:
-        output_path = Path(model["output"])
+    for model in models:
+        output_path = SCRIPT_DIR / model["output"]
         name = model["display_name"]
 
         if output_path.exists():
@@ -472,12 +520,6 @@ def main():
             print(f"[SKIP] {name} — OPENROUTER_API_KEY env var required but not set")
             continue
 
-        if model.get("external_llama_server") and not llama_server_url:
-            print(
-                f"[SKIP] {name} — set LLAMA_SERVER_URL or LLAMA_SERVER_PORT/LLAMA_CPP_PORT"
-            )
-            continue
-
         cmd = [
             python,
             "-u",
@@ -493,10 +535,13 @@ def main():
             str(llama_server_port),
         ]
 
-        if model.get("external_llama_server"):
-            cmd += ["--llama-server-url", llama_server_url]
-            if model.get("llama_server_model"):
-                cmd += ["--llama-server-model", model["llama_server_model"]]
+        if args.llama_server_url and not model.get("cloud"):
+            cmd += ["--llama-server-url", args.llama_server_url.rstrip("/")]
+            llama_server_model = args.llama_server_model or model.get(
+                "llama_server_model"
+            )
+            if llama_server_model:
+                cmd += ["--llama-server-model", llama_server_model]
 
         if model.get("params_b") is not None:
             cmd += ["--params-b", str(model["params_b"])]

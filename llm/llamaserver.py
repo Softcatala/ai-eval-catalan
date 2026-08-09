@@ -1,15 +1,41 @@
 import json
 import os
+import shutil
 import subprocess
 import time
 import urllib.request
 from contextlib import contextmanager
 from pathlib import Path
 
+from inference import chat_completion_params, inference_params
+
 
 def _is_gguf_model(model_name: str) -> bool:
     """Return True if model_name is a GGUF spec (repo:quantization or .gguf file)."""
     return "GGUF" in model_name or "gguf" in model_name or model_name.endswith(".gguf")
+
+
+_FILENAME_OVERRIDES = {
+    "RichardErkhov/BSC-LT_-_salamandra-7b-instruct-gguf": "salamandra-7b-instruct.{quant}.gguf",
+    "mradermacher/salamandra-7b-instruct-2606-GGUF": "salamandra-7b-instruct-2606.{quant}.gguf",
+}
+
+
+def expected_gguf_filename(model_spec: str) -> str:
+    """Return the GGUF filename expected for a repo:quant spec or local .gguf path."""
+    if model_spec.lower().endswith(".gguf"):
+        return Path(model_spec).name
+
+    if ":" in model_spec:
+        repo, quant = model_spec.rsplit(":", 1)
+    else:
+        repo, quant = model_spec, "Q8_0"
+
+    if repo in _FILENAME_OVERRIDES:
+        return _FILENAME_OVERRIDES[repo].format(quant=quant)
+
+    model_base = repo.split("/")[-1].replace("-GGUF", "")
+    return f"{model_base}-{quant}.gguf"
 
 
 def _hf_tokenizer_from_gguf(model_spec: str) -> str:
@@ -38,17 +64,6 @@ def _hf_tokenizer_from_gguf(model_spec: str) -> str:
     if name.startswith("Llama") or name.startswith("Meta-Llama"):
         return f"meta-llama/{name}"
     return name
-
-
-def _is_thinking_model(model_spec: str) -> bool:
-    """Return True for models known to emit thinking tokens (e.g. Gemma-4 E4B, Qwen3/3.5)."""
-    lower = model_spec.lower()
-    return (
-        "gemma-4" in lower
-        or "gemma4" in lower
-        or "-e4b" in lower
-        or "qwen3" in lower
-    )
 
 
 def _wait_for_port(port: int, timeout: float = 300.0):
@@ -112,27 +127,28 @@ class LlamaServerModel:
         raise last_error
 
     def _completions(self, prompt: str, max_tokens: int, **kwargs) -> dict:
+        params = inference_params(max_tokens)
+        params.pop("reasoning_effort", None)
         payload_data = {
             "prompt": prompt,
-            "max_tokens": max_tokens,
-            "temperature": 0,
+            **params,
             **kwargs,
         }
         if self.request_model:
             payload_data["model"] = self.request_model
         return self._post_json("/completions", payload_data)
 
-    def _chat_completions(self, prompt: str, max_tokens: int) -> dict:
+    def _chat_completions(self, prompt: str, max_tokens: int | None) -> dict:
+        params = chat_completion_params(max_tokens)
         payload_data = {
             "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": max_tokens,
-            "temperature": 0,
+            **params,
         }
         if self.request_model:
             payload_data["model"] = self.request_model
         return self._post_json("/chat/completions", payload_data)
 
-    def generate(self, prompt: str, max_new_tokens: int = 256) -> str:
+    def generate(self, prompt: str, max_new_tokens: int | None = None) -> str:
         try:
             data = self._chat_completions(prompt, max_tokens=max_new_tokens)
             return data["choices"][0]["message"]["content"].strip()
@@ -156,84 +172,50 @@ class LlamaServerModel:
 
 
 @contextmanager
-def llama_server_context(model_spec: str, port: int, device: str = "cpu", extra_args: list | None = None):
+def llama_server_context(model_spec: str, port: int, device: str = "cpu"):
     """
     Download the GGUF file via huggingface_hub, spawn llama-server, and yield the base_url.
     """
-    from huggingface_hub import get_token, hf_hub_url
-
-    if ":" in model_spec:
-        repo, quant = model_spec.rsplit(":", 1)
+    local_file = Path(os.path.expanduser(model_spec))
+    if model_spec.lower().endswith(".gguf") and local_file.exists():
+        local_path = str(local_file.resolve())
+        filename = local_file.name
+        print(f"[server] Using local GGUF file {local_path}", flush=True)
     else:
-        repo, quant = model_spec, "Q8_0"
+        if model_spec.lower().endswith(".gguf"):
+            raise FileNotFoundError(f"Local GGUF file not found: {model_spec}")
 
-    _FILENAME_OVERRIDES = {
-        "RichardErkhov/BSC-LT_-_salamandra-7b-instruct-gguf": "salamandra-7b-instruct.{quant}.gguf",
-        "mradermacher/salamandra-7b-instruct-2606-GGUF": "salamandra-7b-instruct-2606.{quant}.gguf",
-    }
-    if repo in _FILENAME_OVERRIDES:
-        filename = _FILENAME_OVERRIDES[repo].format(quant=quant)
-    else:
-        model_base = repo.split("/")[-1].replace("-GGUF", "")
-        filename = f"{model_base}-{quant}.gguf"
+        from huggingface_hub import hf_hub_download
 
-    print(f"[server] Ensuring {filename} is cached locally …", flush=True)
-    cache_dir = os.path.expanduser("~/.cache/huggingface/hub")
-    blob_dir = os.path.join(cache_dir, f"models--{repo.replace('/', '--')}", "blobs")
-    incomplete = os.path.join(blob_dir, filename + ".incomplete")
-    blob_path = os.path.join(blob_dir, filename)
-    if os.path.exists(blob_path):
-        local_path = blob_path
-        print(f"[server] Already cached at {local_path}", flush=True)
-    else:
-        url = hf_hub_url(repo_id=repo, filename=filename)
-        token = get_token()
-        headers = {"Authorization": f"Bearer {token}"} if token else {}
-        req = urllib.request.Request(url, headers=headers)
-        with urllib.request.urlopen(req) as resp:
-            total = int(resp.headers.get("Content-Length", 0))
-            downloaded = 0
-            chunk_size = 1024 * 1024  # 1 MB
-            os.makedirs(blob_dir, exist_ok=True)
-            with open(incomplete, "ab") as f:
-                downloaded = f.seek(0, 2)  # resume if partial
-            if downloaded > 0 and total > 0:
-                req2 = urllib.request.Request(
-                    url, headers={**headers, "Range": f"bytes={downloaded}-"}
-                )
-                try:
-                    resp2 = urllib.request.urlopen(req2)
-                except Exception:
-                    resp2 = urllib.request.urlopen(req)
-                    downloaded = 0
-            else:
-                resp2 = resp
-            with open(incomplete, "ab") as f:
-                while True:
-                    chunk = resp2.read(chunk_size)
-                    if not chunk:
-                        break
-                    f.write(chunk)
-                    downloaded += len(chunk)
-                    if total:
-                        pct = downloaded / total * 100
-                        mb = downloaded / 1024 / 1024
-                        total_mb = total / 1024 / 1024
-                        print(
-                            f"\r[server] Downloading {filename}: {mb:.0f}/{total_mb:.0f} MB ({pct:.1f}%)",
-                            end="",
-                            flush=True,
-                        )
-            print(flush=True)
-        os.rename(incomplete, blob_path)
-        local_path = blob_path
+        if ":" in model_spec:
+            repo, _quant = model_spec.rsplit(":", 1)
+        else:
+            repo = model_spec
+        filename = expected_gguf_filename(model_spec)
+
+        print(f"[server] Ensuring {filename} is cached locally ...", flush=True)
+        legacy_path = Path(os.path.expanduser("~/.cache/huggingface/hub")) / (
+            f"models--{repo.replace('/', '--')}"
+        ) / "blobs" / filename
+        if legacy_path.exists():
+            local_path = str(legacy_path)
+            print(f"[server] Already cached at {local_path}", flush=True)
+        else:
+            local_path = hf_hub_download(repo_id=repo, filename=filename)
+            print(f"[server] Cached at {local_path}", flush=True)
 
     log_path = Path(f"llama_server_{port}.log")
     print(
         f"[server] Starting llama-server on port {port} (device={device}) … (log: {log_path})"
     )
     default_server = Path(__file__).parent.parent.parent / "llama.cpp" / "build" / "bin" / "llama-server"
-    llama_server_bin = os.environ.get("LLAMA_SERVER_PATH", str(default_server))
+    llama_server_bin = os.environ.get("LLAMA_SERVER_PATH")
+    if not llama_server_bin:
+        llama_server_bin = (
+            str(default_server)
+            if default_server.exists()
+            else shutil.which("llama-server") or "llama-server"
+        )
     cmd = [
         llama_server_bin,
         "--model",
@@ -242,13 +224,9 @@ def llama_server_context(model_spec: str, port: int, device: str = "cpu", extra_
         str(port),
         "--ctx-size",
         "2048",
-        "--parallel",
-        "1",
     ]
     if device == "cuda":
         cmd += ["--n-gpu-layers", "99"]
-    if extra_args:
-        cmd += extra_args
     log_file = open(log_path, "w")
     proc = subprocess.Popen(
         cmd,

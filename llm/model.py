@@ -35,16 +35,19 @@ import re
 import time
 from pathlib import Path
 
+from inference import chat_completion_params, lm_eval_params
+
 from llamaserver import (
     LlamaServerModel,
     _hf_tokenizer_from_gguf,
     _is_gguf_model,
-    _is_thinking_model,
     llama_server_context,
 )
 
 # facebook/flores uses an old dataset script — trust it so datasets doesn't refuse to load it.
 os.environ.setdefault("HF_DATASETS_TRUST_REMOTE_CODE", "1")
+
+DEFAULT_LOCAL_SERVER_URL = "http://localhost:9090/v1"
 
 from datasets import load_dataset
 from sklearn.metrics import matthews_corrcoef
@@ -120,34 +123,23 @@ class GeminiModel:
     """Google AI API wrapper (for Gemma 4 / Gemini models)."""
 
     def __init__(self, api_key: str, model_name: str = "gemma-3-27b-it"):
-        import google.generativeai as genai
+        from openai import OpenAI
 
-        genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel(model_name)
+        self.client = OpenAI(
+            api_key=api_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        )
         self.model_name = model_name
 
-    def generate(self, prompt: str, max_new_tokens: int = 256) -> str:
-        # Thinking models (gemini-3.x) consume tokens for internal reasoning before
-        # producing output — a small budget leaves nothing for the actual response.
-        effective_tokens = max(max_new_tokens, 1024)
+    def generate(self, prompt: str, max_new_tokens: int | None = None) -> str:
+        params = chat_completion_params(max_new_tokens, "gemini", self.model_name)
         try:
-            response = self.model.generate_content(
-                prompt,
-                generation_config={
-                    "max_output_tokens": effective_tokens,
-                    "temperature": 0,
-                },
+            response = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=[{"role": "user", "content": prompt}],
+                **params,
             )
-            candidate = response.candidates[0] if response.candidates else None
-            if candidate is None:
-                return ""
-            # finish_reason: 1=STOP (normal), 2=SAFETY, 3=RECITATION, etc.
-            # Even with finish_reason=1 the response can have no parts (empty output).
-            parts = getattr(candidate.content, "parts", None) if candidate.content else None
-            if not parts:
-                return ""
-            text = "".join(p.text for p in parts if hasattr(p, "text"))
-            return text.strip()
+            return (response.choices[0].message.content or "").strip()
         except Exception as e:
             print(f"[error] API call failed: {e}")
             time.sleep(2)
@@ -168,27 +160,22 @@ class OpenAIModel:
 
     def __init__(self, api_key: str, model_name: str, base_url: str | None = None):
         from openai import OpenAI
-        import re
 
         self.model_name = model_name
         self.client = OpenAI(api_key=api_key, base_url=base_url)
-        # gpt-5.x series only supports default temperature (1)
-        self._supports_temperature = not re.match(r"gpt-5\.", model_name)
+        self.provider = "openrouter" if base_url and "openrouter" in base_url else "openai"
         self.prompt_tokens = 0
         self.completion_tokens = 0
         self.total_cost: float | None = None  # None until first response with cost data
 
-    def generate(self, prompt: str, max_new_tokens: int = 256) -> str:
-        effective_tokens = max(max_new_tokens, 1024)
+    def generate(self, prompt: str, max_new_tokens: int | None = None) -> str:
         try:
-            kwargs = dict(
+            params = chat_completion_params(max_new_tokens, self.provider, self.model_name)
+            response = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=[{"role": "user", "content": prompt}],
-                max_completion_tokens=effective_tokens,
+                **params,
             )
-            if self._supports_temperature:
-                kwargs["temperature"] = 0
-            response = self.client.chat.completions.create(**kwargs)
             if response.usage:
                 self.prompt_tokens += response.usage.prompt_tokens
                 self.completion_tokens += response.usage.completion_tokens
@@ -454,17 +441,15 @@ def run_flores(
     print("\n[5/6] Running FLORES+ (EN↔CA translation) via lm-evaluation-harness …")
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
+    inference_provider = "gemini" if gemini_model else "openrouter" if openrouter_model else "openai" if openai_model else "llama" if base_url else "hf"
+    inference_model = gemini_model or openrouter_model or openai_model or model_name
 
     if gemini_model:
         lm_model = "openai-chat-completions"
         _gemini_base_url = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
-        # max_gen_toks must be large enough for thinking models (gemini-3.x) that
-        # consume tokens for internal reasoning before producing the translation.
-        # The default of 256 is too small and causes mid-sentence truncation.
         lm_model_args = (
             f"model={gemini_model},base_url={_gemini_base_url},"
-            f"max_gen_toks=2048,eos_string=</s>,"
-            f"num_concurrent=8,max_retries=3,timeout=120"
+            f"eos_string=</s>,num_concurrent=8,max_retries=3,timeout=120"
         )
         _orig_api_key = os.environ.get("OPENAI_API_KEY")
         _orig_base_url = os.environ.get("OPENAI_BASE_URL")
@@ -506,6 +491,8 @@ def run_flores(
         )
         lm_model_args = f"pretrained={model_name}{mistral_fix}"
 
+    gen_kwargs = lm_eval_params(2048, inference_provider, inference_model)
+
     flores_tasks = ["catalan_bench_flores_en-ca", "catalan_bench_flores_ca-en"]
     try:
         results = lm_eval.simple_evaluate(
@@ -519,6 +506,7 @@ def run_flores(
             log_samples=False,
             limit=n_samples,
             confirm_run_unsafe_code=True,
+            gen_kwargs=gen_kwargs,
         )
     finally:
         if gemini_model or openrouter_model:
@@ -573,6 +561,8 @@ def run_ifeval(
     _orig_api_key = None
     _orig_base_url = None
     needs_env_restore = False
+    inference_provider = "gemini" if gemini_model else "openrouter" if openrouter_model else "openai" if openai_model else "llama" if base_url else "hf"
+    inference_model = gemini_model or openrouter_model or openai_model or model_name
 
     if gemini_model:
         lm_model = "openai-chat-completions"
@@ -583,8 +573,7 @@ def run_ifeval(
         # will end naturally on max_gen_toks instead.
         lm_model_args = (
             f"model={gemini_model},base_url={_gemini_base_url},"
-            f"max_gen_toks=2048,eos_string=</s>,"
-            f"num_concurrent=8,max_retries=3,timeout=120"
+            f"eos_string=</s>,num_concurrent=8,max_retries=3,timeout=120"
         )
         _orig_api_key = os.environ.get("OPENAI_API_KEY")
         _orig_base_url = os.environ.get("OPENAI_BASE_URL")
@@ -628,6 +617,8 @@ def run_ifeval(
         )
         lm_model_args = f"pretrained={model_name}{mistral_fix}"
 
+    gen_kwargs = lm_eval_params(2048, inference_provider, inference_model)
+
     try:
         results = lm_eval.simple_evaluate(
             model=lm_model,
@@ -639,6 +630,7 @@ def run_ifeval(
             log_samples=False,
             limit=n_samples,
             confirm_run_unsafe_code=True,
+            gen_kwargs=gen_kwargs,
         )
     finally:
         if needs_env_restore:
@@ -729,11 +721,15 @@ def main():
     )
     parser.add_argument(
         "--llama-server-url",
-        default=None,
-        help="Reuse an existing llama-server OpenAI-compatible base URL instead of starting one (e.g. http://127.0.0.1:9090/v1)",
+        "--server-url",
+        dest="llama_server_url",
+        default=os.environ.get("LLAMA_SERVER_URL", DEFAULT_LOCAL_SERVER_URL),
+        help="Reuse an existing llama-server OpenAI-compatible base URL instead of starting one (e.g. http://localhost:9090/v1). Also configurable with LLAMA_SERVER_URL.",
     )
     parser.add_argument(
         "--llama-server-model",
+        "--server-model",
+        dest="llama_server_model",
         default=None,
         help="Model id to send to an existing multi-model llama-server (defaults to --model)",
     )
@@ -898,10 +894,7 @@ def main():
             )
             results = _run_benchmarks(model, args.llama_server_url.rstrip("/"))
         else:
-            server_extra = ["--reasoning", "off"] if _is_thinking_model(args.model) else None
-            with llama_server_context(
-                args.model, args.llama_server_port, args.device, extra_args=server_extra
-            ) as base_url:
+            with llama_server_context(args.model, args.llama_server_port, args.device) as base_url:
                 model = LlamaServerModel(args.model, base_url)
                 results = _run_benchmarks(model, base_url)
 

@@ -12,6 +12,7 @@ dependencies = [
     "google-generativeai",
     "accelerate",
     "openai>=2.31.0",
+    "pyyaml>=6.0",
     "langdetect>=1.0.9",
     "spacy>=3.8.14",
     "ca-core-news-sm",

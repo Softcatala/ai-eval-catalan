@@ -78,20 +78,87 @@ El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models de l
 
 ### Instal·lació (LLM)
 
-Requereix [uv](https://docs.astral.sh/uv/) i [llama.cpp](https://github.com/ggerganov/llama.cpp) (el binari `llama-server` ha d'estar disponible al PATH).
+Requereix [uv](https://docs.astral.sh/uv/) i [llama.cpp](https://github.com/ggml-org/llama.cpp). Per als models GGUF locals, engega un `llama-server` extern; per defecte les eines esperen l'endpoint OpenAI-compatible a `http://localhost:9090/v1`.
+
+#### Instal·lació de llama.cpp
+
+Instal·la una versió precompilada amb Homebrew (macOS/Linux) o Conda (Windows/macOS/Linux):
+
+```bash
+brew install llama.cpp
+conda install -c conda-forge llama.cpp
+```
+
+O [compila'l](https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md) amb Git, CMake i un compilador de C/C++:
+
+```bash
+git clone https://github.com/ggml-org/llama.cpp
+cd llama.cpp
+# CPU; a macOS, Metal s'activa per defecte
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+# Per a NVIDIA amb el CUDA Toolkit, usa en canvi:
+# cmake -B build -DGGML_CUDA=ON -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release -j
+export PATH="$PWD/build/bin:$PATH"
+llama-server --version
+```
+
+Les eines també detecten automàticament `../llama.cpp/build/bin/llama-server` si compiles el projecte en un directori germà del repositori.
+
+Des de l'arrel del repositori, instal·la les dependències Python:
 
 ```bash
 cd llm
 uv sync
 ```
 
+#### Configuració d'inferència
+
+Els paràmetres comuns es defineixen a `llm/inference.yaml` amb noms OpenAI-compatible:
+
+```yaml
+temperature: 0
+max_tokens: 256
+reasoning_effort: none
+```
+
+Cada benchmark pot sobreescriure `max_tokens`. Els adaptadors tradueixen aquesta configuració als camps i valors compatibles amb llama.cpp, OpenAI, OpenRouter o Gemini.
+
 ### Execució (LLM)
 
-**Avaluar un sol model GGUF:**
+**1. Descarregar els GGUF necessaris:**
 
 ```bash
-cd llm
-uv run python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0" --device cuda
+make llm-download-ggufs GGUF_DIR=models/gguf
+make llm-download-ggufs GGUF_DIR=models/gguf GGUF_MODELS="gemma3-12b salamandra-7b"
+```
+
+El target llegeix `MODELS` de `llm/run_evals.py`, filtra els models locals GGUF i descarrega els fitxers al subdirectori indicat per `GGUF_DIR` (relatiu a l'arrel del repositori).
+També escriu `presets.ini` al mateix directori, amb els ids de model que usa l'avaluador.
+
+**2. Engegar `llama-server`:**
+
+```bash
+llama-server --models-preset models/gguf/presets.ini --models-max 1 --port 9090
+```
+
+Per defecte les eines fan servir `http://localhost:9090/v1`. Es pot canviar amb `--server-url` o amb `LLAMA_SERVER_URL`.
+
+**3. Executar l'avaluació local:**
+
+```bash
+uv run python run_evals.py --models salamandra-7b
+uv run python run_evals.py --models gemma3-12b --n-samples 200
+uv run python run_evals.py --models gemma3-12b --benchmarks catcola flores
+```
+
+Amb un sol `llama.cpp server`, l'orquestrador només permet un model local per execució; selecciona'l amb `--models`.
+
+Si el servidor requereix un identificador de model concret:
+
+```bash
+uv run python model.py --model "bartowski/google_gemma-3-12b-it-GGUF:Q8_0" --server-url http://localhost:9090/v1 --server-model gemma-3-12b-it-Q8_0
+uv run python run_evals.py --models gemma3-12b --server-model gemma-3-12b-it-Q8_0
 ```
 
 **Avaluar amb l'API de Google AI o OpenAI:**
@@ -99,20 +166,6 @@ uv run python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0" --dev
 ```bash
 uv run python model.py --model gemini --api-key "LA_TEVA_CLAU" --gemini-model gemini-3.6-flash
 OPENAI_API_KEY="LA_TEVA_CLAU" uv run python model.py --model openai --openai-model gpt-4o
-```
-
-**Avaluar benchmarks específics:**
-
-```bash
-uv run python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0" --benchmarks catcola flores
-```
-
-**Executar l'orquestrador per a múltiples models:**
-
-```bash
-uv run python run_evals.py
-uv run python run_evals.py --n-samples 200
-uv run python run_evals.py --benchmarks catcola flores
 ```
 
 Els resultats es desen com a JSON a `llm/evals/`.
