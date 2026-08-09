@@ -47,7 +47,7 @@ from llamaserver import (
 os.environ.setdefault("HF_DATASETS_TRUST_REMOTE_CODE", "1")
 
 from datasets import load_dataset
-from sklearn.metrics import matthews_corrcoef, accuracy_score
+from sklearn.metrics import matthews_corrcoef
 
 # ── Optional: lm_eval for lm-evaluation-harness tasks ─────────────────────────
 try:
@@ -267,6 +267,16 @@ def run_sts_ca(model, n_samples: int = 100) -> dict:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
+def parse_catcola_answer(answer: str) -> int | None:
+    """Parse CatCoLA yes/no answers. Return None for format failures."""
+    text = answer.strip().lower()
+    if re.match(r"^(sí|si)\b", text):
+        return 1
+    if re.match(r"^no\b", text):
+        return 0
+    return None
+
+
 def run_catcola(model, n_samples: int = 200) -> dict:
     """
     Binary classification: is a Catalan sentence grammatically acceptable?
@@ -278,6 +288,8 @@ def run_catcola(model, n_samples: int = 200) -> dict:
     limit = min(n_samples, len(ds))
 
     preds, labels = [], []
+    strict_correct = []
+    invalid = 0
     for i in range(limit):
         item = ds[i]
         sentence = item["Sentence"]
@@ -288,19 +300,39 @@ def run_catcola(model, n_samples: int = 200) -> dict:
             "Respon nomes amb 'si' o 'no'.\n\n"
             f"Frase: {sentence}\nResposta:"
         )
-        answer = model.generate(prompt, max_new_tokens=16).lower()
-        pred = 1 if "si" in answer or "sí" in answer else 0
+        answer = model.generate(prompt, max_new_tokens=16)
+        pred = parse_catcola_answer(answer)
+
+        if pred is None:
+            invalid += 1
+            strict_correct.append(False)
+            continue
 
         preds.append(pred)
         labels.append(label)
+        strict_correct.append(pred == label)
 
     del ds
     gc.collect()
 
-    mcc = matthews_corrcoef(labels, preds)
-    acc = accuracy_score(labels, preds)
-    result = {"mcc": round(mcc, 4), "accuracy": round(acc, 4), "n": len(preds)}
-    print(f"    ✓ MCC={mcc:.4f}  Accuracy={acc:.4f}  (n={len(preds)})")
+    mcc = matthews_corrcoef(labels, preds) if preds else None
+    acc = sum(strict_correct) / limit if limit else 0.0
+    invalid_rate = invalid / limit if limit else 0.0
+    coverage = len(preds) / limit if limit else 0.0
+    result = {
+        "mcc": round(mcc, 4) if mcc is not None else None,
+        "accuracy": round(acc, 4),
+        "invalid_rate": round(invalid_rate, 4),
+        "coverage": round(coverage, 4),
+        "n": limit,
+        "n_valid": len(preds),
+        "n_invalid": invalid,
+    }
+    mcc_text = f"{mcc:.4f}" if mcc is not None else "n/a"
+    print(
+        f"    ✓ MCC(valid)={mcc_text}  Strict Accuracy={acc:.4f}  "
+        f"Invalid={invalid_rate:.2%}  (n={limit}, valid={len(preds)})"
+    )
     return result
 
 

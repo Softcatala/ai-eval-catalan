@@ -15,9 +15,13 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.332,
-      "accuracy": 0.7875,
-      "n": 400
+      "mcc": 0.3464,
+      "accuracy": 0.785,
+      "invalid_rate": 0.0,
+      "coverage": 1.0,
+      "n": 400,
+      "n_valid": 400,
+      "n_invalid": 0
     },
     "club_qa": {
       "exact_match_approx": 0.815,
