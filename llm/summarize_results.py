@@ -8,6 +8,7 @@ Usage:
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -357,13 +358,41 @@ def main():
     json_path = Path(args.json_norm)
     json_path.write_text(
         json.dumps(
-            {"text": json_text, "metrics": json_metrics, "data": json_rows},
+            {
+                "text": json_text,
+                "metrics": json_metrics,
+                "data": [r for r in json_rows if not r["quantized_analysis_only"]],
+            },
             indent=4,
             ensure_ascii=False,
         ),
         encoding="utf-8",
     )
     print(f"Normalized JSON saved to {json_path}")
+
+    quantized_json_rows = sorted(
+        [r for r in json_rows if r["model"].startswith("gemma3")],
+        key=lambda r: (-(r["params_b"] or 0), re.sub(r"-q\d+$", "", r["model"].lower()), -(r["clam_pct"] or 0)),
+    )
+    quantized_json_path = json_path.with_name("llms_quantized.json")
+    quantized_json_path.write_text(
+        json.dumps(
+            {
+                "text": {
+                    **json_text,
+                    "params_b": "Parameters (B)",
+                    "memory_gb": "Memory (GB)",
+                    "quantization": "Quantització",
+                },
+                "metrics": json_metrics,
+                "data": quantized_json_rows,
+            },
+            indent=4,
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    print(f"Quantized JSON saved to {quantized_json_path}")
 
 
 if __name__ == "__main__":

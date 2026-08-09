@@ -44,6 +44,7 @@ jobs:
       - name: Copy JSON files to prod-data
         run: |
           cp llm/llms.json prod_data_branch/llms.json
+          cp llm/llms_quantized.json prod_data_branch/llms_quantized.json
           cp asr/asrs.json prod_data_branch/asrs.json
           cp embeddings/embeddings.json prod_data_branch/embeddings.json
 
@@ -52,6 +53,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add llms.json asrs.json embeddings.json
+          git add llms.json llms_quantized.json asrs.json embeddings.json
           git diff --cached --quiet || git commit -m "Update evaluation JSON from ${{ github.ref_name }}@${{ github.sha }}"
           git push

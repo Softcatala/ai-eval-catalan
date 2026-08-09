@@ -78,6 +78,7 @@ def render(json_path: Path, template_path: Path, out: Path, row_filter=None, ext
 def main():
     parser = argparse.ArgumentParser(description="Render table HTML from JSON")
     parser.add_argument("--llm-json", default="llm/llms.json")
+    parser.add_argument("--llm-quantized-json", default="llm/llms_quantized.json")
     parser.add_argument("--asr-json", default="asr/asrs.json")
     parser.add_argument("--llm-out", default="llm/llms_table.html")
     parser.add_argument("--llm-quantized-out", default="llm/llms_quantized_table.html")
@@ -89,10 +90,9 @@ def main():
     render(Path(args.llm_json), Path("llm/table_template.jinja"), Path(args.llm_out),
            row_filter=lambda r: not r.get("quantized_analysis_only", False))
     render(
-        Path(args.llm_json),
+        Path(args.llm_quantized_json),
         Path("llm/table_template.jinja"),
         Path(args.llm_quantized_out),
-        row_filter=lambda r: r["model"].startswith("gemma3"),
         extra_cols={"quantization": "Quantització"},
         sort_key=lambda r: (-(r.get("params_b") or 0), re.sub(r"-q\d+$", "", r["model"].lower()), -(r.get("clam_pct") or 0)),
     )

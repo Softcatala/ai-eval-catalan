@@ -37,7 +37,7 @@ ai-eval-catalan/
 Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/workflows/publish-llms-json.yml` executa automàticament els passos següents:
 
 1. **Genera els fitxers de dades** a partir dels resultats JSON individuals de `llm/evals/`, `asr/evals/` i `embeddings/evals/`:
-   - `llm/summarize_results.py` → `llm/llms.json`
+   - `llm/summarize_results.py` → `llm/llms.json` i `llm/llms_quantized.json`
    - `asr/summarize_results.py` → `asr/asrs.json`
    - `embeddings/summarize_results.py` → `embeddings/embeddings.json`
 
@@ -45,6 +45,7 @@ Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/wo
    ```
    prod-data/
    ├── llms.json
+   ├── llms_quantized.json
    ├── asrs.json
    └── embeddings.json
    ```
