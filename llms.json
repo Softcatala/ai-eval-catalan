@@ -57,13 +57,13 @@
             "quantized_analysis_only": false,
             "quantization": "",
             "sts_ca": 0.812,
-            "catcola_mcc": 0.513,
+            "catcola_mcc": 0.5423,
             "club_qa_em": 0.7775,
             "casum_rougeL": 0.464,
             "flores_en2ca": 0.4006,
             "flores_ca2en": 0.4672,
             "ifeval_prompt_strict": 0.8025,
-            "clam_pct": 63.38
+            "clam_pct": 63.87
         },
         {
             "model": "(*) gpt-5.4-mini",
@@ -73,13 +73,13 @@
             "quantized_analysis_only": false,
             "quantization": "",
             "sts_ca": 0.7655,
-            "catcola_mcc": 0.4626,
+            "catcola_mcc": 0.4797,
             "club_qa_em": 0.815,
             "casum_rougeL": 0.4346,
             "flores_en2ca": 0.4401,
             "flores_ca2en": 0.4704,
             "ifeval_prompt_strict": 0.805,
-            "clam_pct": 62.3
+            "clam_pct": 62.58
         },
         {
             "model": "qwen3.6-27b",
@@ -89,13 +89,13 @@
             "quantized_analysis_only": false,
             "quantization": "q8",
             "sts_ca": 0.8013,
-            "catcola_mcc": 0.399,
+            "catcola_mcc": 0.4143,
             "club_qa_em": 0.86,
             "casum_rougeL": 0.4512,
             "flores_en2ca": 0.3894,
             "flores_ca2en": 0.4499,
             "ifeval_prompt_strict": 0.8025,
-            "clam_pct": 62.23
+            "clam_pct": 62.48
         },
         {
             "model": "(*) gemini-3-6-flash",
@@ -105,13 +105,13 @@
             "quantized_analysis_only": false,
             "quantization": "",
             "sts_ca": 0.8136,
-            "catcola_mcc": 0.5351,
+            "catcola_mcc": 0.5839,
             "club_qa_em": 0.8675,
             "casum_rougeL": 0.5014,
             "flores_en2ca": 0.4621,
             "flores_ca2en": 0.4997,
             "ifeval_prompt_strict": 0.425,
-            "clam_pct": 60.39
+            "clam_pct": 61.2
         },
         {
             "model": "(*) gemini-3-1-preview",
@@ -121,13 +121,13 @@
             "quantized_analysis_only": false,
             "quantization": "",
             "sts_ca": 0.8214,
-            "catcola_mcc": 0.5196,
+            "catcola_mcc": 0.516,
             "club_qa_em": 0.865,
             "casum_rougeL": 0.4881,
             "flores_en2ca": 0.4771,
             "flores_ca2en": 0.4988,
             "ifeval_prompt_strict": 0.3725,
-            "clam_pct": 59.24
+            "clam_pct": 59.18
         },
         {
             "model": "qwen3.5-9b",
@@ -137,13 +137,13 @@
             "quantized_analysis_only": false,
             "quantization": "q8",
             "sts_ca": 0.71,
-            "catcola_mcc": 0.3379,
+            "catcola_mcc": 0.3466,
             "club_qa_em": 0.85,
             "casum_rougeL": 0.4255,
             "flores_en2ca": 0.3913,
             "flores_ca2en": 0.4311,
             "ifeval_prompt_strict": 0.72,
-            "clam_pct": 57.58
+            "clam_pct": 57.72
         },
         {
             "model": "gemma3-27b",
@@ -185,13 +185,13 @@
             "quantized_analysis_only": false,
             "quantization": "q8",
             "sts_ca": 0.6823,
-            "catcola_mcc": 0.332,
+            "catcola_mcc": 0.3464,
             "club_qa_em": 0.815,
             "casum_rougeL": 0.3707,
             "flores_en2ca": 0.4242,
             "flores_ca2en": 0.4697,
             "ifeval_prompt_strict": 0.75,
-            "clam_pct": 56.62
+            "clam_pct": 56.86
         },
         {
             "model": "gemma3-12b-q4",
@@ -217,13 +217,13 @@
             "quantized_analysis_only": false,
             "quantization": "q8",
             "sts_ca": 0.7497,
-            "catcola_mcc": 0.3814,
+            "catcola_mcc": 0.3687,
             "club_qa_em": 0.8075,
             "casum_rougeL": 0.2602,
             "flores_en2ca": 0.3471,
             "flores_ca2en": 0.4462,
             "ifeval_prompt_strict": 0.735,
-            "clam_pct": 55.51
+            "clam_pct": 55.3
         },
         {
             "model": "gemma4-26b",
@@ -233,13 +233,13 @@
             "quantized_analysis_only": false,
             "quantization": "q8",
             "sts_ca": 0.7229,
-            "catcola_mcc": 0.2001,
+            "catcola_mcc": 0.182,
             "club_qa_em": 0.8375,
             "casum_rougeL": 0.4268,
             "flores_en2ca": 0.4044,
             "flores_ca2en": 0.4442,
             "ifeval_prompt_strict": 0.7025,
-            "clam_pct": 55.23
+            "clam_pct": 54.93
         },
         {
             "model": "gemma4-26b-q4",
@@ -274,38 +274,6 @@
             "clam_pct": 54.03
         },
         {
-            "model": "gemma4-12b",
-            "cloud": false,
-            "params_b": 12.0,
-            "memory_gb": 13.0,
-            "quantized_analysis_only": false,
-            "quantization": "q8",
-            "sts_ca": 0.6999,
-            "catcola_mcc": 0.2578,
-            "club_qa_em": 0.84,
-            "casum_rougeL": 0.3979,
-            "flores_en2ca": 0.3696,
-            "flores_ca2en": 0.4259,
-            "ifeval_prompt_strict": 0.6,
-            "clam_pct": 53.22
-        },
-        {
-            "model": "gemma3-4b",
-            "cloud": false,
-            "params_b": 4.0,
-            "memory_gb": 4.2,
-            "quantized_analysis_only": false,
-            "quantization": "q8",
-            "sts_ca": 0.7022,
-            "catcola_mcc": 0.2657,
-            "club_qa_em": 0.8375,
-            "casum_rougeL": 0.3931,
-            "flores_en2ca": 0.3702,
-            "flores_ca2en": 0.424,
-            "ifeval_prompt_strict": 0.585,
-            "clam_pct": 53.01
-        },
-        {
             "model": "gemma4-12b-q4",
             "cloud": false,
             "params_b": 12.0,
@@ -320,6 +288,54 @@
             "flores_ca2en": 0.424,
             "ifeval_prompt_strict": 0.585,
             "clam_pct": 53.01
+        },
+        {
+            "model": "gemma3-4b",
+            "cloud": false,
+            "params_b": 4.0,
+            "memory_gb": 4.2,
+            "quantized_analysis_only": false,
+            "quantization": "q8",
+            "sts_ca": 0.7022,
+            "catcola_mcc": 0.2486,
+            "club_qa_em": 0.8375,
+            "casum_rougeL": 0.3931,
+            "flores_en2ca": 0.3702,
+            "flores_ca2en": 0.424,
+            "ifeval_prompt_strict": 0.585,
+            "clam_pct": 52.72
+        },
+        {
+            "model": "eurollm-9b",
+            "cloud": false,
+            "params_b": 9.0,
+            "memory_gb": 9.6,
+            "quantized_analysis_only": false,
+            "quantization": "q8",
+            "sts_ca": 0.7713,
+            "catcola_mcc": 0.2404,
+            "club_qa_em": 0.83,
+            "casum_rougeL": 0.4131,
+            "flores_en2ca": 0.43,
+            "flores_ca2en": 0.4326,
+            "ifeval_prompt_strict": 0.4675,
+            "clam_pct": 52.56
+        },
+        {
+            "model": "gemma4-12b",
+            "cloud": false,
+            "params_b": 12.0,
+            "memory_gb": 13.0,
+            "quantized_analysis_only": false,
+            "quantization": "q8",
+            "sts_ca": 0.6999,
+            "catcola_mcc": 0.2168,
+            "club_qa_em": 0.84,
+            "casum_rougeL": 0.3979,
+            "flores_en2ca": 0.3696,
+            "flores_ca2en": 0.4259,
+            "ifeval_prompt_strict": 0.6,
+            "clam_pct": 52.54
         },
         {
             "model": "gemma3-4b-q4",
@@ -354,22 +370,6 @@
             "clam_pct": 52.29
         },
         {
-            "model": "eurollm-9b",
-            "cloud": false,
-            "params_b": 9.0,
-            "memory_gb": 9.6,
-            "quantized_analysis_only": false,
-            "quantization": "q8",
-            "sts_ca": 0.7713,
-            "catcola_mcc": 0.154,
-            "club_qa_em": 0.83,
-            "casum_rougeL": 0.4131,
-            "flores_en2ca": 0.43,
-            "flores_ca2en": 0.4326,
-            "ifeval_prompt_strict": 0.4675,
-            "clam_pct": 51.12
-        },
-        {
             "model": "phi-4",
             "cloud": false,
             "params_b": 14.0,
@@ -377,13 +377,13 @@
             "quantized_analysis_only": false,
             "quantization": "q8",
             "sts_ca": 0.6291,
-            "catcola_mcc": 0.2791,
+            "catcola_mcc": 0.2709,
             "club_qa_em": 0.8125,
             "casum_rougeL": 0.3733,
             "flores_en2ca": 0.3501,
             "flores_ca2en": 0.4272,
             "ifeval_prompt_strict": 0.4975,
-            "clam_pct": 49.67
+            "clam_pct": 49.53
         },
         {
             "model": "gemma4-e4b",
@@ -393,13 +393,13 @@
             "quantized_analysis_only": false,
             "quantization": "q8",
             "sts_ca": 0.704,
-            "catcola_mcc": 0.1247,
+            "catcola_mcc": 0.1303,
             "club_qa_em": 0.83,
             "casum_rougeL": 0.2379,
             "flores_en2ca": 0.3697,
             "flores_ca2en": 0.425,
             "ifeval_prompt_strict": 0.67,
-            "clam_pct": 49.4
+            "clam_pct": 49.49
         },
         {
             "model": "gemma4-e4b-q4",
@@ -425,29 +425,13 @@
             "quantized_analysis_only": false,
             "quantization": "q8",
             "sts_ca": 0.4579,
-            "catcola_mcc": 0.1719,
+            "catcola_mcc": 0.2316,
             "club_qa_em": 0.82,
             "casum_rougeL": 0.2908,
             "flores_en2ca": 0.3711,
             "flores_ca2en": 0.4328,
             "ifeval_prompt_strict": 0.5375,
-            "clam_pct": 44.67
-        },
-        {
-            "model": "mistral-small-24b",
-            "cloud": false,
-            "params_b": 24.0,
-            "memory_gb": 25.5,
-            "quantized_analysis_only": false,
-            "quantization": "q8",
-            "sts_ca": 0.032,
-            "catcola_mcc": 0.2936,
-            "club_qa_em": 0.755,
-            "casum_rougeL": 0.3787,
-            "flores_en2ca": 0.4088,
-            "flores_ca2en": 0.4503,
-            "ifeval_prompt_strict": 0.66,
-            "clam_pct": 42.48
+            "clam_pct": 45.66
         },
         {
             "model": "salamandra-7b",
@@ -457,13 +441,13 @@
             "quantized_analysis_only": false,
             "quantization": "q8",
             "sts_ca": 0.1528,
-            "catcola_mcc": 0.1058,
+            "catcola_mcc": 0.1015,
             "club_qa_em": 0.82,
             "casum_rougeL": 0.3562,
             "flores_en2ca": 0.4258,
             "flores_ca2en": 0.439,
             "ifeval_prompt_strict": 0.645,
-            "clam_pct": 41.87
+            "clam_pct": 41.8
         },
         {
             "model": "aya-expanse-8b",
@@ -473,13 +457,13 @@
             "quantized_analysis_only": false,
             "quantization": "q8",
             "sts_ca": 0.5955,
-            "catcola_mcc": 0.1159,
+            "catcola_mcc": 0.068,
             "club_qa_em": 0.84,
             "casum_rougeL": 0.3421,
             "flores_en2ca": 0.2033,
             "flores_ca2en": 0.2804,
             "ifeval_prompt_strict": 0.33,
-            "clam_pct": 41.09
+            "clam_pct": 40.29
         },
         {
             "model": "gemma3-4b-q2",
@@ -496,6 +480,22 @@
             "flores_ca2en": 0.3585,
             "ifeval_prompt_strict": 0.43,
             "clam_pct": 39.12
+        },
+        {
+            "model": "mistral-small-24b",
+            "cloud": false,
+            "params_b": 24.0,
+            "memory_gb": 25.5,
+            "quantized_analysis_only": false,
+            "quantization": "q8",
+            "sts_ca": 0.032,
+            "catcola_mcc": 0.058,
+            "club_qa_em": 0.755,
+            "casum_rougeL": 0.3787,
+            "flores_en2ca": 0.4088,
+            "flores_ca2en": 0.4503,
+            "ifeval_prompt_strict": 0.66,
+            "clam_pct": 38.55
         }
     ]
 }
