@@ -14,19 +14,23 @@
         "clam_pct": "CLAM%",
         "quantization": "Quantització"
     },
-    "thresholds": {
-        "metric": "clam_pct",
-        "direction": "higher_is_better",
-        "success": {
-            "min": 50,
-            "color": "#388e3c"
-        },
-        "warning": {
-            "min": 40,
-            "color": "#f9a825"
-        },
-        "error": {
-            "color": "#c62828"
+    "metrics": {
+        "clam_pct": {
+            "direction": "higher_is_better",
+            "subtitle": "50% usable",
+            "label": "> 50% el considerem usable",
+            "caption": "Línia discontínua al 50% = \"usable per a tasques en català\"",
+            "success": {
+                "min": 50,
+                "color": "#388e3c"
+            },
+            "warning": {
+                "min": 40,
+                "color": "#f9a825"
+            },
+            "error": {
+                "color": "#c62828"
+            }
         }
     },
     "data": [
@@ -44,7 +48,7 @@
             "flores_en2ca": 0.4382,
             "flores_ca2en": 0.4656,
             "ifeval_prompt_strict": 0.7675,
-            "clam_pct": 55.76
+            "clam_pct": 57.52
         },
         {
             "model": "gemma3-27b-q4",
@@ -60,7 +64,7 @@
             "flores_en2ca": 0.4416,
             "flores_ca2en": 0.4652,
             "ifeval_prompt_strict": 0.77,
-            "clam_pct": 55.22
+            "clam_pct": 56.87
         },
         {
             "model": "gemma3-27b-q2",
@@ -76,7 +80,7 @@
             "flores_en2ca": 0.4207,
             "flores_ca2en": 0.45,
             "ifeval_prompt_strict": 0.7,
-            "clam_pct": 52.53
+            "clam_pct": 54.03
         },
         {
             "model": "gemma3-12b",
@@ -86,13 +90,13 @@
             "quantized_analysis_only": false,
             "quantization": "q8",
             "sts_ca": 0.6823,
-            "catcola_mcc": 0.332,
+            "catcola_mcc": 0.3464,
             "club_qa_em": 0.815,
             "casum_rougeL": 0.3707,
             "flores_en2ca": 0.4242,
             "flores_ca2en": 0.4697,
             "ifeval_prompt_strict": 0.75,
-            "clam_pct": 54.91
+            "clam_pct": 56.86
         },
         {
             "model": "gemma3-12b-q4",
@@ -108,7 +112,7 @@
             "flores_en2ca": 0.4159,
             "flores_ca2en": 0.4535,
             "ifeval_prompt_strict": 0.7275,
-            "clam_pct": 54.21
+            "clam_pct": 56.0
         },
         {
             "model": "gemma3-12b-q2",
@@ -124,7 +128,7 @@
             "flores_en2ca": 0.3813,
             "flores_ca2en": 0.4383,
             "ifeval_prompt_strict": 0.68,
-            "clam_pct": 50.67
+            "clam_pct": 52.29
         },
         {
             "model": "gemma3-4b",
@@ -134,13 +138,13 @@
             "quantized_analysis_only": false,
             "quantization": "q8",
             "sts_ca": 0.7022,
-            "catcola_mcc": 0.2657,
+            "catcola_mcc": 0.2486,
             "club_qa_em": 0.8375,
             "casum_rougeL": 0.3931,
             "flores_en2ca": 0.3702,
             "flores_ca2en": 0.424,
             "ifeval_prompt_strict": 0.585,
-            "clam_pct": 51.11
+            "clam_pct": 52.72
         },
         {
             "model": "gemma3-4b-q4",
@@ -156,7 +160,7 @@
             "flores_en2ca": 0.3463,
             "flores_ca2en": 0.3937,
             "ifeval_prompt_strict": 0.585,
-            "clam_pct": 50.25
+            "clam_pct": 52.46
         },
         {
             "model": "gemma3-4b-q2",
@@ -172,7 +176,7 @@
             "flores_en2ca": 0.2989,
             "flores_ca2en": 0.3585,
             "ifeval_prompt_strict": 0.43,
-            "clam_pct": 38.22
+            "clam_pct": 39.12
         }
     ]
 }
