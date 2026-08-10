@@ -10,6 +10,7 @@ import argparse
 import json
 import re
 import sys
+from statistics import fmean
 from pathlib import Path
 
 from jinja2 import Environment
@@ -52,12 +53,26 @@ def extract_metrics(data: dict) -> dict:
 
     flores = benchmarks.get("flores", {})
     if flores:
-        en2ca = flores.get("catalan_bench_flores_en-ca", {})
-        ca2en = flores.get("catalan_bench_flores_ca-en", {})
-        if en2ca:
-            metrics["flores_en2ca"] = en2ca.get("bleu,none")
-        if ca2en:
-            metrics["flores_ca2en"] = ca2en.get("bleu,none")
+        directions = {
+            "flores_en2ca": "catalan_bench_flores_en-ca",
+            "flores_ca2en": "catalan_bench_flores_ca-en",
+            "flores_es2ca": "catalan_bench_flores_es-ca",
+            "flores_ca2es": "catalan_bench_flores_ca-es",
+        }
+        for metric, task in directions.items():
+            result = flores.get(task, {})
+            if result and result.get("bleu,none") is not None:
+                metrics[metric] = result["bleu,none"]
+
+        for pair, keys in {
+            "flores_en_ca": ("flores_en2ca", "flores_ca2en"),
+            "flores_es_ca": ("flores_es2ca", "flores_ca2es"),
+        }.items():
+            values = [metrics[key] for key in keys if metrics.get(key) is not None]
+            # A language-pair score is bidirectional, so do not publish a
+            # misleading half-pair when one direction failed or is missing.
+            if len(values) == len(keys):
+                metrics[pair] = fmean(values)
 
     ifeval = benchmarks.get("ifeval", {})
     if ifeval and "error" not in ifeval:
@@ -77,8 +92,8 @@ RANDOM_BASELINES = {
     "catcola_mcc":     0.0,   # MCC for binary classification: random baseline is 0
     "club_qa_em":      0.0,   # bounded 0..1, no trivial guesser
     "casum_rougeL":    0.0,   # bounded 0..1
-    "flores_en2ca":    0.0,   # BLEU/100 → 0..1
-    "flores_ca2en":    0.0,   # BLEU/100 → 0..1
+    "flores_en_ca":    0.0,   # mean bidirectional BLEU/100 → 0..1
+    "flores_es_ca":    0.0,   # mean bidirectional BLEU/100 → 0..1
     "ifeval_prompt_strict": 0.0,  # prompt-level strict accuracy, bounded 0..1
 }
 
@@ -93,8 +108,8 @@ COLUMN_LABELS = {
     "catcola_mcc": "CatCoLA MCC",
     "club_qa_em": "CLUB QA",
     "casum_rougeL": "CaSum",
-    "flores_en2ca": "EN→CA",
-    "flores_ca2en": "CA→EN",
+    "flores_en_ca": "EN↔CA",
+    "flores_es_ca": "ES↔CA",
     "ifeval_prompt_strict": "IFEval",
     "clam_pct": "CLAM%",
 }
@@ -109,9 +124,11 @@ def normalize_score(key: str, raw) -> float | None:
     if raw is None:
         return None
     value = raw
-    if key in ("flores_en2ca", "flores_ca2en"):
+    if key.startswith("flores_"):
         value = value / 100.0
-    baseline = RANDOM_BASELINES[key]
+    # Directional FLORES metrics are normalized for JSON diagnostics but are
+    # deliberately not CLAM tasks or public table columns.
+    baseline = RANDOM_BASELINES.get(key, 0.0)
     if baseline == 1.0:
         return None  # degenerate
     normalized = (value - baseline) / (1.0 - baseline)
@@ -120,7 +137,7 @@ def normalize_score(key: str, raw) -> float | None:
 
 def clam_score(metrics: dict) -> float | None:
     """Compute CLAM composite score (0–100) as mean of normalized task scores."""
-    translation_keys = ("flores_en2ca", "flores_ca2en")
+    translation_keys = ("flores_en_ca", "flores_es_ca")
     normalized = [
         normalize_score(k, metrics.get(k))
         for k in CLAM_TASKS
@@ -276,10 +293,14 @@ def main():
         return f"{params_b:.0f}B ({mem})"
 
     # ── Raw scores table ──────────────────────────────────────────────────────
-    col_width = max(14, max(len(k) for k in all_metric_keys) + 2)
+    direction_keys = ("flores_en2ca", "flores_ca2en", "flores_es2ca", "flores_ca2es")
+    # This is the public schema and table order. Keep it stable even when a
+    # result set has no value for a newly introduced task yet.
+    display_metric_keys = list(CLAM_TASKS)
+    col_width = max(14, max(len(k) for k in display_metric_keys) + 2)
     params_col_w = 16
     label_width = max(12, max(len(label) for label, _, _cloud, *_ in rows) + 2)
-    header = f"{'Model':<{label_width}}" + f"{'Params (mem)':>{params_col_w}}" + "".join(f"{k:>{col_width}}" for k in all_metric_keys)
+    header = f"{'Model':<{label_width}}" + f"{'Params (mem)':>{params_col_w}}" + "".join(f"{k:>{col_width}}" for k in display_metric_keys)
     separator = "-" * len(header)
 
     print("\nRaw scores")
@@ -287,12 +308,12 @@ def main():
     print(header)
     print(separator)
     for label, metrics, _cloud, params_b, memory_gb, *_ in rows:
-        row = "".join(f"{fmt(metrics.get(k)):>{col_width}}" for k in all_metric_keys)
+        row = "".join(f"{fmt(metrics.get(k)):>{col_width}}" for k in display_metric_keys)
         print(f"{label:<{label_width}}{fmt_params(params_b, memory_gb):>{params_col_w}}{row}")
     print(separator)
 
     # ── Normalized scores + CLAM composite table ──────────────────────────────
-    norm_keys = [k for k in CLAM_TASKS if k in all_metric_keys]
+    norm_keys = list(CLAM_TASKS)
     norm_col_w = max(14, max(len(k) for k in norm_keys) + 2)
     clam_col_w = 10
     norm_label_w = label_width
@@ -319,7 +340,7 @@ def main():
 
     # ── HTML export ───────────────────────────────────────────────────────────
     html_path = Path(args.html)
-    html_path.write_text(render_html(rows, all_metric_keys, norm_keys, fmt_params), encoding="utf-8")
+    html_path.write_text(render_html(rows, display_metric_keys, norm_keys, fmt_params), encoding="utf-8")
     print(f"\nHTML saved to {html_path}")
 
     # ── JSON export ───────────────────────────────────────────────────────────
@@ -352,6 +373,11 @@ def main():
             "quantized_analysis_only": quantized_analysis_only,
             "quantization": quantization,
             **{k: round(normalize_score(k, metrics.get(k)), 4) if normalize_score(k, metrics.get(k)) is not None else None for k in norm_keys},
+            **{
+                k: round(normalize_score(k, metrics.get(k)), 4)
+                if normalize_score(k, metrics.get(k)) is not None else None
+                for k in direction_keys
+            },
             "clam_pct": round(clam_score(metrics), 2) if clam_score(metrics) is not None else None,
         }
         json_rows.append(entry)

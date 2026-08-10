@@ -414,7 +414,7 @@ def run_casum(model, n_samples: int = 100) -> dict:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 5. FLORES+ — Machine Translation (English ↔ Catalan)
+# 5. FLORES+ — Machine Translation (English/Spanish ↔ Catalan)
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -428,17 +428,18 @@ def run_flores(
     gemini_api_key: str | None = None,
     openrouter_model: str | None = None,
     openrouter_api_key: str | None = None,
+    tasks: list[str] | None = None,
 ) -> dict:
     """
     Translation evaluation on FLORES+ devtest split via lm-evaluation-harness.
-    Tests: English → Catalan and Catalan → English.
+    Tests both directions for English↔Catalan and Spanish↔Catalan.
     Metric: BLEU, TER, chrF (computed by lm-eval).
     Supports llama-server (via base_url), OpenAI API (via openai_model), OpenRouter, or HF.
     """
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
 
-    print("\n[5/6] Running FLORES+ (EN↔CA translation) via lm-evaluation-harness …")
+    print("\n[5/6] Running FLORES+ (EN↔CA and ES↔CA translation) via lm-evaluation-harness …")
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
     inference_provider = "gemini" if gemini_model else "openrouter" if openrouter_model else "openai" if openai_model else "llama" if base_url else "hf"
@@ -493,7 +494,12 @@ def run_flores(
 
     gen_kwargs = lm_eval_params(2048, inference_provider, inference_model)
 
-    flores_tasks = ["catalan_bench_flores_en-ca", "catalan_bench_flores_ca-en"]
+    flores_tasks = tasks or [
+        "catalan_bench_flores_en-ca",
+        "catalan_bench_flores_ca-en",
+        "catalan_bench_flores_es-ca",
+        "catalan_bench_flores_ca-es",
+    ]
     try:
         results = lm_eval.simple_evaluate(
             model=lm_model,
@@ -505,6 +511,7 @@ def run_flores(
             batch_size=1,
             log_samples=False,
             limit=n_samples,
+            bootstrap_iters=0,
             confirm_run_unsafe_code=True,
             gen_kwargs=gen_kwargs,
         )
@@ -709,6 +716,18 @@ def main():
         help="Number of samples per benchmark (default: 100)",
     )
     parser.add_argument(
+        "--flores-tasks",
+        nargs="+",
+        choices=[
+            "catalan_bench_flores_en-ca",
+            "catalan_bench_flores_ca-en",
+            "catalan_bench_flores_es-ca",
+            "catalan_bench_flores_ca-es",
+        ],
+        default=None,
+        help="Optional FLORES direction subset (default: all four directions)",
+    )
+    parser.add_argument(
         "--output",
         default="evals/catalan_eval_results.json",
         help="Output file for results (default: evals/catalan_eval_results.json)",
@@ -835,6 +854,7 @@ def main():
                     gemini_api_key=args.api_key if args.model == "gemini" else None,
                     openrouter_model=args.openai_model if args.model == "claude" else None,
                     openrouter_api_key=(args.api_key or os.environ.get("OPENROUTER_API_KEY")) if args.model == "claude" else None,
+                    tasks=args.flores_tasks,
                 )
             except Exception as e:
                 print(f"[warn] FLORES failed: {e}")

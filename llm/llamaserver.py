@@ -227,6 +227,9 @@ def llama_server_context(model_spec: str, port: int, device: str = "cpu"):
     ]
     if device == "cuda":
         cmd += ["--n-gpu-layers", "99"]
+    # Benchmarks measure final answers, not hidden reasoning behavior. Disable
+    # llama.cpp's template-level automatic reasoning for every local model.
+    cmd += ["--reasoning", "off"]
     log_file = open(log_path, "w")
     proc = subprocess.Popen(
         cmd,

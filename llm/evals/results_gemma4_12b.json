@@ -55,6 +55,24 @@
         "ter_stderr,none": 0.9860479767771394,
         "chrf,none": 69.24082086901943,
         "chrf_stderr,none": 0.6383157468847929
+      },
+      "catalan_bench_flores_es-ca": {
+        "alias": "catalan_bench_flores_es-ca",
+        "bleu,none": 0.0,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 100.0,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 2.4536769933321096,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_ca-es": {
+        "alias": "catalan_bench_flores_ca-es",
+        "bleu,none": 0.0,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 100.0,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 2.363313677692958,
+        "chrf_stderr,none": "N/A"
       }
     }
   },

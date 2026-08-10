@@ -74,8 +74,24 @@ El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models de l
 | **CatCoLA** | Acceptabilitat gramatical | MCC |
 | **CLUB / VilaQuAD** | Comprensió lectora (QA) | Exact Match |
 | **CaSum** | Resum de notícies en català | ROUGE-1/2/L |
-| **FLORES+** | Traducció automàtica EN↔CA | BLEU |
+| **FLORES+** | Traducció automàtica EN↔CA i ES↔CA | BLEU |
 | **IFEval-ca** | Seguiment d'instruccions | Accuracy |
+
+FLORES+ executa quatre tasques: `catalan_bench_flores_en-ca`,
+`catalan_bench_flores_ca-en`, `catalan_bench_flores_es-ca` i
+`catalan_bench_flores_ca-es`. Les taules mostren dues columnes bidireccionals:
+`EN↔CA` i `ES↔CA`, cadascuna calculada com la mitjana del BLEU normalitzat de
+les dues direccions.
+
+El contracte de `llm/llms.json` publica aquestes mitjanes com `flores_en_ca` i
+`flores_es_ca`. També conserva `flores_en2ca`, `flores_ca2en`, `flores_es2ca` i
+`flores_ca2es` per a diagnòstic, però aquestes quatre columnes direccionals no es
+mostren a les taules ni als gràfics per defecte.
+
+Per evitar donar doble pes a la traducció, CLAM calcula primer
+`translation_score` com la mitjana dels valors disponibles de `flores_en_ca` i
+`flores_es_ca`. El resultat final és la mitjana dels benchmarks que no són de
+traducció i aquest únic `translation_score`.
 
 ### Instal·lació (LLM)
 
@@ -105,6 +121,8 @@ llama-server --version
 ```
 
 Les eines també detecten automàticament `../llama.cpp/build/bin/llama-server` si compiles el projecte en un directori germà del repositori.
+
+L'script `../llama.cpp/server.sh` fa servir una configuració dinàmica comuna per a tots els models: `--n-gpu-layers auto --fit on --fit-target 1536`. Això ajusta automàticament les capes descarregades a la GPU i reserva 1,5 GiB de VRAM. Es pot sobreescriure amb les variables `N_GPU_LAYERS`, `FIT` i `FIT_TARGET`.
 
 Des de l'arrel del repositori, instal·la les dependències Python:
 

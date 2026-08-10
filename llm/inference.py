@@ -16,10 +16,17 @@ def inference_params(max_tokens=None, provider="llama", model_name=""):
         params["max_tokens"] = max_tokens
 
     model_name = model_name.lower()
-    if provider == "gemini":
+    if provider == "llama":
+        # Request-level control so benchmark behavior does not depend on the
+        # llama-server/server.sh launch configuration.
+        params.pop("reasoning_effort", None)
+        params["chat_template_kwargs"] = {"enable_thinking": False}
+    elif provider == "gemini":
         if "gemini-3" in model_name:
             if params["reasoning_effort"] == "none":
-                params["reasoning_effort"] = "minimal"
+                params["reasoning_effort"] = (
+                    "low" if "pro" in model_name else "minimal"
+                )
             params["max_tokens"] = max(params["max_tokens"], 1024)
         elif not model_name.startswith("gemini-"):
             params.pop("reasoning_effort")
