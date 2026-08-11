@@ -194,6 +194,26 @@
             "clam_pct": 55.38
         },
         {
+            "model": "muse-glimmer-30b",
+            "cloud": false,
+            "params_b": 30.0,
+            "memory_gb": 31.9,
+            "quantized_analysis_only": false,
+            "quantization": "q8",
+            "sts_ca": 0.7462,
+            "catcola_mcc": 0.1835,
+            "club_qa_em": 0.83,
+            "casum_rougeL": 0.4125,
+            "flores_en_ca": 0.453,
+            "flores_es_ca": 0.2727,
+            "ifeval_prompt_strict": 0.77,
+            "flores_en2ca": 0.4408,
+            "flores_ca2en": 0.4653,
+            "flores_es2ca": 0.2678,
+            "flores_ca2es": 0.2776,
+            "clam_pct": 55.08
+        },
+        {
             "model": "qwen3.5-9b",
             "cloud": false,
             "params_b": 9.0,
