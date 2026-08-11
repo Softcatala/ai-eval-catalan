@@ -129,6 +129,8 @@ class LlamaServerModel:
     def _completions(self, prompt: str, max_tokens: int, **kwargs) -> dict:
         params = inference_params(max_tokens)
         params.pop("reasoning_effort", None)
+        params.pop("chat_template_kwargs", None)
+        params.pop("reasoning_format", None)
         payload_data = {
             "prompt": prompt,
             **params,
@@ -139,7 +141,7 @@ class LlamaServerModel:
         return self._post_json("/completions", payload_data)
 
     def _chat_completions(self, prompt: str, max_tokens: int | None) -> dict:
-        params = chat_completion_params(max_tokens)
+        params = chat_completion_params(max_tokens, model_name=self.model_spec)
         payload_data = {
             "messages": [{"role": "user", "content": prompt}],
             **params,

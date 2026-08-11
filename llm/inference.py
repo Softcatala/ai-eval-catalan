@@ -21,6 +21,9 @@ def inference_params(max_tokens=None, provider="llama", model_name=""):
         # llama-server/server.sh launch configuration.
         params.pop("reasoning_effort", None)
         params["chat_template_kwargs"] = {"enable_thinking": False}
+        if "muse-glimmer" in model_name:
+            params["chat_template_kwargs"]["reasoning_strength"] = "low"
+            params["stop"] = ["<|eot|>", "<|eom|>", "<|start|>"]
     elif provider == "gemini":
         if "gemini-3" in model_name:
             if params["reasoning_effort"] == "none":

@@ -1,0 +1,41 @@
+{{- bos_token -}}
+{%- macro render_content(content) -%}
+{%- if content is string -%}
+{{- content -}}
+{%- elif content is iterable -%}
+{%- for part in content -%}
+{%- if part['type'] == 'text' -%}
+{{- part['text'] -}}
+{%- elif part['type'] == 'image' -%}
+{{- '<|patch|>' -}}
+{%- elif part['type'] == 'video' -%}
+{{- '<|video|>' -}}
+{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{%- endmacro -%}
+{%- if messages|length == 0 or messages[0]['role'] != 'system' -%}
+{{- '<|start|>system<|message|>You are a helpful AI assistant.\n\nReasoning strength: low.\n\n# Valid recipients: "self", "user".<|eot|>' -}}
+{%- endif -%}
+{%- for message in messages -%}
+{%- if message['role'] == 'system' -%}
+{{- '<|start|>system<|message|>' -}}
+{{- render_content(message['content']) -}}
+{{- '\n\nReasoning strength: low.\n\n# Valid recipients: "self", "user".<|eot|>' -}}
+{%- elif message['role'] == 'user' -%}
+{{- '<|start|>user<|message|>' -}}
+{{- render_content(message['content']) -}}
+{{- '<|eot|>' -}}
+{%- elif message['role'] == 'assistant' -%}
+{{- '<|start|>assistant to=user<|message|>' -}}
+{{- render_content(message['content']) -}}
+{{- '<|eot|>' -}}
+{%- elif message['role'] == 'tool' -%}
+{{- '<|start|>tool<|message|>' -}}
+{{- render_content(message['content']) -}}
+{{- '<|eot|>' -}}
+{%- endif -%}
+{%- endfor -%}
+{%- if add_generation_prompt -%}
+{{- '<|start|>assistant to=user<|message|>' -}}
+{%- endif -%}
