@@ -404,16 +404,18 @@ MODELS = [
         "quantization": "",
     },
     {
-        "display_name": "claude-opus-4-7",
-        "output": "evals/results_claude_opus_4_7.json",
+        "display_name": "claude-sonnet-4-6",
+        "output": "evals/results_claude_sonnet_4_6.json",
         "args": [
             "--model",
-            "claude",
+            "openai",
             "--openai-model",
-            "anthropic/claude-opus-4-7",
+            "global.anthropic.claude-sonnet-4-6",
+            "--openai-base-url",
+            f"https://bedrock-runtime.{os.environ.get('AWS_REGION') or os.environ.get('AWS_DEFAULT_REGION') or 'us-east-1'}.amazonaws.com/v1",
         ],
         "cloud": True,
-        "needs_openrouter_api_key": True,
+        "needs_bedrock_token": True,
         "ram_gb": 0,
         "params_b": None,
         "quantization": "",
@@ -505,7 +507,7 @@ def main():
 
     google_api_key = os.environ.get("GOOGLE_API_KEY")
     openai_api_key = os.environ.get("OPENAI_API_KEY")
-    openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
+    bedrock_token = os.environ.get("AWS_BEARER_TOKEN_BEDROCK")
     llama_server_port = (
         os.environ.get("LLAMA_SERVER_PORT")
         or os.environ.get("LLAMA_CPP_PORT")
@@ -530,8 +532,8 @@ def main():
             print(f"[SKIP] {name} — OPENAI_API_KEY env var required but not set")
             continue
 
-        if model.get("needs_openrouter_api_key") and not openrouter_api_key:
-            print(f"[SKIP] {name} — OPENROUTER_API_KEY env var required but not set")
+        if model.get("needs_bedrock_token") and not bedrock_token:
+            print(f"[SKIP] {name} — AWS_BEARER_TOKEN_BEDROCK env var required but not set")
             continue
 
         cmd = [
@@ -571,11 +573,13 @@ def main():
         if model.get("needs_api_key"):
             cmd += ["--api-key", google_api_key]
 
-        if model.get("needs_openrouter_api_key"):
-            cmd += ["--api-key", openrouter_api_key]
-
         print(f"\n[RUN] {name}: {' '.join(cmd)}\n{'='*60}")
-        result = subprocess.run(cmd, cwd=SCRIPT_DIR, stdin=subprocess.DEVNULL)
+        run_env = os.environ.copy()
+        if model.get("needs_bedrock_token"):
+            run_env["OPENAI_API_KEY"] = bedrock_token
+        result = subprocess.run(
+            cmd, cwd=SCRIPT_DIR, stdin=subprocess.DEVNULL, env=run_env
+        )
 
         if result.returncode != 0:
             print(f"[ERROR] {name} exited with code {result.returncode}")

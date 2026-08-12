@@ -6,7 +6,7 @@
   "memory_gb": null,
   "benchmarks": {
     "sts_ca": {
-      "pearson": 0.8283,
+      "pearson": 0.8208,
       "n": 400
     },
     "casum": {
@@ -16,7 +16,7 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.6107,
+      "mcc": 0.6192,
       "accuracy": 0.8525,
       "n": 400
     },
@@ -45,6 +45,24 @@
         "ter_stderr,none": 0.997462957059673,
         "chrf,none": 74.88756623058043,
         "chrf_stderr,none": 0.7212107996304015
+      },
+      "catalan_bench_flores_es-ca": {
+        "alias": "catalan_bench_flores_es-ca",
+        "bleu,none": 28.46484313275678,
+        "bleu_stderr,none": 0.6808790841550061,
+        "ter,none": 61.76959866916199,
+        "ter_stderr,none": 0.790325473150488,
+        "chrf,none": 57.53886385367684,
+        "chrf_stderr,none": 0.513429168628836
+      },
+      "catalan_bench_flores_ca-es": {
+        "alias": "catalan_bench_flores_ca-es",
+        "bleu,none": 27.495585646461087,
+        "bleu_stderr,none": 0.6198499253692221,
+        "ter,none": 59.09001765051971,
+        "ter_stderr,none": 0.6418482357743667,
+        "chrf,none": 55.214161725954625,
+        "chrf_stderr,none": 0.5571659569447063
       }
     },
     "ifeval": {
