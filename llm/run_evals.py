@@ -189,9 +189,9 @@ MODELS = [
         "quantization": "q4",
     },
     {
-        "display_name": "qwen3.6-27b",
-        "output": "evals/results_qwen3.6_27b.json",
-        "args": ["--model", "unsloth/Qwen3.6-27B-GGUF:Q4_K_M", "--device", "cuda"],
+        "display_name": "qwen3.8-27b",
+        "output": "evals/results_qwen3.8_27b.json",
+        "args": ["--model", "unsloth/Qwen3.8-27B-GGUF:Q4_K_M", "--device", "cuda"],
         "ram_gb": 15,
         "params_b": 27.0,
         "quantization": "q4",
