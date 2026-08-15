@@ -29,7 +29,7 @@ def expected_gguf_filename(model_spec: str) -> str:
     if ":" in model_spec:
         repo, quant = model_spec.rsplit(":", 1)
     else:
-        repo, quant = model_spec, "Q8_0"
+        repo, quant = model_spec, "Q4_K_M"
 
     if repo in _FILENAME_OVERRIDES:
         return _FILENAME_OVERRIDES[repo].format(quant=quant)
@@ -41,7 +41,7 @@ def expected_gguf_filename(model_spec: str) -> str:
 def _hf_tokenizer_from_gguf(model_spec: str) -> str:
     """
     Derive the HuggingFace tokenizer repo from a bartowski GGUF spec.
-    e.g. "bartowski/google_gemma-3-1b-it-GGUF:Q8_0" -> "google/gemma-3-1b-it"
+    e.g. "bartowski/google_gemma-3-1b-it-GGUF:Q4_K_M" -> "google/gemma-3-1b-it"
     """
     _KNOWN = {
         "aya-expanse-8b": "CohereForAI/aya-expanse-8b",
@@ -89,8 +89,8 @@ class LlamaServerModel:
     """
     GGUF model accessed via a running llama-server (OpenAI-compatible completions API).
 
-    model_spec format: "repo/ModelName-GGUF:Q8_0"
-      e.g. "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0"
+    model_spec format: "repo/ModelName-GGUF:Q4_K_M"
+      e.g. "bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M"
     """
 
     def __init__(

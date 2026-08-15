@@ -20,8 +20,8 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).parent
 
-# Models sized to fit in Tesla T4 (15 GB VRAM). Run sequentially — only 7 GB host RAM available.
-# 24B Q8 (~24 GB) exceeds VRAM; using Q4_K_M (~13 GB) instead.
+# Local GGUF models use Q4_K_M by default. Gemma 3 additionally retains Q2 and
+# Q8 variants for quantization analysis.
 MODELS = [
     {
         "display_name": "gemma3-4b-q2",
@@ -38,7 +38,7 @@ MODELS = [
         "quantized_analysis_only": True,
     },
     {
-        "display_name": "gemma3-4b-q4",
+        "display_name": "gemma3-4b",
         "output": "evals/results_gemma3_4b_q4.json",
         "args": [
             "--model",
@@ -49,10 +49,9 @@ MODELS = [
         "ram_gb": 3,
         "params_b": 4.0,
         "quantization": "q4",
-        "quantized_analysis_only": True,
     },
     {
-        "display_name": "gemma3-4b",
+        "display_name": "gemma3-4b-q8",
         "output": "evals/results_gemma3_4b_q8.json",
         "args": [
             "--model",
@@ -63,6 +62,7 @@ MODELS = [
         "ram_gb": 5,
         "params_b": 4.0,
         "quantization": "q8",
+        "quantized_analysis_only": True,
     },
     {
         "display_name": "gemma3-12b-q2",
@@ -79,7 +79,7 @@ MODELS = [
         "quantized_analysis_only": True,
     },
     {
-        "display_name": "gemma3-12b-q4",
+        "display_name": "gemma3-12b",
         "output": "evals/results_gemma3_12b_q4.json",
         "args": [
             "--model",
@@ -90,10 +90,9 @@ MODELS = [
         "ram_gb": 7,
         "params_b": 12.0,
         "quantization": "q4",
-        "quantized_analysis_only": True,
     },
     {
-        "display_name": "gemma3-12b",
+        "display_name": "gemma3-12b-q8",
         "output": "evals/results_gemma3_12b.json",
         "args": [
             "--model",
@@ -104,6 +103,7 @@ MODELS = [
         "ram_gb": 12,
         "params_b": 12.0,
         "quantization": "q8",
+        "quantized_analysis_only": True,
     },
     {
         "display_name": "gemma3-27b-q2",
@@ -120,7 +120,7 @@ MODELS = [
         "quantized_analysis_only": True,
     },
     {
-        "display_name": "gemma3-27b-q4",
+        "display_name": "gemma3-27b",
         "output": "evals/results_gemma3_27b_q4.json",
         "args": [
             "--model",
@@ -131,10 +131,9 @@ MODELS = [
         "ram_gb": 15,
         "params_b": 27.0,
         "quantization": "q4",
-        "quantized_analysis_only": True,
     },
     {
-        "display_name": "gemma3-27b",
+        "display_name": "gemma3-27b-q8",
         "output": "evals/results_gemma3_27b.json",
         "args": [
             "--model",
@@ -145,59 +144,60 @@ MODELS = [
         "ram_gb": 27,
         "params_b": 27.0,
         "quantization": "q8",
+        "quantized_analysis_only": True,
     },
     {
         "display_name": "mistral-small-24b",
         "output": "evals/results_mistral_small_24b.json",
         "args": [
             "--model",
-            "bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q8_0",
+            "bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q4_K_M",
             "--device",
             "cuda",
         ],
-        "ram_gb": 25,
+        "ram_gb": 13,
         "params_b": 24.0,
-        "quantization": "q8",
+        "quantization": "q4",
     },
     {
         "display_name": "qwen3-14b",
         "output": "evals/results_qwen3_14b.json",
-        "args": ["--model", "bartowski/Qwen_Qwen3-14B-GGUF:Q8_0", "--device", "cuda"],
-        "ram_gb": 14,
+        "args": ["--model", "bartowski/Qwen_Qwen3-14B-GGUF:Q4_K_M", "--device", "cuda"],
+        "ram_gb": 8,
         "params_b": 14.0,
-        "quantization": "q8",
+        "quantization": "q4",
     },
     {
         "display_name": "phi-4",
         "output": "evals/results_phi4_q8.json",
         "args": [
             "--model",
-            "bartowski/phi-4-GGUF:Q8_0",
+            "bartowski/phi-4-GGUF:Q4_K_M",
         ],
         "external_llama_server": True,
-        "llama_server_model": "phi-4-Q8_0",
-        "ram_gb": 15,
+        "llama_server_model": "phi-4-Q4_K_M",
+        "ram_gb": 8,
         "params_b": 14.0,
-        "quantization": "q8",
+        "quantization": "q4",
     },
     {
         "display_name": "qwen3.5-9b",
         "output": "evals/results_qwen3.5_9b.json",
-        "args": ["--model", "bartowski/Qwen_Qwen3.5-9B-GGUF:Q8_0", "--device", "cuda"],
-        "ram_gb": 9,
+        "args": ["--model", "bartowski/Qwen_Qwen3.5-9B-GGUF:Q4_K_M", "--device", "cuda"],
+        "ram_gb": 5,
         "params_b": 9.0,
-        "quantization": "q8",
+        "quantization": "q4",
     },
     {
         "display_name": "qwen3.6-27b",
         "output": "evals/results_qwen3.6_27b.json",
-        "args": ["--model", "unsloth/Qwen3.6-27B-GGUF:Q8_0", "--device", "cuda"],
-        "ram_gb": 27,
+        "args": ["--model", "unsloth/Qwen3.6-27B-GGUF:Q4_K_M", "--device", "cuda"],
+        "ram_gb": 15,
         "params_b": 27.0,
-        "quantization": "q8",
+        "quantization": "q4",
     },
     {
-        "display_name": "muse-glimmer-30b",
+        "display_name": "muse-glimmer-30b Q8",
         "output": "evals/results_muse_glimmer_30b_q8.json",
         "args": [
             "--model",
@@ -215,55 +215,55 @@ MODELS = [
         "output": "evals/results_llama3.1_8b.json",
         "args": [
             "--model",
-            "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q8_0",
+            "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M",
             "--device",
             "cuda",
         ],
-        "ram_gb": 8,
+        "ram_gb": 5,
         "params_b": 8.0,
-        "quantization": "q8",
+        "quantization": "q4",
     },
     {
         "display_name": "aya-expanse-8b",
         "output": "evals/results_aya_expanse_8b.json",
         "args": [
             "--model",
-            "bartowski/aya-expanse-8b-GGUF:Q8_0",
+            "bartowski/aya-expanse-8b-GGUF:Q4_K_M",
             "--device",
             "cuda",
         ],
-        "ram_gb": 8,
+        "ram_gb": 5,
         "params_b": 8.0,
-        "quantization": "q8",
+        "quantization": "q4",
     },
     {
         "display_name": "eurollm-9b",
         "output": "evals/results_eurollm_9b.json",
         "args": [
             "--model",
-            "bartowski/EuroLLM-9B-Instruct-GGUF:Q8_0",
+            "bartowski/EuroLLM-9B-Instruct-GGUF:Q4_K_M",
             "--device",
             "cuda",
         ],
-        "ram_gb": 9,
+        "ram_gb": 5,
         "params_b": 9.0,
-        "quantization": "q8",
+        "quantization": "q4",
     },
     {
         "display_name": "salamandra-7b",
         "output": "evals/results_salamandra_7b.json",
         "args": [
             "--model",
-            "mradermacher/salamandra-7b-instruct-2606-GGUF:Q8_0",
+            "mradermacher/salamandra-7b-instruct-2606-GGUF:Q4_K_M",
             "--device",
             "cuda",
         ],
-        "ram_gb": 7,
+        "ram_gb": 4,
         "params_b": 7.0,
-        "quantization": "q8",
+        "quantization": "q4",
     },
     {
-        "display_name": "gemma4-12b-q4",
+        "display_name": "gemma4-12b",
         "output": "evals/results_gemma4_12b_q4.json",
         "args": [
             "--model",
@@ -274,23 +274,9 @@ MODELS = [
         "ram_gb": 7,
         "params_b": 12.0,
         "quantization": "q4",
-        "quantized_analysis_only": True,
     },
     {
-        "display_name": "gemma4-12b",
-        "output": "evals/results_gemma4_12b.json",
-        "args": [
-            "--model",
-            "unsloth/gemma-4-12b-it-GGUF:Q8_0",
-            "--device",
-            "cuda",
-        ],
-        "ram_gb": 13,
-        "params_b": 12.0,
-        "quantization": "q8",
-    },
-    {
-        "display_name": "gemma4-e4b-q4",
+        "display_name": "gemma4-e4b",
         "output": "evals/results_gemma4_e4b_q4.json",
         "args": [
             "--model",
@@ -301,23 +287,9 @@ MODELS = [
         "ram_gb": 3,
         "params_b": 4.0,
         "quantization": "q4",
-        "quantized_analysis_only": True,
     },
     {
-        "display_name": "gemma4-e4b",
-        "output": "evals/results_gemma4_e4b.json",
-        "args": [
-            "--model",
-            "bartowski/google_gemma-4-E4B-it-GGUF:Q8_0",
-            "--device",
-            "cuda",
-        ],
-        "ram_gb": 5,
-        "params_b": 4.0,
-        "quantization": "q8",
-    },
-    {
-        "display_name": "gemma4-26b-q4",
+        "display_name": "gemma4-26b",
         "output": "evals/results_gemma4_26b_q4.json",
         "args": [
             "--model",
@@ -328,20 +300,6 @@ MODELS = [
         "ram_gb": 14,
         "params_b": 26.0,
         "quantization": "q4",
-        "quantized_analysis_only": True,
-    },
-    {
-        "display_name": "gemma4-26b",
-        "output": "evals/results_gemma4_26b_q8.json",
-        "args": [
-            "--model",
-            "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q8_0",
-            "--device",
-            "cuda",
-        ],
-        "ram_gb": 26,
-        "params_b": 26.0,
-        "quantization": "q8",
     },
     {
         "display_name": "gemini-3-1-preview",

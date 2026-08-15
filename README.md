@@ -176,8 +176,8 @@ Amb un sol `llama.cpp server`, l'orquestrador només permet un model local per e
 Si el servidor requereix un identificador de model concret:
 
 ```bash
-uv run python model.py --model "bartowski/google_gemma-3-12b-it-GGUF:Q8_0" --server-url http://localhost:9090/v1 --server-model gemma-3-12b-it-Q8_0
-uv run python run_evals.py --models gemma3-12b --server-model gemma-3-12b-it-Q8_0
+uv run python model.py --model "bartowski/google_gemma-3-12b-it-GGUF:Q4_K_M" --server-url http://localhost:9090/v1 --server-model gemma-3-12b-it-Q4_K_M
+uv run python run_evals.py --models gemma3-12b --server-model gemma-3-12b-it-Q4_K_M
 ```
 
 **Avaluar amb l'API de Google AI o OpenAI:**
