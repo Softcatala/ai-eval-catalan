@@ -197,18 +197,18 @@ MODELS = [
         "quantization": "q4",
     },
     {
-        "display_name": "muse-glimmer-30b Q8",
+        "display_name": "muse-glimmer-30b",
         "output": "evals/results_muse_glimmer_30b_q8.json",
         "args": [
             "--model",
-            "unsloth/Muse-Glimmer-30B-GGUF:UD-Q8_K_XL",
+            "unsloth/Muse-Glimmer-30B-GGUF:UD-Q4_K_XL",
             "--device",
             "cuda",
         ],
-        "llama_server_model": "Muse-Glimmer-30B-UD-Q8_K_XL",
-        "ram_gb": 32,
+        "llama_server_model": "Muse-Glimmer-30B-UD-Q4_K_XL",
+        "ram_gb": 17,
         "params_b": 30.0,
-        "quantization": "q8",
+        "quantization": "q4",
     },
     {
         "display_name": "llama3.1-8b",
