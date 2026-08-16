@@ -134,8 +134,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 13,
         "params_b": 24.0,
@@ -144,7 +142,7 @@ MODELS = [
     {
         "display_name": "qwen3-14b",
         "output": "evals/results_qwen3_14b_q4.json",
-        "args": ["--model", "bartowski/Qwen_Qwen3-14B-GGUF:Q4_K_M", "--device", "cuda"],
+        "args": ["--model", "bartowski/Qwen_Qwen3-14B-GGUF:Q4_K_M"],
         "ram_gb": 8,
         "params_b": 14.0,
         "quantization": "q4",
@@ -165,7 +163,7 @@ MODELS = [
     {
         "display_name": "qwen3.5-9b",
         "output": "evals/results_qwen3.5_9b_q4.json",
-        "args": ["--model", "bartowski/Qwen_Qwen3.5-9B-GGUF:Q4_K_M", "--device", "cuda"],
+        "args": ["--model", "bartowski/Qwen_Qwen3.5-9B-GGUF:Q4_K_M"],
         "ram_gb": 5,
         "params_b": 9.0,
         "quantization": "q4",
@@ -173,7 +171,7 @@ MODELS = [
     {
         "display_name": "qwen3.8-27b",
         "output": "evals/results_qwen3.8_27b.json",
-        "args": ["--model", "unsloth/Qwen3.8-27B-GGUF:Q4_K_M", "--device", "cuda"],
+        "args": ["--model", "unsloth/Qwen3.8-27B-GGUF:Q4_K_M"],
         "ram_gb": 15,
         "params_b": 27.0,
         "quantization": "q4",
@@ -184,8 +182,6 @@ MODELS = [
         "args": [
             "--model",
             "unsloth/Muse-Glimmer-30B-GGUF:UD-Q4_K_XL",
-            "--device",
-            "cuda",
         ],
         "llama_server_model": "Muse-Glimmer-30B-UD-Q4_K_XL",
         "ram_gb": 17,
@@ -198,8 +194,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 5,
         "params_b": 8.0,
@@ -211,8 +205,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/aya-expanse-8b-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 5,
         "params_b": 8.0,
@@ -224,8 +216,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/EuroLLM-9B-Instruct-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 5,
         "params_b": 9.0,
@@ -237,8 +227,6 @@ MODELS = [
         "args": [
             "--model",
             "mradermacher/salamandra-7b-instruct-2606-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 4,
         "params_b": 7.0,
