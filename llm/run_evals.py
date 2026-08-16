@@ -148,7 +148,7 @@ MODELS = [
     },
     {
         "display_name": "mistral-small-24b",
-        "output": "evals/results_mistral_small_24b.json",
+        "output": "evals/results_mistral_small_24b_q4.json",
         "args": [
             "--model",
             "bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q4_K_M",
@@ -161,7 +161,7 @@ MODELS = [
     },
     {
         "display_name": "qwen3-14b",
-        "output": "evals/results_qwen3_14b.json",
+        "output": "evals/results_qwen3_14b_q4.json",
         "args": ["--model", "bartowski/Qwen_Qwen3-14B-GGUF:Q4_K_M", "--device", "cuda"],
         "ram_gb": 8,
         "params_b": 14.0,
@@ -169,7 +169,7 @@ MODELS = [
     },
     {
         "display_name": "phi-4",
-        "output": "evals/results_phi4_q8.json",
+        "output": "evals/results_phi4_q4.json",
         "args": [
             "--model",
             "bartowski/phi-4-GGUF:Q4_K_M",
@@ -182,7 +182,7 @@ MODELS = [
     },
     {
         "display_name": "qwen3.5-9b",
-        "output": "evals/results_qwen3.5_9b.json",
+        "output": "evals/results_qwen3.5_9b_q4.json",
         "args": ["--model", "bartowski/Qwen_Qwen3.5-9B-GGUF:Q4_K_M", "--device", "cuda"],
         "ram_gb": 5,
         "params_b": 9.0,
@@ -198,7 +198,7 @@ MODELS = [
     },
     {
         "display_name": "muse-glimmer-30b",
-        "output": "evals/results_muse_glimmer_30b_q8.json",
+        "output": "evals/results_muse_glimmer_30b_q4.json",
         "args": [
             "--model",
             "unsloth/Muse-Glimmer-30B-GGUF:UD-Q4_K_XL",
@@ -212,7 +212,7 @@ MODELS = [
     },
     {
         "display_name": "llama3.1-8b",
-        "output": "evals/results_llama3.1_8b.json",
+        "output": "evals/results_llama3.1_8b_q4.json",
         "args": [
             "--model",
             "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M",
@@ -225,7 +225,7 @@ MODELS = [
     },
     {
         "display_name": "aya-expanse-8b",
-        "output": "evals/results_aya_expanse_8b.json",
+        "output": "evals/results_aya_expanse_8b_q4.json",
         "args": [
             "--model",
             "bartowski/aya-expanse-8b-GGUF:Q4_K_M",
@@ -238,7 +238,7 @@ MODELS = [
     },
     {
         "display_name": "eurollm-9b",
-        "output": "evals/results_eurollm_9b.json",
+        "output": "evals/results_eurollm_9b_q4.json",
         "args": [
             "--model",
             "bartowski/EuroLLM-9B-Instruct-GGUF:Q4_K_M",
@@ -251,7 +251,7 @@ MODELS = [
     },
     {
         "display_name": "salamandra-7b",
-        "output": "evals/results_salamandra_7b.json",
+        "output": "evals/results_salamandra_7b_q4.json",
         "args": [
             "--model",
             "mradermacher/salamandra-7b-instruct-2606-GGUF:Q4_K_M",
