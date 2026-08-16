@@ -4,13 +4,11 @@ import argparse
 import json
 from pathlib import Path
 
+from eval_common.model_urls import repo_url
+
+SCRIPT_DIR = Path(__file__).parent
 
 CLOUD_PREFIXES = ("google-", "openai-", "gemini-", "voyage-", "cohere-")
-CLOUD_MODEL_REPOS = {
-    "gemini-embedding-001": "https://ai.google.dev/gemini-api/docs/embeddings",
-    "text-embedding-3-large": "https://platform.openai.com/docs/models/text-embedding-3-large",
-    "text-embedding-3-small": "https://platform.openai.com/docs/models/text-embedding-3-small",
-}
 
 
 def is_cloud(d) -> bool:
@@ -20,17 +18,9 @@ def is_cloud(d) -> bool:
     return any(name.startswith(p) for p in CLOUD_PREFIXES)
 
 
-def repo_url(model: str) -> str:
-    if "/" in model:
-        return f"https://huggingface.co/{model}"
-    if model in CLOUD_MODEL_REPOS:
-        return CLOUD_MODEL_REPOS[model]
-    raise ValueError(f"No repo URL configured for model: {model}")
-
-
-def load_rows() -> list[dict]:
+def load_rows(results_dir: Path) -> list[dict]:
     rows = []
-    for p in sorted(Path("evals").glob("results_*.json")):
+    for p in sorted(results_dir.glob("results_*.json")):
         d = json.loads(p.read_text())
         bench = d.get("benchmarks", {})
         xq = bench.get("xquad_ca_retrieval", {})
@@ -71,10 +61,11 @@ COL_LABELS = {
 
 def main():
     parser = argparse.ArgumentParser(description="Summarize embeddings eval results")
-    parser.add_argument("--json-out", default="embeddings.json")
+    parser.add_argument("--results-dir", default=SCRIPT_DIR / "evals")
+    parser.add_argument("--json-out", default=SCRIPT_DIR / "embeddings.json")
     args = parser.parse_args()
 
-    rows = load_rows()
+    rows = load_rows(Path(args.results_dir))
     for r in rows:
         r["composite"] = round(composite(r), 4)
     rows.sort(key=lambda r: r["composite"], reverse=True)

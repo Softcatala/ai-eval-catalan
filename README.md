@@ -8,6 +8,7 @@ Els resultats estan compartits a https://www.softcatala.org/ia-local/models-en-c
 ```
 ai-eval-catalan/
 ├── render_tables.py          # Genera taules HTML per a depuració local
+├── eval_common/              # Codi compartit pels generadors de JSON
 ├── llm/                      # Avaluació de models LLM
 │   ├── model.py              # Pipeline d'avaluació per a un model
 │   ├── run_evals.py          # Orquestrador per executar múltiples models
@@ -37,9 +38,9 @@ ai-eval-catalan/
 Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/workflows/publish-llms-json.yml` executa automàticament els passos següents:
 
 1. **Genera els fitxers de dades** a partir dels resultats JSON individuals de `llm/evals/`, `asr/evals/` i `embeddings/evals/`:
-   - `llm/summarize_results.py` → `llm/llms.json` i `llm/llms_quantized.json`
-   - `asr/summarize_results.py` → `asr/asrs.json`
-   - `embeddings/summarize_results.py` → `embeddings/embeddings.json`
+   - `python -m llm.summarize_results` → `llm/llms.json` i `llm/llms_quantized.json`
+   - `python -m asr.summarize_results` → `asr/asrs.json`
+   - `python -m embeddings.summarize_results` → `embeddings/embeddings.json`
 
 2. **Puja només els JSON a la branca `prod-data`**, que actua com a repositori de dades en producció:
    ```
@@ -87,6 +88,9 @@ El contracte de `llm/llms.json` publica aquestes mitjanes com `flores_en_ca` i
 `flores_es_ca`. També conserva `flores_en2ca`, `flores_ca2en`, `flores_es2ca` i
 `flores_ca2es` per a diagnòstic, però aquestes quatre columnes direccionals no es
 mostren a les taules ni als gràfics per defecte.
+
+Cada fila dels JSON publicats inclou `repo_url`, calculat amb el helper compartit
+`eval_common.model_urls`.
 
 Per evitar donar doble pes a la traducció, CLAM calcula primer
 `translation_score` com la mitjana dels valors disponibles de `flores_en_ca` i
@@ -137,8 +141,6 @@ export PATH="$PWD/build/bin:$PATH"
 llama-server --version
 ```
 
-Les eines també detecten automàticament `../llama.cpp/build/bin/llama-server` si compiles el projecte en un directori germà del repositori.
-
 L'script `../llama.cpp/server.sh` fa servir una configuració dinàmica comuna per a tots els models: `--n-gpu-layers auto --fit on --fit-target 1536`. Això ajusta automàticament les capes descarregades a la GPU i reserva 1,5 GiB de VRAM. Es pot sobreescriure amb les variables `N_GPU_LAYERS`, `FIT` i `FIT_TARGET`.
 
 Des de l'arrel del repositori, instal·la les dependències Python:
@@ -175,7 +177,7 @@ També escriu `presets.ini` al mateix directori, amb els ids de model que usa l'
 **2. Engegar `llama-server`:**
 
 ```bash
-llama-server --models-preset models/gguf/presets.ini --models-max 1 --port 9090
+llama-server --models-preset models/gguf/presets.ini --models-max 1 --port 9090 --reasoning off
 ```
 
 Per defecte les eines fan servir `http://localhost:9090/v1`. Es pot canviar amb `--server-url` o amb `LLAMA_SERVER_URL`.

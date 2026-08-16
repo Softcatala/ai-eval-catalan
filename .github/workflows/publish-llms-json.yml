@@ -24,16 +24,13 @@ jobs:
         run: pip install jinja2
 
       - name: Generate llms.json
-        working-directory: llm
-        run: python summarize_results.py --json-norm llms.json
+        run: python -m llm.summarize_results --json-norm llm/llms.json
 
       - name: Generate asrs.json
-        working-directory: asr
-        run: python summarize_results.py --json-out asrs.json
+        run: python -m asr.summarize_results --json-out asr/asrs.json
 
       - name: Generate embeddings.json
-        working-directory: embeddings
-        run: python summarize_results.py --json-out embeddings.json
+        run: python -m embeddings.summarize_results --json-out embeddings/embeddings.json
 
       - name: Checkout prod-data branch
         uses: actions/checkout@v4

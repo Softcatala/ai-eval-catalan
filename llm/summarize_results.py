@@ -15,6 +15,11 @@ from pathlib import Path
 
 from jinja2 import Environment
 
+from eval_common.model_urls import repo_url
+
+SCRIPT_DIR = Path(__file__).parent
+
+
 def discover_result_files(results_dir: Path) -> list[tuple[str, Path]]:
     """Find all results_*.json files and return (model_label, path) pairs."""
     entries = []
@@ -83,6 +88,10 @@ def extract_metrics(data: dict) -> dict:
     return metrics
 
 
+def configured_model_id(model_config: dict) -> str | None:
+    args = model_config.get("args", [])
+    flags = {"--gemini-model", "--openai-model", "--openrouter-model", "--model"}
+    return next((args[i + 1] for i, arg in enumerate(args[:-1]) if arg in flags), None)
 
 
 # Random baselines per task for normalization (HF Open LLM Leaderboard v2 approach)
@@ -242,16 +251,15 @@ def render_html(rows: list, all_metric_keys: list, norm_keys: list, fmt_params_f
 
 def main():
     parser = argparse.ArgumentParser(description="Summarize eval results")
-    parser.add_argument("--results-dir", default="evals", help="Directory containing result JSONs")
-    parser.add_argument("--html", default="summary.html", help="Output HTML file (default: summary.html)")
-    parser.add_argument("--json-norm", default="llms.json", help="Output JSON file for normalized scores (default: llms.json)")
+    parser.add_argument("--results-dir", default=SCRIPT_DIR / "evals", help="Directory containing result JSONs")
+    parser.add_argument("--html", default=SCRIPT_DIR / "summary.html", help="Output HTML file (default: summary.html)")
+    parser.add_argument("--json-norm", default=SCRIPT_DIR / "llms.json", help="Output JSON file for normalized scores (default: llms.json)")
     args = parser.parse_args()
 
     results_dir = Path(args.results_dir)
 
     # Build lookup from output path -> quantized_analysis_only using run_evals.py as source of truth
-    sys.path.insert(0, str(Path(__file__).parent))
-    from run_evals import MODELS
+    from llm.run_evals import MODELS
     quantized_only_by_output = {
         Path(m["output"]).name: m.get("quantized_analysis_only", False)
         for m in MODELS
@@ -260,9 +268,14 @@ def main():
         Path(m["output"]).name: m.get("quantization", "")
         for m in MODELS
     }
+    model_id_by_output = {
+        Path(m["output"]).name: configured_model_id(m)
+        for m in MODELS
+    }
 
     rows = []
     all_metric_keys = []
+    repo_url_by_label = {}
 
     for label, path in discover_result_files(results_dir):
         with open(path) as f:
@@ -274,6 +287,12 @@ def main():
         cloud = data.get("cloud", False)
         quantized_analysis_only = quantized_only_by_output.get(path.name, False)
         quantization = data.get("quantization") or quantization_by_output.get(path.name, "")
+        model_id = data["model"]
+        if "/" not in model_id and not model_id.startswith(
+            ("gemini-", "gpt-", "claude-", "global.anthropic.")
+        ):
+            model_id = model_id_by_output.get(path.name) or model_id
+        repo_url_by_label[display] = repo_url(model_id)
         rows.append((display, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization))
         for k in metrics:
             if k not in all_metric_keys:
@@ -367,6 +386,7 @@ def main():
     for label, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization in rows:
         entry = {
             "model": f"(*) {label}" if cloud else label,
+            "repo_url": repo_url_by_label[label],
             "cloud": cloud,
             "params_b": params_b,
             "memory_gb": memory_gb,

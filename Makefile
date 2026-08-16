@@ -2,9 +2,9 @@ GGUF_DIR ?= models/gguf
 GGUF_MODELS ?=
 
 render-local:
-	cd llm && uv run summarize_results.py > /dev/null && cd ..
-	cd asr && uv run summarize_results.py > /dev/null && cd ..
-	cd embeddings && uv run summarize_results.py > /dev/null && cd ..
+	uv run --project llm python -m llm.summarize_results > /dev/null
+	uv run --project asr python -m asr.summarize_results > /dev/null
+	uv run --project embeddings python -m embeddings.summarize_results > /dev/null
 	uv run --with jinja2 render_tables.py
 	uv run render_index_local.py
 

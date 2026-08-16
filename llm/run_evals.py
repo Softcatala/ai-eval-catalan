@@ -29,8 +29,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-4b-it-GGUF:Q2_K",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 2,
         "params_b": 4.0,
@@ -43,8 +41,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-4b-it-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 3,
         "params_b": 4.0,
@@ -56,8 +52,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-4b-it-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 5,
         "params_b": 4.0,
@@ -70,8 +64,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-12b-it-GGUF:Q2_K",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 4,
         "params_b": 12.0,
@@ -84,8 +76,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-12b-it-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 7,
         "params_b": 12.0,
@@ -97,8 +87,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-12b-it-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 12,
         "params_b": 12.0,
@@ -111,8 +99,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-27b-it-GGUF:Q2_K",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 9,
         "params_b": 27.0,
@@ -125,8 +111,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-27b-it-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 15,
         "params_b": 27.0,
@@ -138,8 +122,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-27b-it-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 27,
         "params_b": 27.0,
@@ -268,8 +250,6 @@ MODELS = [
         "args": [
             "--model",
             "unsloth/gemma-4-12b-it-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 7,
         "params_b": 12.0,
@@ -281,8 +261,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-4-E4B-it-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 3,
         "params_b": 4.0,
@@ -294,8 +272,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 14,
         "params_b": 26.0,
@@ -380,8 +356,6 @@ MODELS = [
     },
 ]
 
-# Base port for llama-server (8080 is taken by Jupyter)
-DEFAULT_BASE_PORT = 8090
 DEFAULT_LOCAL_SERVER_URL = "http://localhost:9090/v1"
 
 
@@ -389,10 +363,6 @@ def _llama_server_url_from_env() -> str | None:
     url = os.environ.get("LLAMA_SERVER_URL")
     if url:
         return url.rstrip("/")
-
-    port = os.environ.get("LLAMA_SERVER_PORT") or os.environ.get("LLAMA_CPP_PORT")
-    if port:
-        return f"http://127.0.0.1:{port}/v1"
 
     return DEFAULT_LOCAL_SERVER_URL
 
@@ -426,8 +396,7 @@ def main():
         default=_llama_server_url_from_env(),
         help=(
             "Reuse an existing llama-server/OpenAI-compatible base URL for local "
-            "GGUF models instead of starting one per run. Also configurable with "
-            "LLAMA_SERVER_URL, LLAMA_SERVER_PORT, or LLAMA_CPP_PORT."
+            "GGUF models. Also configurable with LLAMA_SERVER_URL."
         ),
     )
     parser.add_argument(
@@ -465,12 +434,8 @@ def main():
 
     google_api_key = os.environ.get("GOOGLE_API_KEY")
     openai_api_key = os.environ.get("OPENAI_API_KEY")
+    openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
     bedrock_token = os.environ.get("AWS_BEARER_TOKEN_BEDROCK")
-    llama_server_port = (
-        os.environ.get("LLAMA_SERVER_PORT")
-        or os.environ.get("LLAMA_CPP_PORT")
-        or str(DEFAULT_BASE_PORT)
-    )
 
     python = sys.executable
 
@@ -505,8 +470,6 @@ def main():
             str(args.n_samples),
             "--benchmarks",
             *args.benchmarks,
-            "--llama-server-port",
-            str(llama_server_port),
         ]
 
         if args.llama_server_url and not model.get("cloud"):

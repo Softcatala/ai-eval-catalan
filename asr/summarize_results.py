@@ -13,6 +13,10 @@ from pathlib import Path
 
 from jinja2 import Environment
 
+from eval_common.model_urls import repo_url
+
+SCRIPT_DIR = Path(__file__).parent
+
 
 COLUMN_LABELS = {
     "model": "Model",
@@ -35,6 +39,7 @@ def load_results(results_dir: Path) -> list[dict]:
             fleurs = data.get("benchmarks", {}).get("fleurs_ca", {})
             rows.append({
                 "model": data.get("model", path.stem),
+                "repo_url": repo_url(data.get("model", path.stem)),
                 "cloud": data.get("cloud", False),
                 "params_b": data.get("params_b"),
                 "memory_gb": data.get("memory_gb"),
@@ -62,8 +67,8 @@ def fmt_pct(value) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description="Summarize ASR eval results")
-    parser.add_argument("--results-dir", default="evals")
-    parser.add_argument("--json-out", default="asrs.json")
+    parser.add_argument("--results-dir", default=SCRIPT_DIR / "evals")
+    parser.add_argument("--json-out", default=SCRIPT_DIR / "asrs.json")
     args = parser.parse_args()
 
     rows = load_results(Path(args.results_dir))
@@ -104,6 +109,7 @@ def main():
     json_rows = [
         {
             "model": f"(*) {r['model']}" if r.get("cloud", False) else r["model"],
+            "repo_url": r["repo_url"],
             "cloud": r.get("cloud", False),
             "params_b": r.get("params_b"),
             "memory_gb": r.get("memory_gb"),
