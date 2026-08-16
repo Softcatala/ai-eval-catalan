@@ -93,6 +93,23 @@ Per evitar donar doble pes a la traducció, CLAM calcula primer
 `flores_es_ca`. El resultat final és la mitjana dels benchmarks que no són de
 traducció i aquest únic `translation_score`.
 
+### Mida de model recomanada segons la memòria
+
+Per a models GGUF quantitzats amb **Q4_K_M**, aquestes són les mides orientatives
+segons la memòria disponible del sistema:
+
+| Memòria RAM | Mida recomanada | Límit aproximat |
+|-------------|-----------------|-----------------|
+| 8 GB | 7–8B | 9B, amb poc context |
+| 16 GB | 12–14B | 14B |
+| 32 GB | 24–27B | 30–32B, amb menys marge |
+
+Cal reservar aproximadament un 20–25% de la memòria per al sistema operatiu, el
+motor d'inferència i la memòria cau KV. Un context llarg consumeix més memòria;
+en aquest cas, convé triar un model de la franja inferior. Les xifres són
+orientatives i poden variar segons l'arquitectura del model i la configuració de
+`llama.cpp`.
+
 ### Instal·lació (LLM)
 
 Requereix [uv](https://docs.astral.sh/uv/) i [llama.cpp](https://github.com/ggml-org/llama.cpp). Per als models GGUF locals, engega un `llama-server` extern; per defecte les eines esperen l'endpoint OpenAI-compatible a `http://localhost:9090/v1`.
