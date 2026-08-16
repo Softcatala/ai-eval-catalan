@@ -29,8 +29,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-4b-it-GGUF:Q2_K",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 2,
         "params_b": 4.0,
@@ -43,8 +41,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-4b-it-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 3,
         "params_b": 4.0,
@@ -57,8 +53,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-4b-it-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 5,
         "params_b": 4.0,
@@ -70,8 +64,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-12b-it-GGUF:Q2_K",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 4,
         "params_b": 12.0,
@@ -84,8 +76,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-12b-it-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 7,
         "params_b": 12.0,
@@ -98,8 +88,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-12b-it-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 12,
         "params_b": 12.0,
@@ -111,8 +99,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-27b-it-GGUF:Q2_K",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 9,
         "params_b": 27.0,
@@ -125,8 +111,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-27b-it-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 15,
         "params_b": 27.0,
@@ -139,8 +123,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-3-27b-it-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 27,
         "params_b": 27.0,
@@ -152,8 +134,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 25,
         "params_b": 24.0,
@@ -162,7 +142,7 @@ MODELS = [
     {
         "display_name": "qwen3-14b",
         "output": "evals/results_qwen3_14b.json",
-        "args": ["--model", "bartowski/Qwen_Qwen3-14B-GGUF:Q8_0", "--device", "cuda"],
+        "args": ["--model", "bartowski/Qwen_Qwen3-14B-GGUF:Q8_0"],
         "ram_gb": 14,
         "params_b": 14.0,
         "quantization": "q8",
@@ -183,7 +163,7 @@ MODELS = [
     {
         "display_name": "qwen3.5-9b",
         "output": "evals/results_qwen3.5_9b.json",
-        "args": ["--model", "bartowski/Qwen_Qwen3.5-9B-GGUF:Q8_0", "--device", "cuda"],
+        "args": ["--model", "bartowski/Qwen_Qwen3.5-9B-GGUF:Q8_0"],
         "ram_gb": 9,
         "params_b": 9.0,
         "quantization": "q8",
@@ -191,7 +171,7 @@ MODELS = [
     {
         "display_name": "qwen3.6-27b",
         "output": "evals/results_qwen3.6_27b.json",
-        "args": ["--model", "unsloth/Qwen3.6-27B-GGUF:Q8_0", "--device", "cuda"],
+        "args": ["--model", "unsloth/Qwen3.6-27B-GGUF:Q8_0"],
         "ram_gb": 27,
         "params_b": 27.0,
         "quantization": "q8",
@@ -202,8 +182,6 @@ MODELS = [
         "args": [
             "--model",
             "unsloth/Muse-Glimmer-30B-GGUF:UD-Q8_K_XL",
-            "--device",
-            "cuda",
         ],
         "llama_server_model": "Muse-Glimmer-30B-UD-Q8_K_XL",
         "ram_gb": 32,
@@ -216,8 +194,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 8,
         "params_b": 8.0,
@@ -229,8 +205,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/aya-expanse-8b-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 8,
         "params_b": 8.0,
@@ -242,8 +216,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/EuroLLM-9B-Instruct-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 9,
         "params_b": 9.0,
@@ -255,8 +227,6 @@ MODELS = [
         "args": [
             "--model",
             "mradermacher/salamandra-7b-instruct-2606-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 7,
         "params_b": 7.0,
@@ -268,8 +238,6 @@ MODELS = [
         "args": [
             "--model",
             "unsloth/gemma-4-12b-it-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 7,
         "params_b": 12.0,
@@ -282,8 +250,6 @@ MODELS = [
         "args": [
             "--model",
             "unsloth/gemma-4-12b-it-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 13,
         "params_b": 12.0,
@@ -295,8 +261,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-4-E4B-it-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 3,
         "params_b": 4.0,
@@ -309,8 +273,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-4-E4B-it-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 5,
         "params_b": 4.0,
@@ -322,8 +284,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q4_K_M",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 14,
         "params_b": 26.0,
@@ -336,8 +296,6 @@ MODELS = [
         "args": [
             "--model",
             "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q8_0",
-            "--device",
-            "cuda",
         ],
         "ram_gb": 26,
         "params_b": 26.0,
@@ -422,8 +380,6 @@ MODELS = [
     },
 ]
 
-# Base port for llama-server (8080 is taken by Jupyter)
-DEFAULT_BASE_PORT = 8090
 DEFAULT_LOCAL_SERVER_URL = "http://localhost:9090/v1"
 
 
@@ -431,10 +387,6 @@ def _llama_server_url_from_env() -> str | None:
     url = os.environ.get("LLAMA_SERVER_URL")
     if url:
         return url.rstrip("/")
-
-    port = os.environ.get("LLAMA_SERVER_PORT") or os.environ.get("LLAMA_CPP_PORT")
-    if port:
-        return f"http://127.0.0.1:{port}/v1"
 
     return DEFAULT_LOCAL_SERVER_URL
 
@@ -468,8 +420,7 @@ def main():
         default=_llama_server_url_from_env(),
         help=(
             "Reuse an existing llama-server/OpenAI-compatible base URL for local "
-            "GGUF models instead of starting one per run. Also configurable with "
-            "LLAMA_SERVER_URL, LLAMA_SERVER_PORT, or LLAMA_CPP_PORT."
+            "GGUF models. Also configurable with LLAMA_SERVER_URL."
         ),
     )
     parser.add_argument(
@@ -507,12 +458,8 @@ def main():
 
     google_api_key = os.environ.get("GOOGLE_API_KEY")
     openai_api_key = os.environ.get("OPENAI_API_KEY")
+    openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
     bedrock_token = os.environ.get("AWS_BEARER_TOKEN_BEDROCK")
-    llama_server_port = (
-        os.environ.get("LLAMA_SERVER_PORT")
-        or os.environ.get("LLAMA_CPP_PORT")
-        or str(DEFAULT_BASE_PORT)
-    )
 
     python = sys.executable
 
@@ -547,8 +494,6 @@ def main():
             str(args.n_samples),
             "--benchmarks",
             *args.benchmarks,
-            "--llama-server-port",
-            str(llama_server_port),
         ]
 
         if args.llama_server_url and not model.get("cloud"):

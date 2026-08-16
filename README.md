@@ -124,8 +124,6 @@ export PATH="$PWD/build/bin:$PATH"
 llama-server --version
 ```
 
-Les eines també detecten automàticament `../llama.cpp/build/bin/llama-server` si compiles el projecte en un directori germà del repositori.
-
 L'script `../llama.cpp/server.sh` fa servir una configuració dinàmica comuna per a tots els models: `--n-gpu-layers auto --fit on --fit-target 1536`. Això ajusta automàticament les capes descarregades a la GPU i reserva 1,5 GiB de VRAM. Es pot sobreescriure amb les variables `N_GPU_LAYERS`, `FIT` i `FIT_TARGET`.
 
 Des de l'arrel del repositori, instal·la les dependències Python:
@@ -162,7 +160,7 @@ També escriu `presets.ini` al mateix directori, amb els ids de model que usa l'
 **2. Engegar `llama-server`:**
 
 ```bash
-llama-server --models-preset models/gguf/presets.ini --models-max 1 --port 9090
+llama-server --models-preset models/gguf/presets.ini --models-max 1 --port 9090 --reasoning off
 ```
 
 Per defecte les eines fan servir `http://localhost:9090/v1`. Es pot canviar amb `--server-url` o amb `LLAMA_SERVER_URL`.

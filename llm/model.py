@@ -41,7 +41,6 @@ from llamaserver import (
     LlamaServerModel,
     _hf_tokenizer_from_gguf,
     _is_gguf_model,
-    llama_server_context,
 )
 
 # facebook/flores uses an old dataset script — trust it so datasets doesn't refuse to load it.
@@ -733,17 +732,11 @@ def main():
         help="Output file for results (default: evals/catalan_eval_results.json)",
     )
     parser.add_argument(
-        "--llama-server-port",
-        type=int,
-        default=8080,
-        help="Port for llama-server when running GGUF benchmarks that need the local server (default: 8080)",
-    )
-    parser.add_argument(
         "--llama-server-url",
         "--server-url",
         dest="llama_server_url",
         default=os.environ.get("LLAMA_SERVER_URL", DEFAULT_LOCAL_SERVER_URL),
-        help="Reuse an existing llama-server OpenAI-compatible base URL instead of starting one (e.g. http://localhost:9090/v1). Also configurable with LLAMA_SERVER_URL.",
+        help="Existing llama-server OpenAI-compatible base URL (e.g. http://localhost:9090/v1). Also configurable with LLAMA_SERVER_URL.",
     )
     parser.add_argument(
         "--llama-server-model",
@@ -751,12 +744,6 @@ def main():
         dest="llama_server_model",
         default=None,
         help="Model id to send to an existing multi-model llama-server (defaults to --model)",
-    )
-    parser.add_argument(
-        "--device",
-        choices=["cpu", "cuda"],
-        default="cpu",
-        help="Device for llama-server inference (default: cpu)",
     )
     parser.add_argument(
         "--params-b",
@@ -907,17 +894,16 @@ def main():
         )
         results = _run_benchmarks(model,args.openai_base_url)
     else:
-        if args.llama_server_url:
-            model = LlamaServerModel(
-                args.model,
-                args.llama_server_url,
-                request_model=args.llama_server_model or args.model,
+        if not args.llama_server_url:
+            raise ValueError(
+                "--server-url or LLAMA_SERVER_URL is required for local GGUF models"
             )
-            results = _run_benchmarks(model, args.llama_server_url.rstrip("/"))
-        else:
-            with llama_server_context(args.model, args.llama_server_port, args.device) as base_url:
-                model = LlamaServerModel(args.model, base_url)
-                results = _run_benchmarks(model, base_url)
+        model = LlamaServerModel(
+            args.model,
+            args.llama_server_url,
+            request_model=args.llama_server_model or args.model,
+        )
+        results = _run_benchmarks(model, args.llama_server_url.rstrip("/"))
 
     # ── Save & print summary ──────────────────────────────────────────────────
     output_path = Path(args.output)

@@ -1,10 +1,6 @@
 import json
-import os
-import shutil
-import subprocess
 import time
 import urllib.request
-from contextlib import contextmanager
 from pathlib import Path
 
 from inference import chat_completion_params, inference_params
@@ -64,25 +60,6 @@ def _hf_tokenizer_from_gguf(model_spec: str) -> str:
     if name.startswith("Llama") or name.startswith("Meta-Llama"):
         return f"meta-llama/{name}"
     return name
-
-
-def _wait_for_port(port: int, timeout: float = 300.0):
-    """Block until llama-server is ready (model loaded) or timeout expires."""
-    deadline = time.time() + timeout
-    while time.time() < deadline:
-        try:
-            with urllib.request.urlopen(
-                f"http://127.0.0.1:{port}/health", timeout=2
-            ) as resp:
-                data = json.loads(resp.read())
-                if data.get("status") == "ok":
-                    return
-        except Exception:
-            pass
-        time.sleep(2)
-    raise RuntimeError(
-        f"llama-server did not become ready on port {port} within {timeout}s"
-    )
 
 
 class LlamaServerModel:
@@ -171,80 +148,3 @@ class LlamaServerModel:
                 print(f"[warn] llama-server option scoring failed: {e}", flush=True)
                 scores.append(float("-inf"))
         return scores.index(max(scores))
-
-
-@contextmanager
-def llama_server_context(model_spec: str, port: int, device: str = "cpu"):
-    """
-    Download the GGUF file via huggingface_hub, spawn llama-server, and yield the base_url.
-    """
-    local_file = Path(os.path.expanduser(model_spec))
-    if model_spec.lower().endswith(".gguf") and local_file.exists():
-        local_path = str(local_file.resolve())
-        filename = local_file.name
-        print(f"[server] Using local GGUF file {local_path}", flush=True)
-    else:
-        if model_spec.lower().endswith(".gguf"):
-            raise FileNotFoundError(f"Local GGUF file not found: {model_spec}")
-
-        from huggingface_hub import hf_hub_download
-
-        if ":" in model_spec:
-            repo, _quant = model_spec.rsplit(":", 1)
-        else:
-            repo = model_spec
-        filename = expected_gguf_filename(model_spec)
-
-        print(f"[server] Ensuring {filename} is cached locally ...", flush=True)
-        legacy_path = Path(os.path.expanduser("~/.cache/huggingface/hub")) / (
-            f"models--{repo.replace('/', '--')}"
-        ) / "blobs" / filename
-        if legacy_path.exists():
-            local_path = str(legacy_path)
-            print(f"[server] Already cached at {local_path}", flush=True)
-        else:
-            local_path = hf_hub_download(repo_id=repo, filename=filename)
-            print(f"[server] Cached at {local_path}", flush=True)
-
-    log_path = Path(f"llama_server_{port}.log")
-    print(
-        f"[server] Starting llama-server on port {port} (device={device}) … (log: {log_path})"
-    )
-    default_server = Path(__file__).parent.parent.parent / "llama.cpp" / "build" / "bin" / "llama-server"
-    llama_server_bin = os.environ.get("LLAMA_SERVER_PATH")
-    if not llama_server_bin:
-        llama_server_bin = (
-            str(default_server)
-            if default_server.exists()
-            else shutil.which("llama-server") or "llama-server"
-        )
-    cmd = [
-        llama_server_bin,
-        "--model",
-        local_path,
-        "--port",
-        str(port),
-        "--ctx-size",
-        "2048",
-    ]
-    if device == "cuda":
-        cmd += ["--n-gpu-layers", "99"]
-    # Benchmarks measure final answers, not hidden reasoning behavior. Disable
-    # llama.cpp's template-level automatic reasoning for every local model.
-    cmd += ["--reasoning", "off"]
-    log_file = open(log_path, "w")
-    proc = subprocess.Popen(
-        cmd,
-        stdout=log_file,
-        stderr=log_file,
-        env=os.environ.copy(),
-    )
-    try:
-        _wait_for_port(port)
-        print(f"[server] Ready at http://127.0.0.1:{port}")
-        yield f"http://127.0.0.1:{port}/v1"
-    finally:
-        print("[server] Stopping llama-server …")
-        proc.terminate()
-        proc.wait()
-        log_file.close()
