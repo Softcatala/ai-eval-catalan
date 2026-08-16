@@ -29,6 +29,7 @@
     "data": [
         {
             "model": "(*) gpt-4o-transcribe",
+            "repo_url": "https://platform.openai.com/docs/models/gpt-4o-transcribe",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
@@ -38,6 +39,7 @@
         },
         {
             "model": "whisper-large-v3",
+            "repo_url": "https://huggingface.co/openai/whisper-large-v3",
             "cloud": false,
             "params_b": 1.55,
             "memory_gb": 3.1,
@@ -47,6 +49,7 @@
         },
         {
             "model": "whisper-large-v3-turbo",
+            "repo_url": "https://huggingface.co/openai/whisper-large-v3-turbo",
             "cloud": false,
             "params_b": 0.809,
             "memory_gb": 1.62,
@@ -56,6 +59,7 @@
         },
         {
             "model": "(*) gemini-3-pro-preview",
+            "repo_url": "https://ai.google.dev/gemini-api/docs/models",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
@@ -65,6 +69,7 @@
         },
         {
             "model": "(*) gemini-3.6-flash",
+            "repo_url": "https://ai.google.dev/gemini-api/docs/models",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
@@ -74,6 +79,7 @@
         },
         {
             "model": "projecte-aina/whisper-large-v3-ca-3catparla",
+            "repo_url": "https://huggingface.co/projecte-aina/whisper-large-v3-ca-3catparla",
             "cloud": false,
             "params_b": 1.55,
             "memory_gb": 3.1,
@@ -83,6 +89,7 @@
         },
         {
             "model": "whisper-medium",
+            "repo_url": "https://huggingface.co/openai/whisper-medium",
             "cloud": false,
             "params_b": 0.769,
             "memory_gb": 1.54,
@@ -92,6 +99,7 @@
         },
         {
             "model": "omniASR_CTC_3B",
+            "repo_url": "https://huggingface.co/facebook/omniASR-CTC-3B",
             "cloud": false,
             "params_b": 3.0,
             "memory_gb": 6.0,
@@ -101,6 +109,7 @@
         },
         {
             "model": "microsoft/VibeVoice-ASR",
+            "repo_url": "https://huggingface.co/microsoft/VibeVoice-ASR",
             "cloud": false,
             "params_b": 9.0,
             "memory_gb": 18.0,
@@ -110,6 +119,7 @@
         },
         {
             "model": "omniASR_LLM_300M",
+            "repo_url": "https://huggingface.co/facebook/omniASR-LLM-300M",
             "cloud": false,
             "params_b": 1.6,
             "memory_gb": 3.26,
@@ -119,6 +129,7 @@
         },
         {
             "model": "omniASR_CTC_1B",
+            "repo_url": "https://huggingface.co/facebook/omniASR-CTC-1B",
             "cloud": false,
             "params_b": 1.0,
             "memory_gb": 2.0,
@@ -128,6 +139,7 @@
         },
         {
             "model": "whisper-small",
+            "repo_url": "https://huggingface.co/openai/whisper-small",
             "cloud": false,
             "params_b": 0.244,
             "memory_gb": 0.49,
@@ -137,6 +149,7 @@
         },
         {
             "model": "omniASR_CTC_300M",
+            "repo_url": "https://huggingface.co/facebook/omniASR-CTC-300M",
             "cloud": false,
             "params_b": 0.3,
             "memory_gb": 0.6,
@@ -146,6 +159,7 @@
         },
         {
             "model": "gemma-4-E4B",
+            "repo_url": "https://huggingface.co/google/gemma-4-E4B-it",
             "cloud": false,
             "params_b": 4.5,
             "memory_gb": 9.0,
@@ -155,6 +169,7 @@
         },
         {
             "model": "whisper-base",
+            "repo_url": "https://huggingface.co/openai/whisper-base",
             "cloud": false,
             "params_b": 0.074,
             "memory_gb": 0.15,
@@ -164,6 +179,7 @@
         },
         {
             "model": "gemma-4-E2B",
+            "repo_url": "https://huggingface.co/google/gemma-4-E2B-it",
             "cloud": false,
             "params_b": 2.3,
             "memory_gb": 4.6,
@@ -173,6 +189,7 @@
         },
         {
             "model": "whisper-tiny",
+            "repo_url": "https://huggingface.co/openai/whisper-tiny",
             "cloud": false,
             "params_b": 0.039,
             "memory_gb": 0.08,
