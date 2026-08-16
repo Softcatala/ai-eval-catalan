@@ -178,8 +178,8 @@ def main():
         else:
             print(f"[DONE] {model['label']} -> {output_path}")
             subprocess.run(
-                [python, "summarize_results.py"],
-                cwd=SCRIPT_DIR,
+                [python, "-m", "asr.summarize_results"],
+                cwd=SCRIPT_DIR.parent,
                 stdin=subprocess.DEVNULL,
             )
 
