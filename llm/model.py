@@ -33,6 +33,7 @@ import math
 import os
 import re
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 from inference import chat_completion_params, lm_eval_params
@@ -819,6 +820,9 @@ def main():
             "cloud": args.cloud,
             "params_b": args.params_b,
             "memory_gb": memory_gb,
+            "evaluated_at": datetime.fromtimestamp(
+                t_start, timezone.utc
+            ).isoformat(timespec="seconds"),
             "benchmarks": {},
         }
 

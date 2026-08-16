@@ -426,8 +426,8 @@ def main():
             {
                 "text": {
                     **json_text,
-                    "params_b": "Parameters (B)",
-                    "memory_gb": "Memory (GB)",
+                    "params_b": "Paràmetres (B)",
+                    "memory_gb": "Memòria (GB)",
                     "quantization": "Quantització",
                 },
                 "metrics": json_metrics,
