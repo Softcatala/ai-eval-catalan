@@ -119,8 +119,14 @@ class LlamaServerModel:
 
     def _chat_completions(self, prompt: str, max_tokens: int | None) -> dict:
         params = chat_completion_params(max_tokens, model_name=self.model_spec)
+        messages = []
+        # Override Mistral's tool-focused default system prompt
+        # (mode-collapses short-answer tasks at temp=0).
+        if "mistral" in self.model_spec.lower():
+            messages.append({"role": "system", "content": "You are a helpful assistant."})
+        messages.append({"role": "user", "content": prompt})
         payload_data = {
-            "messages": [{"role": "user", "content": prompt}],
+            "messages": messages,
             **params,
         }
         if self.request_model:
