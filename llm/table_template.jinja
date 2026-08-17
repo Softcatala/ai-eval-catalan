@@ -17,7 +17,7 @@
 <tr>
 <td>{% if row.cloud %}<b>{{ row.model }}</b>{% else %}{{ row.model }}{% endif %}</td>
 <td>{{ row | fmt_params }}</td>
-{% for col in cols %}<td>{% if col == 'clam_pct' %}{{ row[col] | fmt_pct }}{% else %}{{ row[col] | fmt }}{% endif %}</td>{% endfor %}
+{% for col in cols %}<td>{% if col == 'clam' %}{{ row[col] | fmt_score }}{% else %}{{ row[col] | fmt }}{% endif %}</td>{% endfor %}
 </tr>
 {% endfor %}
 </tbody>

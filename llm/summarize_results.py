@@ -120,7 +120,7 @@ COLUMN_LABELS = {
     "flores_en_ca": "EN↔CA",
     "flores_es_ca": "ES↔CA",
     "ifeval_prompt_strict": "IFEval",
-    "clam_pct": "CLAM%",
+    "clam": "CLAM",
 }
 
 
@@ -170,7 +170,7 @@ def fmt(value) -> str:
     return str(value)
 
 
-def fmt_pct(value) -> str:
+def fmt_score(value) -> str:
     if value is None:
         return "—"
     return f"{value:.1f}"
@@ -219,7 +219,7 @@ HTML_TEMPLATE_SRC = """\
       <th>Model</th>
       <th>Params (mem)</th>
       {% for col in norm_cols %}<th>{{ col }}</th>{% endfor %}
-      <th>CLAM%</th>
+      <th>CLAM</th>
     </tr>
   </thead>
   <tbody>
@@ -243,7 +243,7 @@ def render_html(rows: list, all_metric_keys: list, norm_keys: list, fmt_params_f
     env = Environment()
     env.filters["fmt"] = fmt
     env.filters["norm"] = lambda value, key: normalize_score(key, value)
-    env.filters["clam"] = lambda metrics: fmt_pct(clam_score(metrics))
+    env.filters["clam"] = lambda metrics: fmt_score(clam_score(metrics))
     env.filters["fmt_params"] = lambda row: fmt_params_fn(row[3], row[4])
     template = env.from_string(HTML_TEMPLATE_SRC)
     return template.render(rows=rows, raw_cols=all_metric_keys, norm_cols=norm_keys)
@@ -341,7 +341,7 @@ def main():
         f"{'Model':<{norm_label_w}}"
         + f"{'Params (mem)':>{params_col_w}}"
         + "".join(f"{k:>{norm_col_w}}" for k in norm_keys)
-        + f"{'CLAM%':>{clam_col_w}}"
+        + f"{'CLAM':>{clam_col_w}}"
     )
     norm_sep = "-" * len(norm_header)
 
@@ -353,7 +353,7 @@ def main():
         norm_row = "".join(
             f"{fmt(normalize_score(k, metrics.get(k))):>{norm_col_w}}" for k in norm_keys
         )
-        clam = fmt_pct(clam_score(metrics))
+        clam = fmt_score(clam_score(metrics))
         print(f"{label:<{norm_label_w}}{fmt_params(params_b, memory_gb):>{params_col_w}}{norm_row}{clam:>{clam_col_w}}")
     print(norm_sep)
 
@@ -369,14 +369,14 @@ def main():
         "params_b": COLUMN_LABELS["params_b"],
         "memory_gb": COLUMN_LABELS["memory_gb"],
         **{k: COLUMN_LABELS.get(k, k) for k in norm_keys},
-        "clam_pct": COLUMN_LABELS["clam_pct"],
+        "clam": COLUMN_LABELS["clam"],
     }
     json_metrics = {
-        "clam_pct": {
+        "clam": {
             "direction": "higher_is_better",
-            "subtitle": "50% usable",
-            "label": "> 50% el considerem usable",
-            "caption": "Línia discontínua al 50% = \"usable per a tasques en català\"",
+            "subtitle": "50 usable",
+            "label": "> 50 el considerem usable",
+            "caption": "Línia discontínua a 50 = \"usable per a tasques en català\"",
             "success": {"min": 50, "color": "#388e3c"},
             "warning": {"min": 40, "color": "#f9a825"},
             "error": {"color": "#c62828"},
@@ -398,7 +398,7 @@ def main():
                 if normalize_score(k, metrics.get(k)) is not None else None
                 for k in direction_keys
             },
-            "clam_pct": round(clam_score(metrics), 2) if clam_score(metrics) is not None else None,
+            "clam": round(clam_score(metrics), 2) if clam_score(metrics) is not None else None,
         }
         json_rows.append(entry)
     json_path = Path(args.json_norm)
@@ -418,7 +418,7 @@ def main():
 
     quantized_json_rows = sorted(
         [r for r in json_rows if r["model"].startswith("gemma3")],
-        key=lambda r: (-(r["params_b"] or 0), re.sub(r"-q\d+$", "", r["model"].lower()), -(r["clam_pct"] or 0)),
+        key=lambda r: (-(r["params_b"] or 0), re.sub(r"-q\d+$", "", r["model"].lower()), -(r["clam"] or 0)),
     )
     quantized_json_path = json_path.with_name("llms_quantized.json")
     quantized_json_path.write_text(
