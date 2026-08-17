@@ -181,6 +181,27 @@
             "clam_pct": 56.47
         },
         {
+            "model": "mistral-small-24b",
+            "repo_url": "https://huggingface.co/bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF",
+            "cloud": false,
+            "params_b": 24.0,
+            "memory_gb": 25.5,
+            "quantized_analysis_only": false,
+            "quantization": "q8",
+            "sts_ca": 0.7211,
+            "catcola_mcc": 0.3876,
+            "club_qa_em": 0.8375,
+            "casum_rougeL": 0.4024,
+            "flores_en_ca": 0.4324,
+            "flores_es_ca": 0.2703,
+            "ifeval_prompt_strict": 0.6825,
+            "flores_en2ca": 0.4091,
+            "flores_ca2en": 0.4556,
+            "flores_es2ca": 0.2684,
+            "flores_ca2es": 0.2721,
+            "clam_pct": 56.37
+        },
+        {
             "model": "gemma3-27b",
             "repo_url": "https://huggingface.co/bartowski/google_gemma-3-27b-it-GGUF",
             "cloud": false,
@@ -452,27 +473,6 @@
             "flores_es2ca": 0.133,
             "flores_ca2es": 0.1997,
             "clam_pct": 39.66
-        },
-        {
-            "model": "mistral-small-24b",
-            "repo_url": "https://huggingface.co/bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF",
-            "cloud": false,
-            "params_b": 24.0,
-            "memory_gb": 25.5,
-            "quantized_analysis_only": false,
-            "quantization": "q8",
-            "sts_ca": 0.032,
-            "catcola_mcc": 0.058,
-            "club_qa_em": 0.755,
-            "casum_rougeL": 0.3787,
-            "flores_en_ca": 0.4295,
-            "flores_es_ca": 0.268,
-            "ifeval_prompt_strict": 0.66,
-            "flores_en2ca": 0.4088,
-            "flores_ca2en": 0.4503,
-            "flores_es2ca": 0.2667,
-            "flores_ca2es": 0.2693,
-            "clam_pct": 37.21
         }
     ]
 }
