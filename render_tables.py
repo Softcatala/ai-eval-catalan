@@ -22,10 +22,10 @@ def fmt(value) -> str:
     return str(value)
 
 
-def fmt_pct(value) -> str:
+def fmt_score(value) -> str:
     if value is None:
         return "—"
-    return f"{value:.1f}%"
+    return f"{value:.1f}"
 
 
 def fmt_dec_pct(value) -> str:
@@ -65,7 +65,7 @@ def render(json_path: Path, template_path: Path, out: Path, row_filter=None, ext
 
     env = Environment(loader=FileSystemLoader(str(template_path.parent)))
     env.filters["fmt"] = fmt
-    env.filters["fmt_pct"] = fmt_pct
+    env.filters["fmt_score"] = fmt_score
     env.filters["fmt_dec_pct"] = fmt_dec_pct
     env.filters["fmt_params"] = fmt_params
     template = env.get_template(template_path.name)
@@ -94,7 +94,7 @@ def main():
         Path("llm/table_template.jinja"),
         Path(args.llm_quantized_out),
         extra_cols={"quantization": "Quantització"},
-        sort_key=lambda r: (-(r.get("params_b") or 0), re.sub(r"-q\d+$", "", r["model"].lower()), -(r.get("clam_pct") or 0)),
+        sort_key=lambda r: (-(r.get("params_b") or 0), re.sub(r"-q\d+$", "", r["model"].lower()), -(r.get("clam") or 0)),
     )
     render(Path(args.asr_json), Path("asr/table_template.jinja"), Path(args.asr_out))
     render(
