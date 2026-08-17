@@ -11,15 +11,15 @@
         "flores_en_ca": "EN↔CA",
         "flores_es_ca": "ES↔CA",
         "ifeval_prompt_strict": "IFEval",
-        "clam_pct": "CLAM%",
+        "clam": "CLAM",
         "quantization": "Quantització"
     },
     "metrics": {
-        "clam_pct": {
+        "clam": {
             "direction": "higher_is_better",
-            "subtitle": "50% usable",
-            "label": "> 50% el considerem usable",
-            "caption": "Línia discontínua al 50% = \"usable per a tasques en català\"",
+            "subtitle": "50 usable",
+            "label": "> 50 el considerem usable",
+            "caption": "Línia discontínua a 50 = \"usable per a tasques en català\"",
             "success": {
                 "min": 50,
                 "color": "#388e3c"
@@ -53,7 +53,7 @@
             "flores_ca2en": 0.4656,
             "flores_es2ca": 0.2744,
             "flores_ca2es": 0.2748,
-            "clam_pct": 56.05
+            "clam": 56.05
         },
         {
             "model": "gemma3-27b-q4",
@@ -74,7 +74,7 @@
             "flores_ca2en": 0.4652,
             "flores_es2ca": 0.2759,
             "flores_ca2es": 0.2741,
-            "clam_pct": 55.38
+            "clam": 55.38
         },
         {
             "model": "gemma3-27b-q2",
@@ -95,7 +95,7 @@
             "flores_ca2en": 0.45,
             "flores_es2ca": 0.2626,
             "flores_ca2es": 0.2713,
-            "clam_pct": 52.63
+            "clam": 52.63
         },
         {
             "model": "gemma3-12b",
@@ -116,7 +116,7 @@
             "flores_ca2en": 0.4697,
             "flores_es2ca": 0.2652,
             "flores_ca2es": 0.2742,
-            "clam_pct": 55.38
+            "clam": 55.38
         },
         {
             "model": "gemma3-12b-q4",
@@ -137,7 +137,7 @@
             "flores_ca2en": 0.4535,
             "flores_es2ca": 0.2609,
             "flores_ca2es": 0.2738,
-            "clam_pct": 54.61
+            "clam": 54.61
         },
         {
             "model": "gemma3-12b-q2",
@@ -158,7 +158,7 @@
             "flores_ca2en": 0.4383,
             "flores_es2ca": 0.2517,
             "flores_ca2es": 0.2694,
-            "clam_pct": 51.05
+            "clam": 51.05
         },
         {
             "model": "gemma3-4b",
@@ -179,7 +179,7 @@
             "flores_ca2en": 0.424,
             "flores_es2ca": 0.2344,
             "flores_ca2es": 0.2606,
-            "clam_pct": 51.48
+            "clam": 51.48
         },
         {
             "model": "gemma3-4b-q4",
@@ -200,7 +200,7 @@
             "flores_ca2en": 0.3937,
             "flores_es2ca": 0.2333,
             "flores_ca2es": 0.2595,
-            "clam_pct": 51.43
+            "clam": 51.43
         },
         {
             "model": "gemma3-4b-q2",
@@ -221,7 +221,7 @@
             "flores_ca2en": 0.3585,
             "flores_es2ca": 0.2112,
             "flores_ca2es": 0.2459,
-            "clam_pct": 38.28
+            "clam": 38.28
         }
     ]
 }
