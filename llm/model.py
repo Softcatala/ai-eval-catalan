@@ -387,6 +387,8 @@ def run_club_qa(model, n_samples: int = 100) -> dict:
             f"Text: {context[:800]}\n\nPregunta: {question}\nResposta:"
         )
         raw_pred = model.generate(prompt, max_new_tokens=64).strip()
+        if not raw_pred:
+            raise RuntimeError("CLUB QA generation returned an empty response")
         pred = raw_pred.lower()
         em = any(gold.strip().lower() in pred for gold in gold_answers)
         f1 = max(_token_f1(raw_pred, gold) for gold in gold_answers)
