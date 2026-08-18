@@ -1,0 +1,87 @@
+{
+  "model": "bartowski/phi-4-GGUF:Q4_K_M",
+  "display_name": "phi-4",
+  "cloud": false,
+  "params_b": 14.0,
+  "memory_gb": 7.9,
+  "evaluated_at": "2026-08-17T02:45:04+00:00",
+  "benchmarks": {
+    "sts_ca": {
+      "pearson": 0.6426,
+      "n": 400
+    },
+    "casum": {
+      "rouge1": 0.4344,
+      "rouge2": 0.228,
+      "rougeL": 0.366,
+      "n": 400
+    },
+    "catcola": {
+      "mcc": 0.298,
+      "accuracy": 0.735,
+      "invalid_rate": 0.0,
+      "coverage": 1.0,
+      "n": 400,
+      "n_valid": 400,
+      "n_invalid": 0
+    },
+    "club_qa": {
+      "exact_match_approx": 0.81,
+      "n": 400
+    },
+    "flores": {
+      "catalan_bench_flores_en-ca": {
+        "alias": "catalan_bench_flores_en-ca",
+        "n": 400,
+        "bleu,none": 34.28655292401653,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 52.46412975670618,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 61.478298177869405,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_ca-en": {
+        "alias": "catalan_bench_flores_ca-en",
+        "n": 400,
+        "bleu,none": 42.711816139746425,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 43.89294977599623,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 69.37192453745813,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_es-ca": {
+        "alias": "catalan_bench_flores_es-ca",
+        "n": 400,
+        "bleu,none": 22.839672596548915,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 67.54002911208151,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 54.05222779215685,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_ca-es": {
+        "alias": "catalan_bench_flores_ca-es",
+        "n": 400,
+        "bleu,none": 26.731533484649646,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 59.93332025887429,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 54.70677347683479,
+        "chrf_stderr,none": "N/A"
+      }
+    },
+    "ifeval": {
+      "alias": "ifeval_ca",
+      "n": 400,
+      "prompt_level_strict_acc,none": 0.5225,
+      "prompt_level_strict_acc_stderr,none": 0.025005951672504318,
+      "inst_level_strict_acc,none": 0.6306156405990017,
+      "inst_level_strict_acc_stderr,none": "N/A",
+      "prompt_level_loose_acc,none": 0.5775,
+      "prompt_level_loose_acc_stderr,none": 0.024728792083212124,
+      "inst_level_loose_acc,none": 0.6738768718801996,
+      "inst_level_loose_acc_stderr,none": "N/A"
+    }
+  }
+}

@@ -23,7 +23,12 @@ def inference_params(max_tokens=None, provider="llama", model_name=""):
         params["chat_template_kwargs"] = {"enable_thinking": False}
         if "muse-glimmer" in model_name:
             params["chat_template_kwargs"]["reasoning_strength"] = "low"
-            params["stop"] = ["<|eot|>", "<|eom|>", "<|start|>"]
+            # Muse emits its final answer only after an internal reasoning
+            # segment.  Treating its control tokens as client-side stops cuts
+            # the response off between reasoning and final content.  Keep
+            # enough headroom for that segment and let llama.cpp parse the
+            # model's native stop tokens itself.
+            params["max_tokens"] = max(params["max_tokens"], 256)
     elif provider == "gemini":
         if "gemini-3" in model_name:
             if params["reasoning_effort"] == "none":

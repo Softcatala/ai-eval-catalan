@@ -1,0 +1,87 @@
+{
+  "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M",
+  "display_name": "llama3.1-8b",
+  "cloud": false,
+  "params_b": 8.0,
+  "memory_gb": 4.5,
+  "evaluated_at": "2026-08-16T14:15:31+00:00",
+  "benchmarks": {
+    "sts_ca": {
+      "pearson": 0.4506,
+      "n": 400
+    },
+    "casum": {
+      "rouge1": 0.4868,
+      "rouge2": 0.2884,
+      "rougeL": 0.4209,
+      "n": 400
+    },
+    "catcola": {
+      "mcc": 0.1984,
+      "accuracy": 0.425,
+      "invalid_rate": 0.0,
+      "coverage": 1.0,
+      "n": 400,
+      "n_valid": 400,
+      "n_invalid": 0
+    },
+    "club_qa": {
+      "exact_match_approx": 0.7925,
+      "n": 400
+    },
+    "flores": {
+      "catalan_bench_flores_en-ca": {
+        "alias": "catalan_bench_flores_en-ca",
+        "n": 400,
+        "bleu,none": 37.423576332026805,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 50.19754626741526,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 63.361467673799474,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_ca-en": {
+        "alias": "catalan_bench_flores_ca-en",
+        "n": 400,
+        "bleu,none": 42.24874878612723,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 44.164112237679795,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 69.05635690818714,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_es-ca": {
+        "alias": "catalan_bench_flores_es-ca",
+        "n": 400,
+        "bleu,none": 23.872179738391324,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 66.83302141817425,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 54.870026375228484,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_ca-es": {
+        "alias": "catalan_bench_flores_ca-es",
+        "n": 400,
+        "bleu,none": 25.826654029260222,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 60.67856442439694,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 54.28851049978236,
+        "chrf_stderr,none": "N/A"
+      }
+    },
+    "ifeval": {
+      "alias": "ifeval_ca",
+      "n": 400,
+      "prompt_level_strict_acc,none": 0.5325,
+      "prompt_level_strict_acc_stderr,none": 0.024978374105060035,
+      "inst_level_strict_acc,none": 0.6339434276206323,
+      "inst_level_strict_acc_stderr,none": "N/A",
+      "prompt_level_loose_acc,none": 0.595,
+      "prompt_level_loose_acc_stderr,none": 0.024575340657273674,
+      "inst_level_loose_acc,none": 0.6871880199667221,
+      "inst_level_loose_acc_stderr,none": "N/A"
+    }
+  }
+}
