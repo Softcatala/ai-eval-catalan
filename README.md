@@ -73,7 +73,7 @@ El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models de l
 |-----------|-------|---------|
 | **STS-ca** | Similitud semàntica de frases | Correlació de Pearson |
 | **CatCoLA** | Acceptabilitat gramatical | MCC |
-| **CLUB / VilaQuAD** | Comprensió lectora (QA) | Exact Match |
+| **CLUB / VilaQuAD** | Comprensió lectora (QA) | F1 de solapament de tokens |
 | **CaSum** | Resum de notícies en català | ROUGE-1/2/L |
 | **FLORES+** | Traducció automàtica EN↔CA i ES↔CA | BLEU |
 | **IFEval-ca** | Seguiment d'instruccions | Accuracy |

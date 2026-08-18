@@ -27,12 +27,14 @@ Usage:
 """
 
 import argparse
+from collections import Counter
 import gc
 import json
 import math
 import os
 import re
 import time
+import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -337,6 +339,32 @@ def run_club_qa(model, n_samples: int = 100) -> dict:
     print("\n[3/6] Running CLUB / VilaQuAD (QA) …")
     ds = load_dataset("projecte-aina/vilaquad", split="validation")
 
+    # XQuAD Spanish/German/Arabic use a shared SQuAD-style QA-F1 scorer.
+    # Mirror that here with case/accent/punctuation/space normalization only.
+    def _normalize_answer(text: str) -> str:
+        text = re.sub(r"<\|[^|]+_TOKEN\|>", " ", text)
+        text = text.lower()
+        text = "".join(
+            ch for ch in unicodedata.normalize("NFD", text)
+            if unicodedata.category(ch) != "Mn"
+        )
+        text = re.sub(r"[^\w\s]", " ", text, flags=re.UNICODE)
+        return " ".join(text.split())
+
+    def _token_f1(prediction: str, gold_answer: str) -> float:
+        pred_tokens = _normalize_answer(prediction).split()
+        gold_tokens = _normalize_answer(gold_answer).split()
+        if not pred_tokens or not gold_tokens:
+            return float(pred_tokens == gold_tokens)
+
+        common = Counter(pred_tokens) & Counter(gold_tokens)
+        num_same = sum(common.values())
+        if num_same == 0:
+            return 0.0
+        precision = num_same / len(pred_tokens)
+        recall = num_same / len(gold_tokens)
+        return 2 * precision * recall / (precision + recall)
+
     def _iter_qa_pairs(dataset, limit):
         """Yield QA pairs lazily from the nested vilaquad structure."""
         count = 0
@@ -349,22 +377,37 @@ def run_club_qa(model, n_samples: int = 100) -> dict:
                     if count >= limit:
                         return
 
-    exact_matches = []
+    exact_match_total = 0
+    token_f1_total = 0.0
+    n = 0
     for context, question, gold_answers in _iter_qa_pairs(ds, n_samples):
         prompt = (
             f"Llegeix el text i respon la pregunta amb una frase curta extreta del text.\n\n"
             f"Text: {context[:800]}\n\nPregunta: {question}\nResposta:"
         )
-        pred = model.generate(prompt, max_new_tokens=64).strip().lower()
+        raw_pred = model.generate(prompt, max_new_tokens=64).strip()
+        pred = raw_pred.lower()
         em = any(gold.strip().lower() in pred for gold in gold_answers)
-        exact_matches.append(int(em))
+        f1 = max(_token_f1(raw_pred, gold) for gold in gold_answers)
+        exact_match_total += int(em)
+        token_f1_total += f1
+        n += 1
 
     del ds
     gc.collect()
 
-    score = sum(exact_matches) / len(exact_matches)
-    result = {"exact_match_approx": round(score, 4), "n": len(exact_matches)}
-    print(f"    ✓ Approx. Exact Match={score:.4f}  (n={len(exact_matches)})")
+    score = exact_match_total / n
+    f1_score = token_f1_total / n
+    result = {
+        "exact_match_approx": round(score, 4),
+        "token_f1": round(f1_score, 4),
+        "n": n,
+    }
+    print(
+        f"    ✓ Approx. Exact Match={score:.4f}  "
+        f"Token F1={f1_score:.4f}  "
+        f"(n={n})"
+    )
     return result
 
 

@@ -9,7 +9,6 @@ Usage:
 import argparse
 import json
 import re
-import sys
 from statistics import fmean
 from pathlib import Path
 
@@ -49,7 +48,7 @@ def extract_metrics(data: dict) -> dict:
 
     club_qa = benchmarks.get("club_qa", {})
     if club_qa:
-        metrics["club_qa_em"] = club_qa.get("exact_match_approx")
+        metrics["club_qa_f1"] = club_qa["token_f1"]
 
     casum = benchmarks.get("casum", {})
     if casum:
@@ -99,7 +98,7 @@ def configured_model_id(model_config: dict) -> str | None:
 RANDOM_BASELINES = {
     "sts_ca":  0.0,   # correlation, ranges -1..1
     "catcola_mcc":     0.0,   # MCC for binary classification: random baseline is 0
-    "club_qa_em":      0.0,   # bounded 0..1, no trivial guesser
+    "club_qa_f1":      0.0,   # bounded 0..1, no trivial guesser
     "casum_rougeL":    0.0,   # bounded 0..1
     "flores_en_ca":    0.0,   # mean bidirectional BLEU/100 → 0..1
     "flores_es_ca":    0.0,   # mean bidirectional BLEU/100 → 0..1
@@ -115,7 +114,7 @@ COLUMN_LABELS = {
     "memory_gb": "Memòria (GB)",
     "sts_ca": "STS",
     "catcola_mcc": "CatCoLA MCC",
-    "club_qa_em": "CLUB QA",
+    "club_qa_f1": "CLUB QA",
     "casum_rougeL": "CaSum",
     "flores_en_ca": "EN↔CA",
     "flores_es_ca": "ES↔CA",
