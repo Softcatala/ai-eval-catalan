@@ -21,8 +21,7 @@
       "n": 400
     },
     "club_qa": {
-      "exact_match_approx": 0.0,
-      "token_f1": 0.0,
+      "exact_match_approx": 0.81,
       "n": 400
     },
     "iberbench": {

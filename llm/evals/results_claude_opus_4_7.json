@@ -22,8 +22,7 @@
     },
     "club_qa": {
       "exact_match_approx": 0.8475,
-      "n": 400,
-      "token_f1": null
+      "n": 400
     },
     "iberbench": {
       "note": "requires llama-server model (log-prob tasks)"

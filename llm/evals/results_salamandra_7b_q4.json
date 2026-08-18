@@ -1,0 +1,87 @@
+{
+  "model": "mradermacher/salamandra-7b-instruct-2606-GGUF:Q4_K_M",
+  "display_name": "salamandra-7b",
+  "cloud": false,
+  "params_b": 7.0,
+  "memory_gb": 3.9,
+  "evaluated_at": "2026-08-16T21:15:18+00:00",
+  "benchmarks": {
+    "sts_ca": {
+      "pearson": 0.2855,
+      "n": 400
+    },
+    "casum": {
+      "rouge1": 0.3972,
+      "rouge2": 0.215,
+      "rougeL": 0.3255,
+      "n": 400
+    },
+    "catcola": {
+      "mcc": 0.0502,
+      "accuracy": 0.2575,
+      "invalid_rate": 0.0,
+      "coverage": 1.0,
+      "n": 400,
+      "n_valid": 400,
+      "n_invalid": 0
+    },
+    "club_qa": {
+      "exact_match_approx": 0.795,
+      "n": 400
+    },
+    "flores": {
+      "catalan_bench_flores_en-ca": {
+        "alias": "catalan_bench_flores_en-ca",
+        "n": 400,
+        "bleu,none": 42.131916638455714,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 45.383655645664376,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 65.57674266034222,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_ca-en": {
+        "alias": "catalan_bench_flores_ca-en",
+        "n": 400,
+        "bleu,none": 43.865104897535026,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 42.961565668474414,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 68.74982038418528,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_es-ca": {
+        "alias": "catalan_bench_flores_es-ca",
+        "n": 400,
+        "bleu,none": 27.58494990220622,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 62.44541484716157,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 56.92848267357833,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_ca-es": {
+        "alias": "catalan_bench_flores_ca-es",
+        "n": 400,
+        "bleu,none": 27.043886386793357,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 59.01157089625417,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 54.72050420319352,
+        "chrf_stderr,none": "N/A"
+      }
+    },
+    "ifeval": {
+      "alias": "ifeval_ca",
+      "n": 400,
+      "prompt_level_strict_acc,none": 0.625,
+      "prompt_level_strict_acc_stderr,none": 0.02423646044779629,
+      "inst_level_strict_acc,none": 0.7271214642262895,
+      "inst_level_strict_acc_stderr,none": "N/A",
+      "prompt_level_loose_acc,none": 0.6675,
+      "prompt_level_loose_acc_stderr,none": 0.02358495283014154,
+      "inst_level_loose_acc,none": 0.757071547420965,
+      "inst_level_loose_acc_stderr,none": "N/A"
+    }
+  }
+}
