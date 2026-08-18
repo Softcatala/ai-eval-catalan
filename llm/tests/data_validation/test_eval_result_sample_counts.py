@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 NON_METRICS = {"n", "n_valid", "n_invalid", "alias", "invalid_rate"}
+REQUIRED_FIELDS = {"model", "display_name", "params_b", "memory_gb", "benchmarks"}
 
 
 def result_files():
@@ -28,6 +29,13 @@ def leaves(prefix, value):
 
 
 class EvalResultSampleCountsTest(unittest.TestCase):
+    def test_result_files_have_required_fields(self):
+        missing = []
+        for file in result_files():
+            data = json.loads((ROOT / file).read_text(encoding="utf-8"))
+            missing += [f"{Path(file).name}: {key}" for key in REQUIRED_FIELDS - data.keys()]
+        self.assertFalse(missing, "Missing required fields:\n" + "\n".join(missing))
+
     def test_metric_sample_counts_are_stored_and_consistent(self):
         counts = defaultdict(set)
         missing = []
