@@ -25,9 +25,9 @@
       "n_invalid": 0
     },
     "club_qa": {
-      "exact_match_approx": 0.8175,
-      "n": 400,
-      "token_f1": null
+      "exact_match_approx": 0.8275,
+      "token_f1": 0.6738,
+      "n": 400
     },
     "iberbench": {
       "catcola": {
