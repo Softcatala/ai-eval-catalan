@@ -14,7 +14,7 @@ Requirements:
 
 Usage:
   # With a llama.cpp GGUF model from bartowski (default):
-  python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0"
+  python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M"
 
   # With the Google AI API (Gemma 4):
   python model.py --model "gemini" --api-key "YOUR_KEY"
@@ -23,7 +23,7 @@ Usage:
   python model.py --model "claude" --api-key "YOUR_OPENROUTER_KEY" --openai-model "anthropic/claude-opus-4-7"
 
   # Run only specific benchmarks:
-  python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0" --benchmarks catcola flores
+  python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M" --benchmarks catcola flores
 """
 
 import argparse
@@ -715,8 +715,8 @@ def main():
     parser = argparse.ArgumentParser(description="Catalan LLM evaluation pipeline")
     parser.add_argument(
         "--model",
-        default="bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0",
-        help="Model spec: GGUF (e.g. 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0'), 'gemini', 'openai', or 'claude'",
+        default="bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M",
+        help="Model spec: GGUF (e.g. 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M'), 'gemini', 'openai', or 'claude'",
     )
     parser.add_argument(
         "--api-key",
@@ -825,11 +825,12 @@ def main():
             "Q8_0": 8.5,
             "UD-Q8_K_XL": 8.5,
             "Q4_K_M": 4.5,
+            "UD-Q4_K_XL": 4.5,
             "Q4_0": 4.5,
             "Q5_K_M": 5.5,
             "Q6_K": 6.5,
         }
-        quant = model_spec.rsplit(":", 1)[-1] if ":" in model_spec else "Q8_0"
+        quant = model_spec.rsplit(":", 1)[-1] if ":" in model_spec else "Q4_K_M"
         bits = _BITS.get(quant, 8.5)
         return round(params_b * 1e9 * bits / 8 / 1e9, 1)
 
@@ -844,7 +845,7 @@ def main():
     if args.model not in ("gemini", "openai", "claude") and not _is_gguf_model(args.model):
         raise ValueError(
             f"Only GGUF models are supported. Got: {args.model}\n"
-            "Use a GGUF spec like 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0', '--model gemini', '--model openai', or '--model claude'."
+            "Use a GGUF spec like 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M', '--model gemini', '--model openai', or '--model claude'."
         )
 
     tokenizer_id = (
