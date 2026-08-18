@@ -24,8 +24,9 @@
       "n_invalid": 110
     },
     "club_qa": {
-      "exact_match_approx": 0.84,
-      "n": 100
+      "exact_match_approx": 0.785,
+      "token_f1": 0.6936,
+      "n": 400
     },
     "iberbench": {
       "error": "You are trying to access a gated repo.\nMake sure to have access to it at https://huggingface.co/CohereForAI/aya-expanse-8b.\n403 Client Error. (Request ID: Root=1-69d6446f-0d6745d72c107bbb138cf060;e065f4a6-4129-443f-b1c7-8d5bfec227f0)\n\nCannot access gated repo for url https://huggingface.co/CohereForAI/aya-expanse-8b/resolve/main/config.json.\nAccess to model CohereLabs/aya-expanse-8b is restricted and you are not in the authorized list. Visit https://huggingface.co/CohereLabs/aya-expanse-8b to ask for access."

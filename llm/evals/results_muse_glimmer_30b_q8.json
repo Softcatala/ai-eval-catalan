@@ -26,7 +26,8 @@
     },
     "club_qa": {
       "exact_match_approx": 0.83,
-      "n": 400
+      "n": 400,
+      "token_f1": null
     },
     "flores": {
       "catalan_bench_flores_en-ca": {

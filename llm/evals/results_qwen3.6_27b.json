@@ -25,7 +25,8 @@
     },
     "club_qa": {
       "exact_match_approx": 0.86,
-      "n": 400
+      "n": 400,
+      "token_f1": null
     },
     "iberbench": {
       "error": "Qwen3.6-27B is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'\nIf this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`"

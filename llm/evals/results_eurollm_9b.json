@@ -24,8 +24,9 @@
       "n_invalid": 0
     },
     "club_qa": {
-      "exact_match_approx": 0.83,
-      "n": 100
+      "exact_match_approx": 0.6225,
+      "token_f1": 0.6846,
+      "n": 400
     },
     "iberbench": {
       "error": "You are trying to access a gated repo.\nMake sure to have access to it at https://huggingface.co/utter-project/EuroLLM-9B-Instruct.\n403 Client Error. (Request ID: Root=1-69d6418c-3e9a3426702225040c4c0af3;06c6e99c-0f59-4b5e-a6a2-c7aeefc90f84)\n\nCannot access gated repo for url https://huggingface.co/utter-project/EuroLLM-9B-Instruct/resolve/main/config.json.\nAccess to model utter-project/EuroLLM-9B-Instruct is restricted and you are not in the authorized list. Visit https://huggingface.co/utter-project/EuroLLM-9B-Instruct to ask for access."

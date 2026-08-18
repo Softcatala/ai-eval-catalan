@@ -20,7 +20,8 @@
       "n_invalid": 0
     },
     "club_qa": {
-      "exact_match_approx": 0.8375,
+      "exact_match_approx": 0.825,
+      "token_f1": 0.6218,
       "n": 400
     },
     "casum": {

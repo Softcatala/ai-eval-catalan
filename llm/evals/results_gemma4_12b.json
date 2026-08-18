@@ -23,7 +23,8 @@
       "n_invalid": 0
     },
     "club_qa": {
-      "exact_match_approx": 0.84,
+      "exact_match_approx": 0.825,
+      "token_f1": 0.7537,
       "n": 400
     },
     "ifeval": {
