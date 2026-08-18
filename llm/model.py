@@ -383,7 +383,7 @@ def run_club_qa(model, n_samples: int = 100) -> dict:
     for context, question, gold_answers in _iter_qa_pairs(ds, n_samples):
         prompt = (
             f"Llegeix el text i respon només amb el fragment mínim del text que "
-            f"respon la pregunta. No expliquis res.\n\n"
+            f"respon la pregunta. No expliquis res més.\n\n"
             f"Text: {context[:800]}\n\nPregunta: {question}\nResposta:"
         )
         raw_pred = model.generate(prompt, max_new_tokens=64).strip()
