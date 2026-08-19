@@ -352,17 +352,7 @@ def main():
         **{k: COLUMN_LABELS.get(k, k) for k in norm_keys},
         "clam_pct": COLUMN_LABELS["clam_pct"],
     }
-    json_metrics = {
-        "clam_pct": {
-            "direction": "higher_is_better",
-            "subtitle": "50% usable",
-            "label": "> 50% el considerem usable",
-            "caption": "Línia discontínua al 50% = \"usable per a tasques en català\"",
-            "success": {"min": 50, "color": "#388e3c"},
-            "warning": {"min": 40, "color": "#f9a825"},
-            "error": {"color": "#c62828"},
-        }
-    }
+    json_metrics = {}
     json_rows = []
     for label, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization in rows:
         entry = {
