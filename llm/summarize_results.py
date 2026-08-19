@@ -370,17 +370,6 @@ def main():
         **{k: COLUMN_LABELS.get(k, k) for k in norm_keys},
         "clam": COLUMN_LABELS["clam"],
     }
-    json_metrics = {
-        "clam": {
-            "direction": "higher_is_better",
-            "subtitle": "50 usable",
-            "label": "> 50 el considerem usable",
-            "caption": "Línia discontínua a 50 = \"usable per a tasques en català\"",
-            "success": {"min": 50, "color": "#388e3c"},
-            "warning": {"min": 40, "color": "#f9a825"},
-            "error": {"color": "#c62828"},
-        }
-    }
     json_rows = []
     for label, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization in rows:
         entry = {
@@ -405,7 +394,6 @@ def main():
         json.dumps(
             {
                 "text": json_text,
-                "metrics": json_metrics,
                 "data": [r for r in json_rows if not r["quantized_analysis_only"]],
             },
             indent=4,
@@ -429,7 +417,6 @@ def main():
                     "memory_gb": "Memòria (GB)",
                     "quantization": "Quantització",
                 },
-                "metrics": json_metrics,
                 "data": quantized_json_rows,
             },
             indent=4,
