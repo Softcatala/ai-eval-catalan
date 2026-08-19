@@ -6,6 +6,10 @@ from pathlib import Path
 from inference import chat_completion_params, inference_params
 
 
+_MUSE_USER_TEMPLATE = Path(__file__).with_name("templates") / "muse_glimmer_user.jinja"
+_MUSE_BOS_TOKEN = "<|begin_of_text|>"
+
+
 def _is_gguf_model(model_name: str) -> bool:
     """Return True if model_name is a GGUF spec (repo:quantization or .gguf file)."""
     return "GGUF" in model_name or "gguf" in model_name or model_name.endswith(".gguf")
@@ -133,8 +137,26 @@ class LlamaServerModel:
             payload_data["model"] = self.request_model
         return self._post_json("/chat/completions", payload_data)
 
+    def _muse_completion(self, prompt: str, max_tokens: int | None) -> str:
+        """Render Muse's direct-to-user template and bypass its reasoning channel."""
+        from jinja2 import Template
+
+        rendered = Template(_MUSE_USER_TEMPLATE.read_text(encoding="utf-8")).render(
+            messages=[{"role": "user", "content": prompt}],
+            add_generation_prompt=True,
+            bos_token=_MUSE_BOS_TOKEN,
+        )
+        data = self._completions(
+            rendered,
+            max_tokens=max_tokens or 256,
+            stop=["<|eot|>", "<|eom|>", "<|start|>"],
+        )
+        return data["choices"][0]["text"].strip()
+
     def generate(self, prompt: str, max_new_tokens: int | None = None) -> str:
         try:
+            if "muse-glimmer" in self.model_spec.lower():
+                return self._muse_completion(prompt, max_new_tokens)
             data = self._chat_completions(prompt, max_tokens=max_new_tokens)
             return data["choices"][0]["message"]["content"].strip()
         except Exception as e:

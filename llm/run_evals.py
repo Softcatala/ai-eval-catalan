@@ -394,9 +394,16 @@ MODELS = [
     {
         "display_name": "claude-opus-4-7",
         "output": "evals/results_claude_opus_4_7.json",
-        "args": ["--model", "claude", "--openai-model", "anthropic/claude-opus-4-7"],
+        "args": [
+            "--model",
+            "openai",
+            "--openai-model",
+            "global.anthropic.claude-opus-4-7",
+            "--openai-base-url",
+            f"https://bedrock-runtime.{os.environ.get('AWS_REGION') or os.environ.get('AWS_DEFAULT_REGION') or 'us-east-1'}.amazonaws.com/v1",
+        ],
         "cloud": True,
-        "needs_openrouter_api_key": True,
+        "needs_bedrock_token": True,
         "ram_gb": 0,
         "params_b": None,
         "quantization": "",

@@ -35,6 +35,8 @@ import os
 import re
 import time
 import unicodedata
+import urllib.parse
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -164,7 +166,10 @@ class OpenAIModel:
         from openai import OpenAI
 
         self.model_name = model_name
+        self.api_key = api_key
+        self.base_url = base_url
         self.client = OpenAI(api_key=api_key, base_url=base_url)
+        self.is_bedrock = bool(base_url and "bedrock-runtime" in base_url)
         self.provider = "openrouter" if base_url and "openrouter" in base_url else "openai"
         self.prompt_tokens = 0
         self.completion_tokens = 0
@@ -172,6 +177,8 @@ class OpenAIModel:
 
     def generate(self, prompt: str, max_new_tokens: int | None = None) -> str:
         try:
+            if self.is_bedrock:
+                return self._generate_bedrock(prompt, max_new_tokens)
             params = chat_completion_params(max_new_tokens, self.provider, self.model_name)
             response = self.client.chat.completions.create(
                 model=self.model_name,
@@ -190,6 +197,36 @@ class OpenAIModel:
             print(f"[error] API call failed: {e}")
             time.sleep(2)
             return ""
+
+    def _generate_bedrock(self, prompt: str, max_new_tokens: int | None) -> str:
+        """Generate through Bedrock Converse for Claude models unsupported by OpenAI API."""
+        parsed = urllib.parse.urlsplit(self.base_url)
+        model_id = urllib.parse.quote(self.model_name, safe="")
+        url = f"{parsed.scheme}://{parsed.netloc}/model/{model_id}/converse"
+        payload = json.dumps(
+            {
+                "messages": [
+                    {"role": "user", "content": [{"text": prompt}]}
+                ],
+                "inferenceConfig": {"maxTokens": max_new_tokens or 256},
+            }
+        ).encode()
+        request = urllib.request.Request(
+            url,
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+            },
+        )
+        with urllib.request.urlopen(request, timeout=300) as response:
+            data = json.loads(response.read())
+
+        usage = data.get("usage", {})
+        self.prompt_tokens += usage.get("inputTokens", 0)
+        self.completion_tokens += usage.get("outputTokens", 0)
+        blocks = data.get("output", {}).get("message", {}).get("content", [])
+        return "".join(block.get("text", "") for block in blocks).strip()
 
     def score_options(self, prompt: str, options: list[str]) -> int:
         answer = self.generate(prompt + "\nAnswer with only A, B, C, or D.")

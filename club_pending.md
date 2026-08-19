@@ -1,49 +1,41 @@
 # CLUB QA F1 Pending Runs
 
-Task: finish recalculating `benchmarks.club_qa.token_f1` for the remaining LLM result JSON files.
+Task: populate missing `benchmarks.club_qa.token_f1` values only. Do not
+recompute results where `token_f1` is already present.
 
-Already handled on `clubqa_f1`:
-
-- Cleaned untracked `results*.json` files from the repo worktree.
-- Recalculated and merged CLUB QA F1 for the models that completed on this machine.
-- `llm/recalculate_club_f1.py` exists as a helper runner that runs one model at a time, merges only `benchmarks.club_qa`, and continues after failures.
-
-Pending configured models:
+Pending existing result files:
 
 ```text
-gemma3-27b
-qwen3-14b
-phi-4
-qwen3.5-9b
-qwen3.8-27b
 muse-glimmer-30b
-llama3.1-8b
-aya-expanse-8b
-eurollm-9b
-salamandra-7b
-gemma4-26b
-claude-sonnet-4-6
+claude-opus-4-7
 ```
 
 Notes:
 
-- `claude-sonnet-4-6` is missing its result file: `llm/evals/results_claude_sonnet_4_6.json`.
-- The local models above failed here after `llama-server` began returning HTTP 500 and then connection refused.
-- Before rerunning, start a healthy `llama-server` exposing the model aliases from `llm/run_evals.py`, normally at `http://localhost:9090/v1`.
+- `muse-glimmer-30b` is a local GGUF model served by the existing
+  `llama-server` at `http://127.0.0.1:9090/v1`. Do not start another server.
+  Its first missing-F1 retry returned an empty generation. The client now
+  renders `llm/templates/muse_glimmer_user.jinja` into a direct-to-user
+  `/completions` request; a live probe succeeded and the full retry is running.
+- `claude-opus-4-7` is configured as
+  `global.anthropic.claude-opus-4-7` through Amazon Bedrock. The OpenAI-style
+  Bedrock path does not support this model, so the client now uses Bedrock's
+  native Converse endpoint. A live probe succeeded and the full retry is
+  running.
+- `claude-sonnet-4-6` is not part of this task. Its result file does not exist,
+  and the requested Claude model is Opus 4.7.
+- `llm/recalculate_club_f1.py` runs one model at a time and merges only
+  `benchmarks.club_qa` into an existing result JSON.
 
-Resume command:
+Local resume command:
 
 ```bash
 cd llm
-env PYTHONPATH=. uv run python recalculate_club_f1.py \
-  --models gemma3-27b qwen3-14b phi-4 qwen3.5-9b qwen3.8-27b \
-  muse-glimmer-30b llama3.1-8b aya-expanse-8b eurollm-9b salamandra-7b gemma4-26b \
+env PYTHONPATH=. uv run python -u recalculate_club_f1.py \
+  --models muse-glimmer-30b \
+  --llama-server-url http://127.0.0.1:9090/v1 \
   --model-timeout-seconds 2700
 ```
 
-After completion:
-
-```bash
-git status --short
-git diff --stat -- llm/evals/results*.json
-```
+After completion, audit the configured results and retain only existing files
+whose `benchmarks.club_qa.token_f1` is absent from the pending list.
