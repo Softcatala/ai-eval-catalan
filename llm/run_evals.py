@@ -140,6 +140,28 @@ MODELS = [
         "quantization": "q4",
     },
     {
+        "display_name": "ministral3-8b",
+        "output": "evals/results_ministral3_8b_q4.json",
+        "args": [
+            "--model",
+            "mistralai/Ministral-3-8B-Instruct-2512-GGUF:Q4_K_M",
+        ],
+        "ram_gb": 6,
+        "params_b": 8.0,
+        "quantization": "q4",
+    },
+    {
+        "display_name": "ministral3-14b",
+        "output": "evals/results_ministral3_14b_q4.json",
+        "args": [
+            "--model",
+            "mistralai/Ministral-3-14B-Instruct-2512-GGUF:Q4_K_M",
+        ],
+        "ram_gb": 9,
+        "params_b": 14.0,
+        "quantization": "q4",
+    },
+    {
         "display_name": "qwen3-14b",
         "output": "evals/results_qwen3_14b_q4.json",
         "args": ["--model", "bartowski/Qwen_Qwen3-14B-GGUF:Q4_K_M"],
