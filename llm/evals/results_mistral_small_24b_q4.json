@@ -26,7 +26,8 @@
       "n_invalid": 0
     },
     "club_qa": {
-      "exact_match_approx": 0.83,
+      "exact_match_approx": 0.8375,
+      "token_f1": 0.6258,
       "n": 400
     },
     "flores": {
