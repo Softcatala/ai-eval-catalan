@@ -14,25 +14,6 @@
         "clam": "CLAM",
         "quantization": "Quantització"
     },
-    "metrics": {
-        "clam": {
-            "direction": "higher_is_better",
-            "subtitle": "50 usable",
-            "label": "> 50 el considerem usable",
-            "caption": "Línia discontínua a 50 = \"usable per a tasques en català\"",
-            "success": {
-                "min": 50,
-                "color": "#388e3c"
-            },
-            "warning": {
-                "min": 40,
-                "color": "#f9a825"
-            },
-            "error": {
-                "color": "#c62828"
-            }
-        }
-    },
     "data": [
         {
             "model": "gemma3-27b",
