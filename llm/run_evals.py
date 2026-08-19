@@ -375,23 +375,6 @@ MODELS = [
         "quantization": "",
     },
     {
-        "display_name": "claude-sonnet-4-6",
-        "output": "evals/results_claude_sonnet_4_6.json",
-        "args": [
-            "--model",
-            "openai",
-            "--openai-model",
-            "global.anthropic.claude-sonnet-4-6",
-            "--openai-base-url",
-            f"https://bedrock-runtime.{os.environ.get('AWS_REGION') or os.environ.get('AWS_DEFAULT_REGION') or 'us-east-1'}.amazonaws.com/v1",
-        ],
-        "cloud": True,
-        "needs_bedrock_token": True,
-        "ram_gb": 0,
-        "params_b": None,
-        "quantization": "",
-    },
-    {
         "display_name": "claude-opus-4-7",
         "output": "evals/results_claude_opus_4_7.json",
         "args": [
