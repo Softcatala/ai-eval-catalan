@@ -1,0 +1,82 @@
+{
+  "model": "mistralai/Ministral-3-8B-Instruct-2512-GGUF:Q4_K_M",
+  "display_name": "ministral3-8b",
+  "cloud": false,
+  "params_b": 8.0,
+  "memory_gb": 4.5,
+  "evaluated_at": "2026-08-18T20:28:40+00:00",
+  "benchmarks": {
+    "sts_ca": {
+      "pearson": 0.5905,
+      "n": 400
+    },
+    "casum": {
+      "rouge1": 0.409,
+      "rouge2": 0.1933,
+      "rougeL": 0.3391,
+      "n": 400
+    },
+    "catcola": {
+      "mcc": 0.2237,
+      "accuracy": 0.4725,
+      "invalid_rate": 0.0,
+      "coverage": 1.0,
+      "n": 400,
+      "n_valid": 400,
+      "n_invalid": 0
+    },
+    "club_qa": {
+      "exact_match_approx": 0.665,
+      "n": 400
+    },
+    "flores": {
+      "catalan_bench_flores_en-ca": {
+        "alias": "catalan_bench_flores_en-ca",
+        "bleu,none": 28.390059569564837,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 58.04741110417966,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 58.82774874723013,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_ca-en": {
+        "alias": "catalan_bench_flores_ca-en",
+        "bleu,none": 28.633352611810515,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 59.962273048809244,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 58.804086519863304,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_es-ca": {
+        "alias": "catalan_bench_flores_es-ca",
+        "bleu,none": 20.800175125341603,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 69.75462674152631,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 53.16890807781288,
+        "chrf_stderr,none": "N/A"
+      },
+      "catalan_bench_flores_ca-es": {
+        "alias": "catalan_bench_flores_ca-es",
+        "bleu,none": 20.25346734950366,
+        "bleu_stderr,none": "N/A",
+        "ter,none": 68.92527946656207,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 50.94094404320293,
+        "chrf_stderr,none": "N/A"
+      }
+    },
+    "ifeval": {
+      "alias": "ifeval_ca",
+      "prompt_level_strict_acc,none": 0.45,
+      "prompt_level_strict_acc_stderr,none": 0.02490583770684492,
+      "inst_level_strict_acc,none": 0.5806988352745425,
+      "inst_level_strict_acc_stderr,none": "N/A",
+      "prompt_level_loose_acc,none": 0.5,
+      "prompt_level_loose_acc_stderr,none": 0.02503130871608794,
+      "inst_level_loose_acc,none": 0.6206322795341098,
+      "inst_level_loose_acc_stderr,none": "N/A"
+    }
+  }
+}
