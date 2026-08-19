@@ -266,15 +266,6 @@ MODELS = [
         "quantization": "q4",
     },
     {
-        "display_name": "gemma4-12b-q8",
-        "output": "evals/results_gemma4_12b.json",
-        "args": ["--model", "unsloth/gemma-4-12b-it-GGUF:Q8_0"],
-        "ram_gb": 13,
-        "params_b": 12.0,
-        "quantization": "q8",
-        "quantized_analysis_only": True,
-    },
-    {
         "display_name": "gemma4-e4b",
         "output": "evals/results_gemma4_e4b_q4.json",
         "args": [
@@ -286,15 +277,6 @@ MODELS = [
         "quantization": "q4",
     },
     {
-        "display_name": "gemma4-e4b-q8",
-        "output": "evals/results_gemma4_e4b.json",
-        "args": ["--model", "bartowski/google_gemma-4-E4B-it-GGUF:Q8_0"],
-        "ram_gb": 5,
-        "params_b": 4.0,
-        "quantization": "q8",
-        "quantized_analysis_only": True,
-    },
-    {
         "display_name": "gemma4-26b",
         "output": "evals/results_gemma4_26b_q4.json",
         "args": [
@@ -304,15 +286,6 @@ MODELS = [
         "ram_gb": 14,
         "params_b": 26.0,
         "quantization": "q4",
-    },
-    {
-        "display_name": "gemma4-26b-q8",
-        "output": "evals/results_gemma4_26b_q8.json",
-        "args": ["--model", "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q8_0"],
-        "ram_gb": 26,
-        "params_b": 26.0,
-        "quantization": "q8",
-        "quantized_analysis_only": True,
     },
     {
         "display_name": "gemini-3-1-preview",
