@@ -161,6 +161,8 @@ def _missing_requirement(model: dict) -> str | None:
         return "OPENAI_API_KEY env var required but not set"
     if model.get("needs_bedrock_token") and not os.environ.get("AWS_BEARER_TOKEN_BEDROCK"):
         return "AWS_BEARER_TOKEN_BEDROCK env var required but not set"
+    if model.get("needs_openrouter_api_key") and not os.environ.get("OPENROUTER_API_KEY"):
+        return "OPENROUTER_API_KEY env var required but not set"
     return None
 
 
@@ -251,6 +253,8 @@ def main() -> int:
         run_env = os.environ.copy()
         if model.get("needs_bedrock_token"):
             run_env["OPENAI_API_KEY"] = run_env["AWS_BEARER_TOKEN_BEDROCK"]
+        if model.get("needs_openrouter_api_key"):
+            cmd += ["--api-key", run_env["OPENROUTER_API_KEY"]]
 
         log_path = tmpdir / f"{name}.log"
         timeout = args.model_timeout_seconds or None
