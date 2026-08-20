@@ -577,6 +577,7 @@ def run_flores(
         if task in results.get("results", {})
     }
     for task, score in scores.items():
+        score["n"] = n_samples
         bleu = score.get("bleu,none", "n/a")
         print(f"    ✓ {task}: BLEU={bleu}")
     return scores
@@ -697,6 +698,7 @@ def run_ifeval(
                 os.environ["OPENAI_BASE_URL"] = _orig_base_url
 
     score = results["results"].get("ifeval_ca", {})
+    score["n"] = n_samples
     p_strict = score.get("prompt_level_strict_acc,none", "n/a")
     i_strict = score.get("inst_level_strict_acc,none", "n/a")
     p_loose = score.get("prompt_level_loose_acc,none", "n/a")
