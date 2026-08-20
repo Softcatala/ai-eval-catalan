@@ -28,6 +28,12 @@ def fmt_score(value) -> str:
     return f"{value:.1f}"
 
 
+def fmt_speed(value) -> str:
+    if value is None:
+        return "—"
+    return f"{value:.2f}"
+
+
 def fmt_dec_pct(value) -> str:
     """Format a 0–1 decimal as a percentage with 2 decimal places."""
     if value is None:
@@ -66,6 +72,7 @@ def render(json_path: Path, template_path: Path, out: Path, row_filter=None, ext
     env = Environment(loader=FileSystemLoader(str(template_path.parent)))
     env.filters["fmt"] = fmt
     env.filters["fmt_score"] = fmt_score
+    env.filters["fmt_speed"] = fmt_speed
     env.filters["fmt_dec_pct"] = fmt_dec_pct
     env.filters["fmt_params"] = fmt_params
     template = env.get_template(template_path.name)

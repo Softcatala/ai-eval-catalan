@@ -6,6 +6,10 @@ from pathlib import Path
 from inference import chat_completion_params, inference_params
 
 
+_MUSE_USER_TEMPLATE = Path(__file__).with_name("templates") / "muse_glimmer_user.jinja"
+_MUSE_BOS_TOKEN = "<|begin_of_text|>"
+
+
 def _is_gguf_model(model_name: str) -> bool:
     """Return True if model_name is a GGUF spec (repo:quantization or .gguf file)."""
     return "GGUF" in model_name or "gguf" in model_name or model_name.endswith(".gguf")
@@ -25,7 +29,7 @@ def expected_gguf_filename(model_spec: str) -> str:
     if ":" in model_spec:
         repo, quant = model_spec.rsplit(":", 1)
     else:
-        repo, quant = model_spec, "Q8_0"
+        repo, quant = model_spec, "Q4_K_M"
 
     if repo in _FILENAME_OVERRIDES:
         return _FILENAME_OVERRIDES[repo].format(quant=quant)
@@ -37,7 +41,7 @@ def expected_gguf_filename(model_spec: str) -> str:
 def _hf_tokenizer_from_gguf(model_spec: str) -> str:
     """
     Derive the HuggingFace tokenizer repo from a bartowski GGUF spec.
-    e.g. "bartowski/google_gemma-3-1b-it-GGUF:Q8_0" -> "google/gemma-3-1b-it"
+    e.g. "bartowski/google_gemma-3-1b-it-GGUF:Q4_K_M" -> "google/gemma-3-1b-it"
     """
     _KNOWN = {
         "aya-expanse-8b": "CohereForAI/aya-expanse-8b",
@@ -66,8 +70,8 @@ class LlamaServerModel:
     """
     GGUF model accessed via a running llama-server (OpenAI-compatible completions API).
 
-    model_spec format: "repo/ModelName-GGUF:Q8_0"
-      e.g. "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0"
+    model_spec format: "repo/ModelName-GGUF:Q4_K_M"
+      e.g. "bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M"
     """
 
     def __init__(
@@ -133,8 +137,26 @@ class LlamaServerModel:
             payload_data["model"] = self.request_model
         return self._post_json("/chat/completions", payload_data)
 
+    def _muse_completion(self, prompt: str, max_tokens: int | None) -> str:
+        """Render Muse's direct-to-user template and bypass its reasoning channel."""
+        from jinja2 import Template
+
+        rendered = Template(_MUSE_USER_TEMPLATE.read_text(encoding="utf-8")).render(
+            messages=[{"role": "user", "content": prompt}],
+            add_generation_prompt=True,
+            bos_token=_MUSE_BOS_TOKEN,
+        )
+        data = self._completions(
+            rendered,
+            max_tokens=max_tokens or 256,
+            stop=["<|eot|>", "<|eom|>", "<|start|>"],
+        )
+        return data["choices"][0]["text"].strip()
+
     def generate(self, prompt: str, max_new_tokens: int | None = None) -> str:
         try:
+            if "muse-glimmer" in self.model_spec.lower():
+                return self._muse_completion(prompt, max_new_tokens)
             data = self._chat_completions(prompt, max_tokens=max_new_tokens)
             return data["choices"][0]["message"]["content"].strip()
         except Exception as e:

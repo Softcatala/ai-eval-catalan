@@ -14,7 +14,7 @@ Requirements:
 
 Usage:
   # With a llama.cpp GGUF model from bartowski (default):
-  python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0"
+  python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M"
 
   # With the Google AI API (Gemma 4):
   python model.py --model "gemini" --api-key "YOUR_KEY"
@@ -23,16 +23,18 @@ Usage:
   python model.py --model "claude" --api-key "YOUR_OPENROUTER_KEY" --openai-model "anthropic/claude-opus-4-7"
 
   # Run only specific benchmarks:
-  python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0" --benchmarks catcola flores
+  python model.py --model "bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M" --benchmarks catcola flores
 """
 
 import argparse
+from collections import Counter
 import gc
 import json
 import math
 import os
 import re
 import time
+import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -337,6 +339,32 @@ def run_club_qa(model, n_samples: int = 100) -> dict:
     print("\n[3/6] Running CLUB / VilaQuAD (QA) …")
     ds = load_dataset("projecte-aina/vilaquad", split="validation")
 
+    # XQuAD Spanish/German/Arabic use a shared SQuAD-style QA-F1 scorer.
+    # Mirror that here with case/accent/punctuation/space normalization only.
+    def _normalize_answer(text: str) -> str:
+        text = re.sub(r"<\|[^|]+_TOKEN\|>", " ", text)
+        text = text.lower()
+        text = "".join(
+            ch for ch in unicodedata.normalize("NFD", text)
+            if unicodedata.category(ch) != "Mn"
+        )
+        text = re.sub(r"[^\w\s]", " ", text, flags=re.UNICODE)
+        return " ".join(text.split())
+
+    def _token_f1(prediction: str, gold_answer: str) -> float:
+        pred_tokens = _normalize_answer(prediction).split()
+        gold_tokens = _normalize_answer(gold_answer).split()
+        if not pred_tokens or not gold_tokens:
+            return float(pred_tokens == gold_tokens)
+
+        common = Counter(pred_tokens) & Counter(gold_tokens)
+        num_same = sum(common.values())
+        if num_same == 0:
+            return 0.0
+        precision = num_same / len(pred_tokens)
+        recall = num_same / len(gold_tokens)
+        return 2 * precision * recall / (precision + recall)
+
     def _iter_qa_pairs(dataset, limit):
         """Yield QA pairs lazily from the nested vilaquad structure."""
         count = 0
@@ -349,22 +377,40 @@ def run_club_qa(model, n_samples: int = 100) -> dict:
                     if count >= limit:
                         return
 
-    exact_matches = []
+    exact_match_total = 0
+    token_f1_total = 0.0
+    n = 0
     for context, question, gold_answers in _iter_qa_pairs(ds, n_samples):
         prompt = (
-            f"Llegeix el text i respon la pregunta amb una frase curta extreta del text.\n\n"
+            f"Llegeix el text i respon només amb el fragment mínim del text que "
+            f"respon la pregunta. No expliquis res més.\n\n"
             f"Text: {context[:800]}\n\nPregunta: {question}\nResposta:"
         )
-        pred = model.generate(prompt, max_new_tokens=64).strip().lower()
+        raw_pred = model.generate(prompt, max_new_tokens=64).strip()
+        if not raw_pred:
+            raise RuntimeError("CLUB QA generation returned an empty response")
+        pred = raw_pred.lower()
         em = any(gold.strip().lower() in pred for gold in gold_answers)
-        exact_matches.append(int(em))
+        f1 = max(_token_f1(raw_pred, gold) for gold in gold_answers)
+        exact_match_total += int(em)
+        token_f1_total += f1
+        n += 1
 
     del ds
     gc.collect()
 
-    score = sum(exact_matches) / len(exact_matches)
-    result = {"exact_match_approx": round(score, 4), "n": len(exact_matches)}
-    print(f"    ✓ Approx. Exact Match={score:.4f}  (n={len(exact_matches)})")
+    score = exact_match_total / n
+    f1_score = token_f1_total / n
+    result = {
+        "exact_match_approx": round(score, 4),
+        "token_f1": round(f1_score, 4),
+        "n": n,
+    }
+    print(
+        f"    ✓ Approx. Exact Match={score:.4f}  "
+        f"Token F1={f1_score:.4f}  "
+        f"(n={n})"
+    )
     return result
 
 
@@ -673,8 +719,8 @@ def main():
     parser = argparse.ArgumentParser(description="Catalan LLM evaluation pipeline")
     parser.add_argument(
         "--model",
-        default="bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0",
-        help="Model spec: GGUF (e.g. 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0'), 'gemini', 'openai', or 'claude'",
+        default="bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M",
+        help="Model spec: GGUF (e.g. 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M'), 'gemini', 'openai', or 'claude'",
     )
     parser.add_argument(
         "--api-key",
@@ -783,11 +829,12 @@ def main():
             "Q8_0": 8.5,
             "UD-Q8_K_XL": 8.5,
             "Q4_K_M": 4.5,
+            "UD-Q4_K_XL": 4.5,
             "Q4_0": 4.5,
             "Q5_K_M": 5.5,
             "Q6_K": 6.5,
         }
-        quant = model_spec.rsplit(":", 1)[-1] if ":" in model_spec else "Q8_0"
+        quant = model_spec.rsplit(":", 1)[-1] if ":" in model_spec else "Q4_K_M"
         bits = _BITS.get(quant, 8.5)
         return round(params_b * 1e9 * bits / 8 / 1e9, 1)
 
@@ -802,7 +849,7 @@ def main():
     if args.model not in ("gemini", "openai", "claude") and not _is_gguf_model(args.model):
         raise ValueError(
             f"Only GGUF models are supported. Got: {args.model}\n"
-            "Use a GGUF spec like 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q8_0', '--model gemini', '--model openai', or '--model claude'."
+            "Use a GGUF spec like 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M', '--model gemini', '--model openai', or '--model claude'."
         )
 
     tokenizer_id = (

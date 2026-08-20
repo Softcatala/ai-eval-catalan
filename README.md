@@ -73,7 +73,7 @@ El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models de l
 |-----------|-------|---------|
 | **STS-ca** | Similitud semàntica de frases | Correlació de Pearson |
 | **CatCoLA** | Acceptabilitat gramatical | MCC |
-| **CLUB / VilaQuAD** | Comprensió lectora (QA) | Exact Match |
+| **CLUB / VilaQuAD** | Comprensió lectora (QA) | F1 de solapament de tokens |
 | **CaSum** | Resum de notícies en català | ROUGE-1/2/L |
 | **FLORES+** | Traducció automàtica EN↔CA i ES↔CA | BLEU |
 | **IFEval-ca** | Seguiment d'instruccions | Accuracy |
@@ -96,6 +96,23 @@ Per evitar donar doble pes a la traducció, CLAM calcula primer
 `translation_score` com la mitjana dels valors disponibles de `flores_en_ca` i
 `flores_es_ca`. El resultat final és la mitjana dels benchmarks que no són de
 traducció i aquest únic `translation_score`.
+
+### Mida de model recomanada segons la memòria
+
+Per a models GGUF quantitzats amb **Q4_K_M**, aquestes són les mides orientatives
+segons la memòria disponible del sistema:
+
+| Memòria RAM | Mida recomanada | Límit aproximat |
+|-------------|-----------------|-----------------|
+| 8 GB | 7–8B | 9B, amb poc context |
+| 16 GB | 12–14B | 14B |
+| 32 GB | 24–27B | 30–32B, amb menys marge |
+
+Cal reservar aproximadament un 20–25% de la memòria per al sistema operatiu, el
+motor d'inferència i la memòria cau KV. Un context llarg consumeix més memòria;
+en aquest cas, convé triar un model de la franja inferior. Les xifres són
+orientatives i poden variar segons l'arquitectura del model i la configuració de
+`llama.cpp`.
 
 ### Instal·lació (LLM)
 
@@ -178,8 +195,8 @@ Amb un sol `llama.cpp server`, l'orquestrador només permet un model local per e
 Si el servidor requereix un identificador de model concret:
 
 ```bash
-uv run python model.py --model "bartowski/google_gemma-3-12b-it-GGUF:Q8_0" --server-url http://localhost:9090/v1 --server-model gemma-3-12b-it-Q8_0
-uv run python run_evals.py --models gemma3-12b --server-model gemma-3-12b-it-Q8_0
+uv run python model.py --model "bartowski/google_gemma-3-12b-it-GGUF:Q4_K_M" --server-url http://localhost:9090/v1 --server-model gemma-3-12b-it-Q4_K_M
+uv run python run_evals.py --models gemma3-12b --server-model gemma-3-12b-it-Q4_K_M
 ```
 
 **Avaluar amb l'API de Google AI o OpenAI:**
