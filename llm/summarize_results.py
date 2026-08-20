@@ -93,6 +93,25 @@ def configured_model_id(model_config: dict) -> str | None:
     return next((args[i + 1] for i, arg in enumerate(args[:-1]) if arg in flags), None)
 
 
+def load_benchmark_speeds(path: Path) -> dict[str, float]:
+    if not path.exists():
+        return {}
+    with path.open(encoding="utf-8") as f:
+        data = json.load(f)
+
+    speeds: dict[str, float] = {}
+    for run in data.get("runs", []):
+        if not isinstance(run, dict):
+            continue
+        speed = run.get("generation_tokens_per_sec")
+        if not isinstance(speed, (int, float)):
+            continue
+        for key in (run.get("model"), run.get("model_spec"), run.get("server_model")):
+            if key:
+                speeds[str(key)] = float(speed)
+    return speeds
+
+
 # Random baselines per task for normalization (HF Open LLM Leaderboard v2 approach)
 # Classification with N classes: 1/N; regression/correlation: 0; BLEU (pre-divided by 100): 0
 RANDOM_BASELINES = {
@@ -112,6 +131,7 @@ COLUMN_LABELS = {
     "cloud": "Cloud",
     "params_b": "Paràmetres (B)",
     "memory_gb": "Memòria (GB)",
+    "generation_tokens_per_sec": "tok/s",
     "sts_ca": "STS",
     "catcola_mcc": "CatCoLA MCC",
     "club_qa_f1": "CLUB QA",
@@ -201,7 +221,7 @@ HTML_TEMPLATE_SRC = """\
     </tr>
   </thead>
   <tbody>
-    {% for row in rows %}{% set label, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization = row %}
+    {% for row in rows %}{% set label, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization, generation_tokens_per_sec = row %}
     <tr>
       <td>{% if cloud %}<b>{{ label }}</b>{% else %}{{ label }}{% endif %}</td>
       <td>{{ row | fmt_params }}</td>
@@ -222,7 +242,7 @@ HTML_TEMPLATE_SRC = """\
     </tr>
   </thead>
   <tbody>
-    {% for row in rows %}{% set label, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization = row %}
+    {% for row in rows %}{% set label, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization, generation_tokens_per_sec = row %}
     <tr>
       <td>{% if cloud %}<b>{{ label }}</b>{% else %}{{ label }}{% endif %}</td>
       <td>{{ row | fmt_params }}</td>
@@ -253,9 +273,11 @@ def main():
     parser.add_argument("--results-dir", default=SCRIPT_DIR / "evals", help="Directory containing result JSONs")
     parser.add_argument("--html", default=SCRIPT_DIR / "summary.html", help="Output HTML file (default: summary.html)")
     parser.add_argument("--json-norm", default=SCRIPT_DIR / "llms.json", help="Output JSON file for normalized scores (default: llms.json)")
+    parser.add_argument("--benchmark-json", default=SCRIPT_DIR / "benchmark.json", help="Optional local generation speed benchmark JSON")
     args = parser.parse_args()
 
     results_dir = Path(args.results_dir)
+    benchmark_speeds = load_benchmark_speeds(Path(args.benchmark_json))
 
     # Build lookup from output path -> quantized_analysis_only using run_evals.py as source of truth
     from llm.run_evals import MODELS
@@ -265,6 +287,10 @@ def main():
     }
     quantization_by_output = {
         Path(m["output"]).name: m.get("quantization", "")
+        for m in MODELS
+    }
+    display_name_by_output = {
+        Path(m["output"]).name: m.get("display_name")
         for m in MODELS
     }
     model_id_by_output = {
@@ -291,8 +317,31 @@ def main():
             ("gemini-", "gpt-", "claude-", "global.anthropic.")
         ):
             model_id = model_id_by_output.get(path.name) or model_id
+        speed_keys = [
+            model_id_by_output.get(path.name),
+            model_id,
+            data.get("model"),
+        ]
+        if not quantized_analysis_only:
+            speed_keys.extend((display, display_name_by_output.get(path.name)))
+        speed_keys = tuple(
+            key for key in speed_keys if key is not None
+        )
+        generation_tokens_per_sec = next(
+            (benchmark_speeds[key] for key in speed_keys if key in benchmark_speeds),
+            None,
+        )
         repo_url_by_label[display] = repo_url(model_id)
-        rows.append((display, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization))
+        rows.append((
+            display,
+            metrics,
+            cloud,
+            params_b,
+            memory_gb,
+            quantized_analysis_only,
+            quantization,
+            generation_tokens_per_sec,
+        ))
         for k in metrics:
             if k not in all_metric_keys:
                 all_metric_keys.append(k)
@@ -367,17 +416,19 @@ def main():
         "cloud": COLUMN_LABELS["cloud"],
         "params_b": COLUMN_LABELS["params_b"],
         "memory_gb": COLUMN_LABELS["memory_gb"],
+        "generation_tokens_per_sec": COLUMN_LABELS["generation_tokens_per_sec"],
         **{k: COLUMN_LABELS.get(k, k) for k in norm_keys},
         "clam": COLUMN_LABELS["clam"],
     }
     json_rows = []
-    for label, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization in rows:
+    for label, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization, generation_tokens_per_sec in rows:
         entry = {
             "model": f"(*) {label}" if cloud else label,
             "repo_url": repo_url_by_label[label],
             "cloud": cloud,
             "params_b": params_b,
             "memory_gb": memory_gb,
+            "generation_tokens_per_sec": round(generation_tokens_per_sec, 2) if generation_tokens_per_sec is not None else None,
             "quantized_analysis_only": quantized_analysis_only,
             "quantization": quantization,
             **{k: round(normalize_score(k, metrics.get(k)), 4) if normalize_score(k, metrics.get(k)) is not None else None for k in norm_keys},
