@@ -6,8 +6,21 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[3]
-NON_METRICS = {"n", "n_valid", "n_invalid", "alias", "invalid_rate"}
 REQUIRED_FIELDS = {"model", "display_name", "params_b", "memory_gb", "benchmarks"}
+EXPECTED_SAMPLE_COUNTS = {
+    "benchmarks.sts_ca": 400,
+    "benchmarks.casum": 400,
+    "benchmarks.catcola": 400,
+    "benchmarks.club_qa": 400,
+    "benchmarks.iberbench.catcola": 400,
+    "benchmarks.iberbench.wnli_ca": 71,
+    "benchmarks.iberbench.teca": 400,
+    "benchmarks.flores.catalan_bench_flores_en-ca": 400,
+    "benchmarks.flores.catalan_bench_flores_ca-en": 400,
+    "benchmarks.flores.catalan_bench_flores_es-ca": 400,
+    "benchmarks.flores.catalan_bench_flores_ca-es": 400,
+    "benchmarks.ifeval": 400,
+}
 
 
 def result_files():
@@ -52,14 +65,13 @@ class EvalResultSampleCountsTest(unittest.TestCase):
             f"Inconsistent sample counts: {bad}",
         )
 
-    def test_metric_values_are_positive(self):
+    def test_metric_sample_counts_match_expected_dataset_sizes(self):
         bad = []
         for file in result_files():
             data = json.loads((ROOT / file).read_text(encoding="utf-8"))
             for metric, result in leaves("benchmarks", data.get("benchmarks", {})):
-                for key, value in result.items():
-                    if key in NON_METRICS or "stderr" in key or not isinstance(value, (int, float)):
-                        continue
-                    bad += [] if value > 0 else [f"{Path(file).name}: {metric}.{key}={value}"]
+                expected = EXPECTED_SAMPLE_COUNTS.get(metric)
+                if expected is not None and result.get("n") != expected:
+                    bad.append(f"{Path(file).name}: {metric} n={result.get('n')} expected {expected}")
 
-        self.assertFalse(bad, "Non-positive metric values:\n" + "\n".join(bad))
+        self.assertFalse(bad, "Unexpected sample counts:\n" + "\n".join(bad))
