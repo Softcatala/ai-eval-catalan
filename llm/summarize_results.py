@@ -65,8 +65,8 @@ def extract_metrics(data: dict) -> dict:
         }
         for metric, task in directions.items():
             result = flores.get(task, {})
-            if result and result.get("bleu,none") is not None:
-                metrics[metric] = result["bleu,none"]
+            if result and result.get("comet,none") is not None:
+                metrics[metric] = result["comet,none"]
 
         for pair, keys in {
             "flores_en_ca": ("flores_en2ca", "flores_ca2en"),
@@ -113,14 +113,14 @@ def load_benchmark_speeds(path: Path) -> dict[str, float]:
 
 
 # Random baselines per task for normalization (HF Open LLM Leaderboard v2 approach)
-# Classification with N classes: 1/N; regression/correlation: 0; BLEU (pre-divided by 100): 0
+# Classification with N classes: 1/N; regression/correlation and COMET: 0
 RANDOM_BASELINES = {
     "sts_ca":  0.0,   # correlation, ranges -1..1
     "catcola_mcc":     0.0,   # MCC for binary classification: random baseline is 0
     "club_qa_f1":      0.0,   # bounded 0..1, no trivial guesser
     "casum_rougeL":    0.0,   # bounded 0..1
-    "flores_en_ca":    0.0,   # mean bidirectional BLEU/100 → 0..1
-    "flores_es_ca":    0.0,   # mean bidirectional BLEU/100 → 0..1
+    "flores_en_ca":    0.0,   # mean bidirectional COMET score
+    "flores_es_ca":    0.0,   # mean bidirectional COMET score
     "ifeval_prompt_strict": 0.0,  # prompt-level strict accuracy, bounded 0..1
 }
 
@@ -147,13 +147,11 @@ def normalize_score(key: str, raw) -> float | None:
     """Normalize a raw metric to 0..1 using HF Open LLM Leaderboard v2 formula.
 
     normalized = (score − baseline) / (1 − baseline), clamped to [0, 1].
-    BLEU scores are divided by 100 first.
+    COMET scores are already represented on their native scale.
     """
     if raw is None:
         return None
     value = raw
-    if key.startswith("flores_"):
-        value = value / 100.0
     # Directional FLORES metrics are normalized for JSON diagnostics but are
     # deliberately not CLAM tasks or public table columns.
     baseline = RANDOM_BASELINES.get(key, 0.0)

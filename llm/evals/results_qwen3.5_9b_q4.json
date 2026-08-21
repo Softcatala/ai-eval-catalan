@@ -33,43 +33,39 @@
     "flores": {
       "catalan_bench_flores_en-ca": {
         "alias": "catalan_bench_flores_en-ca",
-        "n": 400,
-        "bleu,none": 38.8505075201495,
-        "bleu_stderr,none": "N/A",
-        "ter,none": 48.835516739446874,
+        "ter,none": 48.804325223539195,
         "ter_stderr,none": "N/A",
-        "chrf,none": 64.32220614567049,
-        "chrf_stderr,none": "N/A"
+        "chrf,none": 64.33297430674772,
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.8767476940900087
       },
       "catalan_bench_flores_ca-en": {
         "alias": "catalan_bench_flores_ca-en",
-        "n": 400,
-        "bleu,none": 43.088529632936314,
-        "bleu_stderr,none": "N/A",
         "ter,none": 42.961565668474414,
         "ter_stderr,none": "N/A",
         "chrf,none": 69.39228766886937,
-        "chrf_stderr,none": "N/A"
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.8895287357270718
       },
       "catalan_bench_flores_es-ca": {
         "alias": "catalan_bench_flores_es-ca",
-        "n": 400,
-        "bleu,none": 24.677427355607694,
-        "bleu_stderr,none": "N/A",
         "ter,none": 65.93886462882097,
         "ter_stderr,none": "N/A",
-        "chrf,none": 55.402662420104384,
-        "chrf_stderr,none": "N/A"
+        "chrf,none": 55.41004124507965,
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.8632111331820488
       },
       "catalan_bench_flores_ca-es": {
         "alias": "catalan_bench_flores_ca-es",
-        "n": 400,
-        "bleu,none": 27.079622235241906,
-        "bleu_stderr,none": "N/A",
         "ter,none": 59.71759168464404,
         "ter_stderr,none": "N/A",
         "chrf,none": 55.01747392050238,
-        "chrf_stderr,none": "N/A"
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.8673145094513893
       }
     },
     "ifeval": {
@@ -84,5 +80,6 @@
       "inst_level_loose_acc,none": 0.8252911813643927,
       "inst_level_loose_acc_stderr,none": "N/A"
     }
-  }
+  },
+  "flores_evaluated_at": "2026-08-21T03:26:51+00:00"
 }

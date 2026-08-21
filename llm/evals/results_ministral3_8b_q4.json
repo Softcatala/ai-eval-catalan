@@ -33,43 +33,39 @@
     "flores": {
       "catalan_bench_flores_en-ca": {
         "alias": "catalan_bench_flores_en-ca",
-        "n": 400,
-        "bleu,none": 28.390059569564837,
-        "bleu_stderr,none": "N/A",
         "ter,none": 58.04741110417966,
         "ter_stderr,none": "N/A",
         "chrf,none": 58.82774874723013,
-        "chrf_stderr,none": "N/A"
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.8372616824507714
       },
       "catalan_bench_flores_ca-en": {
         "alias": "catalan_bench_flores_ca-en",
-        "n": 400,
-        "bleu,none": 28.633352611810515,
-        "bleu_stderr,none": "N/A",
         "ter,none": 59.962273048809244,
         "ter_stderr,none": "N/A",
         "chrf,none": 58.804086519863304,
-        "chrf_stderr,none": "N/A"
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.8064060086011886
       },
       "catalan_bench_flores_es-ca": {
         "alias": "catalan_bench_flores_es-ca",
-        "n": 400,
-        "bleu,none": 20.800175125341603,
-        "bleu_stderr,none": "N/A",
         "ter,none": 69.75462674152631,
         "ter_stderr,none": "N/A",
         "chrf,none": 53.16890807781288,
-        "chrf_stderr,none": "N/A"
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.8397588581591845
       },
       "catalan_bench_flores_ca-es": {
         "alias": "catalan_bench_flores_ca-es",
-        "n": 400,
-        "bleu,none": 20.25346734950366,
-        "bleu_stderr,none": "N/A",
         "ter,none": 68.92527946656207,
         "ter_stderr,none": "N/A",
         "chrf,none": 50.94094404320293,
-        "chrf_stderr,none": "N/A"
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.8101866444200277
       }
     },
     "ifeval": {
@@ -84,5 +80,6 @@
       "inst_level_loose_acc,none": 0.6206322795341098,
       "inst_level_loose_acc_stderr,none": "N/A"
     }
-  }
+  },
+  "flores_evaluated_at": "2026-08-21T00:13:50+00:00"
 }

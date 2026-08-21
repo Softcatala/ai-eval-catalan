@@ -75,13 +75,13 @@ El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models de l
 | **CatCoLA** | Acceptabilitat gramatical | MCC |
 | **CLUB / VilaQuAD** | Comprensió lectora (QA) | F1 de solapament de tokens |
 | **CaSum** | Resum de notícies en català | ROUGE-1/2/L |
-| **FLORES+** | Traducció automàtica EN↔CA i ES↔CA | BLEU |
+| **FLORES+** | Traducció automàtica EN↔CA i ES↔CA | COMET |
 | **IFEval-ca** | Seguiment d'instruccions | Accuracy |
 
 FLORES+ executa quatre tasques: `catalan_bench_flores_en-ca`,
 `catalan_bench_flores_ca-en`, `catalan_bench_flores_es-ca` i
 `catalan_bench_flores_ca-es`. Les taules mostren dues columnes bidireccionals:
-`EN↔CA` i `ES↔CA`, cadascuna calculada com la mitjana del BLEU normalitzat de
+`EN↔CA` i `ES↔CA`, cadascuna calculada com la mitjana del COMET de
 les dues direccions.
 
 El contracte de `llm/llms.json` publica aquestes mitjanes com `flores_en_ca` i

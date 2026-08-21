@@ -50,43 +50,39 @@
     "flores": {
       "catalan_bench_flores_en-ca": {
         "alias": "catalan_bench_flores_en-ca",
+        "ter,none": 52.037845705967975,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 61.26458511412868,
+        "chrf_stderr,none": "N/A",
         "n": 400,
-        "bleu,none": 34.62940828073386,
-        "bleu_stderr,none": 0.8470839888832363,
-        "ter,none": 51.84029943855272,
-        "ter_stderr,none": 0.841706079571131,
-        "chrf,none": 61.1726016975697,
-        "chrf_stderr,none": 0.6114193846779945
+        "comet,none": 0.8495554751157761
       },
       "catalan_bench_flores_ca-en": {
         "alias": "catalan_bench_flores_ca-en",
+        "ter,none": 46.793209148785664,
+        "ter_stderr,none": "N/A",
+        "chrf,none": 67.25953900991183,
+        "chrf_stderr,none": "N/A",
         "n": 400,
-        "bleu,none": 39.37088322659867,
-        "bleu_stderr,none": 0.9259104123074061,
-        "ter,none": 47.017212921480784,
-        "ter_stderr,none": 0.9288248852744899,
-        "chrf,none": 67.27572440440078,
-        "chrf_stderr,none": 0.612383349777022
+        "comet,none": 0.8805493581295013
       },
       "catalan_bench_flores_es-ca": {
         "alias": "catalan_bench_flores_es-ca",
-        "n": 400,
-        "bleu,none": 23.333192343816982,
-        "bleu_stderr,none": "N/A",
-        "ter,none": 66.9369931378665,
+        "ter,none": 66.95778748180496,
         "ter_stderr,none": "N/A",
-        "chrf,none": 54.2376359217955,
-        "chrf_stderr,none": "N/A"
+        "chrf,none": 54.16610874901564,
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.84779759734869
       },
       "catalan_bench_flores_ca-es": {
         "alias": "catalan_bench_flores_ca-es",
-        "n": 400,
-        "bleu,none": 25.94862890916404,
-        "bleu_stderr,none": "N/A",
-        "ter,none": 60.58050598156501,
+        "ter,none": 60.54128260443225,
         "ter_stderr,none": "N/A",
-        "chrf,none": 54.13537976757713,
-        "chrf_stderr,none": "N/A"
+        "chrf,none": 54.15904174488504,
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.8590324415266514
       }
     },
     "ifeval": {
@@ -102,5 +98,6 @@
       "inst_level_loose_acc_stderr,none": "N/A"
     }
   },
-  "quantization": "q4"
+  "quantization": "q4",
+  "flores_evaluated_at": "2026-08-20T19:27:18+00:00"
 }

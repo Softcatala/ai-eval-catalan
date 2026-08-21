@@ -32,43 +32,39 @@
     "flores": {
       "catalan_bench_flores_en-ca": {
         "alias": "catalan_bench_flores_en-ca",
-        "n": 400,
-        "bleu,none": 35.49998706735519,
-        "bleu_stderr,none": "N/A",
-        "ter,none": 51.185277604491574,
+        "ter,none": 51.164483260553126,
         "ter_stderr,none": "N/A",
-        "chrf,none": 62.31584817172469,
-        "chrf_stderr,none": "N/A"
+        "chrf,none": 62.27102499734676,
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.8636631045490504
       },
       "catalan_bench_flores_ca-en": {
         "alias": "catalan_bench_flores_ca-en",
-        "n": 400,
-        "bleu,none": 42.84111158323457,
-        "bleu_stderr,none": "N/A",
-        "ter,none": 43.857580759254894,
+        "ter,none": 43.763263381278,
         "ter_stderr,none": "N/A",
-        "chrf,none": 69.56658123553561,
-        "chrf_stderr,none": "N/A"
+        "chrf,none": 69.58467784890917,
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.888707737326622
       },
       "catalan_bench_flores_es-ca": {
         "alias": "catalan_bench_flores_es-ca",
-        "n": 400,
-        "bleu,none": 23.501880440234284,
-        "bleu_stderr,none": "N/A",
-        "ter,none": 67.04096485755875,
+        "ter,none": 67.08255354543564,
         "ter_stderr,none": "N/A",
-        "chrf,none": 54.38755770930162,
-        "chrf_stderr,none": "N/A"
+        "chrf,none": 54.42852426675312,
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.8532881306111813
       },
       "catalan_bench_flores_ca-es": {
         "alias": "catalan_bench_flores_ca-es",
-        "n": 400,
-        "bleu,none": 26.578391771184354,
-        "bleu_stderr,none": "N/A",
-        "ter,none": 60.14904883310454,
+        "ter,none": 60.08040792312218,
         "ter_stderr,none": "N/A",
-        "chrf,none": 54.63540846582351,
-        "chrf_stderr,none": "N/A"
+        "chrf,none": 54.62426097637599,
+        "chrf_stderr,none": "N/A",
+        "n": 400,
+        "comet,none": 0.8635627380013466
       }
     },
     "ifeval": {
@@ -83,5 +79,6 @@
       "inst_level_loose_acc,none": 0.8402662229617305,
       "inst_level_loose_acc_stderr,none": "N/A"
     }
-  }
+  },
+  "flores_evaluated_at": "2026-08-21T01:33:35+00:00"
 }

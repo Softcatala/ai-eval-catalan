@@ -464,6 +464,54 @@ def run_casum(model, n_samples: int = 100) -> dict:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
+_FLORES_SOURCE_FIELDS = {
+    "en": ("sentence_eng_Latn", "eng_Latn", "en", "english"),
+    "es": ("sentence_spa_Latn", "spa_Latn", "es", "spanish"),
+    "ca": ("sentence_cat_Latn", "cat_Latn", "ca", "catalan"),
+}
+
+
+def _load_comet_model():
+    """Load the standard reference-based WMT22 COMET checkpoint lazily."""
+    try:
+        from comet import download_model, load_from_checkpoint
+    except ImportError as exc:
+        raise RuntimeError(
+            "COMET is required for FLORES scoring; install project dependencies"
+        ) from exc
+    return load_from_checkpoint(download_model("Unbabel/wmt22-comet-da"))
+
+
+def _sample_text(value) -> str | None:
+    """Unwrap the list-shaped response/target values emitted by lm-eval."""
+    while isinstance(value, (list, tuple)) and value:
+        value = value[0]
+    return value.strip() if isinstance(value, str) and value.strip() else None
+
+
+def _comet_example(task: str, sample: dict) -> dict[str, str] | None:
+    """Convert one logged lm-eval FLORES sample to COMET's input schema."""
+    direction = task.removeprefix("catalan_bench_flores_")
+    source_language = direction.split("-", 1)[0]
+    doc = sample.get("doc", {})
+    source = next(
+        (
+            _sample_text(doc.get(field))
+            for field in _FLORES_SOURCE_FIELDS.get(source_language, ())
+            if _sample_text(doc.get(field)) is not None
+        ),
+        None,
+    )
+    source = source or _sample_text(doc.get("source")) or _sample_text(doc.get("src"))
+    reference = _sample_text(sample.get("target"))
+    hypothesis = _sample_text(sample.get("filtered_resps")) or _sample_text(
+        sample.get("resps")
+    )
+    if not all((source, reference, hypothesis)):
+        return None
+    return {"src": source, "ref": reference, "mt": hypothesis}
+
+
 def run_flores(
     model_name: str,
     base_url: str | None = None,
@@ -479,7 +527,7 @@ def run_flores(
     """
     Translation evaluation on FLORES+ devtest split via lm-evaluation-harness.
     Tests both directions for English↔Catalan and Spanish↔Catalan.
-    Metric: BLEU, TER, chrF (computed by lm-eval).
+    Metric: COMET (computed from lm-eval's generated translations).
     Supports llama-server (via base_url), OpenAI API (via openai_model), OpenRouter, or HF.
     """
     if not HAS_LM_EVAL:
@@ -555,7 +603,9 @@ def run_flores(
             apply_chat_template=True,
             fewshot_as_multiturn=True,
             batch_size=1,
-            log_samples=False,
+            # COMET needs the source, reference, and generated translation for
+            # every example. lm-eval returns those only when samples are logged.
+            log_samples=True,
             limit=n_samples,
             bootstrap_iters=0,
             confirm_run_unsafe_code=True,
@@ -576,10 +626,43 @@ def run_flores(
         for task in flores_tasks
         if task in results.get("results", {})
     }
+    deferred_path = os.environ.get("COMET_DEFER_PATH")
+    comet_model = None if deferred_path else _load_comet_model()
+    deferred_examples = {}
     for task, score in scores.items():
         score["n"] = n_samples
-        bleu = score.get("bleu,none", "n/a")
-        print(f"    ✓ {task}: BLEU={bleu}")
+        examples = [
+            _comet_example(task, sample)
+            for sample in results.get("samples", {}).get(task, [])
+        ]
+        examples = [example for example in examples if example is not None]
+        if not examples:
+            raise RuntimeError(f"lm-eval returned no usable translations for COMET: {task}")
+        if deferred_path:
+            deferred_examples[task] = examples
+            score["comet_pending"] = True
+            score.pop("bleu,none", None)
+            score.pop("bleu_stderr,none", None)
+            continue
+        prediction = comet_model.predict(  # type: ignore[union-attr]
+            examples,
+            batch_size=8,
+            # llama.cpp owns the GPU in this pipeline. Run COMET on CPU so its
+            # PyTorch/CUDA build cannot conflict with the host driver.
+            gpus=0,
+        )
+        score["comet,none"] = float(prediction.system_score)
+        # BLEU is still produced internally by the lm-eval FLORES task, but it
+        # is no longer part of our result contract.
+        score.pop("bleu,none", None)
+        score.pop("bleu_stderr,none", None)
+        print(f"    ✓ {task}: COMET={score['comet,none']:.4f}")
+    if deferred_path:
+        deferred = Path(deferred_path)
+        temporary = deferred.with_name(f".{deferred.name}.tmp")
+        temporary.write_text(json.dumps(deferred_examples), encoding="utf-8")
+        os.replace(temporary, deferred)
+        print(f"    ✓ deferred COMET scoring data saved to {deferred}")
     return scores
 
 
