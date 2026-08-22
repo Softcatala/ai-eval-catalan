@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 from comet_config import COMET_CHECKPOINT
@@ -14,6 +15,30 @@ TASKS = {
     "catalan_bench_flores_es-ca": ("sentence_spa_Latn", "sentence_cat_Latn"),
     "catalan_bench_flores_ca-es": ("sentence_cat_Latn", "sentence_spa_Latn"),
 }
+CHUNK_SIZE = 8
+
+
+def save(path: Path, value: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.tmp")
+    with temporary.open("w", encoding="utf-8") as stream:
+        json.dump(value, stream, indent=2, ensure_ascii=False)
+        stream.write("\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temporary, path)
+
+
+def result(scores: dict, progress: dict, n_samples: int) -> dict:
+    value = {
+        "baseline": "source-copy (mt = src)",
+        "flores_comet_checkpoint": COMET_CHECKPOINT,
+        "benchmarks": {"flores": scores},
+    }
+    if progress:
+        value["progress"] = progress
+        value["n_samples"] = n_samples
+    return value
 
 
 def main() -> None:
@@ -40,30 +65,30 @@ def main() -> None:
 
     comet = load_from_checkpoint(download_model(COMET_CHECKPOINT))
     samples = dataset.select(range(args.n_samples))
-    scores = {}
+    existing = json.loads(args.output.read_text()) if args.output.exists() else {}
+    scores = existing.get("benchmarks", {}).get("flores", {})
+    progress = existing.get("progress", {})
     for task, (source_key, reference_key) in TASKS.items():
+        if task in scores:
+            continue
         examples = [
             {"src": row[source_key], "ref": row[reference_key], "mt": row[source_key]}
             for row in samples
         ]
-        score = float(comet.predict(examples, batch_size=8, gpus=0).system_score)
-        scores[task] = {"comet,none": score, "n": args.n_samples}
-        print(f"{task}: source-copy COMET={score:.4f}", flush=True)
+        state = progress.setdefault(task, {"done": 0, "score_sum": 0.0})
+        for start in range(state["done"], args.n_samples, CHUNK_SIZE):
+            chunk = examples[start : start + CHUNK_SIZE]
+            prediction = comet.predict(chunk, batch_size=CHUNK_SIZE, gpus=0)
+            state["done"] += len(chunk)
+            state["score_sum"] += sum(float(score) for score in prediction.scores)
+            save(args.output, result(scores, progress, args.n_samples))
+            print(f"{task}: {state['done']}/{args.n_samples}", flush=True)
+        scores[task] = {"comet,none": state["score_sum"] / args.n_samples, "n": args.n_samples}
+        del progress[task]
+        save(args.output, result(scores, progress, args.n_samples))
+        print(f"{task}: source-copy COMET={scores[task]['comet,none']:.4f}", flush=True)
 
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(
-        json.dumps(
-            {
-                "baseline": "source-copy (mt = src)",
-                "flores_comet_checkpoint": COMET_CHECKPOINT,
-                "benchmarks": {"flores": scores},
-            },
-            indent=2,
-            ensure_ascii=False,
-        )
-        + "\n",
-        encoding="utf-8",
-    )
+    save(args.output, result(scores, progress, args.n_samples))
     print(f"Saved baseline to {args.output}", flush=True)
 
 
