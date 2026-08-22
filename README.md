@@ -101,6 +101,10 @@ uv run python comet_baseline.py \
 
 Podeu canviar-ne la mida amb `--n-samples`.
 
+Amb el checkpoint `Unbabel/wmt22-comet-da` i 400 exemples de FLORES devtest per
+direcció, el baseline de còpia de font és: EN→CA 0.6809, CA→EN 0.7549, ES→CA
+0.8222 i CA→ES 0.8228.
+
 Cada fila dels JSON publicats inclou `repo_url`, calculat amb el helper compartit
 `eval_common.model_urls`.
 
