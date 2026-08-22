@@ -38,6 +38,7 @@ import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 
+from comet_config import COMET_CHECKPOINT, drop_legacy_translation_metrics
 from inference import chat_completion_params, lm_eval_params
 
 from llamaserver import (
@@ -469,7 +470,6 @@ _FLORES_SOURCE_FIELDS = {
     "es": ("sentence_spa_Latn", "spa_Latn", "es", "spanish"),
     "ca": ("sentence_cat_Latn", "cat_Latn", "ca", "catalan"),
 }
-COMET_CHECKPOINT = "Unbabel/wmt22-comet-da"
 
 
 def _load_comet_model():
@@ -682,8 +682,7 @@ def run_flores(
         if deferred_path:
             deferred_examples[task] = examples
             score["comet_pending"] = True
-            for metric in ("bleu,none", "bleu_stderr,none", "ter,none", "ter_stderr,none", "chrf,none", "chrf_stderr,none"):
-                score.pop(metric, None)
+            drop_legacy_translation_metrics(score)
             continue
         prediction = comet_model.predict(  # type: ignore[union-attr]
             examples,
@@ -695,8 +694,7 @@ def run_flores(
         score["comet,none"] = float(prediction.system_score)
         # BLEU is still produced internally by the lm-eval FLORES task, but it
         # is no longer part of our result contract.
-        for metric in ("bleu,none", "bleu_stderr,none", "ter,none", "ter_stderr,none", "chrf,none", "chrf_stderr,none"):
-            score.pop(metric, None)
+        drop_legacy_translation_metrics(score)
         print(f"    ✓ {task}: COMET={score['comet,none']:.4f}")
     if deferred_path:
         deferred = Path(deferred_path)
