@@ -513,6 +513,43 @@ def _comet_example(task: str, sample: dict) -> dict[str, str] | None:
     return {"src": source, "ref": reference, "mt": hypothesis}
 
 
+def _score_flores_comet(results: dict, tasks: list[str], comet_model) -> dict:
+    """Attach COMET scores without discarding successful FLORES directions."""
+    scores = {
+        task: results["results"][task]
+        for task in tasks
+        if task in results.get("results", {})
+    }
+    for task, score in list(scores.items()):
+        examples = [
+            example
+            for sample in results.get("samples", {}).get(task, [])
+            if (example := _comet_example(task, sample)) is not None
+        ]
+        try:
+            if not examples:
+                raise RuntimeError("lm-eval returned no usable translations for COMET")
+            prediction = comet_model.predict(
+                examples,
+                batch_size=8,
+                # llama.cpp owns the GPU in this pipeline. Run COMET on CPU so its
+                # PyTorch/CUDA build cannot conflict with the host driver.
+                gpus=0,
+            )
+        except Exception as exc:
+            print(f"    [warn] {task}: COMET failed: {exc}")
+            scores[task] = {"error": str(exc)}
+            continue
+
+        score["n"] = len(examples)
+        score["comet"] = float(prediction.system_score)
+        # BLEU is still produced internally by the lm-eval FLORES task, but it
+        # is no longer part of our result contract.
+        drop_legacy_translation_metrics(score)
+        print(f"    ✓ {task}: COMET={score['comet']:.4f}")
+    return scores
+
+
 def run_flores(
     model_name: str,
     base_url: str | None = None,
@@ -675,34 +712,8 @@ def run_flores(
                 os.environ.pop("OPENAI_BASE_URL", None)
             else:
                 os.environ["OPENAI_BASE_URL"] = _orig_base_url
-    scores = {
-        task: results["results"][task]
-        for task in flores_tasks
-        if task in results.get("results", {})
-    }
     comet_model = _load_comet_model()
-    for task, score in scores.items():
-        score["n"] = n_samples
-        examples = [
-            _comet_example(task, sample)
-            for sample in results.get("samples", {}).get(task, [])
-        ]
-        examples = [example for example in examples if example is not None]
-        if not examples:
-            raise RuntimeError(f"lm-eval returned no usable translations for COMET: {task}")
-        prediction = comet_model.predict(
-            examples,
-            batch_size=8,
-            # llama.cpp owns the GPU in this pipeline. Run COMET on CPU so its
-            # PyTorch/CUDA build cannot conflict with the host driver.
-            gpus=0,
-        )
-        score["comet"] = float(prediction.system_score)
-        # BLEU is still produced internally by the lm-eval FLORES task, but it
-        # is no longer part of our result contract.
-        drop_legacy_translation_metrics(score)
-        print(f"    ✓ {task}: COMET={score['comet']:.4f}")
-    return scores
+    return _score_flores_comet(results, flores_tasks, comet_model)
 
 
 
