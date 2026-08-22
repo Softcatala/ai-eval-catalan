@@ -360,9 +360,12 @@ MODELS = [
             "--model",
             "openai",
             "--openai-model",
-            "global.anthropic.claude-opus-4-7",
+            "anthropic.claude-opus-4-7",
             "--openai-base-url",
-            f"https://bedrock-runtime.{os.environ.get('AWS_REGION') or os.environ.get('AWS_DEFAULT_REGION') or 'us-east-1'}.amazonaws.com/v1",
+            # Opus 4.7 exposes OpenAI-compatible Chat Completions through the
+            # Bedrock Mantle endpoint. Runtime accepts only its native APIs for
+            # this model, which returns payloads without OpenAI ``choices``.
+            f"https://bedrock-mantle.{os.environ.get('AWS_REGION') or os.environ.get('AWS_DEFAULT_REGION') or 'us-east-1'}.api.aws/v1",
         ],
         "cloud": True,
         "needs_bedrock_token": True,

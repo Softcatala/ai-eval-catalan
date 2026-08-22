@@ -536,7 +536,13 @@ def run_flores(
     print("\n[5/6] Running FLORES+ (EN↔CA and ES↔CA translation) via lm-evaluation-harness …")
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
-    inference_provider = "gemini" if gemini_model else "openrouter" if openrouter_model else "openai" if openai_model else "llama" if base_url else "hf"
+    bedrock_anthropic = bool(
+        openai_model
+        and base_url
+        and "bedrock-mantle" in base_url
+        and openai_model.startswith("anthropic.")
+    )
+    inference_provider = "anthropic" if bedrock_anthropic else "gemini" if gemini_model else "openrouter" if openrouter_model else "openai" if openai_model else "llama" if base_url else "hf"
     inference_model = gemini_model or openrouter_model or openai_model or model_name
 
     if gemini_model:
@@ -562,6 +568,40 @@ def run_flores(
         _orig_base_url = os.environ.get("OPENAI_BASE_URL")
         os.environ["OPENAI_API_KEY"] = openrouter_api_key or ""
         os.environ["OPENAI_BASE_URL"] = _openrouter_base_url
+    elif bedrock_anthropic:
+        # Claude Opus 4.7 does not implement Bedrock's OpenAI-compatible Chat
+        # Completions API.  It supports the native Anthropic Messages endpoint
+        # on Bedrock Mantle instead.  lm-eval has an Anthropic adapter, and this
+        # small variant supplies Bedrock's bearer authentication and removes
+        # ``temperature``, which Opus 4.7 has deprecated.
+        from lm_eval.models.anthropic_llms import AnthropicChat
+
+        class BedrockAnthropicChat(AnthropicChat):
+            @property
+            def header(self):
+                token = os.environ.get("AWS_BEARER_TOKEN_BEDROCK")
+                if not token:
+                    raise ValueError("AWS_BEARER_TOKEN_BEDROCK is required")
+                return {
+                    "Authorization": f"Bearer {token}",
+                    "anthropic-version": "bedrock-2023-05-31",
+                }
+
+            def _create_payload(self, *args, **kwargs):
+                payload = super()._create_payload(*args, **kwargs)
+                payload.pop("temperature", None)
+                payload.pop("reasoning_effort", None)
+                return payload
+
+        lm_model = BedrockAnthropicChat(
+            model=openai_model,
+            base_url=f"{base_url.rstrip('/').removesuffix('/v1')}/anthropic/v1/messages",
+            tokenizer_backend="none",
+            tokenized_requests=False,
+            num_concurrent=1,
+            max_retries=3,
+        )
+        lm_model_args = None
     elif openai_model:
         lm_model = "openai-chat-completions"
         _base = f"base_url={base_url}/chat/completions," if base_url else ""
