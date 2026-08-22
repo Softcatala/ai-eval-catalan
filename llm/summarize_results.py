@@ -113,15 +113,19 @@ def load_benchmark_speeds(path: Path) -> dict[str, float]:
     return speeds
 
 
-# Random baselines per task for normalization (HF Open LLM Leaderboard v2 approach)
-# Classification with N classes: 1/N; regression/correlation and COMET: 0
+# Baselines per task for normalization (HF Open LLM Leaderboard v2 approach).
+# FLORES uses the measured source-copy COMET baseline (mt = src), rather than 0.
+COMET_SOURCE_COPY_BASELINES = {
+    "flores_en_ca": fmean((0.6808871791511774, 0.7549228701740504)),
+    "flores_es_ca": fmean((0.8222366382181644, 0.822775568291545)),
+}
+
 RANDOM_BASELINES = {
     "sts_ca":  0.0,   # correlation, ranges -1..1
     "catcola_mcc":     0.0,   # MCC for binary classification: random baseline is 0
     "club_qa_f1":      0.0,   # bounded 0..1, no trivial guesser
     "casum_rougeL":    0.0,   # bounded 0..1
-    "flores_en_ca":    0.0,   # mean bidirectional COMET score
-    "flores_es_ca":    0.0,   # mean bidirectional COMET score
+    **COMET_SOURCE_COPY_BASELINES,
     "ifeval_prompt_strict": 0.0,  # prompt-level strict accuracy, bounded 0..1
 }
 
@@ -148,7 +152,7 @@ def normalize_score(key: str, raw) -> float | None:
     """Normalize a raw metric to 0..1 using HF Open LLM Leaderboard v2 formula.
 
     normalized = (score − baseline) / (1 − baseline), clamped to [0, 1].
-    COMET scores are already represented on their native scale.
+    FLORES COMET uses its measured source-copy baseline.
     """
     if raw is None:
         return None
