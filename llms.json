@@ -347,7 +347,7 @@
             "clam": 48.71
         },
         {
-            "model": "phi-4",
+            "model": "phi-4-14b",
             "repo_url": "https://huggingface.co/bartowski/phi-4-GGUF",
             "cloud": false,
             "params_b": 14.0,
