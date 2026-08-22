@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from comet_config import COMET_CHECKPOINT
+
 TASKS = {
     "catalan_bench_flores_en-ca": ("sentence_eng_Latn", "sentence_cat_Latn"),
     "catalan_bench_flores_ca-en": ("sentence_cat_Latn", "sentence_eng_Latn"),

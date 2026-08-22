@@ -11,10 +11,10 @@ render-local:
 	uv run render_index_local.py
 
 unit-test:
-	cd llm && uv run --with pytest python -m pytest tests --ignore=tests/data_validation
+	cd llm && PYTHONPATH=.. uv run --with pytest python -m pytest tests --ignore=tests/data_validation
 
 data-validation:
-	cd llm && uv run --with pytest python -m pytest tests/data_validation
+	cd llm && PYTHONPATH=.. uv run --with pytest python -m pytest tests/data_validation
 
 llm-download-ggufs:
 	cd llm && uv run python download_ggufs.py --output-dir "$(abspath $(GGUF_DIR))" --presets-file "$(abspath $(GGUF_DIR))/presets.ini" $(if $(GGUF_MODELS),--models $(GGUF_MODELS),) $(if $(GGUF_INCLUDE_QUANTIZED_ANALYSIS),--include-quantized-analysis,)
