@@ -95,7 +95,6 @@ def merge_flores(temporary: Path, destination: Path, n_samples: int) -> None:
     candidate = dict(existing)
     candidate["benchmarks"] = dict(existing.get("benchmarks", {}))
     candidate["benchmarks"]["flores"] = flores
-    candidate["flores_evaluated_at"] = fresh.get("evaluated_at", now())
     candidate["flores_comet_checkpoint"] = fresh.get(
         "flores_comet_checkpoint", COMET_CHECKPOINT
     )

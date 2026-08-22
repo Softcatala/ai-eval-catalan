@@ -68,6 +68,5 @@
     }
   },
   "quantization": "",
-  "flores_evaluated_at": "2026-08-21T11:49:01+00:00",
   "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"
 }

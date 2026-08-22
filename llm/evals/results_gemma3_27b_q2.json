@@ -83,6 +83,5 @@
       "inst_level_loose_acc_stderr,none": "N/A"
     }
   },
-  "flores_evaluated_at": "2026-08-21T16:57:14+00:00",
   "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"
 }
