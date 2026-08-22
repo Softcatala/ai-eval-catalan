@@ -680,9 +680,7 @@ def run_flores(
         for task in flores_tasks
         if task in results.get("results", {})
     }
-    deferred_path = os.environ.get("COMET_DEFER_PATH")
-    comet_model = None if deferred_path else _load_comet_model()
-    deferred_examples = {}
+    comet_model = _load_comet_model()
     for task, score in scores.items():
         score["n"] = n_samples
         examples = [
@@ -692,12 +690,7 @@ def run_flores(
         examples = [example for example in examples if example is not None]
         if not examples:
             raise RuntimeError(f"lm-eval returned no usable translations for COMET: {task}")
-        if deferred_path:
-            deferred_examples[task] = examples
-            score["comet_pending"] = True
-            drop_legacy_translation_metrics(score)
-            continue
-        prediction = comet_model.predict(  # type: ignore[union-attr]
+        prediction = comet_model.predict(
             examples,
             batch_size=8,
             # llama.cpp owns the GPU in this pipeline. Run COMET on CPU so its
@@ -709,12 +702,6 @@ def run_flores(
         # is no longer part of our result contract.
         drop_legacy_translation_metrics(score)
         print(f"    ✓ {task}: COMET={score['comet,none']:.4f}")
-    if deferred_path:
-        deferred = Path(deferred_path)
-        temporary = deferred.with_name(f".{deferred.name}.tmp")
-        temporary.write_text(json.dumps(deferred_examples), encoding="utf-8")
-        os.replace(temporary, deferred)
-        print(f"    ✓ deferred COMET scoring data saved to {deferred}")
     return scores
 
 
