@@ -594,6 +594,19 @@ def run_flores(
                 payload.pop("reasoning_effort", None)
                 return payload
 
+            @staticmethod
+            def parse_generations(outputs, **kwargs):
+                if not isinstance(outputs, list):
+                    outputs = [outputs]
+                return [
+                    "".join(
+                        block.get("text", "")
+                        for block in output.get("content", [])
+                        if isinstance(block, dict)
+                    )
+                    for output in outputs
+                ]
+
         lm_model = BedrockAnthropicChat(
             model=openai_model,
             base_url=f"{base_url.rstrip('/').removesuffix('/v1')}/anthropic/v1/messages",
