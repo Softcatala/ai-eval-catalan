@@ -1,6 +1,6 @@
 {
   "model": "bartowski/phi-4-GGUF:Q4_K_M",
-  "display_name": "phi-4",
+  "display_name": "phi-4-14b",
   "cloud": false,
   "params_b": 14.0,
   "memory_gb": 7.9,

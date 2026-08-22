@@ -176,7 +176,7 @@ MODELS = [
         "quantization": "q4",
     },
     {
-        "display_name": "phi-4",
+        "display_name": "phi-4-14b",
         "output": "evals/results_phi4_q4.json",
         "args": [
             "--model",

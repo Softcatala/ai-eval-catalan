@@ -8,7 +8,6 @@
 <thead>
 <tr>
 <th>Model</th>
-<th>Params (mem)</th>
 {% for col in cols %}<th>{{ col_labels.get(col, col) }}</th>{% endfor %}
 </tr>
 </thead>
@@ -16,7 +15,6 @@
 {% for row in rows %}
 <tr>
 <td>{% if row.cloud %}<b>{{ row.model }}</b>{% else %}{{ row.model }}{% endif %}</td>
-<td>{{ row | fmt_params }}</td>
 {% for col in cols %}<td>{% if col in ('wer', 'cer') %}{{ row[col] | fmt_dec_pct }}{% else %}{{ row[col] | fmt }}{% endif %}</td>{% endfor %}
 </tr>
 {% endfor %}
