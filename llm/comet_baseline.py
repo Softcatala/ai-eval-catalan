@@ -83,10 +83,10 @@ def main() -> None:
             state["score_sum"] += sum(float(score) for score in prediction.scores)
             save(args.output, result(scores, progress, args.n_samples))
             print(f"{task}: {state['done']}/{args.n_samples}", flush=True)
-        scores[task] = {"comet,none": state["score_sum"] / args.n_samples, "n": args.n_samples}
+        scores[task] = {"comet": state["score_sum"] / args.n_samples, "n": args.n_samples}
         del progress[task]
         save(args.output, result(scores, progress, args.n_samples))
-        print(f"{task}: source-copy COMET={scores[task]['comet,none']:.4f}", flush=True)
+        print(f"{task}: source-copy COMET={scores[task]['comet']:.4f}", flush=True)
 
     save(args.output, result(scores, progress, args.n_samples))
     print(f"Saved baseline to {args.output}", flush=True)

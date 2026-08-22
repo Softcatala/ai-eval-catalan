@@ -5,8 +5,8 @@ def test_extract_metrics_uses_comet_for_flores():
     data = {
         "benchmarks": {
             "flores": {
-                "catalan_bench_flores_en-ca": {"comet,none": 0.8},
-                "catalan_bench_flores_ca-en": {"comet,none": 0.6},
+                "catalan_bench_flores_en-ca": {"comet": 0.8},
+                "catalan_bench_flores_ca-en": {"comet": 0.6},
             }
         }
     }

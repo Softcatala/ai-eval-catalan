@@ -697,11 +697,11 @@ def run_flores(
             # PyTorch/CUDA build cannot conflict with the host driver.
             gpus=0,
         )
-        score["comet,none"] = float(prediction.system_score)
+        score["comet"] = float(prediction.system_score)
         # BLEU is still produced internally by the lm-eval FLORES task, but it
         # is no longer part of our result contract.
         drop_legacy_translation_metrics(score)
-        print(f"    ✓ {task}: COMET={score['comet,none']:.4f}")
+        print(f"    ✓ {task}: COMET={score['comet']:.4f}")
     return scores
 
 

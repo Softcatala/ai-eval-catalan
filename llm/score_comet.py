@@ -24,8 +24,8 @@ def main() -> None:
         prediction = comet_model.predict(task_examples, batch_size=8, gpus=0)
         flores[task].pop("comet_pending", None)
         drop_legacy_translation_metrics(flores[task])
-        flores[task]["comet,none"] = float(prediction.system_score)
-        print(f"{task}: COMET={flores[task]['comet,none']:.4f}", flush=True)
+        flores[task]["comet"] = float(prediction.system_score)
+        print(f"{task}: COMET={flores[task]['comet']:.4f}", flush=True)
 
     temporary = args.result.with_name(f".{args.result.name}.scored.tmp")
     with temporary.open("w", encoding="utf-8") as stream:

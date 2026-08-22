@@ -66,8 +66,8 @@ def extract_metrics(data: dict) -> dict:
         }
         for metric, task in directions.items():
             result = flores.get(task, {})
-            if result and result.get("comet,none") is not None:
-                metrics[metric] = result["comet,none"]
+            if result and result.get("comet") is not None:
+                metrics[metric] = result["comet"]
 
         for pair, keys in {
             "flores_en_ca": ("flores_en2ca", "flores_ca2en"),
