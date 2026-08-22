@@ -38,6 +38,7 @@ import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 
+from comet_config import COMET_CHECKPOINT, drop_legacy_translation_metrics
 from inference import chat_completion_params, lm_eval_params
 
 from llamaserver import (
@@ -464,6 +465,91 @@ def run_casum(model, n_samples: int = 100) -> dict:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
+_FLORES_SOURCE_FIELDS = {
+    "en": ("sentence_eng_Latn", "eng_Latn", "en", "english"),
+    "es": ("sentence_spa_Latn", "spa_Latn", "es", "spanish"),
+    "ca": ("sentence_cat_Latn", "cat_Latn", "ca", "catalan"),
+}
+
+
+def _load_comet_model():
+    """Load the standard reference-based WMT22 COMET checkpoint lazily."""
+    try:
+        from comet import download_model, load_from_checkpoint
+    except ImportError as exc:
+        raise RuntimeError(
+            "COMET is required for FLORES scoring; install project dependencies"
+        ) from exc
+    return load_from_checkpoint(download_model(COMET_CHECKPOINT))
+
+
+def _sample_text(value) -> str | None:
+    """Unwrap the list-shaped response/target values emitted by lm-eval."""
+    while isinstance(value, (list, tuple)) and value:
+        value = value[0]
+    return value.strip() if isinstance(value, str) and value.strip() else None
+
+
+def _comet_example(task: str, sample: dict) -> dict[str, str] | None:
+    """Convert one logged lm-eval FLORES sample to COMET's input schema."""
+    direction = task.removeprefix("catalan_bench_flores_")
+    source_language = direction.split("-", 1)[0]
+    doc = sample.get("doc", {})
+    source = next(
+        (
+            _sample_text(doc.get(field))
+            for field in _FLORES_SOURCE_FIELDS.get(source_language, ())
+            if _sample_text(doc.get(field)) is not None
+        ),
+        None,
+    )
+    source = source or _sample_text(doc.get("source")) or _sample_text(doc.get("src"))
+    reference = _sample_text(sample.get("target"))
+    hypothesis = _sample_text(sample.get("filtered_resps")) or _sample_text(
+        sample.get("resps")
+    )
+    if not all((source, reference, hypothesis)):
+        return None
+    return {"src": source, "ref": reference, "mt": hypothesis}
+
+
+def _score_flores_comet(results: dict, tasks: list[str], comet_model) -> dict:
+    """Attach COMET scores without discarding successful FLORES directions."""
+    scores = {
+        task: results["results"][task]
+        for task in tasks
+        if task in results.get("results", {})
+    }
+    for task, score in list(scores.items()):
+        examples = [
+            example
+            for sample in results.get("samples", {}).get(task, [])
+            if (example := _comet_example(task, sample)) is not None
+        ]
+        try:
+            if not examples:
+                raise RuntimeError("lm-eval returned no usable translations for COMET")
+            prediction = comet_model.predict(
+                examples,
+                batch_size=8,
+                # llama.cpp owns the GPU in this pipeline. Run COMET on CPU so its
+                # PyTorch/CUDA build cannot conflict with the host driver.
+                gpus=0,
+            )
+        except Exception as exc:
+            print(f"    [warn] {task}: COMET failed: {exc}")
+            scores[task] = {"error": str(exc)}
+            continue
+
+        score["n"] = len(examples)
+        score["comet"] = float(prediction.system_score)
+        # BLEU is still produced internally by the lm-eval FLORES task, but it
+        # is no longer part of our result contract.
+        drop_legacy_translation_metrics(score)
+        print(f"    ✓ {task}: COMET={score['comet']:.4f}")
+    return scores
+
+
 def run_flores(
     model_name: str,
     base_url: str | None = None,
@@ -479,7 +565,7 @@ def run_flores(
     """
     Translation evaluation on FLORES+ devtest split via lm-evaluation-harness.
     Tests both directions for English↔Catalan and Spanish↔Catalan.
-    Metric: BLEU, TER, chrF (computed by lm-eval).
+    Metric: COMET (computed from lm-eval's generated translations).
     Supports llama-server (via base_url), OpenAI API (via openai_model), OpenRouter, or HF.
     """
     if not HAS_LM_EVAL:
@@ -488,7 +574,13 @@ def run_flores(
     print("\n[5/6] Running FLORES+ (EN↔CA and ES↔CA translation) via lm-evaluation-harness …")
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
-    inference_provider = "gemini" if gemini_model else "openrouter" if openrouter_model else "openai" if openai_model else "llama" if base_url else "hf"
+    bedrock_anthropic = bool(
+        openai_model
+        and base_url
+        and "bedrock-mantle" in base_url
+        and openai_model.startswith("anthropic.")
+    )
+    inference_provider = "anthropic" if bedrock_anthropic else "gemini" if gemini_model else "openrouter" if openrouter_model else "openai" if openai_model else "llama" if base_url else "hf"
     inference_model = gemini_model or openrouter_model or openai_model or model_name
 
     if gemini_model:
@@ -514,6 +606,53 @@ def run_flores(
         _orig_base_url = os.environ.get("OPENAI_BASE_URL")
         os.environ["OPENAI_API_KEY"] = openrouter_api_key or ""
         os.environ["OPENAI_BASE_URL"] = _openrouter_base_url
+    elif bedrock_anthropic:
+        # Claude Opus 4.7 does not implement Bedrock's OpenAI-compatible Chat
+        # Completions API.  It supports the native Anthropic Messages endpoint
+        # on Bedrock Mantle instead.  lm-eval has an Anthropic adapter, and this
+        # small variant supplies Bedrock's bearer authentication and removes
+        # ``temperature``, which Opus 4.7 has deprecated.
+        from lm_eval.models.anthropic_llms import AnthropicChat
+
+        class BedrockAnthropicChat(AnthropicChat):
+            @property
+            def header(self):
+                token = os.environ.get("AWS_BEARER_TOKEN_BEDROCK")
+                if not token:
+                    raise ValueError("AWS_BEARER_TOKEN_BEDROCK is required")
+                return {
+                    "Authorization": f"Bearer {token}",
+                    "anthropic-version": "bedrock-2023-05-31",
+                }
+
+            def _create_payload(self, *args, **kwargs):
+                payload = super()._create_payload(*args, **kwargs)
+                payload.pop("temperature", None)
+                payload.pop("reasoning_effort", None)
+                return payload
+
+            @staticmethod
+            def parse_generations(outputs, **kwargs):
+                if not isinstance(outputs, list):
+                    outputs = [outputs]
+                return [
+                    "".join(
+                        block.get("text", "")
+                        for block in output.get("content", [])
+                        if isinstance(block, dict)
+                    )
+                    for output in outputs
+                ]
+
+        lm_model = BedrockAnthropicChat(
+            model=openai_model,
+            base_url=f"{base_url.rstrip('/').removesuffix('/v1')}/anthropic/v1/messages",
+            tokenizer_backend="none",
+            tokenized_requests=False,
+            num_concurrent=1,
+            max_retries=3,
+        )
+        lm_model_args = None
     elif openai_model:
         lm_model = "openai-chat-completions"
         _base = f"base_url={base_url}/chat/completions," if base_url else ""
@@ -555,7 +694,9 @@ def run_flores(
             apply_chat_template=True,
             fewshot_as_multiturn=True,
             batch_size=1,
-            log_samples=False,
+            # COMET needs the source, reference, and generated translation for
+            # every example. lm-eval returns those only when samples are logged.
+            log_samples=True,
             limit=n_samples,
             bootstrap_iters=0,
             confirm_run_unsafe_code=True,
@@ -571,16 +712,8 @@ def run_flores(
                 os.environ.pop("OPENAI_BASE_URL", None)
             else:
                 os.environ["OPENAI_BASE_URL"] = _orig_base_url
-    scores = {
-        task: results["results"][task]
-        for task in flores_tasks
-        if task in results.get("results", {})
-    }
-    for task, score in scores.items():
-        score["n"] = n_samples
-        bleu = score.get("bleu,none", "n/a")
-        print(f"    ✓ {task}: BLEU={bleu}")
-    return scores
+    comet_model = _load_comet_model()
+    return _score_flores_comet(results, flores_tasks, comet_model)
 
 
 
@@ -897,6 +1030,7 @@ def main():
                     openrouter_api_key=(args.api_key or os.environ.get("OPENROUTER_API_KEY")) if args.model == "claude" else None,
                     tasks=args.flores_tasks,
                 )
+                results["flores_comet_checkpoint"] = COMET_CHECKPOINT
             except Exception as e:
                 print(f"[warn] FLORES failed: {e}")
                 results["benchmarks"]["flores"] = {"error": str(e)}

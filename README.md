@@ -75,19 +75,35 @@ El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models de l
 | **CatCoLA** | Acceptabilitat gramatical | MCC |
 | **CLUB / VilaQuAD** | Comprensió lectora (QA) | F1 de solapament de tokens |
 | **CaSum** | Resum de notícies en català | ROUGE-1/2/L |
-| **FLORES+** | Traducció automàtica EN↔CA i ES↔CA | BLEU |
+| **FLORES+** | Traducció automàtica EN↔CA i ES↔CA | COMET |
 | **IFEval-ca** | Seguiment d'instruccions | Accuracy |
 
 FLORES+ executa quatre tasques: `catalan_bench_flores_en-ca`,
 `catalan_bench_flores_ca-en`, `catalan_bench_flores_es-ca` i
 `catalan_bench_flores_ca-es`. Les taules mostren dues columnes bidireccionals:
-`EN↔CA` i `ES↔CA`, cadascuna calculada com la mitjana del BLEU normalitzat de
+`EN↔CA` i `ES↔CA`, cadascuna calculada com la mitjana del COMET de
 les dues direccions.
 
 El contracte de `llm/llms.json` publica aquestes mitjanes com `flores_en_ca` i
 `flores_es_ca`. També conserva `flores_en2ca`, `flores_ca2en`, `flores_es2ca` i
 `flores_ca2es` per a diagnòstic, però aquestes quatre columnes direccionals no es
 mostren a les taules ni als gràfics per defecte.
+
+Per calcular un baseline de COMET sense executar un traductor, el script usa la
+còpia de la font com a hipòtesi (`mt = src`) sobre FLORES devtest. Avalua les
+quatre direccions i, per defecte, usa 400 exemples per direcció:
+
+```bash
+cd llm
+uv run python comet_baseline.py \
+  --output evals/comet_source_copy_baseline.json
+```
+
+Podeu canviar-ne la mida amb `--n-samples`.
+
+Amb el checkpoint `Unbabel/wmt22-comet-da` i 400 exemples de FLORES devtest per
+direcció, el baseline de còpia de font és: EN→CA 0.6809, CA→EN 0.7549, ES→CA
+0.8222 i CA→ES 0.8228.
 
 Cada fila dels JSON publicats inclou `repo_url`, calculat amb el helper compartit
 `eval_common.model_urls`.

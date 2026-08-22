@@ -12,6 +12,10 @@ import re
 from statistics import fmean
 from pathlib import Path
 
+try:
+    from .comet_config import COMET_CHECKPOINT
+except ImportError:  # Direct execution from llm/.
+    from comet_config import COMET_CHECKPOINT
 from jinja2 import Environment
 
 from eval_common.model_urls import repo_url
@@ -65,8 +69,8 @@ def extract_metrics(data: dict) -> dict:
         }
         for metric, task in directions.items():
             result = flores.get(task, {})
-            if result and result.get("bleu,none") is not None:
-                metrics[metric] = result["bleu,none"]
+            if result and result.get("comet") is not None:
+                metrics[metric] = result["comet"]
 
         for pair, keys in {
             "flores_en_ca": ("flores_en2ca", "flores_ca2en"),
@@ -112,15 +116,19 @@ def load_benchmark_speeds(path: Path) -> dict[str, float]:
     return speeds
 
 
-# Random baselines per task for normalization (HF Open LLM Leaderboard v2 approach)
-# Classification with N classes: 1/N; regression/correlation: 0; BLEU (pre-divided by 100): 0
+# Baselines per task for normalization (HF Open LLM Leaderboard v2 approach).
+# FLORES uses the measured source-copy COMET baseline (mt = src), rather than 0.
+COMET_SOURCE_COPY_BASELINES = {
+    "flores_en_ca": fmean((0.6808871791511774, 0.7549228701740504)),
+    "flores_es_ca": fmean((0.8222366382181644, 0.822775568291545)),
+}
+
 RANDOM_BASELINES = {
     "sts_ca":  0.0,   # correlation, ranges -1..1
     "catcola_mcc":     0.0,   # MCC for binary classification: random baseline is 0
     "club_qa_f1":      0.0,   # bounded 0..1, no trivial guesser
     "casum_rougeL":    0.0,   # bounded 0..1
-    "flores_en_ca":    0.0,   # mean bidirectional BLEU/100 → 0..1
-    "flores_es_ca":    0.0,   # mean bidirectional BLEU/100 → 0..1
+    **COMET_SOURCE_COPY_BASELINES,
     "ifeval_prompt_strict": 0.0,  # prompt-level strict accuracy, bounded 0..1
 }
 
@@ -147,13 +155,11 @@ def normalize_score(key: str, raw) -> float | None:
     """Normalize a raw metric to 0..1 using HF Open LLM Leaderboard v2 formula.
 
     normalized = (score − baseline) / (1 − baseline), clamped to [0, 1].
-    BLEU scores are divided by 100 first.
+    FLORES COMET uses its measured source-copy baseline.
     """
     if raw is None:
         return None
     value = raw
-    if key.startswith("flores_"):
-        value = value / 100.0
     # Directional FLORES metrics are normalized for JSON diagnostics but are
     # deliberately not CLAM tasks or public table columns.
     baseline = RANDOM_BASELINES.get(key, 0.0)
@@ -445,6 +451,7 @@ def main():
         json.dumps(
             {
                 "text": json_text,
+                "flores_comet_checkpoint": COMET_CHECKPOINT,
                 "data": [r for r in json_rows if not r["quantized_analysis_only"]],
             },
             indent=4,
@@ -468,6 +475,7 @@ def main():
                     "memory_gb": "Memòria (GB)",
                     "quantization": "Quantització",
                 },
+                "flores_comet_checkpoint": COMET_CHECKPOINT,
                 "data": quantized_json_rows,
             },
             indent=4,

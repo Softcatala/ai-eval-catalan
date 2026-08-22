@@ -54,42 +54,22 @@
       "catalan_bench_flores_en-ca": {
         "alias": "catalan_bench_flores_en-ca",
         "n": 400,
-        "bleu,none": 42.42049814357455,
-        "bleu_stderr,none": 0.9422468676221638,
-        "ter,none": 44.80141401538781,
-        "ter_stderr,none": 0.8118172398068128,
-        "chrf,none": 66.19341291530797,
-        "chrf_stderr,none": 0.6597103410648194
+        "comet": 0.8792731672525406
       },
       "catalan_bench_flores_ca-en": {
         "alias": "catalan_bench_flores_ca-en",
         "n": 400,
-        "bleu,none": 46.9664751031335,
-        "bleu_stderr,none": 1.116019216474184,
-        "ter,none": 39.99056826220231,
-        "ter_stderr,none": 1.0186675245988104,
-        "chrf,none": 71.41432190371478,
-        "chrf_stderr,none": 0.6374778184458005
+        "comet": 0.8927767273783683
       },
       "catalan_bench_flores_es-ca": {
         "alias": "catalan_bench_flores_es-ca",
         "n": 400,
-        "bleu,none": 26.5182157771779,
-        "bleu_stderr,none": "N/A",
-        "ter,none": 63.34996880848409,
-        "ter_stderr,none": "N/A",
-        "chrf,none": 56.49830218814623,
-        "chrf_stderr,none": "N/A"
+        "comet": 0.864713870882988
       },
       "catalan_bench_flores_ca-es": {
         "alias": "catalan_bench_flores_ca-es",
         "n": 400,
-        "bleu,none": 27.420736294772574,
-        "bleu_stderr,none": "N/A",
-        "ter,none": 59.05079427338694,
-        "ter_stderr,none": "N/A",
-        "chrf,none": 55.15516453118876,
-        "chrf_stderr,none": "N/A"
+        "comet": 0.8664873997867107
       }
     },
     "ifeval": {
@@ -107,5 +87,6 @@
       "inst_level_loose_acc_stderr,none": "N/A"
     }
   },
-  "quantization": "q8"
+  "quantization": "q8",
+  "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"
 }
