@@ -12,7 +12,10 @@ import re
 from statistics import fmean
 from pathlib import Path
 
-from comet_config import COMET_CHECKPOINT
+try:
+    from .comet_config import COMET_CHECKPOINT
+except ImportError:  # Direct execution from llm/.
+    from comet_config import COMET_CHECKPOINT
 from jinja2 import Environment
 
 from eval_common.model_urls import repo_url
