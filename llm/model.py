@@ -681,8 +681,8 @@ def run_flores(
         if deferred_path:
             deferred_examples[task] = examples
             score["comet_pending"] = True
-            score.pop("bleu,none", None)
-            score.pop("bleu_stderr,none", None)
+            for metric in ("bleu,none", "bleu_stderr,none", "ter,none", "ter_stderr,none", "chrf,none", "chrf_stderr,none"):
+                score.pop(metric, None)
             continue
         prediction = comet_model.predict(  # type: ignore[union-attr]
             examples,
@@ -694,8 +694,8 @@ def run_flores(
         score["comet,none"] = float(prediction.system_score)
         # BLEU is still produced internally by the lm-eval FLORES task, but it
         # is no longer part of our result contract.
-        score.pop("bleu,none", None)
-        score.pop("bleu_stderr,none", None)
+        for metric in ("bleu,none", "bleu_stderr,none", "ter,none", "ter_stderr,none", "chrf,none", "chrf_stderr,none"):
+            score.pop(metric, None)
         print(f"    ✓ {task}: COMET={score['comet,none']:.4f}")
     if deferred_path:
         deferred = Path(deferred_path)
