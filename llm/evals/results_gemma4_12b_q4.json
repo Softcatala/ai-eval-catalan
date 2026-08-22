@@ -51,22 +51,22 @@
       "catalan_bench_flores_en-ca": {
         "alias": "catalan_bench_flores_en-ca",
         "n": 400,
-        "comet,none": 0.8694551001489162
+        "comet": 0.8694551001489162
       },
       "catalan_bench_flores_ca-en": {
         "alias": "catalan_bench_flores_ca-en",
         "n": 400,
-        "comet,none": 0.8860094399750232
+        "comet": 0.8860094399750232
       },
       "catalan_bench_flores_es-ca": {
         "alias": "catalan_bench_flores_es-ca",
         "n": 400,
-        "comet,none": 0.8536505027860403
+        "comet": 0.8536505027860403
       },
       "catalan_bench_flores_ca-es": {
         "alias": "catalan_bench_flores_ca-es",
         "n": 400,
-        "comet,none": 0.8625559337437153
+        "comet": 0.8625559337437153
       }
     },
     "ifeval": {
