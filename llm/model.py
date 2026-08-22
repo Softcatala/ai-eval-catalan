@@ -469,6 +469,7 @@ _FLORES_SOURCE_FIELDS = {
     "es": ("sentence_spa_Latn", "spa_Latn", "es", "spanish"),
     "ca": ("sentence_cat_Latn", "cat_Latn", "ca", "catalan"),
 }
+COMET_CHECKPOINT = "Unbabel/wmt22-comet-da"
 
 
 def _load_comet_model():
@@ -479,7 +480,7 @@ def _load_comet_model():
         raise RuntimeError(
             "COMET is required for FLORES scoring; install project dependencies"
         ) from exc
-    return load_from_checkpoint(download_model("Unbabel/wmt22-comet-da"))
+    return load_from_checkpoint(download_model(COMET_CHECKPOINT))
 
 
 def _sample_text(value) -> str | None:
@@ -1020,6 +1021,7 @@ def main():
                     openrouter_api_key=(args.api_key or os.environ.get("OPENROUTER_API_KEY")) if args.model == "claude" else None,
                     tasks=args.flores_tasks,
                 )
+                results["flores_comet_checkpoint"] = COMET_CHECKPOINT
             except Exception as e:
                 print(f"[warn] FLORES failed: {e}")
                 results["benchmarks"]["flores"] = {"error": str(e)}

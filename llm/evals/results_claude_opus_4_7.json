@@ -59,5 +59,6 @@
       "inst_level_loose_acc_stderr,none": "N/A"
     }
   },
-  "quantization": ""
+  "quantization": "",
+  "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"
 }

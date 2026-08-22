@@ -443,6 +443,7 @@ def main():
         json.dumps(
             {
                 "text": json_text,
+                "flores_comet_checkpoint": FLORES_COMET_CHECKPOINT,
                 "data": [r for r in json_rows if not r["quantized_analysis_only"]],
             },
             indent=4,
@@ -466,6 +467,7 @@ def main():
                     "memory_gb": "Memòria (GB)",
                     "quantization": "Quantització",
                 },
+                "flores_comet_checkpoint": FLORES_COMET_CHECKPOINT,
                 "data": quantized_json_rows,
             },
             indent=4,
@@ -478,3 +480,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+FLORES_COMET_CHECKPOINT = "Unbabel/wmt22-comet-da"
