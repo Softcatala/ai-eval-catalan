@@ -89,20 +89,17 @@ El contracte de `llm/llms.json` publica aquestes mitjanes com `flores_en_ca` i
 `flores_ca2es` per a diagnòstic, però aquestes quatre columnes direccionals no es
 mostren a les taules ni als gràfics per defecte.
 
-Per calcular un baseline de COMET sense executar un altre traductor, es pot fer
-servir la còpia de la font com a hipòtesi (`mt = src`) sobre els exemples diferits
-de FLORES. El script exigeix les quatre direccions i escriu un JSON amb els seus
-quatre valors de COMET:
+Per calcular un baseline de COMET sense executar un traductor, el script usa la
+còpia de la font com a hipòtesi (`mt = src`) sobre FLORES devtest. Avalua les
+quatre direccions i, per defecte, usa 400 exemples per direcció:
 
 ```bash
 cd llm
 uv run python comet_baseline.py \
-  --examples /camí/a/exemples-comet.json \
   --output evals/comet_source_copy_baseline.json
 ```
 
-`exemples-comet.json` té el mateix format que el fitxer generat amb
-`COMET_DEFER_PATH` durant l'avaluació FLORES.
+Podeu canviar-ne la mida amb `--n-samples`.
 
 Cada fila dels JSON publicats inclou `repo_url`, calculat amb el helper compartit
 `eval_common.model_urls`.
