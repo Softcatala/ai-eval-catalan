@@ -2,7 +2,6 @@
     "text": {
         "model": "Model",
         "cloud": "Cloud",
-        "params_b": "Paràmetres (B)",
         "memory_gb": "Memòria (GB)",
         "generation_tokens_per_sec": "tok/s",
         "sts_ca": "STS",
