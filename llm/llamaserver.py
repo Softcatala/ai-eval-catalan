@@ -1,9 +1,8 @@
 import json
-import time
 import urllib.request
 from pathlib import Path
 
-from inference import chat_completion_params, inference_params
+from inference import call_with_retries, chat_completion_params, inference_params
 
 
 _MUSE_USER_TEMPLATE = Path(__file__).with_name("templates") / "muse_glimmer_user.jinja"
@@ -80,7 +79,7 @@ class LlamaServerModel:
         base_url: str,
         request_model: str | None = None,
         timeout: float = 120.0,
-        max_retries: int = 1,
+        max_retries: int = 3,
     ):
         self.model_spec = model_spec
         self.base_url = base_url.rstrip("/")
@@ -95,17 +94,15 @@ class LlamaServerModel:
             data=payload,
             headers={"Content-Type": "application/json"},
         )
-        last_error = None
-        for attempt in range(self.max_retries + 1):
-            try:
-                with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-                    return json.loads(resp.read())
-            except Exception as e:
-                last_error = e
-                if attempt < self.max_retries:
-                    print(f"[warn] llama-server request failed, retrying: {e}", flush=True)
-                    time.sleep(1)
-        raise last_error
+        def _request():
+            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+                return json.loads(resp.read())
+
+        return call_with_retries(
+            _request,
+            f"llama-server request to {path}",
+            retries=self.max_retries,
+        )
 
     def _completions(self, prompt: str, max_tokens: int, stop: list[str]) -> dict:
         params = inference_params(max_tokens)
@@ -154,11 +151,7 @@ class LlamaServerModel:
         return data["choices"][0]["text"].strip()
 
     def generate(self, prompt: str, max_new_tokens: int | None = None) -> str:
-        try:
-            if "muse-glimmer" in self.model_spec.lower():
-                return self._muse_completion(prompt, max_new_tokens)
-            data = self._chat_completions(prompt, max_tokens=max_new_tokens)
-            return data["choices"][0]["message"]["content"].strip()
-        except Exception as e:
-            print(f"[warn] llama-server generation failed: {e}", flush=True)
-            return ""
+        if "muse-glimmer" in self.model_spec.lower():
+            return self._muse_completion(prompt, max_new_tokens)
+        data = self._chat_completions(prompt, max_tokens=max_new_tokens)
+        return data["choices"][0]["message"]["content"].strip()
