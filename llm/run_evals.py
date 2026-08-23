@@ -453,7 +453,6 @@ def main():
 
     google_api_key = os.environ.get("GOOGLE_API_KEY")
     openai_api_key = os.environ.get("OPENAI_API_KEY")
-    openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
     bedrock_token = os.environ.get("AWS_BEARER_TOKEN_BEDROCK")
 
     python = sys.executable
