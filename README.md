@@ -315,3 +315,19 @@ Volem expressar el nostre agraïment als proveïdors dels datasets usats en l'av
 - **[Google](https://ai.google/research/)** pel dataset [FLEURS](https://huggingface.co/datasets/google/fleurs) (Few-shot Learning Evaluation of Universal Representations of Speech), usat per avaluar models ASR en català.
 - L'equip de **[lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)** pel motor d'avaluació usat en benchmarks generatius.
 - **[Meta AI](https://ai.meta.com/)** pel benchmark [FLORES+](https://huggingface.co/datasets/facebook/flores) de traducció automàtica.
+
+---
+
+## Com citar aquest treball
+
+Si feu servir aquestes eines o els resultats en un treball, citeu-ho així (i citeu també els datasets originals dels benchmarks que referencieu):
+
+```bibtex
+@misc{softcatala_ai_eval_catalan,
+  author       = {Softcatalà and Mas i Hernàndez, Jordi},
+  title        = {Eines d'avaluació de models LLM, ASR i Embeddings en català},
+  year         = {2026},
+  howpublished = {\url{https://github.com/Softcatala/ai-eval-catalan}}
+}
+```
+
