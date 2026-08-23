@@ -15,7 +15,7 @@ from run_evals import MODELS
 
 
 DEFAULT_SERVER_URL = "http://127.0.0.1:9090/v1"
-DEFAULT_OUTPUT = "speed_results.json"
+DEFAULT_OUTPUT = "benchmark.json"
 BACKEND = "eval-http"
 MAX_TOKENS = 256
 

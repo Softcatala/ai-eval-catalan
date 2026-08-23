@@ -199,7 +199,7 @@ MODELS = [
     {
         "display_name": "qwen3.8-27b",
         "output": "evals/results_qwen3.8_27b.json",
-        "args": ["--model", "unsloth/Qwen3.8-27B-GGUF:Q4_K_M"],
+        "args": ["--model", "unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_M"],
         "ram_gb": 15,
         "params_b": 27.0,
         "quantization": "q4",
