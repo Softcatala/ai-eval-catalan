@@ -39,7 +39,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from comet_config import COMET_CHECKPOINT, drop_legacy_translation_metrics
-from inference import chat_completion_params, lm_eval_params
+from inference import call_with_retries, chat_completion_params, lm_eval_params
 
 from llamaserver import (
     LlamaServerModel,
@@ -140,17 +140,15 @@ class GeminiModel:
 
     def generate(self, prompt: str, max_new_tokens: int | None = None) -> str:
         params = chat_completion_params(max_new_tokens, "gemini", self.model_name)
-        try:
-            response = self.client.chat.completions.create(
+        response = call_with_retries(
+            lambda: self.client.chat.completions.create(
                 model=self.model_name,
                 messages=[{"role": "user", "content": prompt}],
                 **params,
-            )
-            return (response.choices[0].message.content or "").strip()
-        except Exception as e:
-            print(f"[error] API call failed: {e}")
-            time.sleep(2)
-            return ""
+            ),
+            "Gemini API call",
+        )
+        return (response.choices[0].message.content or "").strip()
 
 
 
@@ -168,25 +166,23 @@ class OpenAIModel:
         self.total_cost: float | None = None  # None until first response with cost data
 
     def generate(self, prompt: str, max_new_tokens: int | None = None) -> str:
-        try:
-            params = chat_completion_params(max_new_tokens, self.provider, self.model_name)
-            response = self.client.chat.completions.create(
+        params = chat_completion_params(max_new_tokens, self.provider, self.model_name)
+        response = call_with_retries(
+            lambda: self.client.chat.completions.create(
                 model=self.model_name,
                 messages=[{"role": "user", "content": prompt}],
                 **params,
-            )
-            if response.usage:
-                self.prompt_tokens += response.usage.prompt_tokens
-                self.completion_tokens += response.usage.completion_tokens
-                # OpenRouter returns cost directly in usage
-                call_cost = getattr(response.usage, "cost", None)
-                if call_cost is not None:
-                    self.total_cost = (self.total_cost or 0.0) + call_cost
-            return (response.choices[0].message.content or "").strip()
-        except Exception as e:
-            print(f"[error] API call failed: {e}")
-            time.sleep(2)
-            return ""
+            ),
+            f"{self.provider} API call",
+        )
+        if response.usage:
+            self.prompt_tokens += response.usage.prompt_tokens
+            self.completion_tokens += response.usage.completion_tokens
+            # OpenRouter returns cost directly in usage
+            call_cost = getattr(response.usage, "cost", None)
+            if call_cost is not None:
+                self.total_cost = (self.total_cost or 0.0) + call_cost
+        return (response.choices[0].message.content or "").strip()
 
 
 # ──────────────────────────────────────────────────────────────────────────────

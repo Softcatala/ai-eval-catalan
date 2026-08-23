@@ -1,13 +1,45 @@
 """Shared inference parameters and small provider-specific conversions."""
 
+from collections.abc import Callable
 from pathlib import Path
+import time
+from typing import TypeVar
 
 import yaml
 
 
+T = TypeVar("T")
+
 INFERENCE_CONFIG = yaml.safe_load(
     Path(__file__).with_name("inference.yaml").read_text(encoding="utf-8")
 )
+
+
+def call_with_retries(
+    operation: Callable[[], T],
+    description: str,
+    retries: int = 3,
+    delay_seconds: float = 2.0,
+) -> T:
+    """Run an inference request, retry failures, then re-raise the final error."""
+    for attempt in range(retries + 1):
+        try:
+            return operation()
+        except Exception as e:
+            if attempt >= retries:
+                print(
+                    f"[error] {description} failed after {attempt + 1} attempts: {e}",
+                    flush=True,
+                )
+                raise
+            print(
+                f"[warn] {description} failed "
+                f"(attempt {attempt + 1}/{retries + 1}), retrying: {e}",
+                flush=True,
+            )
+            time.sleep(delay_seconds)
+
+    raise RuntimeError("unreachable retry state")
 
 
 def inference_params(max_tokens=None, provider="llama", model_name=""):
