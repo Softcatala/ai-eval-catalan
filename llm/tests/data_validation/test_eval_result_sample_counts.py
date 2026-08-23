@@ -1,5 +1,4 @@
 import json
-import subprocess
 import unittest
 from collections import defaultdict
 from pathlib import Path
@@ -24,10 +23,10 @@ EXPECTED_SAMPLE_COUNTS = {
 
 
 def result_files():
-    return subprocess.check_output(
-        ["git", "-C", str(ROOT), "ls-files", "llm/evals/results_*.json"],
-        text=True,
-    ).splitlines()
+    return sorted(
+        str(path.relative_to(ROOT))
+        for path in (ROOT / "llm" / "evals").glob("results_*.json")
+    )
 
 
 def leaves(prefix, value):
