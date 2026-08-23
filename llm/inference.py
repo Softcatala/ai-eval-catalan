@@ -32,9 +32,7 @@ def inference_params(max_tokens=None, provider="llama", model_name=""):
     elif provider == "gemini":
         if "gemini-3" in model_name:
             if params["reasoning_effort"] == "none":
-                params["reasoning_effort"] = (
-                    "low" if "pro" in model_name else "minimal"
-                )
+                params["reasoning_effort"] = "low"
             params["max_tokens"] = max(params["max_tokens"], 1024)
         elif not model_name.startswith("gemini-"):
             params.pop("reasoning_effort")

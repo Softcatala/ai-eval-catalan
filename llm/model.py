@@ -106,6 +106,10 @@ try:
         payload = _original_openai_chat_payload(self, *args, **kwargs)
         if "generativelanguage.googleapis.com" in self.base_url:
             payload.pop("seed", None)
+            # lm-eval emits max_gen_toks, but Gemini's OpenAI endpoint expects max_completion_tokens.
+            max_gen_toks = payload.pop("max_gen_toks", None)
+            if max_gen_toks is not None and "max_completion_tokens" not in payload:
+                payload["max_completion_tokens"] = max_gen_toks
         return payload
 
     _lm_oai.OpenAIChatCompletion._create_payload = _gemini_compatible_chat_payload
