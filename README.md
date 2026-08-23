@@ -242,7 +242,7 @@ uv sync
 Si vols avaluar models Omnilingual ASR, instal·la també:
 
 ```bash
-uv add omnilingual-asr
+uv pip install -e /path/to/omnilingual_asr
 ```
 
 ### Execució (ASR)
@@ -293,7 +293,7 @@ uv run python model.py --model "<nom_model>" --output evals/<nom_model>.json
 
 ```bash
 uv run python model.py --cloud-provider openai --model text-embedding-3-large --output evals/results_openai_text_embedding_3_large.json
-uv run python model.py --cloud-provider google --model embedding-001 --output evals/results_google_gemini_embedding_001.json
+uv run python model.py --cloud-provider google --model gemini-embedding-001 --output evals/results_google_gemini_embedding_001.json
 ```
 
 **Executar l'orquestrador per a múltiples models:**
