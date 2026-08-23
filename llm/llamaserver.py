@@ -107,15 +107,15 @@ class LlamaServerModel:
                     time.sleep(1)
         raise last_error
 
-    def _completions(self, prompt: str, max_tokens: int, **kwargs) -> dict:
+    def _completions(self, prompt: str, max_tokens: int, stop: list[str]) -> dict:
         params = inference_params(max_tokens)
         params.pop("reasoning_effort", None)
         params.pop("chat_template_kwargs", None)
         params.pop("reasoning_format", None)
         payload_data = {
             "prompt": prompt,
+            "stop": stop,
             **params,
-            **kwargs,
         }
         if self.request_model:
             payload_data["model"] = self.request_model
@@ -162,17 +162,3 @@ class LlamaServerModel:
         except Exception as e:
             print(f"[warn] llama-server generation failed: {e}", flush=True)
             return ""
-
-    def score_options(self, prompt: str, options: list[str]) -> int:
-        """Pick the option with the highest token log-probability sum."""
-        scores = []
-        for opt in options:
-            try:
-                data = self._completions(prompt + opt, max_tokens=1, echo=True, logprobs=1)
-                token_logprobs = data["choices"][0]["logprobs"]["token_logprobs"]
-                valid = [lp for lp in token_logprobs if lp is not None]
-                scores.append(sum(valid))
-            except Exception as e:
-                print(f"[warn] llama-server option scoring failed: {e}", flush=True)
-                scores.append(float("-inf"))
-        return scores.index(max(scores))

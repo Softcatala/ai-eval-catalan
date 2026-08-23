@@ -152,14 +152,6 @@ class GeminiModel:
             time.sleep(2)
             return ""
 
-    def score_options(self, prompt: str, options: list[str]) -> int:
-        """For API models, generate and pick the closest option."""
-        answer = self.generate(prompt + "\nAnswer with only A, B, C, or D.")
-        for i, opt in enumerate(options):
-            if opt.strip().lower() in answer.lower():
-                return i
-        return 0  # fallback
-
 
 
 class OpenAIModel:
@@ -195,13 +187,6 @@ class OpenAIModel:
             print(f"[error] API call failed: {e}")
             time.sleep(2)
             return ""
-
-    def score_options(self, prompt: str, options: list[str]) -> int:
-        answer = self.generate(prompt + "\nAnswer with only A, B, C, or D.")
-        for i, opt in enumerate(options):
-            if opt.strip().lower() in answer.lower():
-                return i
-        return 0
 
 
 # ──────────────────────────────────────────────────────────────────────────────
