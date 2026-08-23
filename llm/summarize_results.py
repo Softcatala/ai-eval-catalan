@@ -420,7 +420,6 @@ def main():
     json_text = {
         "model": COLUMN_LABELS["model"],
         "cloud": COLUMN_LABELS["cloud"],
-        "params_b": COLUMN_LABELS["params_b"],
         "memory_gb": COLUMN_LABELS["memory_gb"],
         "generation_tokens_per_sec": COLUMN_LABELS["generation_tokens_per_sec"],
         **{k: COLUMN_LABELS.get(k, k) for k in norm_keys},
@@ -471,7 +470,6 @@ def main():
             {
                 "text": {
                     **json_text,
-                    "params_b": "Paràmetres (B)",
                     "memory_gb": "Memòria (GB)",
                     "quantization": "Quantització",
                 },
