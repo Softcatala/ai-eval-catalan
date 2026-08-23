@@ -21,7 +21,7 @@ def call_with_retries(
     retries: int = 3,
     delay_seconds: float = 2.0,
 ) -> T:
-    """Run an inference request, retry transient failures, then re-raise."""
+    """Run an inference request, retry failures, then re-raise the final error."""
     for attempt in range(retries + 1):
         try:
             return operation()
