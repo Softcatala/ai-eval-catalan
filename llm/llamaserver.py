@@ -3,7 +3,6 @@ import urllib.request
 from pathlib import Path
 
 from inference import call_with_retries, chat_completion_params, inference_params
-from model_specs import expected_gguf_filename, is_gguf_model as _is_gguf_model
 
 
 _MUSE_USER_TEMPLATE = Path(__file__).with_name("templates") / "muse_glimmer_user.jinja"
