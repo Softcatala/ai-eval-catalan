@@ -18,7 +18,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-from models_config import DEFAULT_LOCAL_SERVER_URL, MODELS
+try:
+    from .models_config import DEFAULT_LOCAL_SERVER_URL, MODELS
+except ImportError:
+    from models_config import DEFAULT_LOCAL_SERVER_URL, MODELS
 
 SCRIPT_DIR = Path(__file__).parent
 
