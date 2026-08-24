@@ -18,7 +18,7 @@ format-check:
 	cd llm && uv run ruff format --check $(addprefix ../,$(PYTHON_SOURCES))
 
 publish-check:
-	PYTHONPATH=$(CURDIR) python -m llm.summarize_results --json-norm /tmp/llms.json --html /tmp/llms-summary.html
+	PYTHONPATH=$(CURDIR) uv run --with jinja2 python -m llm.summarize_results --json-norm /tmp/llms.json --html /tmp/llms-summary.html
 	PYTHONPATH=$(CURDIR) python -m asr.summarize_results --json-out /tmp/asrs.json
 	PYTHONPATH=$(CURDIR) python -m embeddings.summarize_results --json-out /tmp/embeddings.json
 
