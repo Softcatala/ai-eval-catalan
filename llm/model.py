@@ -40,11 +40,11 @@ from pathlib import Path
 
 from comet_config import COMET_CHECKPOINT, drop_legacy_translation_metrics
 from inference import call_with_retries, chat_completion_params, lm_eval_params
+from model_specs import is_gguf_model
 
 from llamaserver import (
     LlamaServerModel,
     _hf_tokenizer_from_gguf,
-    _is_gguf_model,
 )
 
 # facebook/flores uses an old dataset script — trust it so datasets doesn't refuse to load it.
@@ -964,14 +964,14 @@ def main():
     )
 
     # ── Validate model spec ───────────────────────────────────────────────────
-    if args.model not in ("gemini", "openai", "claude") and not _is_gguf_model(args.model):
+    if args.model not in ("gemini", "openai", "claude") and not is_gguf_model(args.model):
         raise ValueError(
             f"Only GGUF models are supported. Got: {args.model}\n"
             "Use a GGUF spec like 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M', '--model gemini', '--model openai', or '--model claude'."
         )
 
     tokenizer_id = (
-        _hf_tokenizer_from_gguf(args.model) if _is_gguf_model(args.model) else None
+        _hf_tokenizer_from_gguf(args.model) if is_gguf_model(args.model) else None
     )
 
     def _run_benchmarks(model, lm_eval_base_url: str | None = None):

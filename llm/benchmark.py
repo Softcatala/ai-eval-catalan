@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from models_config import MODELS
+from model_specs import arg_value, expected_gguf_filename, is_gguf_model
 
 
 DEFAULT_SERVER_URL = "http://127.0.0.1:9090/v1"
@@ -32,57 +33,26 @@ class BenchmarkError(Exception):
     pass
 
 
-def _arg_value(args: list[str], name: str) -> str | None:
-    try:
-        return args[args.index(name) + 1]
-    except (ValueError, IndexError):
-        return None
-
-
-def _is_gguf_model(model_spec: str) -> bool:
-    lower = model_spec.lower()
-    return "gguf" in lower or lower.endswith(".gguf")
-
-
 def _local_models() -> list[dict[str, Any]]:
     models = []
     for entry in MODELS:
-        model_spec = _arg_value(entry.get("args", []), "--model")
+        model_spec = arg_value(entry.get("args", []), "--model")
         if (
             entry.get("cloud")
             or entry.get("quantized_analysis_only")
             or not model_spec
-            or not _is_gguf_model(model_spec)
+            or not is_gguf_model(model_spec)
         ):
             continue
         models.append(
             {
                 "model": entry["display_name"],
                 "model_spec": model_spec,
-                "device": _arg_value(entry.get("args", []), "--device") or "cuda",
+                "device": arg_value(entry.get("args", []), "--device") or "cuda",
                 "quantization": entry.get("quantization", ""),
             }
         )
     return models
-
-
-def _expected_gguf_filename(model_spec: str) -> str | None:
-    if model_spec.endswith(".gguf"):
-        return Path(model_spec).name
-
-    if ":" in model_spec:
-        repo, quant = model_spec.rsplit(":", 1)
-    else:
-        repo, quant = model_spec, "Q8_0"
-
-    filename_overrides = {
-        "RichardErkhov/BSC-LT_-_salamandra-7b-instruct-gguf": "salamandra-7b-instruct.{quant}.gguf",
-    }
-    if repo in filename_overrides:
-        return filename_overrides[repo].format(quant=quant)
-
-    model_base = repo.split("/")[-1].replace("-GGUF", "")
-    return f"{model_base}-{quant}.gguf"
 
 
 def _compact(value: str) -> str:
@@ -106,7 +76,7 @@ def _without_quant(value: str) -> str:
 
 def _name_variants(model: dict[str, Any]) -> set[str]:
     values = {model["model"], model["model_spec"]}
-    filename = _expected_gguf_filename(model["model_spec"])
+    filename = expected_gguf_filename(model["model_spec"], default_quant="Q8_0")
     if filename:
         values.add(filename)
         values.add(Path(filename).stem)

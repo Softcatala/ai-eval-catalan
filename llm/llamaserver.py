@@ -3,38 +3,11 @@ import urllib.request
 from pathlib import Path
 
 from inference import call_with_retries, chat_completion_params, inference_params
+from model_specs import expected_gguf_filename, is_gguf_model as _is_gguf_model
 
 
 _MUSE_USER_TEMPLATE = Path(__file__).with_name("templates") / "muse_glimmer_user.jinja"
 _MUSE_BOS_TOKEN = "<|begin_of_text|>"
-
-
-def _is_gguf_model(model_name: str) -> bool:
-    """Return True if model_name is a GGUF spec (repo:quantization or .gguf file)."""
-    return "GGUF" in model_name or "gguf" in model_name or model_name.endswith(".gguf")
-
-
-_FILENAME_OVERRIDES = {
-    "RichardErkhov/BSC-LT_-_salamandra-7b-instruct-gguf": "salamandra-7b-instruct.{quant}.gguf",
-    "mradermacher/salamandra-7b-instruct-2606-GGUF": "salamandra-7b-instruct-2606.{quant}.gguf",
-}
-
-
-def expected_gguf_filename(model_spec: str) -> str:
-    """Return the GGUF filename expected for a repo:quant spec or local .gguf path."""
-    if model_spec.lower().endswith(".gguf"):
-        return Path(model_spec).name
-
-    if ":" in model_spec:
-        repo, quant = model_spec.rsplit(":", 1)
-    else:
-        repo, quant = model_spec, "Q4_K_M"
-
-    if repo in _FILENAME_OVERRIDES:
-        return _FILENAME_OVERRIDES[repo].format(quant=quant)
-
-    model_base = repo.split("/")[-1].replace("-GGUF", "")
-    return f"{model_base}-{quant}.gguf"
 
 
 def _hf_tokenizer_from_gguf(model_spec: str) -> str:
