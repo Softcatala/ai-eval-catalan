@@ -19,8 +19,8 @@ format-check:
 
 publish-check:
 	PYTHONPATH=$(CURDIR) uv run --with jinja2 python -m llm.summarize_results --json-norm /tmp/llms.json --html /tmp/llms-summary.html
-	PYTHONPATH=$(CURDIR) python -m asr.summarize_results --json-out /tmp/asrs.json
-	PYTHONPATH=$(CURDIR) python -m embeddings.summarize_results --json-out /tmp/embeddings.json
+	PYTHONPATH=$(CURDIR) uv run --with jinja2 python -m asr.summarize_results --json-out /tmp/asrs.json
+	PYTHONPATH=$(CURDIR) uv run --with jinja2 python -m embeddings.summarize_results --json-out /tmp/embeddings.json
 
 unit-test:
 	cd llm && PYTHONPATH=.. uv run --with pytest python -m pytest tests --ignore=tests/data_validation
