@@ -1,4 +1,4 @@
-"""Download local GGUF models from run_evals.py and write a llama-server preset."""
+"""Download configured local GGUF models and write a llama-server preset."""
 
 import argparse
 from pathlib import Path
@@ -6,7 +6,7 @@ from pathlib import Path
 from huggingface_hub import hf_hub_download
 
 from llamaserver import _is_gguf_model, expected_gguf_filename
-from run_evals import MODELS
+from models_config import MODELS
 
 
 def _arg_value(args: list[str], name: str) -> str | None:

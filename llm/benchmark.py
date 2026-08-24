@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from run_evals import MODELS
+from models_config import MODELS
 
 
 DEFAULT_SERVER_URL = "http://127.0.0.1:9090/v1"
