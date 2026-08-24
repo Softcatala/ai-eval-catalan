@@ -26,9 +26,7 @@ def _gemma4_aliases(repo: str) -> set[str]:
 
 
 GEMMA4_REPO_BY_ALIAS = {
-    alias: repo
-    for repo in GEMMA4_MODEL_REPOS
-    for alias in _gemma4_aliases(repo)
+    alias: repo for repo in GEMMA4_MODEL_REPOS for alias in _gemma4_aliases(repo)
 }
 
 

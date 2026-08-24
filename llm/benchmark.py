@@ -97,7 +97,9 @@ def _name_variants(model: dict[str, Any]) -> set[str]:
     return {_compact(variant) for variant in variants if _compact(variant)}
 
 
-def _match_server_model(model: dict[str, Any], server_model_ids: list[str]) -> str | None:
+def _match_server_model(
+    model: dict[str, Any], server_model_ids: list[str]
+) -> str | None:
     model_quant = _quant_key(model["model_spec"])
     model_names = _name_variants(model)
     for server_id in server_model_ids:
@@ -125,7 +127,9 @@ def _read_json(path: Path) -> dict[str, Any] | None:
 def _write_json(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp_path = path.with_suffix(path.suffix + ".tmp")
-    tmp_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    tmp_path.write_text(
+        json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
     tmp_path.replace(path)
 
 
@@ -203,7 +207,9 @@ def _http_json(
             return json.loads(resp.read())
     except urllib.error.HTTPError as exc:
         body = exc.read().decode(errors="replace")
-        raise BenchmarkError(f"{method} {url} failed with HTTP {exc.code}: {body}") from exc
+        raise BenchmarkError(
+            f"{method} {url} failed with HTTP {exc.code}: {body}"
+        ) from exc
     except urllib.error.URLError as exc:
         raise BenchmarkError(f"{method} {url} failed: {exc.reason}") from exc
     except TimeoutError as exc:
@@ -315,7 +321,9 @@ def _print_table(data: dict[str, Any]) -> None:
     for run in runs:
         speed = run.get("generation_tokens_per_sec")
         speed_text = f"{float(speed):.2f}" if isinstance(speed, (int, float)) else "?"
-        rows.append((str(run.get("model", "?")), str(run.get("backend", "?")), speed_text))
+        rows.append(
+            (str(run.get("model", "?")), str(run.get("backend", "?")), speed_text)
+        )
 
     model_width = max([len("Model"), *(len(row[0]) for row in rows)])
     backend_width = max([len("Backend"), *(len(row[1]) for row in rows)])
@@ -327,7 +335,9 @@ def _print_table(data: dict[str, Any]) -> None:
     )
     print(f"{'-' * model_width}  {'-' * backend_width}  {'-' * speed_width}")
     for model, backend, speed in rows:
-        print(f"{model:<{model_width}}  {backend:<{backend_width}}  {speed:>{speed_width}}")
+        print(
+            f"{model:<{model_width}}  {backend:<{backend_width}}  {speed:>{speed_width}}"
+        )
 
     device = next((run.get("device") for run in runs if run.get("device")), None)
     if device:
@@ -346,10 +356,14 @@ def _print_skipped(skipped: list[tuple[str, str]]) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Benchmark local GGUF model generation speed")
+    parser = argparse.ArgumentParser(
+        description="Benchmark local GGUF model generation speed"
+    )
     parser.add_argument("--server-url", default=DEFAULT_SERVER_URL)
     parser.add_argument("--output", default=DEFAULT_OUTPUT)
-    parser.add_argument("--device", default="cuda", help="Device label used in hardware metadata")
+    parser.add_argument(
+        "--device", default="cuda", help="Device label used in hardware metadata"
+    )
     parser.add_argument(
         "--timeout",
         type=float,
@@ -399,7 +413,9 @@ def main() -> int:
             skipped.append((model["model"], str(exc)))
 
     for model in missing:
-        server_model = _match_server_model(model, server_model_ids) if server_model_ids else None
+        server_model = (
+            _match_server_model(model, server_model_ids) if server_model_ids else None
+        )
         if server_model_ids and not server_model:
             skipped.append((model["model"], "server is not serving this model"))
             continue

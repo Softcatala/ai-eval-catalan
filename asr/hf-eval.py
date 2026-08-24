@@ -142,7 +142,9 @@ class WhisperWrapper:
 
 class VibeVoiceWrapper:
     def __init__(self, model_name: str, device: str):
-        from vibevoice.modular.modeling_vibevoice_asr import VibeVoiceASRForConditionalGeneration
+        from vibevoice.modular.modeling_vibevoice_asr import (
+            VibeVoiceASRForConditionalGeneration,
+        )
         from vibevoice.processor.vibevoice_asr_processor import VibeVoiceASRProcessor
 
         self.processor = VibeVoiceASRProcessor.from_pretrained(
@@ -173,7 +175,10 @@ class VibeVoiceWrapper:
             add_generation_prompt=True,
             context_info="The audio is in Catalan language.",
         )
-        inputs = {k: v.to(self.device) if isinstance(v, torch.Tensor) else v for k, v in inputs.items()}
+        inputs = {
+            k: v.to(self.device) if isinstance(v, torch.Tensor) else v
+            for k, v in inputs.items()
+        }
 
         with torch.no_grad():
             output_ids = self.model.generate(
@@ -186,7 +191,9 @@ class VibeVoiceWrapper:
 
         input_length = inputs["input_ids"].shape[1]
         generated_ids = output_ids[0, input_length:]
-        eos_pos = (generated_ids == self.processor.tokenizer.eos_token_id).nonzero(as_tuple=True)[0]
+        eos_pos = (generated_ids == self.processor.tokenizer.eos_token_id).nonzero(
+            as_tuple=True
+        )[0]
         if len(eos_pos) > 0:
             generated_ids = generated_ids[: eos_pos[0] + 1]
         raw_text = self.processor.decode(generated_ids, skip_special_tokens=True)
@@ -195,7 +202,11 @@ class VibeVoiceWrapper:
         try:
             segments = self.processor.post_process_transcription(raw_text)
             if segments:
-                texts = [seg.get("text", "") for seg in segments if seg.get("text", "") not in PLACEHOLDERS]
+                texts = [
+                    seg.get("text", "")
+                    for seg in segments
+                    if seg.get("text", "") not in PLACEHOLDERS
+                ]
                 return " ".join(texts).strip()
         except Exception:
             pass
@@ -320,10 +331,10 @@ def evaluate_language(
     else:
         model_lang = lang_config["whisper_lang"]
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Evaluating {lang_config['name']} ({lang_code}) on FLEURS")
     print(f"Model: {model_name} | Lang code: {model_lang}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     print(f"Loading FLEURS dataset for {lang_config['name']} (streaming)...")
     dataset = load_dataset(
@@ -421,7 +432,7 @@ def evaluate_language(
     print(f"  Samples: {result.num_samples} (skipped: {skipped})")
     print(f"  WER: {result.wer:.2%} | CER: {result.cer:.2%}")
     print(
-        f"  RTF: {result.avg_rtf:.3f} ({1/result.avg_rtf:.1f}x real-time)"
+        f"  RTF: {result.avg_rtf:.3f} ({1 / result.avg_rtf:.1f}x real-time)"
         if result.avg_rtf > 0
         else "  RTF: N/A"
     )
@@ -495,7 +506,9 @@ def main():
     t_start = time.time()
     model = load_model(args.model, args.device)
 
-    max_duration = Gemma4Wrapper.MAX_AUDIO_DURATION if args.model in GEMMA_MODELS else 40.0
+    max_duration = (
+        Gemma4Wrapper.MAX_AUDIO_DURATION if args.model in GEMMA_MODELS else 40.0
+    )
     result = evaluate_language(
         model=model,
         model_name=args.model,
@@ -525,16 +538,16 @@ def main():
             json.dump(results, f, ensure_ascii=False, indent=2)
         print(f"\nResults saved to: {output_path}")
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("  SUMMARY")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(f"  Model      : {args.model}")
     print(f"  WER        : {result.wer:.2%}")
     print(f"  CER        : {result.cer:.2%}")
     print(f"  RTF        : {result.avg_rtf:.3f}")
     print(f"  Samples    : {result.num_samples}")
     print(f"  Total time : {elapsed_str}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
 
 if __name__ == "__main__":

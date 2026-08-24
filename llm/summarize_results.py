@@ -124,10 +124,10 @@ COMET_SOURCE_COPY_BASELINES = {
 }
 
 RANDOM_BASELINES = {
-    "sts_ca":  0.0,   # correlation, ranges -1..1
-    "catcola_mcc":     0.0,   # MCC for binary classification: random baseline is 0
-    "club_qa_f1":      0.0,   # bounded 0..1, no trivial guesser
-    "casum_rougeL":    0.0,   # bounded 0..1
+    "sts_ca": 0.0,  # correlation, ranges -1..1
+    "catcola_mcc": 0.0,  # MCC for binary classification: random baseline is 0
+    "club_qa_f1": 0.0,  # bounded 0..1, no trivial guesser
+    "casum_rougeL": 0.0,  # bounded 0..1
     **COMET_SOURCE_COPY_BASELINES,
     "ifeval_prompt_strict": 0.0,  # prompt-level strict accuracy, bounded 0..1
 }
@@ -264,7 +264,9 @@ HTML_TEMPLATE_SRC = """\
 """
 
 
-def render_html(rows: list, all_metric_keys: list, norm_keys: list, fmt_params_fn) -> str:
+def render_html(
+    rows: list, all_metric_keys: list, norm_keys: list, fmt_params_fn
+) -> str:
     env = Environment()
     env.filters["fmt"] = fmt
     env.filters["norm"] = lambda value, key: normalize_score(key, value)
@@ -276,10 +278,26 @@ def render_html(rows: list, all_metric_keys: list, norm_keys: list, fmt_params_f
 
 def main():
     parser = argparse.ArgumentParser(description="Summarize eval results")
-    parser.add_argument("--results-dir", default=SCRIPT_DIR / "evals", help="Directory containing result JSONs")
-    parser.add_argument("--html", default=SCRIPT_DIR / "summary.html", help="Output HTML file (default: summary.html)")
-    parser.add_argument("--json-norm", default=SCRIPT_DIR / "llms.json", help="Output JSON file for normalized scores (default: llms.json)")
-    parser.add_argument("--benchmark-json", default=SCRIPT_DIR / "benchmark.json", help="Optional local generation speed benchmark JSON")
+    parser.add_argument(
+        "--results-dir",
+        default=SCRIPT_DIR / "evals",
+        help="Directory containing result JSONs",
+    )
+    parser.add_argument(
+        "--html",
+        default=SCRIPT_DIR / "summary.html",
+        help="Output HTML file (default: summary.html)",
+    )
+    parser.add_argument(
+        "--json-norm",
+        default=SCRIPT_DIR / "llms.json",
+        help="Output JSON file for normalized scores (default: llms.json)",
+    )
+    parser.add_argument(
+        "--benchmark-json",
+        default=SCRIPT_DIR / "benchmark.json",
+        help="Optional local generation speed benchmark JSON",
+    )
     args = parser.parse_args()
 
     results_dir = Path(args.results_dir)
@@ -287,21 +305,18 @@ def main():
 
     # Build lookup from output path -> quantized_analysis_only using run_evals.py as source of truth
     from llm.run_evals import MODELS
+
     quantized_only_by_output = {
-        Path(m["output"]).name: m.get("quantized_analysis_only", False)
-        for m in MODELS
+        Path(m["output"]).name: m.get("quantized_analysis_only", False) for m in MODELS
     }
     quantization_by_output = {
-        Path(m["output"]).name: m.get("quantization", "")
-        for m in MODELS
+        Path(m["output"]).name: m.get("quantization", "") for m in MODELS
     }
     display_name_by_output = {
-        Path(m["output"]).name: m.get("display_name")
-        for m in MODELS
+        Path(m["output"]).name: m.get("display_name") for m in MODELS
     }
     model_id_by_output = {
-        Path(m["output"]).name: configured_model_id(m)
-        for m in MODELS
+        Path(m["output"]).name: configured_model_id(m) for m in MODELS
     }
 
     rows = []
@@ -317,7 +332,9 @@ def main():
         display = data.get("display_name") or label
         cloud = data.get("cloud", False)
         quantized_analysis_only = quantized_only_by_output.get(path.name, False)
-        quantization = data.get("quantization") or quantization_by_output.get(path.name, "")
+        quantization = data.get("quantization") or quantization_by_output.get(
+            path.name, ""
+        )
         model_id = data["model"]
         if "/" not in model_id and not model_id.startswith(
             ("gemini-", "gpt-", "claude-", "global.anthropic.")
@@ -330,24 +347,24 @@ def main():
         ]
         if not quantized_analysis_only:
             speed_keys.extend((display, display_name_by_output.get(path.name)))
-        speed_keys = tuple(
-            key for key in speed_keys if key is not None
-        )
+        speed_keys = tuple(key for key in speed_keys if key is not None)
         generation_tokens_per_sec = next(
             (benchmark_speeds[key] for key in speed_keys if key in benchmark_speeds),
             None,
         )
         repo_url_by_label[display] = repo_url(model_id)
-        rows.append((
-            display,
-            metrics,
-            cloud,
-            params_b,
-            memory_gb,
-            quantized_analysis_only,
-            quantization,
-            generation_tokens_per_sec,
-        ))
+        rows.append(
+            (
+                display,
+                metrics,
+                cloud,
+                params_b,
+                memory_gb,
+                quantized_analysis_only,
+                quantization,
+                generation_tokens_per_sec,
+            )
+        )
         for k in metrics:
             if k not in all_metric_keys:
                 all_metric_keys.append(k)
@@ -373,7 +390,11 @@ def main():
     col_width = max(14, max(len(k) for k in display_metric_keys) + 2)
     params_col_w = 16
     label_width = max(12, max(len(label) for label, _, _cloud, *_ in rows) + 2)
-    header = f"{'Model':<{label_width}}" + f"{'Params (mem)':>{params_col_w}}" + "".join(f"{k:>{col_width}}" for k in display_metric_keys)
+    header = (
+        f"{'Model':<{label_width}}"
+        + f"{'Params (mem)':>{params_col_w}}"
+        + "".join(f"{k:>{col_width}}" for k in display_metric_keys)
+    )
     separator = "-" * len(header)
 
     print("\nRaw scores")
@@ -381,8 +402,12 @@ def main():
     print(header)
     print(separator)
     for label, metrics, _cloud, params_b, memory_gb, *_ in rows:
-        row = "".join(f"{fmt(metrics.get(k)):>{col_width}}" for k in display_metric_keys)
-        print(f"{label:<{label_width}}{fmt_params(params_b, memory_gb):>{params_col_w}}{row}")
+        row = "".join(
+            f"{fmt(metrics.get(k)):>{col_width}}" for k in display_metric_keys
+        )
+        print(
+            f"{label:<{label_width}}{fmt_params(params_b, memory_gb):>{params_col_w}}{row}"
+        )
     print(separator)
 
     # ── Normalized scores + CLAM composite table ──────────────────────────────
@@ -405,15 +430,20 @@ def main():
     print(norm_sep)
     for label, metrics, _cloud, params_b, memory_gb, *_ in rows:
         norm_row = "".join(
-            f"{fmt(normalize_score(k, metrics.get(k))):>{norm_col_w}}" for k in norm_keys
+            f"{fmt(normalize_score(k, metrics.get(k))):>{norm_col_w}}"
+            for k in norm_keys
         )
         clam = fmt_score(clam_score(metrics))
-        print(f"{label:<{norm_label_w}}{fmt_params(params_b, memory_gb):>{params_col_w}}{norm_row}{clam:>{clam_col_w}}")
+        print(
+            f"{label:<{norm_label_w}}{fmt_params(params_b, memory_gb):>{params_col_w}}{norm_row}{clam:>{clam_col_w}}"
+        )
     print(norm_sep)
 
     # ── HTML export ───────────────────────────────────────────────────────────
     html_path = Path(args.html)
-    html_path.write_text(render_html(rows, display_metric_keys, norm_keys, fmt_params), encoding="utf-8")
+    html_path.write_text(
+        render_html(rows, display_metric_keys, norm_keys, fmt_params), encoding="utf-8"
+    )
     print(f"\nHTML saved to {html_path}")
 
     # ── JSON export ───────────────────────────────────────────────────────────
@@ -426,23 +456,42 @@ def main():
         "clam": COLUMN_LABELS["clam"],
     }
     json_rows = []
-    for label, metrics, cloud, params_b, memory_gb, quantized_analysis_only, quantization, generation_tokens_per_sec in rows:
+    for (
+        label,
+        metrics,
+        cloud,
+        params_b,
+        memory_gb,
+        quantized_analysis_only,
+        quantization,
+        generation_tokens_per_sec,
+    ) in rows:
         entry = {
             "model": f"(*) {label}" if cloud else label,
             "repo_url": repo_url_by_label[label],
             "cloud": cloud,
             "params_b": params_b,
             "memory_gb": memory_gb,
-            "generation_tokens_per_sec": round(generation_tokens_per_sec, 2) if generation_tokens_per_sec is not None else None,
+            "generation_tokens_per_sec": round(generation_tokens_per_sec, 2)
+            if generation_tokens_per_sec is not None
+            else None,
             "quantized_analysis_only": quantized_analysis_only,
             "quantization": quantization,
-            **{k: round(normalize_score(k, metrics.get(k)), 4) if normalize_score(k, metrics.get(k)) is not None else None for k in norm_keys},
             **{
                 k: round(normalize_score(k, metrics.get(k)), 4)
-                if normalize_score(k, metrics.get(k)) is not None else None
+                if normalize_score(k, metrics.get(k)) is not None
+                else None
+                for k in norm_keys
+            },
+            **{
+                k: round(normalize_score(k, metrics.get(k)), 4)
+                if normalize_score(k, metrics.get(k)) is not None
+                else None
                 for k in direction_keys
             },
-            "clam": round(clam_score(metrics), 2) if clam_score(metrics) is not None else None,
+            "clam": round(clam_score(metrics), 2)
+            if clam_score(metrics) is not None
+            else None,
         }
         json_rows.append(entry)
     json_path = Path(args.json_norm)
@@ -462,7 +511,11 @@ def main():
 
     quantized_json_rows = sorted(
         [r for r in json_rows if r["model"].startswith("gemma3")],
-        key=lambda r: (-(r["params_b"] or 0), re.sub(r"-q\d+$", "", r["model"].lower()), -(r["clam"] or 0)),
+        key=lambda r: (
+            -(r["params_b"] or 0),
+            re.sub(r"-q\d+$", "", r["model"].lower()),
+            -(r["clam"] or 0),
+        ),
     )
     quantized_json_path = json_path.with_name("llms_quantized.json")
     quantized_json_path.write_text(

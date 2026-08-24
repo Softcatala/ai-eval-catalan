@@ -24,8 +24,13 @@ BOOTSTRAP_ITERS = 1000
 def encode(model, texts, batch_size, kind="symmetric"):
     if hasattr(model, "embed"):
         return model.embed(texts, kind=kind)
-    return model.encode(texts, normalize_embeddings=True, convert_to_numpy=True,
-                        show_progress_bar=True, batch_size=batch_size)
+    return model.encode(
+        texts,
+        normalize_embeddings=True,
+        convert_to_numpy=True,
+        show_progress_bar=True,
+        batch_size=batch_size,
+    )
 
 
 def ndcg10_from_ranks(ranks):
@@ -46,7 +51,9 @@ def retrieval_metrics(sims, gold_idx):
 def bootstrap_ci(values, statistic, n_iter=BOOTSTRAP_ITERS):
     n = len(values)
     stats = [statistic(values[RNG.integers(0, n, size=n)]) for _ in range(n_iter)]
-    return round(float(np.percentile(stats, 2.5)), 4), round(float(np.percentile(stats, 97.5)), 4)
+    return round(float(np.percentile(stats, 2.5)), 4), round(
+        float(np.percentile(stats, 97.5)), 4
+    )
 
 
 def prefixed(records, field, prefix):
@@ -66,7 +73,9 @@ def retrieval_from_embeddings(query_emb, corpus_emb, gold):
     return metrics
 
 
-def eval_retrieval(model, queries, corpus, gold, batch_size, query_kind="query", doc_kind="doc"):
+def eval_retrieval(
+    model, queries, corpus, gold, batch_size, query_kind="query", doc_kind="doc"
+):
     return retrieval_from_embeddings(
         *encode_pair(model, queries, corpus, batch_size, query_kind, doc_kind),
         gold,
@@ -108,12 +117,23 @@ def eval_sts_ca(model, sym_prefix, batch_size):
 
 def eval_tecla(model, doc_prefix, batch_size, n_train):
     """Linear probe on TeCla label1 (4 coarse classes: Societat/Política/Economia/Cultura)."""
-    train = load_dataset("projecte-aina/tecla", split="train").shuffle(seed=42).select(range(n_train))
+    train = (
+        load_dataset("projecte-aina/tecla", split="train")
+        .shuffle(seed=42)
+        .select(range(n_train))
+    )
     test = load_dataset("projecte-aina/tecla", split="test")
 
-    X_train = encode(model, prefixed(train, "sentence", doc_prefix), batch_size, kind="classification")
+    X_train = encode(
+        model,
+        prefixed(train, "sentence", doc_prefix),
+        batch_size,
+        kind="classification",
+    )
     y_train = [r["label1"] for r in train]
-    X_test = encode(model, prefixed(test, "sentence", doc_prefix), batch_size, kind="classification")
+    X_test = encode(
+        model, prefixed(test, "sentence", doc_prefix), batch_size, kind="classification"
+    )
     y_test = [r["label1"] for r in test]
 
     clf = LogisticRegression(max_iter=1000, C=1.0)
@@ -153,29 +173,45 @@ def main():
     skip = {s.strip() for s in a.skip.split(",") if s.strip()}
     if a.cloud_provider:
         from cloud_models import load_cloud_model
+
         model = load_cloud_model(a.cloud_provider, a.model, batch_size=a.batch_size)
     else:
-        model = SentenceTransformer(a.model, trust_remote_code=a.trust_remote_code, device=a.device)
+        model = SentenceTransformer(
+            a.model, trust_remote_code=a.trust_remote_code, device=a.device
+        )
     if a.max_seq_length is not None:
         if not hasattr(model, "max_seq_length"):
-            raise ValueError("--max-seq-length is only supported for local SentenceTransformer models")
+            raise ValueError(
+                "--max-seq-length is only supported for local SentenceTransformer models"
+            )
         model.max_seq_length = a.max_seq_length
 
     sts_prefix = a.sts_prefix if a.sts_prefix is not None else a.query_prefix
     tasks = [
-        ("xquad_ca_retrieval", "xquad_ca", lambda: eval_xquad_ca(model, a.query_prefix, a.doc_prefix, a.batch_size)),
+        (
+            "xquad_ca_retrieval",
+            "xquad_ca",
+            lambda: eval_xquad_ca(model, a.query_prefix, a.doc_prefix, a.batch_size),
+        ),
         ("sts_ca", "sts_ca", lambda: eval_sts_ca(model, sts_prefix, a.batch_size)),
-        ("tecla_classification", "tecla", lambda: eval_tecla(model, a.doc_prefix, a.batch_size, a.n_tecla_train)),
+        (
+            "tecla_classification",
+            "tecla",
+            lambda: eval_tecla(model, a.doc_prefix, a.batch_size, a.n_tecla_train),
+        ),
     ]
 
-    benchmarks = {name: run() for name, skip_name, run in tasks if skip_name not in skip}
+    benchmarks = {
+        name: run() for name, skip_name, run in tasks if skip_name not in skip
+    }
 
     result = {
         "model": a.model,
         "display_name": a.display_name or a.model.split("/")[-1],
         "cloud": bool(a.cloud_provider),
         "embedding_dim": (
-            model.get_embedding_dimension() if hasattr(model, "get_embedding_dimension")
+            model.get_embedding_dimension()
+            if hasattr(model, "get_embedding_dimension")
             else model.get_sentence_embedding_dimension()
         ),
         "benchmarks": benchmarks,

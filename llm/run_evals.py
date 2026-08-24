@@ -119,7 +119,9 @@ def main():
             continue
 
         if model.get("needs_bedrock_token") and not bedrock_token:
-            print(f"[SKIP] {name} — AWS_BEARER_TOKEN_BEDROCK env var required but not set")
+            print(
+                f"[SKIP] {name} — AWS_BEARER_TOKEN_BEDROCK env var required but not set"
+            )
             continue
 
         cmd = [
@@ -157,7 +159,7 @@ def main():
         if model.get("needs_api_key"):
             cmd += ["--api-key", google_api_key]
 
-        print(f"\n[RUN] {name}: {' '.join(cmd)}\n{'='*60}")
+        print(f"\n[RUN] {name}: {' '.join(cmd)}\n{'=' * 60}")
         run_env = os.environ.copy()
         if model.get("needs_bedrock_token"):
             run_env["OPENAI_API_KEY"] = bedrock_token

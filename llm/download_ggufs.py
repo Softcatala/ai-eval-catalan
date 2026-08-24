@@ -10,10 +10,14 @@ from model_specs import arg_value, expected_gguf_filename, is_gguf_model
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Download configured local GGUF models")
+    parser = argparse.ArgumentParser(
+        description="Download configured local GGUF models"
+    )
     parser.add_argument("--output-dir", required=True, help="Destination directory")
     parser.add_argument("--models", nargs="+", help="Optional display-name subset")
-    parser.add_argument("--presets-file", help="Optional llama-server models-preset INI")
+    parser.add_argument(
+        "--presets-file", help="Optional llama-server models-preset INI"
+    )
     parser.add_argument("--include-quantized-analysis", action="store_true")
     args = parser.parse_args()
 

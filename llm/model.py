@@ -125,7 +125,6 @@ except ImportError:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-
 class GeminiModel:
     """Google AI API wrapper (for Gemma 4 / Gemini models)."""
 
@@ -151,7 +150,6 @@ class GeminiModel:
         return (response.choices[0].message.content or "").strip()
 
 
-
 class OpenAIModel:
     """OpenAI-compatible API wrapper (works with OpenAI and OpenRouter)."""
 
@@ -160,7 +158,9 @@ class OpenAIModel:
 
         self.model_name = model_name
         self.client = OpenAI(api_key=api_key, base_url=base_url)
-        self.provider = "openrouter" if base_url and "openrouter" in base_url else "openai"
+        self.provider = (
+            "openrouter" if base_url and "openrouter" in base_url else "openai"
+        )
         self.prompt_tokens = 0
         self.completion_tokens = 0
         self.total_cost: float | None = None  # None until first response with cost data
@@ -331,7 +331,8 @@ def run_club_qa(model, n_samples: int = 100) -> dict:
         text = re.sub(r"<\|[^|]+_TOKEN\|>", " ", text)
         text = text.lower()
         text = "".join(
-            ch for ch in unicodedata.normalize("NFD", text)
+            ch
+            for ch in unicodedata.normalize("NFD", text)
             if unicodedata.category(ch) != "Mn"
         )
         text = re.sub(r"[^\w\s]", " ", text, flags=re.UNICODE)
@@ -392,11 +393,7 @@ def run_club_qa(model, n_samples: int = 100) -> dict:
         "token_f1": round(f1_score, 4),
         "n": n,
     }
-    print(
-        f"    ✓ Approx. Exact Match={score:.4f}  "
-        f"Token F1={f1_score:.4f}  "
-        f"(n={n})"
-    )
+    print(f"    ✓ Approx. Exact Match={score:.4f}  Token F1={f1_score:.4f}  (n={n})")
     return result
 
 
@@ -556,7 +553,9 @@ def run_flores(
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
 
-    print("\n[5/6] Running FLORES+ (EN↔CA and ES↔CA translation) via lm-evaluation-harness …")
+    print(
+        "\n[5/6] Running FLORES+ (EN↔CA and ES↔CA translation) via lm-evaluation-harness …"
+    )
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
     bedrock_anthropic = bool(
@@ -565,12 +564,26 @@ def run_flores(
         and "bedrock-mantle" in base_url
         and openai_model.startswith("anthropic.")
     )
-    inference_provider = "anthropic" if bedrock_anthropic else "gemini" if gemini_model else "openrouter" if openrouter_model else "openai" if openai_model else "llama" if base_url else "hf"
+    inference_provider = (
+        "anthropic"
+        if bedrock_anthropic
+        else "gemini"
+        if gemini_model
+        else "openrouter"
+        if openrouter_model
+        else "openai"
+        if openai_model
+        else "llama"
+        if base_url
+        else "hf"
+    )
     inference_model = gemini_model or openrouter_model or openai_model or model_name
 
     if gemini_model:
         lm_model = "openai-chat-completions"
-        _gemini_base_url = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+        _gemini_base_url = (
+            "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+        )
         lm_model_args = (
             f"model={gemini_model},base_url={_gemini_base_url},"
             f"eos_string=</s>,num_concurrent=8,max_retries=3,timeout=120"
@@ -701,7 +714,6 @@ def run_flores(
     return _score_flores_comet(results, flores_tasks, comet_model)
 
 
-
 # ──────────────────────────────────────────────────────────────────────────────
 # 6. IFEval-ca — Instruction Following (Catalan)
 # ──────────────────────────────────────────────────────────────────────────────
@@ -727,18 +739,32 @@ def run_ifeval(
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
 
-    print("\n[6/6] Running IFEval-ca (instruction following) via lm-evaluation-harness …")
+    print(
+        "\n[6/6] Running IFEval-ca (instruction following) via lm-evaluation-harness …"
+    )
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
     _orig_api_key = None
     _orig_base_url = None
     needs_env_restore = False
-    inference_provider = "gemini" if gemini_model else "openrouter" if openrouter_model else "openai" if openai_model else "llama" if base_url else "hf"
+    inference_provider = (
+        "gemini"
+        if gemini_model
+        else "openrouter"
+        if openrouter_model
+        else "openai"
+        if openai_model
+        else "llama"
+        if base_url
+        else "hf"
+    )
     inference_model = gemini_model or openrouter_model or openai_model or model_name
 
     if gemini_model:
         lm_model = "openai-chat-completions"
-        _gemini_base_url = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+        _gemini_base_url = (
+            "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+        )
         # eos_string=</s> avoids lm_eval sending an empty stop=[] array which the
         # Gemini OpenAI-compat endpoint rejects with 400 "Value is not a string: []".
         # The literal string is unlikely to appear in Catalan output, so generation
@@ -964,7 +990,9 @@ def main():
     )
 
     # ── Validate model spec ───────────────────────────────────────────────────
-    if args.model not in ("gemini", "openai", "claude") and not is_gguf_model(args.model):
+    if args.model not in ("gemini", "openai", "claude") and not is_gguf_model(
+        args.model
+    ):
         raise ValueError(
             f"Only GGUF models are supported. Got: {args.model}\n"
             "Use a GGUF spec like 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M', '--model gemini', '--model openai', or '--model claude'."
@@ -975,8 +1003,12 @@ def main():
     )
 
     def _run_benchmarks(model, lm_eval_base_url: str | None = None):
-        model_label = args.gemini_model if args.model == "gemini" else (
-            args.openai_model if args.model in ("openai", "claude") else args.model
+        model_label = (
+            args.gemini_model
+            if args.model == "gemini"
+            else (
+                args.openai_model if args.model in ("openai", "claude") else args.model
+            )
         )
         lm_eval_model_name = args.llama_server_model or args.model
         memory_gb = _estimate_memory_gb(args.params_b, args.model)
@@ -986,9 +1018,9 @@ def main():
             "cloud": args.cloud,
             "params_b": args.params_b,
             "memory_gb": memory_gb,
-            "evaluated_at": datetime.fromtimestamp(
-                t_start, timezone.utc
-            ).isoformat(timespec="seconds"),
+            "evaluated_at": datetime.fromtimestamp(t_start, timezone.utc).isoformat(
+                timespec="seconds"
+            ),
             "benchmarks": {},
         }
 
@@ -1007,12 +1039,21 @@ def main():
         if "flores" in to_run:
             try:
                 results["benchmarks"]["flores"] = run_flores(
-                    lm_eval_model_name, lm_eval_base_url, tokenizer_id, args.n_samples,
+                    lm_eval_model_name,
+                    lm_eval_base_url,
+                    tokenizer_id,
+                    args.n_samples,
                     openai_model=args.openai_model if args.model == "openai" else None,
                     gemini_model=args.gemini_model if args.model == "gemini" else None,
                     gemini_api_key=args.api_key if args.model == "gemini" else None,
-                    openrouter_model=args.openai_model if args.model == "claude" else None,
-                    openrouter_api_key=(args.api_key or os.environ.get("OPENROUTER_API_KEY")) if args.model == "claude" else None,
+                    openrouter_model=args.openai_model
+                    if args.model == "claude"
+                    else None,
+                    openrouter_api_key=(
+                        args.api_key or os.environ.get("OPENROUTER_API_KEY")
+                    )
+                    if args.model == "claude"
+                    else None,
                     tasks=args.flores_tasks,
                 )
                 results["flores_comet_checkpoint"] = COMET_CHECKPOINT
@@ -1023,12 +1064,21 @@ def main():
         if "ifeval" in to_run:
             try:
                 results["benchmarks"]["ifeval"] = run_ifeval(
-                    lm_eval_model_name, lm_eval_base_url, tokenizer_id, args.n_samples,
+                    lm_eval_model_name,
+                    lm_eval_base_url,
+                    tokenizer_id,
+                    args.n_samples,
                     openai_model=args.openai_model if args.model == "openai" else None,
                     gemini_model=args.gemini_model if args.model == "gemini" else None,
                     gemini_api_key=args.api_key if args.model == "gemini" else None,
-                    openrouter_model=args.openai_model if args.model == "claude" else None,
-                    openrouter_api_key=(args.api_key or os.environ.get("OPENROUTER_API_KEY")) if args.model == "claude" else None,
+                    openrouter_model=args.openai_model
+                    if args.model == "claude"
+                    else None,
+                    openrouter_api_key=(
+                        args.api_key or os.environ.get("OPENROUTER_API_KEY")
+                    )
+                    if args.model == "claude"
+                    else None,
                 )
             except Exception as e:
                 print(f"[warn] IFEval-ca failed: {e}")
@@ -1046,7 +1096,9 @@ def main():
     elif args.model == "claude":
         openrouter_api_key = args.api_key or os.environ.get("OPENROUTER_API_KEY")
         if not openrouter_api_key:
-            raise ValueError("--api-key or OPENROUTER_API_KEY is required when using --model claude")
+            raise ValueError(
+                "--api-key or OPENROUTER_API_KEY is required when using --model claude"
+            )
         model = OpenAIModel(
             api_key=openrouter_api_key,
             model_name=args.openai_model or "anthropic/claude-sonnet-4-5",
@@ -1056,7 +1108,9 @@ def main():
     elif args.model == "openai":
         openai_api_key = os.environ.get("OPENAI_API_KEY")
         if not openai_api_key:
-            raise ValueError("OPENAI_API_KEY environment variable is required when using --model openai")
+            raise ValueError(
+                "OPENAI_API_KEY environment variable is required when using --model openai"
+            )
         if not args.openai_model:
             raise ValueError("--openai-model is required when using --model openai")
         model = OpenAIModel(
@@ -1064,7 +1118,7 @@ def main():
             model_name=args.openai_model,
             base_url=args.openai_base_url,
         )
-        results = _run_benchmarks(model,args.openai_base_url)
+        results = _run_benchmarks(model, args.openai_base_url)
     else:
         if not args.llama_server_url:
             raise ValueError(
@@ -1092,9 +1146,13 @@ def main():
     for bench, res in results["benchmarks"].items():
         print(f"  {bench:<15} → {res}")
     print(f"  Total time    : {elapsed_str}")
-    if isinstance(model, OpenAIModel) and (model.prompt_tokens or model.completion_tokens):
+    if isinstance(model, OpenAIModel) and (
+        model.prompt_tokens or model.completion_tokens
+    ):
         total_tokens = model.prompt_tokens + model.completion_tokens
-        print(f"  Tokens        : {model.prompt_tokens:,} in + {model.completion_tokens:,} out = {total_tokens:,} total")
+        print(
+            f"  Tokens        : {model.prompt_tokens:,} in + {model.completion_tokens:,} out = {total_tokens:,} total"
+        )
         if model.total_cost is not None:
             print(f"  Cost          : ${model.total_cost:.4f}")
     print("═" * 60)

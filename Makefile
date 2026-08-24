@@ -1,7 +1,8 @@
 GGUF_DIR ?= models/gguf
 GGUF_MODELS ?=
+PYTHON_SOURCES := render_index_local.py render_tables.py eval_common asr embeddings llm
 
-.PHONY: render-local unit-test data-validation llm-download-ggufs
+.PHONY: render-local format format-check unit-test data-validation llm-download-ggufs
 
 render-local:
 	uv run --project llm python -m llm.summarize_results > /dev/null
@@ -9,6 +10,12 @@ render-local:
 	uv run --project embeddings python -m embeddings.summarize_results > /dev/null
 	uv run --with jinja2 render_tables.py
 	uv run render_index_local.py
+
+format:
+	cd llm && uv run ruff format $(addprefix ../,$(PYTHON_SOURCES))
+
+format-check:
+	cd llm && uv run ruff format --check $(addprefix ../,$(PYTHON_SOURCES))
 
 unit-test:
 	cd llm && PYTHONPATH=.. uv run --with pytest python -m pytest tests --ignore=tests/data_validation

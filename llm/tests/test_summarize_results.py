@@ -1,4 +1,8 @@
-from summarize_results import COMET_SOURCE_COPY_BASELINES, extract_metrics, normalize_score
+from summarize_results import (
+    COMET_SOURCE_COPY_BASELINES,
+    extract_metrics,
+    normalize_score,
+)
 
 
 def test_extract_metrics_uses_comet_for_flores():

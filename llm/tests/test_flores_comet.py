@@ -80,4 +80,7 @@ def test_comet_error_is_limited_to_its_flores_direction():
     scores = model._score_flores_comet(results, [good_task, empty_task], Comet())
 
     assert scores[good_task]["comet"] == 0.75
-    assert scores[empty_task]["error"] == "lm-eval returned no usable translations for COMET"
+    assert (
+        scores[empty_task]["error"]
+        == "lm-eval returned no usable translations for COMET"
+    )

@@ -23,7 +23,9 @@ GOOGLE_TASK_TYPES = {
 
 
 def _env(*names: str) -> str:
-    if value := next((os.environ.get(name) for name in names if os.environ.get(name)), None):
+    if value := next(
+        (os.environ.get(name) for name in names if os.environ.get(name)), None
+    ):
         return value
     joined = " / ".join(names)
     raise RuntimeError(f"{joined} env var is required")
@@ -36,7 +38,7 @@ def _retry(fn, attempts: int = 5):
         except Exception:
             if attempt == attempts - 1:
                 raise
-            time.sleep(2 ** attempt)
+            time.sleep(2**attempt)
 
 
 class CloudEmbedder:
@@ -58,7 +60,9 @@ class CloudEmbedder:
         from google import genai
         from google.genai import types as gtypes
 
-        return genai.Client(api_key=_env("GOOGLE_API_KEY", "GEMINI_API_KEY")), gtypes.EmbedContentConfig
+        return genai.Client(
+            api_key=_env("GOOGLE_API_KEY", "GEMINI_API_KEY")
+        ), gtypes.EmbedContentConfig
 
     def embed(self, texts: Sequence[str], kind: str = "symmetric") -> np.ndarray:
         if not texts:
@@ -68,13 +72,17 @@ class CloudEmbedder:
         vectors = [
             vector
             for i in range(0, len(texts), self.batch_size)
-            for vector in _retry(lambda: self._embed_batch(texts[i : i + self.batch_size], kind))
+            for vector in _retry(
+                lambda: self._embed_batch(texts[i : i + self.batch_size], kind)
+            )
         ]
         arr = np.asarray(vectors, dtype=np.float32)
         self._dim = arr.shape[1]
         return _l2_normalize(arr)
 
-    def _embed_batch(self, batch: Sequence[str], kind: str) -> Sequence[Sequence[float]]:
+    def _embed_batch(
+        self, batch: Sequence[str], kind: str
+    ) -> Sequence[Sequence[float]]:
         if self.provider == "openai":
             resp = self.client.embeddings.create(model=self.model, input=batch)
             return [d.embedding for d in resp.data]
@@ -82,7 +90,9 @@ class CloudEmbedder:
         resp = self.client.models.embed_content(
             model=self.model,
             contents=batch,
-            config=self.embed_config(task_type=GOOGLE_TASK_TYPES.get(kind, "SEMANTIC_SIMILARITY")),
+            config=self.embed_config(
+                task_type=GOOGLE_TASK_TYPES.get(kind, "SEMANTIC_SIMILARITY")
+            ),
         )
         return [e.values for e in resp.embeddings]
 
