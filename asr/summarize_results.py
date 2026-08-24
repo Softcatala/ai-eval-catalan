@@ -37,17 +37,19 @@ def load_results(results_dir: Path) -> list[dict]:
             with open(path) as f:
                 data = json.load(f)
             fleurs = data.get("benchmarks", {}).get("fleurs_ca", {})
-            rows.append({
-                "model": data.get("model", path.stem),
-                "repo_url": repo_url(data.get("model", path.stem)),
-                "cloud": data.get("cloud", False),
-                "params_b": data.get("params_b"),
-                "memory_gb": data.get("memory_gb"),
-                "wer": fleurs.get("wer"),
-                "cer": fleurs.get("cer"),
-                "rtf": fleurs.get("rtf"),
-                "n": fleurs.get("n"),
-            })
+            rows.append(
+                {
+                    "model": data.get("model", path.stem),
+                    "repo_url": repo_url(data.get("model", path.stem)),
+                    "cloud": data.get("cloud", False),
+                    "params_b": data.get("params_b"),
+                    "memory_gb": data.get("memory_gb"),
+                    "wer": fleurs.get("wer"),
+                    "cer": fleurs.get("cer"),
+                    "rtf": fleurs.get("rtf"),
+                    "n": fleurs.get("n"),
+                }
+            )
         except Exception:
             pass
     return rows
@@ -62,7 +64,7 @@ def fmt(value, digits=4) -> str:
 def fmt_pct(value) -> str:
     if value is None:
         return "—"
-    return f"{value*100:.2f}%"
+    return f"{value * 100:.2f}%"
 
 
 def main():
@@ -88,19 +90,23 @@ def main():
     print(header)
     print(sep)
     for r in rows:
-        rt = f"{1/r['rtf']:.1f}x" if r["rtf"] else "—"
+        rt = f"{1 / r['rtf']:.1f}x" if r["rtf"] else "—"
         n = str(r["n"]) if r["n"] else "—"
-        print(f"{r['model']:<{label_w}}{fmt_pct(r['wer']):>10}{fmt_pct(r['cer']):>10}{fmt(r['rtf']):>10}{rt:>12}{n:>6}")
+        print(
+            f"{r['model']:<{label_w}}{fmt_pct(r['wer']):>10}{fmt_pct(r['cer']):>10}{fmt(r['rtf']):>10}{rt:>12}{n:>6}"
+        )
     print(sep)
 
     # ── JSON export ───────────────────────────────────────────────────────────
-    json_text = {k: COLUMN_LABELS.get(k, k) for k in ["model", "params_b", "memory_gb"] + METRICS}
+    json_text = {
+        k: COLUMN_LABELS.get(k, k) for k in ["model", "params_b", "memory_gb"] + METRICS
+    }
     json_metrics = {
         "wer": {
             "direction": "lower_is_better",
             "subtitle": "10% habilitat d'un humà",
             "label": "10% habilitat d'un humà",
-            "caption": "Línia discontínua al 10% ≈ \"habilitat d'un humà\"",
+            "caption": 'Línia discontínua al 10% ≈ "habilitat d\'un humà"',
             "success": {"max": 0.1, "color": "#388e3c"},
             "warning": {"max": 0.2, "color": "#f9a825"},
             "error": {"color": "#c62828"},

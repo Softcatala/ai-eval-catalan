@@ -107,14 +107,20 @@ class GeminiASRWrapper:
 
         try:
             sf.write(tmp_path, waveform.numpy(), sample_rate)
-            uploaded = self.client.files.upload(file=tmp_path, config={"mime_type": "audio/wav"})
+            uploaded = self.client.files.upload(
+                file=tmp_path, config={"mime_type": "audio/wav"}
+            )
             response = self.client.models.generate_content(
                 model=self.model_name,
                 contents=[
-                    self.types.Part.from_uri(file_uri=uploaded.uri, mime_type="audio/wav"),
+                    self.types.Part.from_uri(
+                        file_uri=uploaded.uri, mime_type="audio/wav"
+                    ),
                     self.PROMPT,
                 ],
-                config=self.types.GenerateContentConfig(temperature=1.0, max_output_tokens=2048),
+                config=self.types.GenerateContentConfig(
+                    temperature=1.0, max_output_tokens=2048
+                ),
             )
             self.client.files.delete(name=uploaded.name)
             return response.text.strip() if response.text else ""
@@ -155,10 +161,10 @@ def evaluate_language(
     locale = lang_config["fleurs_locale"]
     model_lang = lang_config["lang"]
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Evaluating {lang_config['name']} ({lang_code}) on FLEURS")
     print(f"Model: {model_name} | Lang code: {model_lang}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     print(f"Loading FLEURS dataset for {lang_config['name']} (streaming)...")
     dataset = load_dataset(
@@ -181,7 +187,9 @@ def evaluate_language(
     resampler = torchaudio.transforms.Resample(48000, 16000)
 
     with torch.no_grad():
-        for sample in tqdm(dataset, desc=f"Processing {lang_config['name']}", total=num_samples):
+        for sample in tqdm(
+            dataset, desc=f"Processing {lang_config['name']}", total=num_samples
+        ):
             if processed >= num_samples:
                 break
 
@@ -245,7 +253,7 @@ def evaluate_language(
     print(f"  Samples: {result.num_samples} (skipped: {skipped})")
     print(f"  WER: {result.wer:.2%} | CER: {result.cer:.2%}")
     print(
-        f"  RTF: {result.avg_rtf:.3f} ({1/result.avg_rtf:.1f}x real-time)"
+        f"  RTF: {result.avg_rtf:.3f} ({1 / result.avg_rtf:.1f}x real-time)"
         if result.avg_rtf > 0
         else "  RTF: N/A"
     )
@@ -297,7 +305,9 @@ def main():
         parser.error("model argument is required (use --list-models to see options)")
 
     if args.model not in ALL_MODELS:
-        parser.error(f"Unknown model '{args.model}'. Use --list-models to see available options.")
+        parser.error(
+            f"Unknown model '{args.model}'. Use --list-models to see available options."
+        )
 
     output_path = Path(args.output) if args.output else None
 
@@ -332,16 +342,16 @@ def main():
             json.dump(results, f, ensure_ascii=False, indent=2)
         print(f"\nResults saved to: {output_path}")
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("  SUMMARY")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(f"  Model      : {args.model}")
     print(f"  WER        : {result.wer:.2%}")
     print(f"  CER        : {result.cer:.2%}")
     print(f"  RTF        : {result.avg_rtf:.3f}")
     print(f"  Samples    : {result.num_samples}")
     print(f"  Total time : {elapsed_str}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
 
 if __name__ == "__main__":

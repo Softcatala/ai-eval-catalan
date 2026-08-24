@@ -66,6 +66,7 @@ class LlamaServerModel:
             data=payload,
             headers={"Content-Type": "application/json"},
         )
+
         def _request():
             with urllib.request.urlopen(req, timeout=self.timeout) as resp:
                 return json.loads(resp.read())
@@ -96,7 +97,9 @@ class LlamaServerModel:
         # Override Mistral's tool-focused default system prompt
         # (mode-collapses short-answer tasks at temp=0).
         if "mistral" in self.model_spec.lower():
-            messages.append({"role": "system", "content": "You are a helpful assistant."})
+            messages.append(
+                {"role": "system", "content": "You are a helpful assistant."}
+            )
         messages.append({"role": "user", "content": prompt})
         payload_data = {
             "messages": messages,

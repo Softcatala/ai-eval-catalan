@@ -54,7 +54,15 @@ def fmt_params(row) -> str:
     return f"{size} ({mem})"
 
 
-def render(json_path: Path, template_path: Path, out: Path, row_filter=None, extra_cols=None, sort_key=None, show_params=True) -> None:
+def render(
+    json_path: Path,
+    template_path: Path,
+    out: Path,
+    row_filter=None,
+    extra_cols=None,
+    sort_key=None,
+    show_params=True,
+) -> None:
     data = json.loads(json_path.read_text())
     col_labels = dict(data["text"])
     rows = data["data"]
@@ -62,7 +70,11 @@ def render(json_path: Path, template_path: Path, out: Path, row_filter=None, ext
         rows = [r for r in rows if row_filter(r)]
     if sort_key is not None:
         rows = sorted(rows, key=sort_key)
-    cols = [k for k in col_labels if k != "model" and k not in ("cloud", "params_b", "memory_gb")]
+    cols = [
+        k
+        for k in col_labels
+        if k != "model" and k not in ("cloud", "params_b", "memory_gb")
+    ]
     if extra_cols:
         for k, label in reversed(list(extra_cols.items())):
             if k not in cols:
@@ -77,7 +89,9 @@ def render(json_path: Path, template_path: Path, out: Path, row_filter=None, ext
     env.filters["fmt_params"] = fmt_params
     template = env.get_template(template_path.name)
 
-    html = template.render(rows=rows, cols=cols, col_labels=col_labels, show_params=show_params)
+    html = template.render(
+        rows=rows, cols=cols, col_labels=col_labels, show_params=show_params
+    )
     out.write_text(html, encoding="utf-8")
     print(f"Saved to {out}")
 
@@ -94,14 +108,22 @@ def main():
     parser.add_argument("--emb-out", default="embeddings/embeddings_table.html")
     args = parser.parse_args()
 
-    render(Path(args.llm_json), Path("llm/table_template.jinja"), Path(args.llm_out),
-           row_filter=lambda r: not r.get("quantized_analysis_only", False))
+    render(
+        Path(args.llm_json),
+        Path("llm/table_template.jinja"),
+        Path(args.llm_out),
+        row_filter=lambda r: not r.get("quantized_analysis_only", False),
+    )
     render(
         Path(args.llm_quantized_json),
         Path("llm/table_template.jinja"),
         Path(args.llm_quantized_out),
         extra_cols={"quantization": "Quantització"},
-        sort_key=lambda r: (-(r.get("params_b") or 0), re.sub(r"-q\d+$", "", r["model"].lower()), -(r.get("clam") or 0)),
+        sort_key=lambda r: (
+            -(r.get("params_b") or 0),
+            re.sub(r"-q\d+$", "", r["model"].lower()),
+            -(r.get("clam") or 0),
+        ),
     )
     render(Path(args.asr_json), Path("asr/table_template.jinja"), Path(args.asr_out))
     render(

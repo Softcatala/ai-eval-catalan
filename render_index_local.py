@@ -6,10 +6,10 @@ Produces a self-contained file that works when opened directly via file://.
 from pathlib import Path
 
 FRAGMENTS = [
-    ("LLM — Taula",              "llm/llms_table.html"),
-    ("LLM — Taula Quantitzada",  "llm/llms_quantized_table.html"),
-    ("ASR — Taula",              "asr/asrs_table.html"),
-    ("Embeddings — Taula",       "embeddings/embeddings_table.html"),
+    ("LLM — Taula", "llm/llms_table.html"),
+    ("LLM — Taula Quantitzada", "llm/llms_quantized_table.html"),
+    ("ASR — Taula", "asr/asrs_table.html"),
+    ("Embeddings — Taula", "embeddings/embeddings_table.html"),
 ]
 
 STYLE = """

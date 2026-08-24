@@ -18,5 +18,7 @@ def benchmark_runs():
 class BenchmarkEntriesTest(unittest.TestCase):
     def test_all_local_models_have_benchmark_entry(self):
         expected = {model["model_spec"] for model in _local_models()}
-        actual = {run.get("model_spec") for run in benchmark_runs() if isinstance(run, dict)}
+        actual = {
+            run.get("model_spec") for run in benchmark_runs() if isinstance(run, dict)
+        }
         self.assertFalse(expected - actual)

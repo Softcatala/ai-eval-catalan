@@ -26,17 +26,19 @@ def load_rows(results_dir: Path) -> list[dict]:
         xq = bench.get("xquad_ca_retrieval", {})
         sts = bench.get("sts_ca", {})
         tec = bench.get("tecla_classification", {})
-        rows.append({
-            "model": d["display_name"],
-            "repo_url": repo_url(d["model"]),
-            "cloud": is_cloud(d),
-            "dim": d["embedding_dim"],
-            "xquad_ndcg_at_10": xq.get("ndcg_at_10"),
-            "xquad_ndcg_at_10_ci": xq.get("ndcg_at_10_ci"),
-            "sts_ca_spearman": sts.get("spearman"),
-            "sts_ca_spearman_ci": sts.get("spearman_ci"),
-            "tecla_macro_f1": tec.get("macro_f1"),
-        })
+        rows.append(
+            {
+                "model": d["display_name"],
+                "repo_url": repo_url(d["model"]),
+                "cloud": is_cloud(d),
+                "dim": d["embedding_dim"],
+                "xquad_ndcg_at_10": xq.get("ndcg_at_10"),
+                "xquad_ndcg_at_10_ci": xq.get("ndcg_at_10_ci"),
+                "sts_ca_spearman": sts.get("spearman"),
+                "sts_ca_spearman_ci": sts.get("spearman_ci"),
+                "tecla_macro_f1": tec.get("macro_f1"),
+            }
+        )
     return rows
 
 
@@ -93,8 +95,10 @@ def main():
     # Per-model 95% bootstrap CIs are stored in embeddings.json (xquad_ndcg_at_10_ci,
     # sts_ca_spearman_ci) for anyone who wants the exact intervals.
     print()
-    print("Note: composite gaps under ~0.015 are within sampling noise — treat clustered "
-          "middle ranks as tied. Per-model 95% bootstrap CIs are in embeddings.json.")
+    print(
+        "Note: composite gaps under ~0.015 are within sampling noise — treat clustered "
+        "middle ranks as tied. Per-model 95% bootstrap CIs are in embeddings.json."
+    )
 
     out = {
         "text": COL_LABELS,
@@ -103,13 +107,15 @@ def main():
                 "direction": "higher_is_better",
                 "subtitle": "0.85 alta qualitat",
                 "label": "≥ 0.85 alta qualitat",
-                "caption": "Línia discontínua a 0.85 = \"alta qualitat per a tasques en català\"",
+                "caption": 'Línia discontínua a 0.85 = "alta qualitat per a tasques en català"',
                 "success": {"min": 0.85, "color": "#388e3c"},
                 "warning": {"min": 0.8, "color": "#f9a825"},
                 "error": {"color": "#c62828"},
             }
         },
-        "data": [{**r, "model": f"(*) {r['model']}"} if r["cloud"] else r for r in rows],
+        "data": [
+            {**r, "model": f"(*) {r['model']}"} if r["cloud"] else r for r in rows
+        ],
     }
     Path(args.json_out).write_text(json.dumps(out, indent=2, ensure_ascii=False))
 

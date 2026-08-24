@@ -150,11 +150,15 @@ def main():
             continue
 
         if model.get("needs_openai_api_key") and not openai_api_key:
-            print(f"[SKIP] {model['label']} — OPENAI_API_KEY env var required but not set")
+            print(
+                f"[SKIP] {model['label']} — OPENAI_API_KEY env var required but not set"
+            )
             continue
 
         if model.get("needs_google_api_key") and not google_api_key:
-            print(f"[SKIP] {model['label']} — GOOGLE_API_KEY env var required but not set")
+            print(
+                f"[SKIP] {model['label']} — GOOGLE_API_KEY env var required but not set"
+            )
             continue
 
         script = model.get("script", "hf-eval.py")
@@ -170,7 +174,7 @@ def main():
             model["output"],
         ]
 
-        print(f"\n[RUN] {model['label']}: {' '.join(cmd)}\n{'='*60}")
+        print(f"\n[RUN] {model['label']}: {' '.join(cmd)}\n{'=' * 60}")
         result = subprocess.run(cmd, cwd=SCRIPT_DIR, stdin=subprocess.DEVNULL)
 
         if result.returncode != 0:

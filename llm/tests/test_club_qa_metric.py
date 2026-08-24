@@ -13,8 +13,14 @@ class ClubQaMetricTest(unittest.TestCase):
                         {
                             "context": "Context mock.",
                             "qas": [
-                                {"question": "On?", "answers": [{"text": "l'Audiència de Barcelona"}]},
-                                {"question": "Que?", "answers": [{"text": "les carreteres"}]},
+                                {
+                                    "question": "On?",
+                                    "answers": [{"text": "l'Audiència de Barcelona"}],
+                                },
+                                {
+                                    "question": "Que?",
+                                    "answers": [{"text": "les carreteres"}],
+                                },
                             ],
                         }
                     ]

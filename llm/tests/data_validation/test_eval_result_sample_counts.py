@@ -36,7 +36,10 @@ def leaves(prefix, value):
     if children:
         for key, child in children:
             yield from leaves(f"{prefix}.{key}", child)
-    elif any("," in key or key in {"pearson", "mcc", "rougeL", "exact_match_approx"} for key in value):
+    elif any(
+        "," in key or key in {"pearson", "mcc", "rougeL", "exact_match_approx"}
+        for key in value
+    ):
         yield prefix, value
 
 
@@ -45,7 +48,9 @@ class EvalResultSampleCountsTest(unittest.TestCase):
         missing = []
         for file in result_files():
             data = json.loads((ROOT / file).read_text(encoding="utf-8"))
-            missing += [f"{Path(file).name}: {key}" for key in REQUIRED_FIELDS - data.keys()]
+            missing += [
+                f"{Path(file).name}: {key}" for key in REQUIRED_FIELDS - data.keys()
+            ]
         self.assertFalse(missing, "Missing required fields:\n" + "\n".join(missing))
 
     def test_metric_sample_counts_are_stored_and_consistent(self):
@@ -71,6 +76,8 @@ class EvalResultSampleCountsTest(unittest.TestCase):
             for metric, result in leaves("benchmarks", data.get("benchmarks", {})):
                 expected = EXPECTED_SAMPLE_COUNTS.get(metric)
                 if expected is not None and result.get("n") != expected:
-                    bad.append(f"{Path(file).name}: {metric} n={result.get('n')} expected {expected}")
+                    bad.append(
+                        f"{Path(file).name}: {metric} n={result.get('n')} expected {expected}"
+                    )
 
         self.assertFalse(bad, "Unexpected sample counts:\n" + "\n".join(bad))

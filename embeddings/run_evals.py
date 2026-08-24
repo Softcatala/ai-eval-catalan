@@ -52,8 +52,13 @@ MODELS = [
         "id": "Snowflake/snowflake-arctic-embed-l-v2.0",
         # Model ships "query: " as its only documented prefix; reuse on both
         # sides of STS-ca (it's pure-retrieval-trained, no STS-specific prompt).
-        "extra": ["--trust-remote-code", "--batch-size", "8",
-                  "--sts-prefix", "query: "],
+        "extra": [
+            "--trust-remote-code",
+            "--batch-size",
+            "8",
+            "--sts-prefix",
+            "query: ",
+        ],
     },
     {
         "name": "nomic-embed-text-v2-moe",
@@ -67,7 +72,8 @@ MODELS = [
             "search_document: ",
             "--sts-prefix",
             "classification: ",
-            "--batch-size", "8",
+            "--batch-size",
+            "8",
         ],
     },
     {
@@ -124,7 +130,11 @@ OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
 GOOGLE_KEY = os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")
 
 for m in MODELS:
-    out = SCRIPT_DIR / "evals" / f"results_{m['name'].replace('-', '_').replace('.', '_')}.json"
+    out = (
+        SCRIPT_DIR
+        / "evals"
+        / f"results_{m['name'].replace('-', '_').replace('.', '_')}.json"
+    )
 
     # Gate cloud models behind an explicit opt-in and key presence.
     if m.get("cloud"):
@@ -142,6 +152,7 @@ for m in MODELS:
         # Skip only if all required benchmarks are already present.
         try:
             import json as _json
+
             data = _json.loads(out.read_text())
             bench = data.get("benchmarks", {})
             needed = {"xquad_ca_retrieval", "sts_ca", "tecla_classification"}
@@ -150,7 +161,17 @@ for m in MODELS:
                 continue
         except Exception:
             pass
-    cmd = [sys.executable, "-u", "model.py", "--model", m["id"], "--output", str(out),
-           "--display-name", m["name"], *m["extra"]]
+    cmd = [
+        sys.executable,
+        "-u",
+        "model.py",
+        "--model",
+        m["id"],
+        "--output",
+        str(out),
+        "--display-name",
+        m["name"],
+        *m["extra"],
+    ]
     print(f"[RUN] {' '.join(cmd)}")
     subprocess.run(cmd, cwd=SCRIPT_DIR, check=False)
