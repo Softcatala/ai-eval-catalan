@@ -21,6 +21,9 @@ jobs:
       - name: Check formatting
         run: make format-check
 
+      - name: Check publish scripts
+        run: make publish-check
+
       - name: Run unit tests
         run: make unit-test
 
