@@ -1,19 +1,12 @@
-"""Download local GGUF models from run_evals.py and write a llama-server preset."""
+"""Download configured local GGUF models and write a llama-server preset."""
 
 import argparse
 from pathlib import Path
 
 from huggingface_hub import hf_hub_download
 
-from llamaserver import _is_gguf_model, expected_gguf_filename
-from run_evals import MODELS
-
-
-def _arg_value(args: list[str], name: str) -> str | None:
-    try:
-        return args[args.index(name) + 1]
-    except (ValueError, IndexError):
-        return None
+from models_config import MODELS
+from model_specs import arg_value, expected_gguf_filename, is_gguf_model
 
 
 def main() -> int:
@@ -40,14 +33,16 @@ def main() -> int:
             continue
         if model.get("quantized_analysis_only") and not args.include_quantized_analysis:
             continue
-        model_spec = _arg_value(model.get("args", []), "--model")
-        if model.get("cloud") or not model_spec or not _is_gguf_model(model_spec):
+        model_spec = arg_value(model.get("args", []), "--model")
+        if model.get("cloud") or not model_spec or not is_gguf_model(model_spec):
             continue
 
         if model_spec.lower().endswith(".gguf"):
             path = Path(model_spec).expanduser()
             if not path.exists():
-                parser.error(f"{model['display_name']}: local GGUF file not found: {model_spec}")
+                parser.error(
+                    f"{model['display_name']}: local GGUF file not found: {model_spec}"
+                )
         else:
             repo = model_spec.rsplit(":", 1)[0] if ":" in model_spec else model_spec
             filename = expected_gguf_filename(model_spec)
