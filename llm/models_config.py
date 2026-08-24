@@ -8,7 +8,7 @@ MODELS = [
         "output": "evals/results_gemma3_4b_q2.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-3-4b-it-GGUF:Q2_K",
+            "unsloth/gemma-3-4b-it-GGUF:Q2_K",
         ],
         "llama_server_model": "google_gemma-3-4b-it-Q2_K",
         "ram_gb": 2,
@@ -21,7 +21,7 @@ MODELS = [
         "output": "evals/results_gemma3_4b_q4.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-3-4b-it-GGUF:Q4_K_M",
+            "unsloth/gemma-3-4b-it-GGUF:Q4_K_M",
         ],
         "ram_gb": 3,
         "params_b": 4.0,
@@ -32,7 +32,7 @@ MODELS = [
         "output": "evals/results_gemma3_4b_q8.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-3-4b-it-GGUF:Q8_0",
+            "unsloth/gemma-3-4b-it-GGUF:Q8_0",
         ],
         "llama_server_model": "google_gemma-3-4b-it-Q8_0",
         "ram_gb": 5,
@@ -45,7 +45,7 @@ MODELS = [
         "output": "evals/results_gemma3_12b_q2.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-3-12b-it-GGUF:Q2_K",
+            "unsloth/gemma-3-12b-it-GGUF:Q2_K",
         ],
         "llama_server_model": "google_gemma-3-12b-it-Q2_K",
         "ram_gb": 4,
@@ -58,7 +58,7 @@ MODELS = [
         "output": "evals/results_gemma3_12b_q4.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-3-12b-it-GGUF:Q4_K_M",
+            "unsloth/gemma-3-12b-it-GGUF:Q4_K_M",
         ],
         "ram_gb": 7,
         "params_b": 12.0,
@@ -69,7 +69,7 @@ MODELS = [
         "output": "evals/results_gemma3_12b.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-3-12b-it-GGUF:Q8_0",
+            "unsloth/gemma-3-12b-it-GGUF:Q8_0",
         ],
         "llama_server_model": "google_gemma-3-12b-it-Q8_0",
         "ram_gb": 12,
@@ -82,7 +82,7 @@ MODELS = [
         "output": "evals/results_gemma3_27b_q2.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-3-27b-it-GGUF:Q2_K",
+            "unsloth/gemma-3-27b-it-GGUF:Q2_K",
         ],
         "llama_server_model": "google_gemma-3-27b-it-Q2_K",
         "ram_gb": 9,
@@ -95,7 +95,7 @@ MODELS = [
         "output": "evals/results_gemma3_27b_q4.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-3-27b-it-GGUF:Q4_K_M",
+            "unsloth/gemma-3-27b-it-GGUF:Q4_K_M",
         ],
         "ram_gb": 15,
         "params_b": 27.0,
@@ -106,7 +106,7 @@ MODELS = [
         "output": "evals/results_gemma3_27b.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-3-27b-it-GGUF:Q8_0",
+            "unsloth/gemma-3-27b-it-GGUF:Q8_0",
         ],
         "llama_server_model": "google_gemma-3-27b-it-Q8_0",
         "ram_gb": 27,
@@ -119,7 +119,7 @@ MODELS = [
         "output": "evals/results_mistral_small_24b_q4.json",
         "args": [
             "--model",
-            "bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q4_K_M",
+            "unsloth/Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q4_K_M",
         ],
         "ram_gb": 13,
         "params_b": 24.0,
@@ -130,7 +130,7 @@ MODELS = [
         "output": "evals/results_ministral3_8b_q4.json",
         "args": [
             "--model",
-            "mistralai/Ministral-3-8B-Instruct-2512-GGUF:Q4_K_M",
+            "unsloth/Ministral-3-8B-Instruct-2512-GGUF:Q4_K_M",
         ],
         "ram_gb": 6,
         "params_b": 8.0,
@@ -141,7 +141,7 @@ MODELS = [
         "output": "evals/results_ministral3_14b_q4.json",
         "args": [
             "--model",
-            "mistralai/Ministral-3-14B-Instruct-2512-GGUF:Q4_K_M",
+            "unsloth/Ministral-3-14B-Instruct-2512-GGUF:Q4_K_M",
         ],
         "ram_gb": 9,
         "params_b": 14.0,
@@ -150,7 +150,7 @@ MODELS = [
     {
         "display_name": "qwen3-14b",
         "output": "evals/results_qwen3_14b_q4.json",
-        "args": ["--model", "bartowski/Qwen_Qwen3-14B-GGUF:Q4_K_M"],
+        "args": ["--model", "unsloth/Qwen3-14B-GGUF:Q4_K_M"],
         "ram_gb": 8,
         "params_b": 14.0,
         "quantization": "q4",
@@ -160,7 +160,7 @@ MODELS = [
         "output": "evals/results_phi4_q4.json",
         "args": [
             "--model",
-            "bartowski/phi-4-GGUF:Q4_K_M",
+            "unsloth/phi-4-GGUF:Q4_K_M",
         ],
         "external_llama_server": True,
         "llama_server_model": "phi-4-Q4_K_M",
@@ -171,7 +171,7 @@ MODELS = [
     {
         "display_name": "qwen3.5-9b",
         "output": "evals/results_qwen3.5_9b_q4.json",
-        "args": ["--model", "bartowski/Qwen_Qwen3.5-9B-GGUF:Q4_K_M"],
+        "args": ["--model", "unsloth/Qwen3.5-9B-GGUF:Q4_K_M"],
         "ram_gb": 5,
         "params_b": 9.0,
         "quantization": "q4",
