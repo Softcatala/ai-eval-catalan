@@ -99,16 +99,16 @@ Requereix [uv](https://docs.astral.sh/uv/) i [llama.cpp](https://github.com/ggml
 
 #### Instal·lació de llama.cpp
 
-Instal·la una versió precompilada amb Homebrew (macOS/Linux) o Conda (Windows/macOS/Linux):
+Instal·la una versió precompilada amb Homebrew (macOS/Linux) o Conda (Windows/macOS/Linux). Per a una GPU NVIDIA a Linux o Windows, Conda també ofereix una variant CUDA:
 
 ```bash
 brew install llama.cpp
 conda install -c conda-forge llama.cpp
+# NVIDIA/CUDA (Linux o Windows)
+conda install -c conda-forge "llama.cpp=*=cuda*"
 ```
 
 Per compilar-lo des del codi font o configurar CUDA, ROCm o Metal, consulta la [documentació oficial de compilació de llama.cpp](https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md).
-
-Les eines també detecten automàticament `../llama.cpp/build/bin/llama-server` si compiles el projecte en un directori germà del repositori.
 
 Des de l'arrel del repositori, instal·la les dependències Python:
 
