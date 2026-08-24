@@ -106,23 +106,9 @@ brew install llama.cpp
 conda install -c conda-forge llama.cpp
 ```
 
-O [compila'l](https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md) amb Git, CMake i un compilador de C/C++:
-
-```bash
-git clone https://github.com/ggml-org/llama.cpp
-cd llama.cpp
-# CPU; a macOS, Metal s'activa per defecte
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-# Per a NVIDIA amb el CUDA Toolkit, usa en canvi:
-# cmake -B build -DGGML_CUDA=ON -DCMAKE_BUILD_TYPE=Release
-cmake --build build --config Release -j
-export PATH="$PWD/build/bin:$PATH"
-llama-server --version
-```
+Per compilar-lo des del codi font o configurar CUDA, ROCm o Metal, consulta la [documentació oficial de compilació de llama.cpp](https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md).
 
 Les eines també detecten automàticament `../llama.cpp/build/bin/llama-server` si compiles el projecte en un directori germà del repositori.
-
-L'script `../llama.cpp/server.sh` fa servir una configuració dinàmica comuna per a tots els models: `--n-gpu-layers auto --fit on --fit-target 1536`. Això ajusta automàticament les capes descarregades a la GPU i reserva 1,5 GiB de VRAM. Es pot sobreescriure amb les variables `N_GPU_LAYERS`, `FIT` i `FIT_TARGET`.
 
 Des de l'arrel del repositori, instal·la les dependències Python:
 

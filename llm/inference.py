@@ -18,7 +18,7 @@ def inference_params(max_tokens=None, provider="llama", model_name=""):
     model_name = model_name.lower()
     if provider == "llama":
         # Request-level control so benchmark behavior does not depend on the
-        # llama-server/server.sh launch configuration.
+        # llama-server launch configuration.
         params.pop("reasoning_effort", None)
         params["chat_template_kwargs"] = {"enable_thinking": False}
         if "muse-glimmer" in model_name:
