@@ -4,63 +4,63 @@
   "cloud": false,
   "params_b": 8.0,
   "memory_gb": 4.5,
-  "evaluated_at": "2026-08-25T09:31:03+00:00",
+  "evaluated_at": "2026-08-25T17:27:00+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.5717,
       "n": 400
     },
     "casum": {
-      "rouge1": 0.0344,
-      "rouge2": 0.0208,
-      "rougeL": 0.03,
+      "rouge1": 0.4499,
+      "rouge2": 0.2421,
+      "rougeL": 0.3841,
       "n": 400
     },
     "catcola": {
-      "mcc": null,
-      "accuracy": 0.0,
-      "invalid_rate": 1.0,
-      "coverage": 0.0,
+      "mcc": 0.1504,
+      "accuracy": 0.325,
+      "invalid_rate": 0.59,
+      "coverage": 0.41,
       "n": 400,
-      "n_valid": 0,
-      "n_invalid": 400
+      "n_valid": 164,
+      "n_invalid": 236
     },
     "club_qa": {
-      "exact_match_approx": 0.0,
-      "token_f1": 0.0,
+      "exact_match_approx": 0.79,
+      "token_f1": 0.6897,
       "n": 400
     },
     "flores": {
       "catalan_bench_flores_en-ca": {
         "alias": "catalan_bench_flores_en-ca",
         "n": 400,
-        "comet": 0.7151574982702732
+        "comet": 0.8175477482378483
       },
       "catalan_bench_flores_ca-en": {
         "alias": "catalan_bench_flores_ca-en",
         "n": 400,
-        "comet": 0.8190359150618315
+        "comet": 0.8768953168392182
       },
       "catalan_bench_flores_es-ca": {
         "alias": "catalan_bench_flores_es-ca",
         "n": 400,
-        "comet": 0.28758019089698794
+        "comet": 0.8193893155455589
       },
       "catalan_bench_flores_ca-es": {
         "alias": "catalan_bench_flores_ca-es",
         "n": 400,
-        "comet": 0.1743798502162099
+        "comet": 0.8575041511654854
       }
     },
     "ifeval": {
       "alias": "ifeval_ca",
-      "prompt_level_strict_acc,none": 0.1725,
-      "prompt_level_strict_acc_stderr,none": 0.018914379699014616,
-      "inst_level_strict_acc,none": 0.2778702163061564,
+      "prompt_level_strict_acc,none": 0.3725,
+      "prompt_level_strict_acc_stderr,none": 0.024203800008203106,
+      "inst_level_strict_acc,none": 0.49916805324459235,
       "inst_level_strict_acc_stderr,none": "N/A",
-      "prompt_level_loose_acc,none": 0.22,
-      "prompt_level_loose_acc_stderr,none": 0.020738254217024268,
-      "inst_level_loose_acc,none": 0.33777038269550747,
+      "prompt_level_loose_acc,none": 0.435,
+      "prompt_level_loose_acc_stderr,none": 0.024818892876375905,
+      "inst_level_loose_acc,none": 0.5590682196339434,
       "inst_level_loose_acc_stderr,none": "N/A",
       "n": 400
     }
