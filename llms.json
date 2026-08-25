@@ -456,6 +456,28 @@
             "clam": 41.19
         },
         {
+            "model": "aya-expanse-8b",
+            "repo_url": "https://huggingface.co/bartowski/aya-expanse-8b-GGUF",
+            "cloud": false,
+            "params_b": 8.0,
+            "memory_gb": 4.5,
+            "generation_tokens_per_sec": 31.38,
+            "quantized_analysis_only": false,
+            "quantization": "q4",
+            "sts_ca": 0.5717,
+            "catcola_mcc": 0.1504,
+            "club_qa_f1": 0.6897,
+            "casum_rougeL": 0.3841,
+            "flores_en_ca": 0.4584,
+            "flores_es_ca": 0.0898,
+            "ifeval_prompt_strict": 0.3725,
+            "flores_en2ca": 0.8175,
+            "flores_ca2en": 0.8769,
+            "flores_es2ca": 0.8194,
+            "flores_ca2es": 0.8575,
+            "clam": 40.71
+        },
+        {
             "model": "ministral3-8b",
             "repo_url": "https://huggingface.co/mistralai/Ministral-3-8B-Instruct-2512-GGUF",
             "cloud": false,
@@ -498,28 +520,6 @@
             "flores_es2ca": 0.8679,
             "flores_ca2es": 0.8648,
             "clam": 37.86
-        },
-        {
-            "model": "aya-expanse-8b",
-            "repo_url": "https://huggingface.co/bartowski/aya-expanse-8b-GGUF",
-            "cloud": false,
-            "params_b": 8.0,
-            "memory_gb": 4.5,
-            "generation_tokens_per_sec": 31.38,
-            "quantized_analysis_only": false,
-            "quantization": "q4",
-            "sts_ca": 0.5728,
-            "catcola_mcc": 0.0783,
-            "club_qa_f1": 0.6936,
-            "casum_rougeL": 0.341,
-            "flores_en_ca": 0.0,
-            "flores_es_ca": 0.0,
-            "ifeval_prompt_strict": 0.3275,
-            "flores_en2ca": 0.6491,
-            "flores_ca2en": 0.704,
-            "flores_es2ca": 0.6575,
-            "flores_ca2es": 0.6834,
-            "clam": 33.55
         }
     ]
 }
