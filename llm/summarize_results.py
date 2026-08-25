@@ -117,10 +117,10 @@ def load_benchmark_speeds(path: Path) -> dict[str, float]:
 
 
 # Baselines per task for normalization (HF Open LLM Leaderboard v2 approach).
-# FLORES uses the measured source-copy COMET baseline (mt = src), rather than 0.
+# FLORES uses the measured mismatched-copy COMET baseline (mt = next ref).
 COMET_SOURCE_COPY_BASELINES = {
-    "flores_en_ca": fmean((0.6808871791511774, 0.7549228701740504)),
-    "flores_es_ca": fmean((0.8222366382181644, 0.822775568291545)),
+    "flores_en_ca": fmean((0.5303924230486154, 0.5150260711461305)),
+    "flores_es_ca": fmean((0.5241243038326502, 0.514803419932723)),
 }
 
 RANDOM_BASELINES = {

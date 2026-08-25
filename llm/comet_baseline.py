@@ -1,4 +1,4 @@
-"""Calculate the FLORES source-copy COMET baseline in four directions."""
+"""Calculate the FLORES mismatched-copy COMET baseline in four directions."""
 
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ def save(path: Path, value: dict) -> None:
 
 def result(scores: dict, progress: dict, n_samples: int) -> dict:
     value = {
-        "baseline": "source-copy (mt = src)",
+        "baseline": "mismatched-copy (mt = next ref)",
         "flores_comet_checkpoint": COMET_CHECKPOINT,
         "benchmarks": {"flores": scores},
     }
@@ -71,9 +71,14 @@ def main() -> None:
     for task, (source_key, reference_key) in TASKS.items():
         if task in scores:
             continue
+        references = [row[reference_key] for row in samples]
         examples = [
-            {"src": row[source_key], "ref": row[reference_key], "mt": row[source_key]}
-            for row in samples
+            {
+                "src": row[source_key],
+                "ref": row[reference_key],
+                "mt": references[(index + 1) % args.n_samples],
+            }
+            for index, row in enumerate(samples)
         ]
         state = progress.setdefault(task, {"done": 0, "score_sum": 0.0})
         for start in range(state["done"], args.n_samples, CHUNK_SIZE):
@@ -89,7 +94,10 @@ def main() -> None:
         }
         del progress[task]
         save(args.output, result(scores, progress, args.n_samples))
-        print(f"{task}: source-copy COMET={scores[task]['comet']:.4f}", flush=True)
+        print(
+            f"{task}: mismatched-copy COMET={scores[task]['comet']:.4f}",
+            flush=True,
+        )
 
     save(args.output, result(scores, progress, args.n_samples))
     print(f"Saved baseline to {args.output}", flush=True)
