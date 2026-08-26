@@ -4,39 +4,27 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from statistics import fmean
+from statistics import covariance, fmean
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from summarize_results import CLAM_TASKS, extract_metrics, normalize_score
+from summarize_results import (
+    CLAM_TASKS,
+    COLUMN_LABELS,
+    extract_metrics,
+    normalize_score,
+)
 
 
 RESULTS_DIR = ROOT / "llm" / "evals"
 TRANSLATION_KEYS = ("flores_en_ca", "flores_es_ca")
 TRANSLATION = "translation_score"
-LABELS = {
-    "sts_ca": "STS",
-    "catcola_mcc": "CatCoLA MCC",
-    "club_qa_f1": "CLUB QA",
-    "casum_rougeL": "CaSum",
-    "ifeval_prompt_strict": "IFEval",
-    TRANSLATION: "Translation",
-}
 
 
 def label(key):
-    return LABELS.get(key, key)
-
-
-def avg(xs):
-    return sum(xs) / len(xs)
-
-
-def cov(xs, ys):
-    mx, my = avg(xs), avg(ys)
-    return avg([(x - mx) * (y - my) for x, y in zip(xs, ys)])
+    return "Translation" if key == TRANSLATION else COLUMN_LABELS.get(key, key)
 
 
 def load_rows(results_dir):
@@ -44,14 +32,12 @@ def load_rows(results_dir):
     for path in sorted(results_dir.glob("results_*.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
         metrics = extract_metrics(data)
-        components = {}
-
-        for key in CLAM_TASKS:
-            if key in TRANSLATION_KEYS:
-                continue
-            value = normalize_score(key, metrics.get(key))
-            if value is not None:
-                components[key] = value
+        components = {
+            key: value
+            for key in CLAM_TASKS
+            if key not in TRANSLATION_KEYS
+            if (value := normalize_score(key, metrics.get(key))) is not None
+        }
 
         translations = [
             value
@@ -63,13 +49,11 @@ def load_rows(results_dir):
         if not components:
             continue
 
-        weight = 1 / len(components)
         rows.append(
             {
                 "model": data.get("display_name") or data.get("model") or path.stem,
                 "components": components,
-                "weights": {key: weight for key in components},
-                "clam": avg(list(components.values())),
+                "clam": fmean(components.values()),
             }
         )
     return rows
@@ -82,32 +66,36 @@ def component_keys(rows):
 
 def weight_table(rows):
     clams = [row["clam"] for row in rows]
-    clam_var = cov(clams, clams)
+    clam_var = covariance(clams, clams)
     if clam_var == 0:
         raise SystemExit("CLAM has zero variance; real weights are undefined.")
 
     table = []
     for key in component_keys(rows):
-        theoretical = avg([row["weights"].get(key, 0) for row in rows])
+        theoretical = fmean(
+            [
+                1 / len(row["components"]) if key in row["components"] else 0
+                for row in rows
+            ]
+        )
         contribution = [
-            row["weights"].get(key, 0) * row["components"].get(key, 0) for row in rows
+            row["components"][key] / len(row["components"])
+            if key in row["components"]
+            else 0
+            for row in rows
         ]
-        real = cov(contribution, clams) / clam_var
+        real = covariance(contribution, clams) / clam_var
         factor = theoretical / real if real > 0 else None
         table.append((key, theoretical, real, factor))
     return table
 
 
-def correction_factors(table):
-    return {key: factor for key, _theoretical, _real, factor in table if factor}
-
-
 def projected_clam(row, factors):
-    weights = {
-        key: row["weights"][key] * factors.get(key, 1) for key in row["components"]
-    }
-    total = sum(weights.values())
-    return sum(weights[key] * row["components"][key] for key in weights) / total
+    total = sum(factors.get(key, 1) for key in row["components"])
+    return (
+        sum(factors.get(key, 1) * value for key, value in row["components"].items())
+        / total
+    )
 
 
 def print_weights(rows, table):
@@ -185,7 +173,8 @@ def main():
     if args.current_clam:
         print_current(rows)
     if args.current_projected:
-        print_projected(rows, correction_factors(table))
+        factors = {key: factor for key, _theoretical, _real, factor in table if factor}
+        print_projected(rows, factors)
 
 
 if __name__ == "__main__":
