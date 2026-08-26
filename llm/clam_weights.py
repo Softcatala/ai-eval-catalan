@@ -90,8 +90,7 @@ def weight_table(rows):
     for key in component_keys(rows):
         theoretical = avg([row["weights"].get(key, 0) for row in rows])
         contribution = [
-            row["weights"].get(key, 0) * row["components"].get(key, 0)
-            for row in rows
+            row["weights"].get(key, 0) * row["components"].get(key, 0) for row in rows
         ]
         real = cov(contribution, clams) / clam_var
         factor = theoretical / real if real > 0 else None
@@ -135,9 +134,8 @@ def print_current(rows):
     keys = component_keys(rows)
     model_w = max(len("Model"), max(len(row["model"]) for row in rows))
     comp_w = max(10, max(len(label(key)) for key in keys))
-    header = (
-        f"{'Model':<{model_w}}  {'CLAM':>6}  "
-        + "".join(f"{label(key):>{comp_w + 2}}" for key in keys)
+    header = f"{'Model':<{model_w}}  {'CLAM':>6}  " + "".join(
+        f"{label(key):>{comp_w + 2}}" for key in keys
     )
     print("\nCurrent CLAM and normalized components")
     print("-" * len(header))
