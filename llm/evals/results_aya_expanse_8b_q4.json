@@ -4,65 +4,65 @@
   "cloud": false,
   "params_b": 8.0,
   "memory_gb": 4.5,
-  "evaluated_at": "2026-08-16T17:38:21+00:00",
+  "evaluated_at": "2026-08-25T17:27:00+00:00",
   "benchmarks": {
     "sts_ca": {
-      "pearson": 0.5728,
+      "pearson": 0.5717,
       "n": 400
     },
     "casum": {
-      "rouge1": 0.4008,
-      "rouge2": 0.2123,
-      "rougeL": 0.341,
+      "rouge1": 0.4499,
+      "rouge2": 0.2421,
+      "rougeL": 0.3841,
       "n": 400
     },
     "catcola": {
-      "mcc": 0.0783,
-      "accuracy": 0.3275,
-      "invalid_rate": 0.585,
-      "coverage": 0.415,
+      "mcc": 0.1504,
+      "accuracy": 0.325,
+      "invalid_rate": 0.59,
+      "coverage": 0.41,
       "n": 400,
-      "n_valid": 166,
-      "n_invalid": 234
+      "n_valid": 164,
+      "n_invalid": 236
     },
     "club_qa": {
       "exact_match_approx": 0.79,
-      "token_f1": 0.6936,
+      "token_f1": 0.6897,
       "n": 400
     },
     "flores": {
       "catalan_bench_flores_en-ca": {
         "alias": "catalan_bench_flores_en-ca",
         "n": 400,
-        "comet": 0.649142465814948
+        "comet": 0.8175477482378483
       },
       "catalan_bench_flores_ca-en": {
         "alias": "catalan_bench_flores_ca-en",
         "n": 400,
-        "comet": 0.7039690905809403
+        "comet": 0.8768953168392182
       },
       "catalan_bench_flores_es-ca": {
         "alias": "catalan_bench_flores_es-ca",
         "n": 400,
-        "comet": 0.6574711172282696
+        "comet": 0.8193893155455589
       },
       "catalan_bench_flores_ca-es": {
         "alias": "catalan_bench_flores_ca-es",
         "n": 400,
-        "comet": 0.683432533442974
+        "comet": 0.8575041511654854
       }
     },
     "ifeval": {
       "alias": "ifeval_ca",
-      "n": 400,
-      "prompt_level_strict_acc,none": 0.3275,
-      "prompt_level_strict_acc_stderr,none": 0.02349445356612767,
-      "inst_level_strict_acc,none": 0.4459234608985025,
+      "prompt_level_strict_acc,none": 0.3725,
+      "prompt_level_strict_acc_stderr,none": 0.024203800008203106,
+      "inst_level_strict_acc,none": 0.49916805324459235,
       "inst_level_strict_acc_stderr,none": "N/A",
-      "prompt_level_loose_acc,none": 0.42,
-      "prompt_level_loose_acc_stderr,none": 0.02470883072485368,
-      "inst_level_loose_acc,none": 0.5257903494176372,
-      "inst_level_loose_acc_stderr,none": "N/A"
+      "prompt_level_loose_acc,none": 0.435,
+      "prompt_level_loose_acc_stderr,none": 0.024818892876375905,
+      "inst_level_loose_acc,none": 0.5590682196339434,
+      "inst_level_loose_acc_stderr,none": "N/A",
+      "n": 400
     }
   },
   "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"

@@ -7,6 +7,7 @@ from inference import call_with_retries, chat_completion_params, inference_param
 
 _MUSE_USER_TEMPLATE = Path(__file__).with_name("templates") / "muse_glimmer_user.jinja"
 _MUSE_BOS_TOKEN = "<|begin_of_text|>"
+_AYA_END_OF_TURN_TOKEN = "<|END_OF_TURN_TOKEN|>"
 
 
 def _hf_tokenizer_from_gguf(model_spec: str) -> str:
@@ -105,6 +106,8 @@ class LlamaServerModel:
             "messages": messages,
             **params,
         }
+        if "aya-expanse" in self.model_spec.lower():
+            payload_data["stop"] = [_AYA_END_OF_TURN_TOKEN]
         if self.request_model:
             payload_data["model"] = self.request_model
         return self._post_json("/chat/completions", payload_data)
