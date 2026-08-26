@@ -1,22 +1,23 @@
 {
-  "model": "bartowski/google_gemma-3-27b-it-GGUF:Q8_0",
-  "display_name": "gemma3-27b",
+  "model": "unsloth/gemma-3-27b-it-GGUF:Q8_0",
+  "display_name": "gemma3-27b-q8",
   "cloud": false,
   "params_b": 27.0,
   "memory_gb": 28.7,
+  "evaluated_at": "2026-08-25T20:38:22+00:00",
   "benchmarks": {
     "sts_ca": {
-      "pearson": 0.7564,
+      "pearson": 0.7558,
       "n": 400
     },
     "casum": {
-      "rouge1": 0.3596,
-      "rouge2": 0.1656,
-      "rougeL": 0.2716,
+      "rouge1": 0.3565,
+      "rouge2": 0.1631,
+      "rougeL": 0.2686,
       "n": 400
     },
     "catcola": {
-      "mcc": 0.3865,
+      "mcc": 0.3902,
       "accuracy": 0.78,
       "invalid_rate": 0.0,
       "coverage": 1.0,
@@ -25,31 +26,9 @@
       "n_invalid": 0
     },
     "club_qa": {
-      "exact_match_approx": 0.8325,
-      "token_f1": 0.679,
+      "exact_match_approx": 0.83,
+      "token_f1": 0.6769,
       "n": 400
-    },
-    "iberbench": {
-      "catcola": {
-        "alias": "catcola",
-        "n": 400,
-        "acc,none": 0.25,
-        "acc_stderr,none": 0.021677749238103,
-        "mcc,none": 0.0,
-        "mcc_stderr,none": 0.0
-      },
-      "wnli_ca": {
-        "alias": "wnli_ca",
-        "n": 71,
-        "acc,none": 0.5633802816901409,
-        "acc_stderr,none": 0.0592793555841297
-      },
-      "teca": {
-        "alias": "teca",
-        "n": 400,
-        "acc,none": 0.3725,
-        "acc_stderr,none": 0.0242038000082031
-      }
     },
     "flores": {
       "catalan_bench_flores_en-ca": {
@@ -75,17 +54,16 @@
     },
     "ifeval": {
       "alias": "ifeval_ca",
-      "n": 400,
-      "prompt_level_strict_acc,none": 0.7675,
-      "prompt_level_strict_acc_stderr,none": 0.021147752684600417,
-      "inst_level_strict_acc,none": 0.8352745424292846,
+      "prompt_level_strict_acc,none": 0.8025,
+      "prompt_level_strict_acc_stderr,none": 0.019930565561694973,
+      "inst_level_strict_acc,none": 0.8635607321131448,
       "inst_level_strict_acc_stderr,none": "N/A",
-      "prompt_level_loose_acc,none": 0.8075,
-      "prompt_level_loose_acc_stderr,none": 0.019737865470544992,
-      "inst_level_loose_acc,none": 0.8618968386023295,
-      "inst_level_loose_acc_stderr,none": "N/A"
+      "prompt_level_loose_acc,none": 0.8325,
+      "prompt_level_loose_acc_stderr,none": 0.01869446663338554,
+      "inst_level_loose_acc,none": 0.8835274542429284,
+      "inst_level_loose_acc_stderr,none": "N/A",
+      "n": 400
     }
   },
-  "quantization": "q8",
   "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"
 }
