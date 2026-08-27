@@ -117,10 +117,10 @@ def load_benchmark_speeds(path: Path) -> dict[str, float]:
 
 
 # Baselines per task for normalization (HF Open LLM Leaderboard v2 approach).
-# FLORES uses the measured source-copy COMET baseline (mt = src), rather than 0.
-COMET_SOURCE_COPY_BASELINES = {
-    "flores_en_ca": fmean((0.6808871791511774, 0.7549228701740504)),
-    "flores_es_ca": fmean((0.8222366382181644, 0.822775568291545)),
+# FLORES uses measured random-mismatch COMET baselines from fixed-seed derangements.
+COMET_RANDOM_MISMATCH_BASELINES = {
+    "flores_en_ca": fmean((0.43233901144564146, 0.40972742018103603)),
+    "flores_es_ca": fmean((0.42619744141399857, 0.4148862131088972)),
 }
 
 RANDOM_BASELINES = {
@@ -128,7 +128,7 @@ RANDOM_BASELINES = {
     "catcola_mcc": 0.0,  # MCC for binary classification: random baseline is 0
     "club_qa_f1": 0.0,  # bounded 0..1, no trivial guesser
     "casum_rougeL": 0.0,  # bounded 0..1
-    **COMET_SOURCE_COPY_BASELINES,
+    **COMET_RANDOM_MISMATCH_BASELINES,
     "ifeval_prompt_strict": 0.0,  # prompt-level strict accuracy, bounded 0..1
 }
 
@@ -155,7 +155,7 @@ def normalize_score(key: str, raw) -> float | None:
     """Normalize a raw metric to 0..1 using HF Open LLM Leaderboard v2 formula.
 
     normalized = (score − baseline) / (1 − baseline), clamped to [0, 1].
-    FLORES COMET uses its measured source-copy baseline.
+    FLORES COMET uses its measured random-mismatch baseline.
     """
     if raw is None:
         return None

@@ -89,21 +89,24 @@ El contracte de `llm/llms.json` publica aquestes mitjanes com `flores_en_ca` i
 `flores_ca2es` per a diagnòstic, però aquestes quatre columnes direccionals no es
 mostren a les taules ni als gràfics per defecte.
 
-Per calcular un baseline de COMET sense executar un traductor, el script usa la
-còpia de la font com a hipòtesi (`mt = src`) sobre FLORES devtest. Avalua les
-quatre direccions i, per defecte, usa 400 exemples per direcció:
+Per calcular un baseline de COMET sense executar un traductor, el script usa
+traduccions desaparellades com a hipòtesi sobre FLORES devtest. Les
+desaparella amb permutacions aleatòries de llavor fixa perquè FLORES està
+ordenat per document i una frase adjacent comparteix massa tema amb l'original.
+Avalua les quatre direccions i, per defecte, usa 400 exemples per direcció i la
+mitjana de 5 permutacions:
 
 ```bash
 cd llm
 uv run python comet_baseline.py \
-  --output evals/comet_source_copy_baseline.json
+  --output evals/comet_random_mismatch_baseline.json
 ```
 
-Podeu canviar-ne la mida amb `--n-samples`.
+Podeu canviar-ne la mida amb `--n-samples`, el nombre de permutacions amb
+`--n-permutations` i la llavor amb `--seed`.
 
-Amb el checkpoint `Unbabel/wmt22-comet-da` i 400 exemples de FLORES devtest per
-direcció, el baseline de còpia de font és: EN→CA 0.6809, CA→EN 0.7549, ES→CA
-0.8222 i CA→ES 0.8228.
+El JSON generat conté la mitjana i la desviació estàndard del baseline per
+direcció.
 
 Cada fila dels JSON publicats inclou `repo_url`, calculat amb el helper compartit
 `eval_common.model_urls`.
