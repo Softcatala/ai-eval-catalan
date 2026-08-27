@@ -3,7 +3,7 @@
   "runs": [
     {
       "model": "gemma3-4b",
-      "model_spec": "bartowski/google_gemma-3-4b-it-GGUF:Q4_K_M",
+      "model_spec": "unsloth/gemma-3-4b-it-GGUF:Q4_K_M",
       "server_model": "google_gemma-3-4b-it-Q4_K_M",
       "backend": "eval-http",
       "device": "cuda",
@@ -15,7 +15,7 @@
     },
     {
       "model": "qwen3.5-9b",
-      "model_spec": "bartowski/Qwen_Qwen3.5-9B-GGUF:Q4_K_M",
+      "model_spec": "unsloth/Qwen3.5-9B-GGUF:Q4_K_M",
       "server_model": "Qwen_Qwen3.5-9B-Q4_K_M",
       "backend": "eval-http",
       "device": "cuda",
@@ -51,7 +51,7 @@
     },
     {
       "model": "gemma3-12b",
-      "model_spec": "bartowski/google_gemma-3-12b-it-GGUF:Q4_K_M",
+      "model_spec": "unsloth/gemma-3-12b-it-GGUF:Q4_K_M",
       "server_model": "google_gemma-3-12b-it-Q4_K_M",
       "backend": "eval-http",
       "device": "cuda",
@@ -75,7 +75,7 @@
     },
     {
       "model": "gemma3-27b",
-      "model_spec": "bartowski/google_gemma-3-27b-it-GGUF:Q4_K_M",
+      "model_spec": "unsloth/gemma-3-27b-it-GGUF:Q4_K_M",
       "server_model": "bartowski/google_gemma-3-27b-it-GGUF:Q4_K_M",
       "backend": "eval-http",
       "device": "cuda",
@@ -99,7 +99,7 @@
     },
     {
       "model": "mistral-small-24b",
-      "model_spec": "bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q4_K_M",
+      "model_spec": "unsloth/Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q4_K_M",
       "server_model": "bartowski/mistralai_Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q4_K_M",
       "backend": "eval-http",
       "device": "cuda",
@@ -111,7 +111,7 @@
     },
     {
       "model": "ministral3-8b",
-      "model_spec": "mistralai/Ministral-3-8B-Instruct-2512-GGUF:Q4_K_M",
+      "model_spec": "unsloth/Ministral-3-8B-Instruct-2512-GGUF:Q4_K_M",
       "server_model": "Ministral-3-8B-Instruct-2512-Q4_K_M",
       "backend": "eval-http",
       "device": "cuda",
@@ -123,7 +123,7 @@
     },
     {
       "model": "ministral3-14b",
-      "model_spec": "mistralai/Ministral-3-14B-Instruct-2512-GGUF:Q4_K_M",
+      "model_spec": "unsloth/Ministral-3-14B-Instruct-2512-GGUF:Q4_K_M",
       "server_model": "Ministral-3-14B-Instruct-2512-Q4_K_M",
       "backend": "eval-http",
       "device": "cuda",
@@ -135,7 +135,7 @@
     },
     {
       "model": "qwen3-14b",
-      "model_spec": "bartowski/Qwen_Qwen3-14B-GGUF:Q4_K_M",
+      "model_spec": "unsloth/Qwen3-14B-GGUF:Q4_K_M",
       "server_model": "Qwen_Qwen3-14B-Q4_K_M",
       "backend": "eval-http",
       "device": "cuda",
@@ -147,7 +147,7 @@
     },
     {
       "model": "phi-4-14b",
-      "model_spec": "bartowski/phi-4-GGUF:Q4_K_M",
+      "model_spec": "unsloth/phi-4-GGUF:Q4_K_M",
       "server_model": "bartowski/phi-4-GGUF:Q4_K_M",
       "backend": "eval-http",
       "device": "cuda",

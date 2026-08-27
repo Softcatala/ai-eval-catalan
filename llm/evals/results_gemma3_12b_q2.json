@@ -1,86 +1,68 @@
 {
-  "model": "bartowski/google_gemma-3-12b-it-GGUF:Q2_K",
+  "model": "unsloth/gemma-3-12b-it-GGUF:Q2_K",
   "display_name": "gemma3-12b-q2",
   "cloud": false,
   "params_b": 12.0,
-  "memory_gb": 4.0,
-  "quantization": "q2",
+  "memory_gb": 12.8,
+  "evaluated_at": "2026-08-24T14:12:29+00:00",
   "benchmarks": {
     "sts_ca": {
-      "pearson": 0.6555,
+      "pearson": 0.6444,
       "n": 400
     },
     "casum": {
-      "rouge1": 0.3477,
-      "rouge2": 0.1688,
-      "rougeL": 0.277,
+      "rouge1": 0.3436,
+      "rouge2": 0.1603,
+      "rougeL": 0.2671,
       "n": 400
     },
     "catcola": {
-      "mcc": 0.3426,
-      "accuracy": 0.7575,
-      "n": 400
+      "mcc": 0.4066,
+      "accuracy": 0.7825,
+      "invalid_rate": 0.0,
+      "coverage": 1.0,
+      "n": 400,
+      "n_valid": 400,
+      "n_invalid": 0
     },
     "club_qa": {
-      "exact_match_approx": 0.8,
-      "token_f1": 0.6786,
+      "exact_match_approx": 0.7925,
+      "token_f1": 0.6882,
       "n": 400
-    },
-    "iberbench": {
-      "catcola": {
-        "alias": "catcola",
-        "n": 400,
-        "acc,none": 0.25,
-        "acc_stderr,none": 0.021677749238103,
-        "mcc,none": 0.0,
-        "mcc_stderr,none": 0.0
-      },
-      "wnli_ca": {
-        "alias": "wnli_ca",
-        "n": 71,
-        "acc,none": 0.5633802816901409,
-        "acc_stderr,none": 0.0592793555841297
-      },
-      "teca": {
-        "alias": "teca",
-        "n": 400,
-        "acc,none": 0.3725,
-        "acc_stderr,none": 0.0242038000082031
-      }
     },
     "flores": {
       "catalan_bench_flores_en-ca": {
         "alias": "catalan_bench_flores_en-ca",
         "n": 400,
-        "comet": 0.8634434174001216
+        "comet": 0.866730246245861
       },
       "catalan_bench_flores_ca-en": {
         "alias": "catalan_bench_flores_ca-en",
         "n": 400,
-        "comet": 0.887510503232479
+        "comet": 0.8870148552954197
       },
       "catalan_bench_flores_es-ca": {
         "alias": "catalan_bench_flores_es-ca",
         "n": 400,
-        "comet": 0.8555600456893444
+        "comet": 0.8538703768700361
       },
       "catalan_bench_flores_ca-es": {
         "alias": "catalan_bench_flores_ca-es",
         "n": 400,
-        "comet": 0.8637521860003471
+        "comet": 0.8645295652747155
       }
     },
     "ifeval": {
       "alias": "ifeval_ca",
-      "n": 400,
-      "prompt_level_strict_acc,none": 0.68,
-      "prompt_level_strict_acc_stderr,none": 0.023353017118164995,
-      "inst_level_strict_acc,none": 0.7637271214642263,
+      "prompt_level_strict_acc,none": 0.6925,
+      "prompt_level_strict_acc_stderr,none": 0.0231018096482192,
+      "inst_level_strict_acc,none": 0.78369384359401,
       "inst_level_strict_acc_stderr,none": "N/A",
-      "prompt_level_loose_acc,none": 0.725,
-      "prompt_level_loose_acc_stderr,none": 0.022353673451850874,
-      "inst_level_loose_acc,none": 0.8019966722129783,
-      "inst_level_loose_acc_stderr,none": "N/A"
+      "prompt_level_loose_acc,none": 0.7375,
+      "prompt_level_loose_acc_stderr,none": 0.022027196108925232,
+      "inst_level_loose_acc,none": 0.8169717138103162,
+      "inst_level_loose_acc_stderr,none": "N/A",
+      "n": 400
     }
   },
   "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"

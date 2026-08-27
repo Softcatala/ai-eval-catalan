@@ -130,6 +130,14 @@ en aquest cas, convé triar un model de la franja inferior. Les xifres són
 orientatives i poden variar segons l'arquitectura del model i la configuració de
 `llama.cpp`.
 
+### Criteri per als repositoris GGUF
+
+Per simplificar el manteniment, es prioritzen els repositoris d'`unsloth` per a
+models GGUF quantitzats. S'accepten excepcions quan no ofereixin el model o la
+variant exacta necessària (especialment `Q4_K_M`), o quan calgui conservar una
+avaluació reproduïble ja associada a un altre repositori. En cada cas s'ha de
+registrar el repositori, el fitxer GGUF i la quantització emprada.
+
 ### Instal·lació (LLM)
 
 Requereix [uv](https://docs.astral.sh/uv/) i [llama.cpp](https://github.com/ggml-org/llama.cpp). Per als models GGUF locals, engega un `llama-server` extern; per defecte les eines esperen l'endpoint OpenAI-compatible a `http://localhost:9090/v1`.
@@ -211,7 +219,7 @@ Amb un sol `llama.cpp server`, l'orquestrador només permet un model local per e
 Si el servidor requereix un identificador de model concret:
 
 ```bash
-uv run python model.py --model "bartowski/google_gemma-3-12b-it-GGUF:Q4_K_M" --server-url http://localhost:9090/v1 --server-model gemma-3-12b-it-Q4_K_M
+uv run python model.py --model "unsloth/gemma-3-12b-it-GGUF:Q4_K_M" --server-url http://localhost:9090/v1 --server-model unsloth/gemma-3-12b-it-GGUF:Q4_K_M
 uv run python run_evals.py --models gemma3-12b --server-model gemma-3-12b-it-Q4_K_M
 ```
 
@@ -330,4 +338,3 @@ Si feu servir aquestes eines o els resultats en un treball, citeu-ho així (i ci
   howpublished = {\url{https://github.com/Softcatala/ai-eval-catalan}}
 }
 ```
-
