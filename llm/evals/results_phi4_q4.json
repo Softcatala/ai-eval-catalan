@@ -2,9 +2,9 @@
   "model": "unsloth/phi-4-GGUF:Q4_K_M",
   "display_name": "phi-4-14b",
   "cloud": false,
-  "params_b": 14.0,
+  "params_b": 14,
   "memory_gb": 7.9,
-  "evaluated_at": "2026-08-26T23:50:17+00:00",
+  "evaluated_at": "2026-08-27T08:59:14+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.6299,
@@ -17,10 +17,10 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.2752,
-      "accuracy": 0.73,
-      "invalid_rate": 0.0,
-      "coverage": 1.0,
+      "mcc": 0.2957,
+      "accuracy": 0.77,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
       "n_valid": 400,
       "n_invalid": 0
