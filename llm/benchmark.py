@@ -37,12 +37,7 @@ def _local_models() -> list[dict[str, Any]]:
     models = []
     for entry in MODELS:
         model_spec = arg_value(entry.get("args", []), "--model")
-        if (
-            entry.get("cloud")
-            or entry.get("quantized_analysis_only")
-            or not model_spec
-            or not is_gguf_model(model_spec)
-        ):
+        if entry.get("cloud") or not model_spec or not is_gguf_model(model_spec):
             continue
         models.append(
             {
@@ -185,7 +180,8 @@ def _hardware_string(device: str) -> str:
     if gpu:
         parts.append(gpu)
     parts.append(_cpu_name())
-    parts.append(device)
+    if device:
+        parts.append(device)
     return ", ".join(parts)
 
 
