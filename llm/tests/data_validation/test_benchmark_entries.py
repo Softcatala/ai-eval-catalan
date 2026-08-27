@@ -16,9 +16,15 @@ def benchmark_runs():
 
 
 class BenchmarkEntriesTest(unittest.TestCase):
-    def test_all_local_models_have_benchmark_entry(self):
+    def test_all_local_models_have_speed_benchmark_entry(self):
         expected = {model["model_spec"] for model in _local_models()}
-        actual = {
-            run.get("model_spec") for run in benchmark_runs() if isinstance(run, dict)
-        }
-        self.assertFalse(expected - actual)
+        speeds = {}
+        for run in benchmark_runs():
+            if not isinstance(run, dict):
+                continue
+            model_spec = run.get("model_spec")
+            speed = run.get("generation_tokens_per_sec")
+            if model_spec and isinstance(speed, (int, float)) and speed > 0:
+                speeds[model_spec] = speed
+
+        self.assertFalse(expected - set(speeds))
