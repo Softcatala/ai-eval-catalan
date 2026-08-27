@@ -37,11 +37,7 @@ def _local_models() -> list[dict[str, Any]]:
     models = []
     for entry in MODELS:
         model_spec = arg_value(entry.get("args", []), "--model")
-        if (
-            entry.get("cloud")
-            or not model_spec
-            or not is_gguf_model(model_spec)
-        ):
+        if entry.get("cloud") or not model_spec or not is_gguf_model(model_spec):
             continue
         models.append(
             {
