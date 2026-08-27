@@ -76,9 +76,11 @@ def render(
         if k != "model" and k not in ("cloud", "params_b", "memory_gb")
     ]
     if extra_cols:
+        for k, label in extra_cols.items():
+            if k in cols:
+                cols.remove(k)
         for k, label in reversed(list(extra_cols.items())):
-            if k not in cols:
-                cols.insert(0, k)
+            cols.insert(0, k)
             col_labels[k] = label
 
     env = Environment(loader=FileSystemLoader(str(template_path.parent)))
