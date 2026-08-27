@@ -2,9 +2,9 @@
   "model": "unsloth/Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q4_K_M",
   "display_name": "mistral-small-24b",
   "cloud": false,
-  "params_b": 24.0,
+  "params_b": 24,
   "memory_gb": 13.5,
-  "evaluated_at": "2026-08-26T08:52:50+00:00",
+  "evaluated_at": "2026-08-27T08:53:31+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.6966,
@@ -17,10 +17,10 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.3911,
-      "accuracy": 0.7275,
-      "invalid_rate": 0.0,
-      "coverage": 1.0,
+      "mcc": 0.4248,
+      "accuracy": 0.7625,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
       "n_valid": 400,
       "n_invalid": 0

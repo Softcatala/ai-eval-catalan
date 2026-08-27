@@ -2,9 +2,9 @@
   "model": "unsloth/Muse-Glimmer-30B-GGUF:UD-Q4_K_XL",
   "display_name": "muse-glimmer-30b",
   "cloud": false,
-  "params_b": 30.0,
+  "params_b": 30,
   "memory_gb": 16.9,
-  "evaluated_at": "2026-08-18T07:37:28+00:00",
+  "evaluated_at": "2026-08-27T09:06:23+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.7622,
@@ -17,13 +17,13 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.418,
-      "accuracy": 0.6325,
-      "invalid_rate": 0.1675,
-      "coverage": 0.8325,
+      "mcc": 0.3062,
+      "accuracy": 0.5075,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
-      "n_valid": 333,
-      "n_invalid": 67
+      "n_valid": 400,
+      "n_invalid": 0
     },
     "club_qa": {
       "exact_match_approx": 0.8225,

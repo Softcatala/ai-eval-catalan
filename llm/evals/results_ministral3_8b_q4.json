@@ -2,9 +2,9 @@
   "model": "unsloth/Ministral-3-8B-Instruct-2512-GGUF:Q4_K_M",
   "display_name": "ministral3-8b",
   "cloud": false,
-  "params_b": 8.0,
+  "params_b": 8,
   "memory_gb": 4.5,
-  "evaluated_at": "2026-08-26T13:23:55+00:00",
+  "evaluated_at": "2026-08-27T08:55:41+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.5913,
@@ -17,10 +17,10 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.1858,
-      "accuracy": 0.3775,
-      "invalid_rate": 0.0,
-      "coverage": 1.0,
+      "mcc": 0.2806,
+      "accuracy": 0.6375,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
       "n_valid": 400,
       "n_invalid": 0

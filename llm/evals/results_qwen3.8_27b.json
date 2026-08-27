@@ -2,9 +2,9 @@
   "model": "unsloth/Qwen3.8-27B-GGUF:Q4_K_M",
   "display_name": "qwen3.8-27b",
   "cloud": false,
-  "params_b": 27.0,
+  "params_b": 27,
   "memory_gb": 15.2,
-  "evaluated_at": "2026-08-17T12:08:20+00:00",
+  "evaluated_at": "2026-08-27T09:02:12+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.7616,
@@ -17,10 +17,10 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.3874,
-      "accuracy": 0.62,
-      "invalid_rate": 0.0,
-      "coverage": 1.0,
+      "mcc": 0.412,
+      "accuracy": 0.6375,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
       "n_valid": 400,
       "n_invalid": 0

@@ -2,9 +2,9 @@
   "model": "unsloth/Qwen3-14B-GGUF:Q4_K_M",
   "display_name": "qwen3-14b",
   "cloud": false,
-  "params_b": 14.0,
+  "params_b": 14,
   "memory_gb": 7.9,
-  "evaluated_at": "2026-08-26T20:27:26+00:00",
+  "evaluated_at": "2026-08-27T08:57:49+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.6811,
@@ -17,10 +17,10 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.3699,
-      "accuracy": 0.745,
-      "invalid_rate": 0.0,
-      "coverage": 1.0,
+      "mcc": 0.3653,
+      "accuracy": 0.705,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
       "n_valid": 400,
       "n_invalid": 0

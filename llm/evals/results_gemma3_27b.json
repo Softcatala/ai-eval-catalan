@@ -2,9 +2,9 @@
   "model": "unsloth/gemma-3-27b-it-GGUF:Q8_0",
   "display_name": "gemma3-27b-q8",
   "cloud": false,
-  "params_b": 27.0,
+  "params_b": 27,
   "memory_gb": 28.7,
-  "evaluated_at": "2026-08-25T20:38:22+00:00",
+  "evaluated_at": "2026-08-27T08:47:58+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.7558,
@@ -17,10 +17,10 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.3902,
-      "accuracy": 0.78,
-      "invalid_rate": 0.0,
-      "coverage": 1.0,
+      "mcc": 0.3875,
+      "accuracy": 0.79,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
       "n_valid": 400,
       "n_invalid": 0

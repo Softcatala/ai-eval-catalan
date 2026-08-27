@@ -4,7 +4,7 @@
   "cloud": true,
   "params_b": null,
   "memory_gb": null,
-  "evaluated_at": "2026-08-22T16:56:45+00:00",
+  "evaluated_at": "2026-08-27T11:14:01+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.8361,
@@ -17,10 +17,10 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.5046,
-      "accuracy": 0.8225,
-      "invalid_rate": 0.0,
-      "coverage": 1.0,
+      "mcc": 0.5185,
+      "accuracy": 0.825,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
       "n_valid": 400,
       "n_invalid": 0

@@ -2,9 +2,9 @@
   "model": "mradermacher/salamandra-7b-instruct-2606-GGUF:Q4_K_M",
   "display_name": "salamandra-7b",
   "cloud": false,
-  "params_b": 7.0,
+  "params_b": 7,
   "memory_gb": 3.9,
-  "evaluated_at": "2026-08-16T21:15:18+00:00",
+  "evaluated_at": "2026-08-27T09:14:01+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.2855,
@@ -17,10 +17,10 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.0502,
-      "accuracy": 0.2575,
-      "invalid_rate": 0.0,
-      "coverage": 1.0,
+      "mcc": 0,
+      "accuracy": 0.25,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
       "n_valid": 400,
       "n_invalid": 0

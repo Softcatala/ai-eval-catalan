@@ -2,9 +2,9 @@
   "model": "bartowski/aya-expanse-8b-GGUF:Q4_K_M",
   "display_name": "aya-expanse-8b",
   "cloud": false,
-  "params_b": 8.0,
+  "params_b": 8,
   "memory_gb": 4.5,
-  "evaluated_at": "2026-08-25T17:27:00+00:00",
+  "evaluated_at": "2026-08-27T09:11:18+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.5717,
@@ -17,13 +17,13 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.1504,
-      "accuracy": 0.325,
-      "invalid_rate": 0.59,
-      "coverage": 0.41,
+      "mcc": 0.1614,
+      "accuracy": 0.745,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
-      "n_valid": 164,
-      "n_invalid": 236
+      "n_valid": 400,
+      "n_invalid": 0
     },
     "club_qa": {
       "exact_match_approx": 0.79,
