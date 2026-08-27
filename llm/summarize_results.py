@@ -468,6 +468,7 @@ def main():
     ) in rows:
         entry = {
             "model": f"(*) {label}" if cloud else label,
+            "quantization": quantization,
             "repo_url": repo_url_by_label[label],
             "cloud": cloud,
             "params_b": params_b,
@@ -476,7 +477,6 @@ def main():
             if generation_tokens_per_sec is not None
             else None,
             "quantized_analysis_only": quantized_analysis_only,
-            "quantization": quantization,
             **{
                 k: round(normalize_score(k, metrics.get(k)), 4)
                 if normalize_score(k, metrics.get(k)) is not None
@@ -522,9 +522,9 @@ def main():
         json.dumps(
             {
                 "text": {
-                    **json_text,
-                    "memory_gb": "Memòria (GB)",
+                    "model": json_text["model"],
                     "quantization": "Quantització",
+                    **{k: v for k, v in json_text.items() if k != "model"},
                 },
                 "flores_comet_checkpoint": COMET_CHECKPOINT,
                 "data": quantized_json_rows,
