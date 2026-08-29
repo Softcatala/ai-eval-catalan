@@ -1,6 +1,6 @@
 {
   "model": "unsloth/gemma-4-12b-it-GGUF:Q4_K_M",
-  "display_name": "gemma4-12b-q4",
+  "display_name": "gemma4-12b",
   "cloud": false,
   "params_b": 12,
   "memory_gb": 6.8,
