@@ -149,7 +149,7 @@
             "clam": 50.8
         },
         {
-            "model": "gemma3-4b",
+            "model": "gemma3-4b-q8",
             "quantization": "q8",
             "repo_url": "https://huggingface.co/bartowski/google_gemma-3-4b-it-GGUF",
             "cloud": false,
@@ -173,7 +173,7 @@
         {
             "model": "gemma3-4b",
             "quantization": "q4",
-            "repo_url": "https://huggingface.co/bartowski/google_gemma-3-4b-it-GGUF",
+            "repo_url": "https://huggingface.co/unsloth/gemma-3-4b-it-GGUF",
             "cloud": false,
             "params_b": 4,
             "memory_gb": 2.2,

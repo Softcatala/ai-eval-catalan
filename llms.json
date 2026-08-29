@@ -170,7 +170,7 @@
             "clam": 56.03
         },
         {
-            "model": "gemma4-26b-q4",
+            "model": "gemma4-26b",
             "quantization": "q4",
             "repo_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
             "cloud": false,
@@ -302,7 +302,7 @@
             "clam": 53.14
         },
         {
-            "model": "gemma4-12b-q4",
+            "model": "gemma4-12b",
             "quantization": "q4",
             "repo_url": "https://huggingface.co/google/gemma-4-12b-it",
             "cloud": false,
@@ -346,7 +346,7 @@
             "clam": 45.61
         },
         {
-            "model": "gemma4-e4b-q4",
+            "model": "gemma4-e4b",
             "quantization": "q4",
             "repo_url": "https://huggingface.co/google/gemma-4-E4B-it",
             "cloud": false,
@@ -436,7 +436,7 @@
         {
             "model": "gemma3-4b",
             "quantization": "q4",
-            "repo_url": "https://huggingface.co/bartowski/google_gemma-3-4b-it-GGUF",
+            "repo_url": "https://huggingface.co/unsloth/gemma-3-4b-it-GGUF",
             "cloud": false,
             "params_b": 4,
             "memory_gb": 2.2,
