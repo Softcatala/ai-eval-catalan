@@ -1,11 +1,17 @@
 import json
+import sys
 import unittest
 from collections import defaultdict
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "llm"))
+from models_config import MODELS
+
 REQUIRED_FIELDS = {"model", "display_name", "params_b", "memory_gb", "benchmarks"}
+QUANTIZATION_BY_FILE = {
+    Path(m["output"]).name: m.get("quantization", "") for m in MODELS
+}
 EXPECTED_SAMPLE_COUNTS = {
     "benchmarks.sts_ca": 400,
     "benchmarks.casum": 400,
@@ -81,3 +87,19 @@ class EvalResultSampleCountsTest(unittest.TestCase):
                     )
 
         self.assertFalse(bad, "Unexpected sample counts:\n" + "\n".join(bad))
+
+    def test_display_names_follow_quantization_suffix_rule(self):
+        bad = []
+        for file in result_files():
+            name = json.loads((ROOT / file).read_text(encoding="utf-8"))["display_name"]
+            quantization = QUANTIZATION_BY_FILE[Path(file).name]
+            if quantization == "q4" and name.endswith("-q4"):
+                bad.append(f"{Path(file).name}: remove -q4 from {name}")
+            elif (
+                quantization
+                and quantization != "q4"
+                and not name.endswith(f"-{quantization}")
+            ):
+                bad.append(f"{Path(file).name}: add -{quantization} to {name}")
+
+        self.assertFalse(bad, "Bad display names:\n" + "\n".join(bad))

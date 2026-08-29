@@ -1,6 +1,6 @@
 {
   "model": "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q4_K_M",
-  "display_name": "gemma4-26b-q4",
+  "display_name": "gemma4-26b",
   "params_b": 26,
   "memory_gb": 14.6,
   "benchmarks": {

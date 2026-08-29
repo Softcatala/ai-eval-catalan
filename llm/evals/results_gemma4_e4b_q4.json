@@ -1,6 +1,6 @@
 {
   "model": "bartowski/google_gemma-4-E4B-it-GGUF:Q4_K_M",
-  "display_name": "gemma4-e4b-q4",
+  "display_name": "gemma4-e4b",
   "cloud": false,
   "params_b": 4,
   "memory_gb": 2.2,
