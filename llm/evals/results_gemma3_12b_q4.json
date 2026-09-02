@@ -63,6 +63,9 @@
       "inst_level_loose_acc,none": 0.8569051580698835,
       "inst_level_loose_acc_stderr,none": "N/A",
       "n": 400
+    },
+    "catalan_drift": {
+      "error": "400 Client Error: Bad Request for url: http://localhost:9090/v1/chat/completions"
     }
   },
   "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"

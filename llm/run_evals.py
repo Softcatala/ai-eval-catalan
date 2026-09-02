@@ -25,6 +25,31 @@ except ImportError:
 
 SCRIPT_DIR = Path(__file__).parent
 
+# Model ids advertised by the local llama.cpp router on port 9090.  Keep this
+# separate from Hugging Face model specs, which are not valid router ids.
+LOCAL_SERVER_MODEL_IDS = {
+    "gemma3-4b-q2": "gemma-3-4b-it-Q2_K",
+    "gemma3-4b": "gemma-3-4b-it-Q4_K_M",
+    "gemma3-4b-q8": "gemma-3-4b-it-Q8_0",
+    "gemma3-12b-q2": "gemma-3-12b-it-Q2_K",
+    "gemma3-12b": "gemma-3-12b-it-Q4_K_M",
+    "gemma3-12b-q8": "gemma-3-12b-it-Q8_0",
+    "gemma3-27b-q2": "gemma-3-27b-it-Q2_K",
+    "gemma3-27b": "gemma-3-27b-it-Q4_K_M",
+    "gemma3-27b-q8": "gemma-3-27b-it-Q8_0",
+    "mistral-small-24b": "Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M",
+    "ministral3-8b": "Ministral-3-8B-Instruct-2512-Q4_K_M",
+    "ministral3-14b": "Ministral-3-14B-Instruct-2512-Q4_K_M",
+    "qwen3-14b": "Qwen3-14B-Q4_K_M",
+    "qwen3.5-9b": "Qwen3.5-9B-Q4_K_M",
+    "qwen3.8-27b": "Qwen3.8-27B-UD-Q4_K_M",
+    "llama3.1-8b": "Meta-Llama-3.1-8B-Instruct-Q4_K_M",
+    "eurollm-9b": "EuroLLM-9B-Instruct-Q4_K_M",
+    "gemma4-12b": "gemma-4-12b-it-Q4_K_M",
+    "gemma4-e4b": "google_gemma-4-E4B-it-Q4_K_M",
+    "gemma4-26b": "google_gemma-4-26B-A4B-it-Q4_K_M",
+}
+
 
 def _llama_server_url_from_env() -> str | None:
     url = os.environ.get("LLAMA_SERVER_URL")
@@ -48,8 +73,18 @@ def main():
             "casum",
             "flores",
             "ifeval",
+            "catalan_drift",
             "all",
         ],
+    )
+    parser.add_argument(
+        "--mantinc-dir",
+        help="Mantinc checkout containing the exported Catalan Drift lm-eval dataset",
+    )
+    parser.add_argument(
+        "--rerun-benchmarks",
+        action="store_true",
+        help="Run selected benchmarks even when an output JSON already exists",
     )
     parser.add_argument(
         "--models",
@@ -89,11 +124,6 @@ def main():
         models = MODELS
 
     local_models = [model for model in models if not model.get("cloud")]
-    if args.llama_server_url and len(local_models) > 1:
-        parser.error(
-            "using one local llama-server requires exactly one selected local model; "
-            "pass --models <display_name>"
-        )
     if args.llama_server_model and len(local_models) != 1:
         parser.error(
             "--llama-server-model requires exactly one selected local GGUF model"
@@ -109,7 +139,7 @@ def main():
         output_path = SCRIPT_DIR / model["output"]
         name = model["display_name"]
 
-        if output_path.exists():
+        if output_path.exists() and not args.rerun_benchmarks:
             print(f"[SKIP] {name} — {output_path} already exists")
             continue
 
@@ -140,10 +170,15 @@ def main():
             *args.benchmarks,
         ]
 
+        if args.rerun_benchmarks and output_path.exists():
+            cmd.append("--merge-output")
+
         if args.llama_server_url and not model.get("cloud"):
             cmd += ["--llama-server-url", args.llama_server_url.rstrip("/")]
-            llama_server_model = args.llama_server_model or model.get(
-                "llama_server_model"
+            llama_server_model = (
+                args.llama_server_model
+                or LOCAL_SERVER_MODEL_IDS.get(name)
+                or model.get("llama_server_model")
             )
             if llama_server_model:
                 cmd += ["--llama-server-model", llama_server_model]
@@ -161,6 +196,9 @@ def main():
 
         if model.get("needs_api_key"):
             cmd += ["--api-key", google_api_key]
+
+        if args.mantinc_dir:
+            cmd += ["--mantinc-dir", args.mantinc_dir]
 
         print(f"\n[RUN] {name}: {' '.join(cmd)}\n{'=' * 60}")
         run_env = os.environ.copy()

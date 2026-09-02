@@ -730,6 +730,9 @@ def run_ifeval(
     gemini_api_key: str | None = None,
     openrouter_model: str | None = None,
     openrouter_api_key: str | None = None,
+    task: str = "ifeval_ca",
+    task_label: str = "IFEval-ca",
+    include_path: Path | None = None,
 ) -> dict:
     """
     Catalan IFEval — instruction-following evaluation via lm-evaluation-harness.
@@ -741,7 +744,7 @@ def run_ifeval(
         return {"error": "lm_eval not installed"}
 
     print(
-        "\n[6/6] Running IFEval-ca (instruction following) via lm-evaluation-harness …"
+        f"\n[6/7] Running {task_label} via lm-evaluation-harness …"
     )
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
@@ -819,11 +822,17 @@ def run_ifeval(
 
     gen_kwargs = lm_eval_params(2048, inference_provider, inference_model)
 
+    task_manager = None
+    if include_path:
+        from lm_eval.tasks import TaskManager
+
+        task_manager = TaskManager(include_path=str(include_path))
+
     try:
         results = lm_eval.simple_evaluate(
             model=lm_model,
             model_args=lm_model_args,
-            tasks=["ifeval_ca"],
+            tasks=[task],
             num_fewshot=0,
             apply_chat_template=True,
             batch_size=1,
@@ -831,6 +840,7 @@ def run_ifeval(
             limit=n_samples,
             confirm_run_unsafe_code=True,
             gen_kwargs=gen_kwargs,
+            task_manager=task_manager,
         )
     finally:
         if needs_env_restore:
@@ -843,17 +853,54 @@ def run_ifeval(
             else:
                 os.environ["OPENAI_BASE_URL"] = _orig_base_url
 
-    score = results["results"].get("ifeval_ca", {})
+    score = results["results"].get(task, {})
     score["n"] = n_samples
-    p_strict = score.get("prompt_level_strict_acc,none", "n/a")
-    i_strict = score.get("inst_level_strict_acc,none", "n/a")
-    p_loose = score.get("prompt_level_loose_acc,none", "n/a")
-    i_loose = score.get("inst_level_loose_acc,none", "n/a")
-    print(
-        f"    ✓ prompt-strict={p_strict}  inst-strict={i_strict}  "
-        f"prompt-loose={p_loose}  inst-loose={i_loose}"
-    )
+    if task == "ifeval_ca":
+        p_strict = score.get("prompt_level_strict_acc,none", "n/a")
+        i_strict = score.get("inst_level_strict_acc,none", "n/a")
+        p_loose = score.get("prompt_level_loose_acc,none", "n/a")
+        i_loose = score.get("inst_level_loose_acc,none", "n/a")
+        print(
+            f"    ✓ prompt-strict={p_strict}  inst-strict={i_strict}  "
+            f"prompt-loose={p_loose}  inst-loose={i_loose}"
+        )
+    else:
+        print(f"    ✓ drift-pass={score.get('drift_pass,none', 'n/a')}")
     return score
+
+
+def run_catalan_drift(
+    model_name: str,
+    mantinc_dir: Path,
+    **kwargs,
+) -> dict:
+    """Run Mantinc's Catalan Drift task with lm-evaluation-harness."""
+    task_dir = mantinc_dir / "lm_eval_tasks"
+    dataset = mantinc_dir / "data" / "lm_eval" / "catalan_drift.jsonl"
+    if not task_dir.is_dir() or not dataset.is_file():
+        raise FileNotFoundError(
+            "Catalan Drift needs a Mantinc checkout with its lm-eval dataset. "
+            "Run `python scripts/catalan_drift_eval.py export-lm-eval` in the "
+            "Mantinc repository, then pass --mantinc-dir <checkout>."
+        )
+
+    requested_samples = kwargs.get("n_samples")
+    if requested_samples is not None:
+        dataset_size = sum(1 for line in dataset.open(encoding="utf-8") if line.strip())
+        kwargs["n_samples"] = min(requested_samples, dataset_size)
+
+    cwd = Path.cwd()
+    try:
+        os.chdir(mantinc_dir)
+        return run_ifeval(
+            model_name,
+            task="catalan_drift",
+            task_label="Catalan Drift",
+            include_path=task_dir,
+            **kwargs,
+        )
+    finally:
+        os.chdir(cwd)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -898,10 +945,16 @@ def main():
             "casum",
             "flores",
             "ifeval",
+            "catalan_drift",
             "all",
         ],
         default=["all"],
         help="Which benchmarks to run (default: all)",
+    )
+    parser.add_argument(
+        "--mantinc-dir",
+        type=Path,
+        help="Mantinc checkout containing the exported Catalan Drift lm-eval dataset",
     )
     parser.add_argument(
         "--n-samples",
@@ -925,6 +978,11 @@ def main():
         "--output",
         default="evals/catalan_eval_results.json",
         help="Output file for results (default: evals/catalan_eval_results.json)",
+    )
+    parser.add_argument(
+        "--merge-output",
+        action="store_true",
+        help="Merge newly run benchmarks into an existing output JSON",
     )
     parser.add_argument(
         "--llama-server-url",
@@ -988,7 +1046,7 @@ def main():
     to_run = (
         set(args.benchmarks)
         if not run_all
-        else {"sts_ca", "catcola", "club", "casum", "flores", "ifeval"}
+        else {"sts_ca", "catcola", "club", "casum", "flores", "ifeval", "catalan_drift"}
     )
 
     # ── Validate model spec ───────────────────────────────────────────────────
@@ -1086,6 +1144,26 @@ def main():
                 print(f"[warn] IFEval-ca failed: {e}")
                 results["benchmarks"]["ifeval"] = {"error": str(e)}
 
+        if "catalan_drift" in to_run:
+            try:
+                if args.mantinc_dir is None:
+                    raise ValueError("--mantinc-dir is required for Catalan Drift")
+                results["benchmarks"]["catalan_drift"] = run_catalan_drift(
+                    lm_eval_model_name,
+                    args.mantinc_dir,
+                    base_url=lm_eval_base_url,
+                    tokenizer=tokenizer_id,
+                    n_samples=args.n_samples,
+                    openai_model=args.openai_model if args.model == "openai" else None,
+                    gemini_model=args.gemini_model if args.model == "gemini" else None,
+                    gemini_api_key=args.api_key if args.model == "gemini" else None,
+                    openrouter_model=args.openai_model if args.model == "claude" else None,
+                    openrouter_api_key=(args.api_key or os.environ.get("OPENROUTER_API_KEY")) if args.model == "claude" else None,
+                )
+            except Exception as e:
+                print(f"[warn] Catalan Drift failed: {e}")
+                results["benchmarks"]["catalan_drift"] = {"error": str(e)}
+
         return results
 
     # ── Run benchmarks ────────────────────────────────────────────────────────
@@ -1135,6 +1213,11 @@ def main():
 
     # ── Save & print summary ──────────────────────────────────────────────────
     output_path = Path(args.output)
+    if args.merge_output and output_path.exists():
+        with output_path.open(encoding="utf-8") as f:
+            existing = json.load(f)
+        existing.setdefault("benchmarks", {}).update(results["benchmarks"])
+        results = existing
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
 

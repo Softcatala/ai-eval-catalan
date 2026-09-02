@@ -84,6 +84,9 @@
       "prompt_level_loose_acc_stderr,none": 0.02429971585175825,
       "inst_level_loose_acc,none": 0.7287853577371048,
       "inst_level_loose_acc_stderr,none": "N/A"
+    },
+    "catalan_drift": {
+      "error": "400 Client Error: Bad Request for url: http://localhost:9090/v1/chat/completions"
     }
   },
   "quantization": "q8",

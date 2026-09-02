@@ -88,6 +88,12 @@ def extract_metrics(data: dict) -> dict:
         if prompt_strict is not None:
             metrics["ifeval_prompt_strict"] = prompt_strict
 
+    catalan_drift = benchmarks.get("catalan_drift", {})
+    if catalan_drift and "error" not in catalan_drift:
+        pass_rate = catalan_drift.get("drift_pass,none", catalan_drift.get("drift_pass"))
+        if pass_rate is not None:
+            metrics["catalan_drift_pass_rate"] = pass_rate
+
     return metrics
 
 
@@ -130,6 +136,7 @@ RANDOM_BASELINES = {
     "casum_rougeL": 0.0,  # bounded 0..1
     **COMET_SOURCE_COPY_BASELINES,
     "ifeval_prompt_strict": 0.0,  # prompt-level strict accuracy, bounded 0..1
+    "catalan_drift_pass_rate": 0.0,  # bounded 0..1
 }
 
 CLAM_TASKS = list(RANDOM_BASELINES.keys())
@@ -147,6 +154,7 @@ COLUMN_LABELS = {
     "flores_en_ca": "EN↔CA",
     "flores_es_ca": "ES↔CA",
     "ifeval_prompt_strict": "IFEval",
+    "catalan_drift_pass_rate": "Catalan Drift",
     "clam": "CLAM",
 }
 
