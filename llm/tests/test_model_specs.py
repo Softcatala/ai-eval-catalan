@@ -24,6 +24,6 @@ def test_expected_gguf_filename_uses_quant_and_overrides():
         == "Model-Q8_0.gguf"
     )
     assert (
-        expected_gguf_filename("mradermacher/salamandra-7b-instruct-2606-GGUF:Q4_K_M")
-        == "salamandra-7b-instruct-2606.Q4_K_M.gguf"
+        expected_gguf_filename("BSC-LT/salamandra-7b-fc-2607-GGUF:Q4_0")
+        == "ALIA-7b-fc-2607-Q4_0.gguf"
     )

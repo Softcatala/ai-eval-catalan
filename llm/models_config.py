@@ -231,10 +231,10 @@ MODELS = [
     },
     {
         "display_name": "salamandra-7b",
-        "output": "evals/results_salamandra_7b_q4.json",
+        "output": "evals/results_salamandra_7b_fc_2607_q4_0.json",
         "args": [
             "--model",
-            "mradermacher/salamandra-7b-instruct-2606-GGUF:Q4_K_M",
+            "BSC-LT/salamandra-7b-fc-2607-GGUF:Q4_0",
         ],
         "ram_gb": 4,
         "params_b": 7.0,

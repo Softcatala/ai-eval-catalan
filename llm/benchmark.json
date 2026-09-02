@@ -207,8 +207,8 @@
     },
     {
       "model": "salamandra-7b",
-      "model_spec": "mradermacher/salamandra-7b-instruct-2606-GGUF:Q4_K_M",
-      "server_model": "mradermacher/salamandra-7b-instruct-2606-GGUF:Q4_K_M",
+      "model_spec": "BSC-LT/salamandra-7b-fc-2607-GGUF:Q4_0",
+      "server_model": "BSC-LT/salamandra-7b-fc-2607-GGUF:Q4_0",
       "backend": "eval-http",
       "device": "cuda",
       "prompt_tokens": 1,
