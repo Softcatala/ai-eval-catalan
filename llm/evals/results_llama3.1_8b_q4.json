@@ -2,9 +2,9 @@
   "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M",
   "display_name": "llama3.1-8b",
   "cloud": false,
-  "params_b": 8.0,
+  "params_b": 8,
   "memory_gb": 4.5,
-  "evaluated_at": "2026-08-16T14:15:31+00:00",
+  "evaluated_at": "2026-08-27T09:10:19+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.4506,
@@ -17,10 +17,10 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.1984,
-      "accuracy": 0.425,
-      "invalid_rate": 0.0,
-      "coverage": 1.0,
+      "mcc": 0.2357,
+      "accuracy": 0.6925,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
       "n_valid": 400,
       "n_invalid": 0

@@ -2,9 +2,9 @@
   "model": "bartowski/EuroLLM-9B-Instruct-GGUF:Q4_K_M",
   "display_name": "eurollm-9b",
   "cloud": false,
-  "params_b": 9.0,
+  "params_b": 9,
   "memory_gb": 5.1,
-  "evaluated_at": "2026-08-16T17:38:21+00:00",
+  "evaluated_at": "2026-08-27T08:23:22+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.3753,
@@ -17,10 +17,10 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.2861,
-      "accuracy": 0.725,
-      "invalid_rate": 0.0,
-      "coverage": 1.0,
+      "mcc": 0.3112,
+      "accuracy": 0.7025,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
       "n_valid": 400,
       "n_invalid": 0

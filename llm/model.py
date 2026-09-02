@@ -271,8 +271,8 @@ def run_catcola(model, n_samples: int = 200) -> dict:
         label = item["Label"]  # 0 = unacceptable, 1 = acceptable
 
         prompt = (
-            "La seguent frase en catala es gramaticalment correcta? "
-            "Respon nomes amb 'si' o 'no'.\n\n"
+            "La següent frase en català és gramaticalment correcta? "
+            "Respon només amb 'sí' o 'no'.\n\n"
             f"Frase: {sentence}\nResposta:"
         )
         answer = model.generate(prompt, max_new_tokens=16)

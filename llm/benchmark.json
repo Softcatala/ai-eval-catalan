@@ -228,6 +228,78 @@
       "generation_seconds": 12.6215,
       "generation_tokens_per_sec": 20.28,
       "timestamp": "2026-08-23T07:18:29.922993+00:00"
+    },
+    {
+      "model": "gemma3-4b-q2",
+      "model_spec": "unsloth/gemma-3-4b-it-GGUF:Q2_K",
+      "server_model": "google_gemma-3-4b-it-Q2_K",
+      "backend": "eval-http",
+      "device": "cuda",
+      "prompt_tokens": 5,
+      "generated_tokens": 256,
+      "generation_seconds": 4.4932,
+      "generation_tokens_per_sec": 56.98,
+      "timestamp": "2026-08-27T14:11:14.525100+00:00"
+    },
+    {
+      "model": "gemma3-4b-q8",
+      "model_spec": "unsloth/gemma-3-4b-it-GGUF:Q8_0",
+      "server_model": "google_gemma-3-4b-it-Q8_0",
+      "backend": "eval-http",
+      "device": "cuda",
+      "prompt_tokens": 5,
+      "generated_tokens": 256,
+      "generation_seconds": 6.7043,
+      "generation_tokens_per_sec": 38.18,
+      "timestamp": "2026-08-27T14:11:32.737414+00:00"
+    },
+    {
+      "model": "gemma3-12b-q2",
+      "model_spec": "unsloth/gemma-3-12b-it-GGUF:Q2_K",
+      "server_model": "google_gemma-3-12b-it-Q2_K",
+      "backend": "eval-http",
+      "device": "cuda",
+      "prompt_tokens": 5,
+      "generated_tokens": 256,
+      "generation_seconds": 9.7201,
+      "generation_tokens_per_sec": 26.34,
+      "timestamp": "2026-08-27T14:14:53.263425+00:00"
+    },
+    {
+      "model": "gemma3-12b-q8",
+      "model_spec": "unsloth/gemma-3-12b-it-GGUF:Q8_0",
+      "server_model": "google_gemma-3-12b-it-Q8_0",
+      "backend": "eval-http",
+      "device": "cuda",
+      "prompt_tokens": 5,
+      "generated_tokens": 256,
+      "generation_seconds": 17.3773,
+      "generation_tokens_per_sec": 14.73,
+      "timestamp": "2026-08-27T14:15:36.930211+00:00"
+    },
+    {
+      "model": "gemma3-27b-q2",
+      "model_spec": "unsloth/gemma-3-27b-it-GGUF:Q2_K",
+      "server_model": "google_gemma-3-27b-it-Q2_K",
+      "backend": "eval-http",
+      "device": "cuda",
+      "prompt_tokens": 5,
+      "generated_tokens": 256,
+      "generation_seconds": 19.3554,
+      "generation_tokens_per_sec": 13.23,
+      "timestamp": "2026-08-27T14:16:24.607439+00:00"
+    },
+    {
+      "model": "gemma3-27b-q8",
+      "model_spec": "unsloth/gemma-3-27b-it-GGUF:Q8_0",
+      "server_model": "google_gemma-3-27b-it-Q8_0",
+      "backend": "eval-http",
+      "device": "cuda",
+      "prompt_tokens": 5,
+      "generated_tokens": 256,
+      "generation_seconds": 49.4867,
+      "generation_tokens_per_sec": 5.17,
+      "timestamp": "2026-08-27T14:18:29.729716+00:00"
     }
   ]
 }

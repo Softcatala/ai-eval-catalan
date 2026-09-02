@@ -2,9 +2,9 @@
   "model": "unsloth/gemma-3-12b-it-GGUF:Q8_0",
   "display_name": "gemma3-12b-q8",
   "cloud": false,
-  "params_b": 12.0,
+  "params_b": 12,
   "memory_gb": 12.8,
-  "evaluated_at": "2026-08-24T22:24:40+00:00",
+  "evaluated_at": "2026-08-27T08:36:45+00:00",
   "benchmarks": {
     "sts_ca": {
       "pearson": 0.7153,
@@ -17,10 +17,10 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.3605,
-      "accuracy": 0.79,
-      "invalid_rate": 0.0,
-      "coverage": 1.0,
+      "mcc": 0.3897,
+      "accuracy": 0.785,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
       "n_valid": 400,
       "n_invalid": 0

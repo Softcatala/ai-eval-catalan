@@ -16,10 +16,10 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.4797,
-      "accuracy": 0.775,
-      "invalid_rate": 0.0,
-      "coverage": 1.0,
+      "mcc": 0.4363,
+      "accuracy": 0.79,
+      "invalid_rate": 0,
+      "coverage": 1,
       "n": 400,
       "n_valid": 400,
       "n_invalid": 0
@@ -68,5 +68,6 @@
     }
   },
   "quantization": "",
-  "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"
+  "flores_comet_checkpoint": "Unbabel/wmt22-comet-da",
+  "evaluated_at": "2026-08-27T08:46:57+00:00"
 }

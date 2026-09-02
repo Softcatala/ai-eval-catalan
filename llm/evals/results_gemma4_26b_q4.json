@@ -1,7 +1,7 @@
 {
   "model": "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q4_K_M",
-  "display_name": "gemma4-26b-q4",
-  "params_b": 26.0,
+  "display_name": "gemma4-26b",
+  "params_b": 26,
   "memory_gb": 14.6,
   "benchmarks": {
     "sts_ca": {
@@ -15,9 +15,13 @@
       "n": 400
     },
     "catcola": {
-      "mcc": 0.1829,
-      "accuracy": 0.5525,
-      "n": 400
+      "mcc": 0.2839,
+      "accuracy": 0.6975,
+      "invalid_rate": 0,
+      "coverage": 1,
+      "n": 400,
+      "n_valid": 400,
+      "n_invalid": 0
     },
     "club_qa": {
       "exact_match_approx": 0.78,
@@ -30,8 +34,8 @@
         "n": 400,
         "acc,none": 0.25,
         "acc_stderr,none": 0.021677749238103,
-        "mcc,none": 0.0,
-        "mcc_stderr,none": 0.0
+        "mcc,none": 0,
+        "mcc_stderr,none": 0
       },
       "wnli_ca": {
         "alias": "wnli_ca",
@@ -82,5 +86,6 @@
     }
   },
   "quantization": "q4",
-  "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"
+  "flores_comet_checkpoint": "Unbabel/wmt22-comet-da",
+  "evaluated_at": "2026-08-27T09:17:21+00:00"
 }
