@@ -20,6 +20,7 @@ def _hf_tokenizer_from_gguf(model_spec: str) -> str:
         "EuroLLM-9B-Instruct": "utter-project/EuroLLM-9B-Instruct",
         "BSC-LT_-_salamandra-7b-instruct-gguf": "BSC-LT/salamandra-7b-instruct",
         "salamandra-7b-instruct-2606": "BSC-LT/salamandra-7b-instruct-2606",
+        "salamandra-7b-fc-2607": "BSC-LT/salamandra-7b-fc-2607",
         "gemma-4-12b-it": "google/gemma-4-12b-it",
     }
 
