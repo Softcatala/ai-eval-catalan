@@ -368,6 +368,28 @@
             "clam": 45.17
         },
         {
+            "model": "salamandra-7b",
+            "quantization": "q4",
+            "repo_url": "https://huggingface.co/BSC-LT/salamandra-7b-fc-2607-GGUF",
+            "cloud": false,
+            "params_b": 7.0,
+            "memory_gb": 3.9,
+            "generation_tokens_per_sec": 36.09,
+            "quantized_analysis_only": false,
+            "sts_ca": 0.3177,
+            "catcola_mcc": 0.3643,
+            "club_qa_f1": 0.7469,
+            "casum_rougeL": 0.4768,
+            "flores_en_ca": 0.5871,
+            "flores_es_ca": 0.2379,
+            "ifeval_prompt_strict": 0.355,
+            "flores_en2ca": 0.8794,
+            "flores_ca2en": 0.8876,
+            "flores_es2ca": 0.866,
+            "flores_ca2es": 0.8635,
+            "clam": 44.55
+        },
+        {
             "model": "ministral3-14b",
             "quantization": "q4",
             "repo_url": "https://huggingface.co/unsloth/Ministral-3-14B-Instruct-2512-GGUF",
@@ -498,28 +520,6 @@
             "flores_es2ca": 0.8405,
             "flores_ca2es": 0.8202,
             "clam": 40.29
-        },
-        {
-            "model": "salamandra-7b",
-            "quantization": "q4",
-            "repo_url": "https://huggingface.co/mradermacher/salamandra-7b-instruct-2606-GGUF",
-            "cloud": false,
-            "params_b": 7,
-            "memory_gb": 3.9,
-            "generation_tokens_per_sec": 36.09,
-            "quantized_analysis_only": false,
-            "sts_ca": 0.2855,
-            "catcola_mcc": 0.0,
-            "club_qa_f1": 0.5672,
-            "casum_rougeL": 0.3255,
-            "flores_en_ca": 0.5894,
-            "flores_es_ca": 0.2469,
-            "ifeval_prompt_strict": 0.625,
-            "flores_en2ca": 0.8807,
-            "flores_ca2en": 0.8876,
-            "flores_es2ca": 0.8679,
-            "flores_ca2es": 0.8648,
-            "clam": 37.02
         }
     ]
 }
