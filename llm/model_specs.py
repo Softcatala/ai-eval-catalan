@@ -3,7 +3,6 @@ from pathlib import Path
 
 FILENAME_OVERRIDES = {
     "RichardErkhov/BSC-LT_-_salamandra-7b-instruct-gguf": "salamandra-7b-instruct.{quant}.gguf",
-    "mradermacher/salamandra-7b-instruct-2606-GGUF": "salamandra-7b-instruct-2606.{quant}.gguf",
     "BSC-LT/salamandra-7b-fc-2607-GGUF": "ALIA-7b-fc-2607-{quant}.gguf",
 }
 
