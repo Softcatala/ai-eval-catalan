@@ -63,6 +63,28 @@
       "inst_level_loose_acc,none": 0.8951747088186356,
       "inst_level_loose_acc_stderr,none": "N/A",
       "n": 400
+    },
+    "catalan_drift": {
+      "alias": "Catalan Drift",
+      "drift_pass,none": 0.93,
+      "drift_pass_stderr,none": 0.014755532945588932,
+      "language_fail,none": 0.07,
+      "language_fail_stderr,none": 0.014755532945588928,
+      "api_or_empty_fail,none": 0.0,
+      "api_or_empty_fail_stderr,none": 0.0,
+      "catalan_token_ratio,none": 0.9538214067104158,
+      "catalan_token_ratio_stderr,none": "N/A",
+      "monolingual_pass,none": 1.0,
+      "monolingual_pass_stderr,none": 0.0,
+      "crosslingual_basic_pass,none": 0.9666666666666667,
+      "crosslingual_basic_pass_stderr,none": 0.02336962472310331,
+      "multi_turn_pass,none": 0.8833333333333333,
+      "multi_turn_pass_stderr,none": 0.0417935919902812,
+      "crosslingual_advanced_pass,none": 0.9666666666666667,
+      "crosslingual_advanced_pass_stderr,none": 0.023369624723103298,
+      "rag_context_pass,none": 0.8333333333333334,
+      "rag_context_pass_stderr,none": 0.04851854247829852,
+      "n": 300
     }
   },
   "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"
