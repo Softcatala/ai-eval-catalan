@@ -154,7 +154,7 @@ COLUMN_LABELS = {
     "flores_en_ca": "EN↔CA",
     "flores_es_ca": "ES↔CA",
     "ifeval_prompt_strict": "IFEval",
-    "catalan_drift_pass_rate": "Catalan Drift",
+    "catalan_drift_pass_rate": "Mantinc",
     "clam": "CLAM",
 }
 

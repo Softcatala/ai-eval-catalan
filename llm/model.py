@@ -898,7 +898,7 @@ def run_catalan_drift(
         return run_ifeval(
             model_name,
             task="catalan_drift",
-            task_label="Catalan Drift",
+            task_label="Mantinc",
             include_path=task_dir,
             **kwargs,
         )
