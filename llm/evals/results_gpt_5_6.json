@@ -65,6 +65,9 @@
       "prompt_level_loose_acc_stderr,none": 0.01943919251187622,
       "inst_level_loose_acc,none": 0.831946755407654,
       "inst_level_loose_acc_stderr,none": "N/A"
+    },
+    "catalan_drift": {
+      "error": "400 Client Error: Bad Request for url: https://api.openai.com/v1/chat/completions"
     }
   },
   "usage": {

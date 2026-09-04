@@ -30,7 +30,9 @@ def main() -> int:
         parser.error(f"unknown model display name(s): {', '.join(sorted(unknown))}")
 
     count = 0
-    preset_lines = ["version = 1", "", "[*]", "ctx-size = 2048", ""]
+    # Catalan Drift includes long retrieved-context prompts. Keep the generated
+    # llama.cpp router presets large enough to evaluate that task.
+    preset_lines = ["version = 1", "", "[*]", "ctx-size = 16385", ""]
 
     for model in MODELS:
         if selected and model["display_name"] not in selected:

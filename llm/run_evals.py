@@ -87,6 +87,11 @@ def main():
         help="Run selected benchmarks even when an output JSON already exists",
     )
     parser.add_argument(
+        "--exclude-quantized-analysis",
+        action="store_true",
+        help="Exclude models marked quantized_analysis_only",
+    )
+    parser.add_argument(
         "--models",
         nargs="+",
         help="Optional display-name subset from MODELS (e.g. gemma3-12b)",
@@ -122,6 +127,9 @@ def main():
         models = [model for model in MODELS if model["display_name"] in selected]
     else:
         models = MODELS
+
+    if args.exclude_quantized_analysis:
+        models = [model for model in models if not model.get("quantized_analysis_only")]
 
     local_models = [model for model in models if not model.get("cloud")]
     if args.llama_server_model and len(local_models) != 1:

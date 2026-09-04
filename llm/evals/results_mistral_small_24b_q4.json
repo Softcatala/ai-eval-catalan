@@ -65,7 +65,26 @@
       "n": 400
     },
     "catalan_drift": {
-      "error": "400 Client Error: Bad Request for url: http://localhost:9090/v1/chat/completions"
+      "alias": "Catalan Drift",
+      "drift_pass,none": 0.6866666666666666,
+      "drift_pass_stderr,none": 0.026825059139630406,
+      "language_fail,none": 0.31333333333333335,
+      "language_fail_stderr,none": 0.026825059139630406,
+      "api_or_empty_fail,none": 0.0,
+      "api_or_empty_fail_stderr,none": 0.0,
+      "catalan_token_ratio,none": 0.7415998899473811,
+      "catalan_token_ratio_stderr,none": "N/A",
+      "monolingual_pass,none": 1.0,
+      "monolingual_pass_stderr,none": 0.0,
+      "crosslingual_basic_pass,none": 0.6166666666666667,
+      "crosslingual_basic_pass_stderr,none": 0.06329764084940144,
+      "multi_turn_pass,none": 0.55,
+      "multi_turn_pass_stderr,none": 0.06476816543825593,
+      "crosslingual_advanced_pass,none": 0.7,
+      "crosslingual_advanced_pass_stderr,none": 0.059660053921349286,
+      "rag_context_pass,none": 0.5666666666666667,
+      "rag_context_pass_stderr,none": 0.06451324335931519,
+      "n": 300
     }
   },
   "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"

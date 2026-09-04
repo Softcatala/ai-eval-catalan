@@ -65,7 +65,7 @@
       "n": 400
     },
     "catalan_drift": {
-      "error": "400 Client Error: Bad Request for url: http://localhost:9090/v1/chat/completions"
+      "error": "500 Server Error: Internal Server Error for url: http://localhost:9090/v1/chat/completions"
     }
   },
   "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"

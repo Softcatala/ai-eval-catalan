@@ -97,19 +97,19 @@ try:
     _lm_oai.LocalCompletionsAPI.parse_logprobs = _patched_parse_logprobs
 
     # Gemini's OpenAI-compatible endpoint rejects the optional `seed` field that
-    # lm-eval unconditionally adds to chat-completion payloads.  Keep lm-eval's
-    # normal payload everywhere else and strip only that unsupported field for
-    # Google's endpoint.
+    # lm-eval unconditionally adds to chat-completion payloads. Both it and the
+    # current OpenAI API expect `max_completion_tokens`, not lm-eval's internal
+    # `max_gen_toks` field.
     _original_openai_chat_payload = _lm_oai.OpenAIChatCompletion._create_payload
 
     def _gemini_compatible_chat_payload(self, *args, **kwargs):
         payload = _original_openai_chat_payload(self, *args, **kwargs)
-        if "generativelanguage.googleapis.com" in self.base_url:
+        is_gemini = "generativelanguage.googleapis.com" in self.base_url
+        if is_gemini:
             payload.pop("seed", None)
-            # lm-eval emits max_gen_toks, but Gemini's OpenAI endpoint expects max_completion_tokens.
-            max_gen_toks = payload.pop("max_gen_toks", None)
-            if max_gen_toks is not None and "max_completion_tokens" not in payload:
-                payload["max_completion_tokens"] = max_gen_toks
+        max_gen_toks = payload.pop("max_gen_toks", None)
+        if max_gen_toks is not None and "max_completion_tokens" not in payload:
+            payload["max_completion_tokens"] = max_gen_toks
         return payload
 
     _lm_oai.OpenAIChatCompletion._create_payload = _gemini_compatible_chat_payload
@@ -578,7 +578,6 @@ def run_flores(
         else "hf"
     )
     inference_model = gemini_model or openrouter_model or openai_model or model_name
-
     if gemini_model:
         lm_model = "openai-chat-completions"
         _gemini_base_url = (
@@ -763,6 +762,10 @@ def run_ifeval(
         else "hf"
     )
     inference_model = gemini_model or openrouter_model or openai_model or model_name
+    # Mantinc's long RAG prompts keep an API request open for much longer than
+    # IFEval. lm-eval's async adapter can close its aiohttp session while
+    # retrying concurrent requests, so keep this custom task serial on APIs.
+    api_concurrency = 1 if task == "catalan_drift" else 8
 
     if gemini_model:
         lm_model = "openai-chat-completions"
@@ -775,7 +778,7 @@ def run_ifeval(
         # will end naturally on max_gen_toks instead.
         lm_model_args = (
             f"model={gemini_model},base_url={_gemini_base_url},"
-            f"eos_string=</s>,num_concurrent=8,max_retries=3,timeout=120"
+            f"eos_string=</s>,num_concurrent={api_concurrency},max_retries=3,timeout=120"
         )
         _orig_api_key = os.environ.get("OPENAI_API_KEY")
         _orig_base_url = os.environ.get("OPENAI_BASE_URL")
@@ -801,7 +804,7 @@ def run_ifeval(
         lm_model_args = (
             f"model={openai_model},"
             f"{_base}"
-            f"num_concurrent=8,max_retries=3,timeout=120,tokenized_requests=False"
+            f"num_concurrent={api_concurrency},max_retries=3,timeout=120,tokenized_requests=False"
         )
     elif base_url:
         lm_model = "local-chat-completions"
