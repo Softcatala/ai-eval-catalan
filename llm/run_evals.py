@@ -137,7 +137,10 @@ def main():
             "--llama-server-model requires exactly one selected local GGUF model"
         )
 
-    google_api_key = os.environ.get("GOOGLE_API_KEY")
+    # Accept both common names used by Google AI SDKs and deployment tooling.
+    google_api_key = os.environ.get("GOOGLE_API_KEY") or os.environ.get(
+        "GEMINI_API_KEY"
+    )
     openai_api_key = os.environ.get("OPENAI_API_KEY")
     bedrock_token = os.environ.get("AWS_BEARER_TOKEN_BEDROCK")
 
@@ -208,7 +211,10 @@ def main():
         if args.mantinc_dir:
             cmd += ["--mantinc-dir", args.mantinc_dir]
 
-        print(f"\n[RUN] {name}: {' '.join(cmd)}\n{'=' * 60}")
+        display_cmd = cmd.copy()
+        if "--api-key" in display_cmd:
+            display_cmd[display_cmd.index("--api-key") + 1] = "[redacted]"
+        print(f"\n[RUN] {name}: {' '.join(display_cmd)}\n{'=' * 60}")
         run_env = os.environ.copy()
         if model.get("needs_bedrock_token"):
             run_env["OPENAI_API_KEY"] = bedrock_token

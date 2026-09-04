@@ -90,7 +90,9 @@ def extract_metrics(data: dict) -> dict:
 
     catalan_drift = benchmarks.get("catalan_drift", {})
     if catalan_drift and "error" not in catalan_drift:
-        pass_rate = catalan_drift.get("drift_pass,none", catalan_drift.get("drift_pass"))
+        pass_rate = catalan_drift.get(
+            "drift_pass,none", catalan_drift.get("drift_pass")
+        )
         if pass_rate is not None:
             metrics["catalan_drift_pass_rate"] = pass_rate
 

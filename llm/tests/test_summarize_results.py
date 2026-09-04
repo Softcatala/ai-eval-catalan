@@ -31,7 +31,9 @@ def test_comet_uses_the_measured_source_copy_baseline():
 
 
 def test_extract_metrics_adds_lm_eval_catalan_drift_pass_rate():
-    metrics = extract_metrics({"benchmarks": {"catalan_drift": {"drift_pass,none": 0.7133}}})
+    metrics = extract_metrics(
+        {"benchmarks": {"catalan_drift": {"drift_pass,none": 0.7133}}}
+    )
 
     assert metrics["catalan_drift_pass_rate"] == 0.7133
     assert "catalan_drift_pass_rate" in CLAM_TASKS

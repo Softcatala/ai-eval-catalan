@@ -742,9 +742,7 @@ def run_ifeval(
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
 
-    print(
-        f"\n[6/7] Running {task_label} via lm-evaluation-harness …"
-    )
+    print(f"\n[6/7] Running {task_label} via lm-evaluation-harness …")
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
     _orig_api_key = None
@@ -1160,8 +1158,14 @@ def main():
                     openai_model=args.openai_model if args.model == "openai" else None,
                     gemini_model=args.gemini_model if args.model == "gemini" else None,
                     gemini_api_key=args.api_key if args.model == "gemini" else None,
-                    openrouter_model=args.openai_model if args.model == "claude" else None,
-                    openrouter_api_key=(args.api_key or os.environ.get("OPENROUTER_API_KEY")) if args.model == "claude" else None,
+                    openrouter_model=args.openai_model
+                    if args.model == "claude"
+                    else None,
+                    openrouter_api_key=(
+                        args.api_key or os.environ.get("OPENROUTER_API_KEY")
+                    )
+                    if args.model == "claude"
+                    else None,
                 )
             except Exception as e:
                 print(f"[warn] Catalan Drift failed: {e}")

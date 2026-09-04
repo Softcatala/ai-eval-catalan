@@ -67,7 +67,26 @@
       "inst_level_loose_acc_stderr,none": "N/A"
     },
     "catalan_drift": {
-      "error": "400 Client Error: Bad Request for url: https://api.openai.com/v1/chat/completions"
+      "alias": "Catalan Drift",
+      "drift_pass,none": 0.77,
+      "drift_pass_stderr,none": 0.02433737233777906,
+      "language_fail,none": 0.23,
+      "language_fail_stderr,none": 0.02433737233777906,
+      "api_or_empty_fail,none": 0.0,
+      "api_or_empty_fail_stderr,none": 0.0,
+      "catalan_token_ratio,none": 0.8223010643689812,
+      "catalan_token_ratio_stderr,none": "N/A",
+      "monolingual_pass,none": 1.0,
+      "monolingual_pass_stderr,none": 0.0,
+      "crosslingual_basic_pass,none": 0.7666666666666667,
+      "crosslingual_basic_pass_stderr,none": 0.05506373639622877,
+      "multi_turn_pass,none": 0.5833333333333334,
+      "multi_turn_pass_stderr,none": 0.06418399868645064,
+      "crosslingual_advanced_pass,none": 0.75,
+      "crosslingual_advanced_pass_stderr,none": 0.05637345210021216,
+      "rag_context_pass,none": 0.75,
+      "rag_context_pass_stderr,none": 0.05637345210021216,
+      "n": 300
     }
   },
   "quantization": "",
