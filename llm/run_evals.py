@@ -20,36 +20,12 @@ from pathlib import Path
 
 try:
     from .models_config import DEFAULT_LOCAL_SERVER_URL, MODELS
+    from .model_specs import arg_value
 except ImportError:
     from models_config import DEFAULT_LOCAL_SERVER_URL, MODELS
+    from model_specs import arg_value
 
 SCRIPT_DIR = Path(__file__).parent
-
-# Model ids advertised by the local llama.cpp router on port 9090.  Keep this
-# separate from Hugging Face model specs, which are not valid router ids.
-LOCAL_SERVER_MODEL_IDS = {
-    "gemma3-4b-q2": "gemma-3-4b-it-Q2_K",
-    "gemma3-4b": "gemma-3-4b-it-Q4_K_M",
-    "gemma3-4b-q8": "gemma-3-4b-it-Q8_0",
-    "gemma3-12b-q2": "gemma-3-12b-it-Q2_K",
-    "gemma3-12b": "gemma-3-12b-it-Q4_K_M",
-    "gemma3-12b-q8": "gemma-3-12b-it-Q8_0",
-    "gemma3-27b-q2": "gemma-3-27b-it-Q2_K",
-    "gemma3-27b": "gemma-3-27b-it-Q4_K_M",
-    "gemma3-27b-q8": "gemma-3-27b-it-Q8_0",
-    "mistral-small-24b": "Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M",
-    "ministral3-8b": "Ministral-3-8B-Instruct-2512-Q4_K_M",
-    "ministral3-14b": "Ministral-3-14B-Instruct-2512-Q4_K_M",
-    "qwen3-14b": "Qwen3-14B-Q4_K_M",
-    "qwen3.5-9b": "Qwen3.5-9B-Q4_K_M",
-    "qwen3.8-27b": "Qwen3.8-27B-UD-Q4_K_M",
-    "llama3.1-8b": "Meta-Llama-3.1-8B-Instruct-Q4_K_M",
-    "eurollm-9b": "EuroLLM-9B-Instruct-Q4_K_M",
-    "gemma4-12b": "gemma-4-12b-it-Q4_K_M",
-    "gemma4-e4b": "google_gemma-4-E4B-it-Q4_K_M",
-    "gemma4-26b": "google_gemma-4-26B-A4B-it-Q4_K_M",
-}
-
 
 def _llama_server_url_from_env() -> str | None:
     url = os.environ.get("LLAMA_SERVER_URL")
@@ -184,8 +160,7 @@ def main():
             cmd += ["--llama-server-url", args.llama_server_url.rstrip("/")]
             llama_server_model = (
                 args.llama_server_model
-                or LOCAL_SERVER_MODEL_IDS.get(name)
-                or model.get("llama_server_model")
+                or arg_value(model.get("args", []), "--model")
             )
             if llama_server_model:
                 cmd += ["--llama-server-model", llama_server_model]
