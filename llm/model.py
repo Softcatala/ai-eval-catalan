@@ -41,6 +41,8 @@ from pathlib import Path
 from comet_config import COMET_CHECKPOINT, drop_legacy_translation_metrics
 from inference import call_with_retries, chat_completion_params, lm_eval_params
 from model_specs import is_gguf_model
+from mantinc import TASK_NAME as MANTINC_TASK_NAME
+from mantinc import task_path as mantinc_task_path
 
 from llamaserver import (
     LlamaServerModel,
@@ -97,19 +99,19 @@ try:
     _lm_oai.LocalCompletionsAPI.parse_logprobs = _patched_parse_logprobs
 
     # Gemini's OpenAI-compatible endpoint rejects the optional `seed` field that
-    # lm-eval unconditionally adds to chat-completion payloads.  Keep lm-eval's
-    # normal payload everywhere else and strip only that unsupported field for
-    # Google's endpoint.
+    # lm-eval unconditionally adds to chat-completion payloads. Both it and the
+    # current OpenAI API expect `max_completion_tokens`, not lm-eval's internal
+    # `max_gen_toks` field.
     _original_openai_chat_payload = _lm_oai.OpenAIChatCompletion._create_payload
 
     def _gemini_compatible_chat_payload(self, *args, **kwargs):
         payload = _original_openai_chat_payload(self, *args, **kwargs)
-        if "generativelanguage.googleapis.com" in self.base_url:
+        is_gemini = "generativelanguage.googleapis.com" in self.base_url
+        if is_gemini:
             payload.pop("seed", None)
-            # lm-eval emits max_gen_toks, but Gemini's OpenAI endpoint expects max_completion_tokens.
-            max_gen_toks = payload.pop("max_gen_toks", None)
-            if max_gen_toks is not None and "max_completion_tokens" not in payload:
-                payload["max_completion_tokens"] = max_gen_toks
+        max_gen_toks = payload.pop("max_gen_toks", None)
+        if max_gen_toks is not None and "max_completion_tokens" not in payload:
+            payload["max_completion_tokens"] = max_gen_toks
         return payload
 
     _lm_oai.OpenAIChatCompletion._create_payload = _gemini_compatible_chat_payload
@@ -578,7 +580,6 @@ def run_flores(
         else "hf"
     )
     inference_model = gemini_model or openrouter_model or openai_model or model_name
-
     if gemini_model:
         lm_model = "openai-chat-completions"
         _gemini_base_url = (
@@ -730,6 +731,9 @@ def run_ifeval(
     gemini_api_key: str | None = None,
     openrouter_model: str | None = None,
     openrouter_api_key: str | None = None,
+    task: str | dict = "ifeval_ca",
+    task_label: str = "IFEval-ca",
+    include_path: Path | None = None,
 ) -> dict:
     """
     Catalan IFEval — instruction-following evaluation via lm-evaluation-harness.
@@ -740,9 +744,8 @@ def run_ifeval(
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
 
-    print(
-        "\n[6/6] Running IFEval-ca (instruction following) via lm-evaluation-harness …"
-    )
+    task_name = task["task"] if isinstance(task, dict) else task
+    print(f"\n[6/7] Running {task_label} via lm-evaluation-harness …")
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
     _orig_api_key = None
@@ -760,6 +763,10 @@ def run_ifeval(
         else "hf"
     )
     inference_model = gemini_model or openrouter_model or openai_model or model_name
+    # Mantinc's long RAG prompts keep an API request open for much longer than
+    # IFEval. lm-eval's async adapter can close its aiohttp session while
+    # retrying concurrent requests, so keep this custom task serial on APIs.
+    api_concurrency = 1 if task_name == "catalan_drift" else 8
 
     if gemini_model:
         lm_model = "openai-chat-completions"
@@ -772,7 +779,7 @@ def run_ifeval(
         # will end naturally on max_gen_toks instead.
         lm_model_args = (
             f"model={gemini_model},base_url={_gemini_base_url},"
-            f"eos_string=</s>,num_concurrent=8,max_retries=3,timeout=120"
+            f"eos_string=</s>,num_concurrent={api_concurrency},max_retries=3,timeout=120"
         )
         _orig_api_key = os.environ.get("OPENAI_API_KEY")
         _orig_base_url = os.environ.get("OPENAI_BASE_URL")
@@ -798,7 +805,7 @@ def run_ifeval(
         lm_model_args = (
             f"model={openai_model},"
             f"{_base}"
-            f"num_concurrent=8,max_retries=3,timeout=120,tokenized_requests=False"
+            f"num_concurrent={api_concurrency},max_retries=3,timeout=120,tokenized_requests=False"
         )
     elif base_url:
         lm_model = "local-chat-completions"
@@ -819,11 +826,17 @@ def run_ifeval(
 
     gen_kwargs = lm_eval_params(2048, inference_provider, inference_model)
 
+    task_manager = None
+    if include_path:
+        from lm_eval.tasks import TaskManager
+
+        task_manager = TaskManager(include_path=str(include_path))
+
     try:
         results = lm_eval.simple_evaluate(
             model=lm_model,
             model_args=lm_model_args,
-            tasks=["ifeval_ca"],
+            tasks=[task],
             num_fewshot=0,
             apply_chat_template=True,
             batch_size=1,
@@ -831,6 +844,7 @@ def run_ifeval(
             limit=n_samples,
             confirm_run_unsafe_code=True,
             gen_kwargs=gen_kwargs,
+            task_manager=task_manager,
         )
     finally:
         if needs_env_restore:
@@ -843,17 +857,37 @@ def run_ifeval(
             else:
                 os.environ["OPENAI_BASE_URL"] = _orig_base_url
 
-    score = results["results"].get("ifeval_ca", {})
-    score["n"] = n_samples
-    p_strict = score.get("prompt_level_strict_acc,none", "n/a")
-    i_strict = score.get("inst_level_strict_acc,none", "n/a")
-    p_loose = score.get("prompt_level_loose_acc,none", "n/a")
-    i_loose = score.get("inst_level_loose_acc,none", "n/a")
-    print(
-        f"    ✓ prompt-strict={p_strict}  inst-strict={i_strict}  "
-        f"prompt-loose={p_loose}  inst-loose={i_loose}"
+    score = results["results"].get(task_name, {})
+    score["n"] = (
+        results.get("n-samples", {}).get(task_name, {}).get("effective", n_samples)
     )
+    if task_name == "ifeval_ca":
+        p_strict = score.get("prompt_level_strict_acc,none", "n/a")
+        i_strict = score.get("inst_level_strict_acc,none", "n/a")
+        p_loose = score.get("prompt_level_loose_acc,none", "n/a")
+        i_loose = score.get("inst_level_loose_acc,none", "n/a")
+        print(
+            f"    ✓ prompt-strict={p_strict}  inst-strict={i_strict}  "
+            f"prompt-loose={p_loose}  inst-loose={i_loose}"
+        )
+    else:
+        print(f"    ✓ drift-pass={score.get('drift_pass,none', 'n/a')}")
     return score
+
+
+def run_catalan_drift(
+    model_name: str,
+    **kwargs,
+) -> dict:
+    """Run Mantinc's Catalan Drift task with lm-evaluation-harness."""
+    task_dir = mantinc_task_path()
+    return run_ifeval(
+        model_name,
+        task=MANTINC_TASK_NAME,
+        task_label="Mantinc",
+        include_path=task_dir,
+        **kwargs,
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -898,6 +932,7 @@ def main():
             "casum",
             "flores",
             "ifeval",
+            "catalan_drift",
             "all",
         ],
         default=["all"],
@@ -925,6 +960,11 @@ def main():
         "--output",
         default="evals/catalan_eval_results.json",
         help="Output file for results (default: evals/catalan_eval_results.json)",
+    )
+    parser.add_argument(
+        "--merge-output",
+        action="store_true",
+        help="Merge newly run benchmarks into an existing output JSON",
     )
     parser.add_argument(
         "--llama-server-url",
@@ -988,7 +1028,7 @@ def main():
     to_run = (
         set(args.benchmarks)
         if not run_all
-        else {"sts_ca", "catcola", "club", "casum", "flores", "ifeval"}
+        else {"sts_ca", "catcola", "club", "casum", "flores", "ifeval", "catalan_drift"}
     )
 
     # ── Validate model spec ───────────────────────────────────────────────────
@@ -1014,6 +1054,20 @@ def main():
         )
         lm_eval_model_name = args.llama_server_model or args.model
         memory_gb = _estimate_memory_gb(args.params_b, args.model)
+        lm_eval_kwargs = {
+            "base_url": lm_eval_base_url,
+            "tokenizer": tokenizer_id,
+            "n_samples": args.n_samples,
+            "openai_model": args.openai_model if args.model == "openai" else None,
+            "gemini_model": args.gemini_model if args.model == "gemini" else None,
+            "gemini_api_key": args.api_key if args.model == "gemini" else None,
+            "openrouter_model": (args.openai_model if args.model == "claude" else None),
+            "openrouter_api_key": (
+                args.api_key or os.environ.get("OPENROUTER_API_KEY")
+                if args.model == "claude"
+                else None
+            ),
+        }
         results = {
             "model": model_label,
             "display_name": args.display_name,
@@ -1042,21 +1096,8 @@ def main():
             try:
                 results["benchmarks"]["flores"] = run_flores(
                     lm_eval_model_name,
-                    lm_eval_base_url,
-                    tokenizer_id,
-                    args.n_samples,
-                    openai_model=args.openai_model if args.model == "openai" else None,
-                    gemini_model=args.gemini_model if args.model == "gemini" else None,
-                    gemini_api_key=args.api_key if args.model == "gemini" else None,
-                    openrouter_model=args.openai_model
-                    if args.model == "claude"
-                    else None,
-                    openrouter_api_key=(
-                        args.api_key or os.environ.get("OPENROUTER_API_KEY")
-                    )
-                    if args.model == "claude"
-                    else None,
                     tasks=args.flores_tasks,
+                    **lm_eval_kwargs,
                 )
                 results["flores_comet_checkpoint"] = COMET_CHECKPOINT
             except Exception as e:
@@ -1067,24 +1108,21 @@ def main():
             try:
                 results["benchmarks"]["ifeval"] = run_ifeval(
                     lm_eval_model_name,
-                    lm_eval_base_url,
-                    tokenizer_id,
-                    args.n_samples,
-                    openai_model=args.openai_model if args.model == "openai" else None,
-                    gemini_model=args.gemini_model if args.model == "gemini" else None,
-                    gemini_api_key=args.api_key if args.model == "gemini" else None,
-                    openrouter_model=args.openai_model
-                    if args.model == "claude"
-                    else None,
-                    openrouter_api_key=(
-                        args.api_key or os.environ.get("OPENROUTER_API_KEY")
-                    )
-                    if args.model == "claude"
-                    else None,
+                    **lm_eval_kwargs,
                 )
             except Exception as e:
                 print(f"[warn] IFEval-ca failed: {e}")
                 results["benchmarks"]["ifeval"] = {"error": str(e)}
+
+        if "catalan_drift" in to_run:
+            try:
+                results["benchmarks"]["catalan_drift"] = run_catalan_drift(
+                    lm_eval_model_name,
+                    **lm_eval_kwargs,
+                )
+            except Exception as e:
+                print(f"[warn] Catalan Drift failed: {e}")
+                results["benchmarks"]["catalan_drift"] = {"error": str(e)}
 
         return results
 
@@ -1135,6 +1173,11 @@ def main():
 
     # ── Save & print summary ──────────────────────────────────────────────────
     output_path = Path(args.output)
+    if args.merge_output and output_path.exists():
+        with output_path.open(encoding="utf-8") as f:
+            existing = json.load(f)
+        existing.setdefault("benchmarks", {}).update(results["benchmarks"])
+        results = existing
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
 

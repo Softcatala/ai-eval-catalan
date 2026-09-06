@@ -63,6 +63,28 @@
       "prompt_level_loose_acc_stderr,none": 0.016556654463313048,
       "inst_level_loose_acc,none": 0.9101497504159733,
       "inst_level_loose_acc_stderr,none": "N/A"
+    },
+    "catalan_drift": {
+      "alias": "Catalan Drift",
+      "drift_pass,none": 0.84,
+      "drift_pass_stderr,none": 0.021201375610068268,
+      "language_fail,none": 0.16,
+      "language_fail_stderr,none": 0.021201375610068268,
+      "api_or_empty_fail,none": 0.0,
+      "api_or_empty_fail_stderr,none": 0.0,
+      "catalan_token_ratio,none": 0.9052621062697133,
+      "catalan_token_ratio_stderr,none": "N/A",
+      "monolingual_pass,none": 1.0,
+      "monolingual_pass_stderr,none": 0.0,
+      "crosslingual_basic_pass,none": 0.8333333333333334,
+      "crosslingual_basic_pass_stderr,none": 0.0485185424782985,
+      "multi_turn_pass,none": 0.8666666666666667,
+      "multi_turn_pass_stderr,none": 0.04425571983630767,
+      "crosslingual_advanced_pass,none": 0.9333333333333333,
+      "crosslingual_advanced_pass_stderr,none": 0.03247482002983031,
+      "rag_context_pass,none": 0.5666666666666667,
+      "rag_context_pass_stderr,none": 0.0645132433593152,
+      "n": 300
     }
   },
   "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"

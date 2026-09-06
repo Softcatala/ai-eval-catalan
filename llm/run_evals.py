@@ -20,8 +20,10 @@ from pathlib import Path
 
 try:
     from .models_config import DEFAULT_LOCAL_SERVER_URL, MODELS
+    from .model_specs import arg_value
 except ImportError:
     from models_config import DEFAULT_LOCAL_SERVER_URL, MODELS
+    from model_specs import arg_value
 
 SCRIPT_DIR = Path(__file__).parent
 
@@ -48,8 +50,19 @@ def main():
             "casum",
             "flores",
             "ifeval",
+            "catalan_drift",
             "all",
         ],
+    )
+    parser.add_argument(
+        "--rerun-benchmarks",
+        action="store_true",
+        help="Run selected benchmarks even when an output JSON already exists",
+    )
+    parser.add_argument(
+        "--exclude-quantized-analysis",
+        action="store_true",
+        help="Exclude models marked quantized_analysis_only",
     )
     parser.add_argument(
         "--models",
@@ -88,18 +101,19 @@ def main():
     else:
         models = MODELS
 
+    if args.exclude_quantized_analysis:
+        models = [model for model in models if not model.get("quantized_analysis_only")]
+
     local_models = [model for model in models if not model.get("cloud")]
-    if args.llama_server_url and len(local_models) > 1:
-        parser.error(
-            "using one local llama-server requires exactly one selected local model; "
-            "pass --models <display_name>"
-        )
     if args.llama_server_model and len(local_models) != 1:
         parser.error(
             "--llama-server-model requires exactly one selected local GGUF model"
         )
 
-    google_api_key = os.environ.get("GOOGLE_API_KEY")
+    # Accept both common names used by Google AI SDKs and deployment tooling.
+    google_api_key = os.environ.get("GOOGLE_API_KEY") or os.environ.get(
+        "GEMINI_API_KEY"
+    )
     openai_api_key = os.environ.get("OPENAI_API_KEY")
     bedrock_token = os.environ.get("AWS_BEARER_TOKEN_BEDROCK")
 
@@ -109,7 +123,7 @@ def main():
         output_path = SCRIPT_DIR / model["output"]
         name = model["display_name"]
 
-        if output_path.exists():
+        if output_path.exists() and not args.rerun_benchmarks:
             print(f"[SKIP] {name} — {output_path} already exists")
             continue
 
@@ -140,10 +154,13 @@ def main():
             *args.benchmarks,
         ]
 
+        if args.rerun_benchmarks and output_path.exists():
+            cmd.append("--merge-output")
+
         if args.llama_server_url and not model.get("cloud"):
             cmd += ["--llama-server-url", args.llama_server_url.rstrip("/")]
-            llama_server_model = args.llama_server_model or model.get(
-                "llama_server_model"
+            llama_server_model = args.llama_server_model or arg_value(
+                model.get("args", []), "--model"
             )
             if llama_server_model:
                 cmd += ["--llama-server-model", llama_server_model]
@@ -162,7 +179,10 @@ def main():
         if model.get("needs_api_key"):
             cmd += ["--api-key", google_api_key]
 
-        print(f"\n[RUN] {name}: {' '.join(cmd)}\n{'=' * 60}")
+        display_cmd = cmd.copy()
+        if "--api-key" in display_cmd:
+            display_cmd[display_cmd.index("--api-key") + 1] = "[redacted]"
+        print(f"\n[RUN] {name}: {' '.join(display_cmd)}\n{'=' * 60}")
         run_env = os.environ.copy()
         if model.get("needs_bedrock_token"):
             run_env["OPENAI_API_KEY"] = bedrock_token

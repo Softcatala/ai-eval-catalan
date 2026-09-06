@@ -65,6 +65,28 @@
       "prompt_level_loose_acc_stderr,none": 0.01943919251187622,
       "inst_level_loose_acc,none": 0.831946755407654,
       "inst_level_loose_acc_stderr,none": "N/A"
+    },
+    "catalan_drift": {
+      "alias": "Catalan Drift",
+      "drift_pass,none": 0.71,
+      "drift_pass_stderr,none": 0.026241737033622717,
+      "language_fail,none": 0.29,
+      "language_fail_stderr,none": 0.026241737033622717,
+      "api_or_empty_fail,none": 0.0,
+      "api_or_empty_fail_stderr,none": 0.0,
+      "catalan_token_ratio,none": 0.7631670312120266,
+      "catalan_token_ratio_stderr,none": "N/A",
+      "monolingual_pass,none": 1.0,
+      "monolingual_pass_stderr,none": 0.0,
+      "crosslingual_basic_pass,none": 0.8,
+      "crosslingual_basic_pass_stderr,none": 0.05207556439232952,
+      "multi_turn_pass,none": 0.5666666666666667,
+      "multi_turn_pass_stderr,none": 0.06451324335931519,
+      "crosslingual_advanced_pass,none": 0.6,
+      "crosslingual_advanced_pass_stderr,none": 0.06377928041432807,
+      "rag_context_pass,none": 0.5833333333333334,
+      "rag_context_pass_stderr,none": 0.06418399868645062,
+      "n": 300
     }
   },
   "usage": {

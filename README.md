@@ -77,6 +77,7 @@ El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models de l
 | **CaSum** | Resum de notícies en català | ROUGE-1/2/L |
 | **FLORES+** | Traducció automàtica EN↔CA i ES↔CA | COMET |
 | **IFEval-ca** | Seguiment d'instruccions | Accuracy |
+| **Mantinc** | Manteniment del català en prompts adversaris | Pass rate |
 
 FLORES+ executa quatre tasques: `catalan_bench_flores_en-ca`,
 `catalan_bench_flores_ca-en`, `catalan_bench_flores_es-ca` i
@@ -112,6 +113,15 @@ Per evitar donar doble pes a la traducció, CLAM calcula primer
 `translation_score` com la mitjana dels valors disponibles de `flores_en_ca` i
 `flores_es_ca`. El resultat final és la mitjana dels benchmarks que no són de
 traducció i aquest únic `translation_score`.
+
+CLAM també inclou `Mantinc`: el `pass_rate` de prompts de manteniment del
+català de [Softcatalà/mantinc-catalan-drift](https://github.com/Softcatala/mantinc-catalan-drift),
+executat localment amb lm-evaluation-harness.
+
+Les dades, la tasca lm-eval i l'avaluador fastText s'instal·len com una única
+dependència Git de Mantinc fixada a un commit concret; no cal tenir-ne un
+checkout local ni descarregar el dataset per separat:
+`uv run python model.py --benchmarks catalan_drift`.
 
 ### Mida de model recomanada segons la memòria
 
