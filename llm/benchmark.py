@@ -281,7 +281,6 @@ def _benchmark_model(
     model: dict[str, Any],
     server_url: str,
     server_model: str,
-    hardware: str,
     timeout: float,
 ) -> dict[str, Any]:
     _chat_completion(server_url, server_model=server_model, timeout=timeout)
@@ -424,7 +423,6 @@ def main() -> int:
                 model,
                 args.server_url,
                 server_model=server_model,
-                hardware=hardware,
                 timeout=args.timeout,
             )
         except BenchmarkError as exc:

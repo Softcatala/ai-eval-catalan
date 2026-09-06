@@ -10,35 +10,6 @@ _MUSE_BOS_TOKEN = "<|begin_of_text|>"
 _AYA_END_OF_TURN_TOKEN = "<|END_OF_TURN_TOKEN|>"
 
 
-def _hf_tokenizer_from_gguf(model_spec: str) -> str:
-    """
-    Derive the HuggingFace tokenizer repo from a bartowski GGUF spec.
-    e.g. "bartowski/google_gemma-3-1b-it-GGUF:Q4_K_M" -> "google/gemma-3-1b-it"
-    """
-    _KNOWN = {
-        "aya-expanse-8b": "CohereForAI/aya-expanse-8b",
-        "EuroLLM-9B-Instruct": "utter-project/EuroLLM-9B-Instruct",
-        "BSC-LT_-_salamandra-7b-instruct-gguf": "BSC-LT/salamandra-7b-instruct",
-        "salamandra-7b-instruct-2606": "BSC-LT/salamandra-7b-instruct-2606",
-        "salamandra-7b-fc-2607": "BSC-LT/salamandra-7b-fc-2607",
-        "gemma-4-12b-it": "google/gemma-4-12b-it",
-    }
-
-    repo = model_spec.rsplit(":", 1)[0]
-    name = repo.split("/")[-1]
-    name = name.replace("-GGUF", "")
-
-    if name in _KNOWN:
-        return _KNOWN[name]
-
-    if "_" in name:
-        org, model = name.split("_", 1)
-        return f"{org}/{model}"
-    if name.startswith("Llama") or name.startswith("Meta-Llama"):
-        return f"meta-llama/{name}"
-    return name
-
-
 class LlamaServerModel:
     """
     GGUF model accessed via a running llama-server (OpenAI-compatible completions API).

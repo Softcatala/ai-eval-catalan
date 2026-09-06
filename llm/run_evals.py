@@ -173,9 +173,6 @@ def main():
         if model.get("cloud"):
             cmd += ["--cloud"]
 
-        if model.get("quantized_analysis_only"):
-            cmd += ["--quantized-analysis"]
-
         if model.get("needs_api_key"):
             cmd += ["--api-key", google_api_key]
 

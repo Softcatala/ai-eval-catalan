@@ -45,10 +45,7 @@ from mantinc import TASK_NAME as MANTINC_TASK_NAME
 from mantinc import dataset_path as mantinc_dataset_path
 from mantinc import task_path as mantinc_task_path
 
-from llamaserver import (
-    LlamaServerModel,
-    _hf_tokenizer_from_gguf,
-)
+from llamaserver import LlamaServerModel
 
 # facebook/flores uses an old dataset script — trust it so datasets doesn't refuse to load it.
 os.environ.setdefault("HF_DATASETS_TRUST_REMOTE_CODE", "1")
@@ -541,7 +538,6 @@ def _score_flores_comet(results: dict, tasks: list[str], comet_model) -> dict:
 def run_flores(
     model_name: str,
     base_url: str | None = None,
-    tokenizer: str | None = None,
     n_samples: int | None = None,
     openai_model: str | None = None,
     gemini_model: str | None = None,
@@ -728,7 +724,6 @@ def run_flores(
 def run_ifeval(
     model_name: str,
     base_url: str | None = None,
-    tokenizer: str | None = None,
     n_samples: int | None = None,
     openai_model: str | None = None,
     gemini_model: str | None = None,
@@ -1004,12 +999,6 @@ def main():
         default=False,
         help="Mark this model as a cloud API model (not a local GGUF)",
     )
-    parser.add_argument(
-        "--quantized-analysis",
-        action="store_true",
-        default=False,
-        help="Mark this model as a quantized (Q4) variant for analysis purposes",
-    )
     args = parser.parse_args()
 
     # ── Compute memory estimate ───────────────────────────────────────────────
@@ -1047,10 +1036,6 @@ def main():
             "Use a GGUF spec like 'bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M', '--model gemini', '--model openai', or '--model claude'."
         )
 
-    tokenizer_id = (
-        _hf_tokenizer_from_gguf(args.model) if is_gguf_model(args.model) else None
-    )
-
     def _run_benchmarks(model, lm_eval_base_url: str | None = None):
         model_label = (
             args.gemini_model
@@ -1063,7 +1048,6 @@ def main():
         memory_gb = _estimate_memory_gb(args.params_b, args.model)
         lm_eval_kwargs = {
             "base_url": lm_eval_base_url,
-            "tokenizer": tokenizer_id,
             "n_samples": args.n_samples,
             "openai_model": args.openai_model if args.model == "openai" else None,
             "gemini_model": args.gemini_model if args.model == "gemini" else None,
