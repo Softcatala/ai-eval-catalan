@@ -115,12 +115,15 @@ Per evitar donar doble pes a la traducció, CLAM calcula primer
 traducció i aquest únic `translation_score`.
 
 CLAM també inclou `Mantinc`: el `pass_rate` de prompts de manteniment del
-català de [Softcatalà/mantinc (branca `harder`)](https://github.com/Softcatala/mantinc/tree/harder),
+català de [Softcatalà/mantinc-catalan-drift](https://github.com/Softcatala/mantinc-catalan-drift),
 executat localment amb lm-evaluation-harness.
 
-Per executar-lo, prepareu el dataset al vostre checkout de Mantinc i passeu-ne
-el camí: `python scripts/catalan_drift_eval.py export-lm-eval` i després
+Les dades es descarreguen de
+[`softcatala/mantinc-catalan-drift`](https://huggingface.co/datasets/softcatala/mantinc-catalan-drift).
+El checkout de Mantinc només aporta la tasca lm-eval i l'avaluador fastText:
 `uv run python model.py --benchmarks catalan_drift --mantinc-dir /camí/a/mantinc`.
+Per fixar una versió concreta del dataset, definiu `MANTINC_DATASET_REVISION`
+amb una etiqueta o un hash de commit de Hugging Face.
 
 ### Mida de model recomanada segons la memòria
 

@@ -51,6 +51,7 @@ from llamaserver import (
 os.environ.setdefault("HF_DATASETS_TRUST_REMOTE_CODE", "1")
 
 DEFAULT_LOCAL_SERVER_URL = "http://localhost:9090/v1"
+MANTINC_DATASET_ID = "softcatala/mantinc-catalan-drift"
 
 from datasets import load_dataset
 from sklearn.metrics import matthews_corrcoef
@@ -729,7 +730,7 @@ def run_ifeval(
     gemini_api_key: str | None = None,
     openrouter_model: str | None = None,
     openrouter_api_key: str | None = None,
-    task: str = "ifeval_ca",
+    task: str | dict = "ifeval_ca",
     task_label: str = "IFEval-ca",
     include_path: Path | None = None,
 ) -> dict:
@@ -742,6 +743,7 @@ def run_ifeval(
     if not HAS_LM_EVAL:
         return {"error": "lm_eval not installed"}
 
+    task_name = task["task"] if isinstance(task, dict) else task
     print(f"\n[6/7] Running {task_label} via lm-evaluation-harness …")
 
     _openrouter_base_url = "https://openrouter.ai/api/v1"
@@ -763,7 +765,7 @@ def run_ifeval(
     # Mantinc's long RAG prompts keep an API request open for much longer than
     # IFEval. lm-eval's async adapter can close its aiohttp session while
     # retrying concurrent requests, so keep this custom task serial on APIs.
-    api_concurrency = 1 if task == "catalan_drift" else 8
+    api_concurrency = 1 if task_name == "catalan_drift" else 8
 
     if gemini_model:
         lm_model = "openai-chat-completions"
@@ -854,9 +856,11 @@ def run_ifeval(
             else:
                 os.environ["OPENAI_BASE_URL"] = _orig_base_url
 
-    score = results["results"].get(task, {})
-    score["n"] = n_samples
-    if task == "ifeval_ca":
+    score = results["results"].get(task_name, {})
+    score["n"] = (
+        results.get("n-samples", {}).get(task_name, {}).get("effective", n_samples)
+    )
+    if task_name == "ifeval_ca":
         p_strict = score.get("prompt_level_strict_acc,none", "n/a")
         i_strict = score.get("inst_level_strict_acc,none", "n/a")
         p_loose = score.get("prompt_level_loose_acc,none", "n/a")
@@ -877,25 +881,27 @@ def run_catalan_drift(
 ) -> dict:
     """Run Mantinc's Catalan Drift task with lm-evaluation-harness."""
     task_dir = mantinc_dir / "lm_eval_tasks"
-    dataset = mantinc_dir / "data" / "lm_eval" / "catalan_drift.jsonl"
-    if not task_dir.is_dir() or not dataset.is_file():
+    task_config_path = task_dir / "catalan_drift" / "catalan_drift.yaml"
+    if not task_config_path.is_file():
         raise FileNotFoundError(
-            "Catalan Drift needs a Mantinc checkout with its lm-eval dataset. "
-            "Run `python scripts/catalan_drift_eval.py export-lm-eval` in the "
-            "Mantinc repository, then pass --mantinc-dir <checkout>."
+            "Catalan Drift needs a Mantinc checkout containing its lm-eval task. "
+            "Pass --mantinc-dir <checkout>."
         )
 
-    requested_samples = kwargs.get("n_samples")
-    if requested_samples is not None:
-        dataset_size = sum(1 for line in dataset.open(encoding="utf-8") if line.strip())
-        kwargs["n_samples"] = min(requested_samples, dataset_size)
+    from lm_eval.utils import load_yaml_config
+
+    task_config = load_yaml_config(yaml_path=task_config_path)
+    task_config["dataset_path"] = MANTINC_DATASET_ID
+    task_config["dataset_name"] = None
+    revision = os.environ.get("MANTINC_DATASET_REVISION")
+    task_config["dataset_kwargs"] = {"revision": revision} if revision else {}
 
     cwd = Path.cwd()
     try:
         os.chdir(mantinc_dir)
         return run_ifeval(
             model_name,
-            task="catalan_drift",
+            task=task_config,
             task_label="Mantinc",
             include_path=task_dir,
             **kwargs,
@@ -955,7 +961,7 @@ def main():
     parser.add_argument(
         "--mantinc-dir",
         type=Path,
-        help="Mantinc checkout containing the exported Catalan Drift lm-eval dataset",
+        help="Mantinc checkout containing the Catalan Drift lm-eval task and scorer",
     )
     parser.add_argument(
         "--n-samples",

@@ -79,7 +79,7 @@ def main():
     )
     parser.add_argument(
         "--mantinc-dir",
-        help="Mantinc checkout containing the exported Catalan Drift lm-eval dataset",
+        help="Mantinc checkout containing the Catalan Drift lm-eval task and scorer",
     )
     parser.add_argument(
         "--rerun-benchmarks",
