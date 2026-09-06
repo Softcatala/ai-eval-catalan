@@ -69,9 +69,11 @@ def inference_params(max_tokens=None, provider="llama", model_name=""):
         elif not model_name.startswith("gemini-"):
             params.pop("reasoning_effort")
     elif provider == "openai":
-        if model_name.startswith("gpt-5."):
+        if model_name.startswith(("gpt-5.", "gpt-6-")):
             params.pop("temperature")
             params["max_tokens"] = max(params["max_tokens"], 1024)
+            if model_name.startswith("gpt-6-"):
+                params["reasoning_effort"] = "low"
         else:
             params.pop("reasoning_effort")
     elif provider in ("openrouter", "hf"):

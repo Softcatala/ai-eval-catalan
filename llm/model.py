@@ -42,6 +42,7 @@ from comet_config import COMET_CHECKPOINT, drop_legacy_translation_metrics
 from inference import call_with_retries, chat_completion_params, lm_eval_params
 from model_specs import is_gguf_model
 from mantinc import TASK_NAME as MANTINC_TASK_NAME
+from mantinc import dataset_path as mantinc_dataset_path
 from mantinc import task_path as mantinc_task_path
 
 from llamaserver import (
@@ -104,17 +105,20 @@ try:
     # `max_gen_toks` field.
     _original_openai_chat_payload = _lm_oai.OpenAIChatCompletion._create_payload
 
-    def _gemini_compatible_chat_payload(self, *args, **kwargs):
+    def _provider_compatible_chat_payload(self, *args, **kwargs):
         payload = _original_openai_chat_payload(self, *args, **kwargs)
         is_gemini = "generativelanguage.googleapis.com" in self.base_url
         if is_gemini:
             payload.pop("seed", None)
+        if self.model.startswith("gpt-6-"):
+            payload.pop("stop", None)
+            payload.pop("temperature", None)
         max_gen_toks = payload.pop("max_gen_toks", None)
         if max_gen_toks is not None and "max_completion_tokens" not in payload:
             payload["max_completion_tokens"] = max_gen_toks
         return payload
 
-    _lm_oai.OpenAIChatCompletion._create_payload = _gemini_compatible_chat_payload
+    _lm_oai.OpenAIChatCompletion._create_payload = _provider_compatible_chat_payload
     HAS_LM_EVAL = True
 except ImportError:
     HAS_LM_EVAL = False
@@ -861,6 +865,9 @@ def run_ifeval(
     score["n"] = (
         results.get("n-samples", {}).get(task_name, {}).get("effective", n_samples)
     )
+    if task_name == MANTINC_TASK_NAME:
+        with mantinc_dataset_path().open(encoding="utf-8") as dataset_file:
+            score["n"] = min(n_samples, sum(1 for _ in dataset_file))
     if task_name == "ifeval_ca":
         p_strict = score.get("prompt_level_strict_acc,none", "n/a")
         i_strict = score.get("inst_level_strict_acc,none", "n/a")
