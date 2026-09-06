@@ -1671,7 +1671,7 @@ wheels = [
 [[package]]
 name = "mantinc-catalan-drift"
 version = "0.1.0"
-source = { git = "https://github.com/Softcatala/mantinc-catalan-drift.git?rev=a081a04840ce0e27a7f8c819a6f72634ec552a15#a081a04840ce0e27a7f8c819a6f72634ec552a15" }
+source = { git = "https://github.com/Softcatala/mantinc-catalan-drift.git?rev=f54fbe4d556cff16e3fb2ac18cb535ca2609eed3#f54fbe4d556cff16e3fb2ac18cb535ca2609eed3" }
 dependencies = [
     { name = "lm-eval" },
 ]
@@ -1835,7 +1835,7 @@ requires-dist = [
     { name = "iso639-lang", specifier = ">=2.6.3" },
     { name = "langdetect", specifier = ">=1.0.9" },
     { name = "lm-eval", extras = ["api"] },
-    { name = "mantinc-catalan-drift", git = "https://github.com/Softcatala/mantinc-catalan-drift.git?rev=a081a04840ce0e27a7f8c819a6f72634ec552a15" },
+    { name = "mantinc-catalan-drift", git = "https://github.com/Softcatala/mantinc-catalan-drift.git?rev=f54fbe4d556cff16e3fb2ac18cb535ca2609eed3" },
     { name = "openai", specifier = ">=2.31.0" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "scikit-learn" },

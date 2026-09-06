@@ -881,18 +881,9 @@ def run_catalan_drift(
 ) -> dict:
     """Run Mantinc's Catalan Drift task with lm-evaluation-harness."""
     task_dir = mantinc_task_path()
-    task: str | dict = MANTINC_TASK_NAME
-    revision = os.environ.get("MANTINC_DATASET_REVISION")
-    if revision:
-        from lm_eval.utils import load_yaml_config
-
-        task_config_path = task_dir / MANTINC_TASK_NAME / f"{MANTINC_TASK_NAME}.yaml"
-        task = load_yaml_config(yaml_path=task_config_path)
-        task["dataset_kwargs"] = {"revision": revision}
-
     return run_ifeval(
         model_name,
-        task=task,
+        task=MANTINC_TASK_NAME,
         task_label="Mantinc",
         include_path=task_dir,
         **kwargs,

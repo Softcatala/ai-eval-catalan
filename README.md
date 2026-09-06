@@ -118,13 +118,10 @@ CLAM també inclou `Mantinc`: el `pass_rate` de prompts de manteniment del
 català de [Softcatalà/mantinc-catalan-drift](https://github.com/Softcatala/mantinc-catalan-drift),
 executat localment amb lm-evaluation-harness.
 
-Les dades es descarreguen de
-[`softcatala/mantinc-catalan-drift`](https://huggingface.co/datasets/softcatala/mantinc-catalan-drift).
-La tasca lm-eval i l'avaluador fastText s'instal·len com una dependència Git de
-Mantinc fixada a un commit concret; no cal tenir-ne un checkout local:
+Les dades, la tasca lm-eval i l'avaluador fastText s'instal·len com una única
+dependència Git de Mantinc fixada a un commit concret; no cal tenir-ne un
+checkout local ni descarregar el dataset per separat:
 `uv run python model.py --benchmarks catalan_drift`.
-Per fixar una versió concreta del dataset, definiu `MANTINC_DATASET_REVISION`
-amb una etiqueta o un hash de commit de Hugging Face.
 
 ### Mida de model recomanada segons la memòria
 
