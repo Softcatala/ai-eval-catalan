@@ -21,14 +21,12 @@ ai-eval-catalan/
 │   ├── summarize_results.py  # Agrega els resultats en un JSON
 │   ├── table_template.jinja  # Plantilla per a la taula de resultats
 │   └── evals/                # Resultats JSON per model
-├── embeddings/               # Avaluació de models d'embeddings
-│   ├── model.py              # Pipeline d'avaluació per a un model
-│   ├── run_evals.py          # Orquestrador per executar múltiples models
-│   ├── summarize_results.py  # Agrega els resultats en un JSON
-│   ├── table_template.jinja  # Plantilla per a la taula de resultats
-│   └── evals/                # Resultats JSON per model
-└── mt/                       # Avaluació de traducció automàtica
-    └── mt.py                 # Avaluació de models MT
+└── embeddings/               # Avaluació de models d'embeddings
+    ├── model.py              # Pipeline d'avaluació per a un model
+    ├── run_evals.py          # Orquestrador per executar múltiples models
+    ├── summarize_results.py  # Agrega els resultats en un JSON
+    ├── table_template.jinja  # Plantilla per a la taula de resultats
+    └── evals/                # Resultats JSON per model
 ```
 
 ---
@@ -110,15 +108,15 @@ Cada fila dels JSON publicats inclou `repo_url`, calculat amb el helper comparti
 `eval_common.model_urls`.
 
 Per evitar donar doble pes a la traducció, CLAM calcula primer
-`translation_score` com la mitjana dels valors disponibles de `flores_en_ca` i
-`flores_es_ca`. El resultat final és la mitjana dels benchmarks que no són de
-traducció i aquest únic `translation_score`.
+`translation_score` com la mitjana dels valors normalitzats disponibles de `flores_en_ca` i
+`flores_es_ca`. El resultat final és la mitjana dels benchmarks normalitzats que no són de
+traducció i aquest únic `translation_score`, multiplicada per 100.
 
 CLAM també inclou `Mantinc`: el `pass_rate` de prompts de manteniment del
 català de [Softcatalà/mantinc-catalan-drift](https://github.com/Softcatala/mantinc-catalan-drift),
 executat localment amb lm-evaluation-harness.
 
-Les dades, la tasca lm-eval i l'avaluador fastText s'instal·len com una única
+Les dades, la tasca lm-eval i l'avaluador s'instal·len com una única
 dependència Git de Mantinc fixada a un commit concret; no cal tenir-ne un
 checkout local ni descarregar el dataset per separat:
 `uv run python model.py --benchmarks catalan_drift`.
@@ -175,8 +173,6 @@ export PATH="$PWD/build/bin:$PATH"
 llama-server --version
 ```
 
-L'script `../llama.cpp/server.sh` fa servir una configuració dinàmica comuna per a tots els models: `--n-gpu-layers auto --fit on --fit-target 1536`. Això ajusta automàticament les capes descarregades a la GPU i reserva 1,5 GiB de VRAM. Es pot sobreescriure amb les variables `N_GPU_LAYERS`, `FIT` i `FIT_TARGET`.
-
 Des de l'arrel del repositori, instal·la les dependències Python:
 
 ```bash
@@ -205,7 +201,7 @@ make llm-download-ggufs GGUF_DIR=models/gguf
 make llm-download-ggufs GGUF_DIR=models/gguf GGUF_MODELS="gemma3-12b salamandra-7b"
 ```
 
-El target llegeix `MODELS` de `llm/run_evals.py`, filtra els models locals GGUF i descarrega els fitxers al subdirectori indicat per `GGUF_DIR` (relatiu a l'arrel del repositori).
+El target llegeix `MODELS` de `llm/models_config.py`, filtra els models locals GGUF i descarrega els fitxers al subdirectori indicat per `GGUF_DIR` (relatiu a l'arrel del repositori).
 També escriu `presets.ini` al mateix directori, amb els ids de model que usa l'avaluador.
 
 **2. Engegar `llama-server`:**
@@ -224,7 +220,7 @@ uv run python run_evals.py --models gemma3-12b --n-samples 200
 uv run python run_evals.py --models gemma3-12b --benchmarks catcola flores
 ```
 
-Amb un sol `llama.cpp server`, l'orquestrador només permet un model local per execució; selecciona'l amb `--models`.
+Amb `presets.ini`, l'orquestrador permet avaluar diversos models per execució amb `--models`. Només `--server-model` requereix seleccionar exactament un model local.
 
 Si el servidor requereix un identificador de model concret:
 
@@ -257,11 +253,7 @@ cd asr
 uv sync
 ```
 
-Si vols avaluar models Omnilingual ASR, instal·la també:
-
-```bash
-uv pip install -e /path/to/omnilingual_asr
-```
+Per avaluar models Omnilingual ASR, cal instal·lar també el paquet `omnilingual_asr` a l'entorn d'ASR.
 
 ### Execució (ASR)
 
@@ -331,6 +323,7 @@ Volem expressar el nostre agraïment als proveïdors dels datasets usats en l'av
 - **[Projecte AINA](https://www.projecteaina.cat/)** (Barcelona Supercomputing Center) pels datasets [STS-ca](https://huggingface.co/datasets/projecte-aina/sts-ca), [VilaQuAD](https://huggingface.co/datasets/projecte-aina/vilaquad) i [CaSum](https://huggingface.co/datasets/projecte-aina/casum), que han fet possible l'avaluació de models en català.
 - **[nbel](https://huggingface.co/nbel)** pel dataset [CatCoLA](https://huggingface.co/datasets/nbel/CatCoLA), corpus d'acceptabilitat lingüística en català.
 - **[Google](https://ai.google/research/)** pel dataset [FLEURS](https://huggingface.co/datasets/google/fleurs) (Few-shot Learning Evaluation of Universal Representations of Speech), usat per avaluar models ASR en català.
+- **[Softcatalà — Mantinc](https://github.com/Softcatala/mantinc-catalan-drift)** pel dataset que avalua si els models mantenen les respostes en català davant de prompts que poden induir un canvi de llengua.
 - L'equip de **[lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)** pel motor d'avaluació usat en benchmarks generatius.
 - **[Meta AI](https://ai.meta.com/)** pel benchmark [FLORES+](https://huggingface.co/datasets/facebook/flores) de traducció automàtica.
 
