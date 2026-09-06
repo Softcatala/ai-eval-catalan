@@ -19,6 +19,7 @@ dependencies = [
     "es-core-news-sm",
     "xx-sent-ud-sm",
     "iso639-lang>=2.6.3",
+    "mantinc-catalan-drift",
 ]
 
 [project.scripts]
@@ -29,6 +30,7 @@ model-eval = "model:main"
 ignore = ["E402"]
 
 [tool.uv.sources]
+mantinc-catalan-drift = { git = "https://github.com/Softcatala/mantinc-catalan-drift.git", rev = "cff7c9765aceaf4ebe9e3e4d5cf9a432e44a580b" }
 ca-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/ca_core_news_sm-3.8.0/ca_core_news_sm-3.8.0-py3-none-any.whl" }
 es-core-news-sm = { url = "https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.8.0/es_core_news_sm-3.8.0-py3-none-any.whl" }
 xx-sent-ud-sm = { url = "https://github.com/explosion/spacy-models/releases/download/xx_sent_ud_sm-3.8.0/xx_sent_ud_sm-3.8.0-py3-none-any.whl" }

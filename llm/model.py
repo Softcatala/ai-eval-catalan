@@ -41,6 +41,9 @@ from pathlib import Path
 from comet_config import COMET_CHECKPOINT, drop_legacy_translation_metrics
 from inference import call_with_retries, chat_completion_params, lm_eval_params
 from model_specs import is_gguf_model
+from mantinc import DATASET_ID as MANTINC_DATASET_ID
+from mantinc import TASK_NAME as MANTINC_TASK_NAME
+from mantinc import task_path as mantinc_task_path
 
 from llamaserver import (
     LlamaServerModel,
@@ -51,7 +54,6 @@ from llamaserver import (
 os.environ.setdefault("HF_DATASETS_TRUST_REMOTE_CODE", "1")
 
 DEFAULT_LOCAL_SERVER_URL = "http://localhost:9090/v1"
-MANTINC_DATASET_ID = "softcatala/mantinc-catalan-drift"
 
 from datasets import load_dataset
 from sklearn.metrics import matthews_corrcoef
@@ -876,17 +878,11 @@ def run_ifeval(
 
 def run_catalan_drift(
     model_name: str,
-    mantinc_dir: Path,
     **kwargs,
 ) -> dict:
     """Run Mantinc's Catalan Drift task with lm-evaluation-harness."""
-    task_dir = mantinc_dir / "lm_eval_tasks"
-    task_config_path = task_dir / "catalan_drift" / "catalan_drift.yaml"
-    if not task_config_path.is_file():
-        raise FileNotFoundError(
-            "Catalan Drift needs a Mantinc checkout containing its lm-eval task. "
-            "Pass --mantinc-dir <checkout>."
-        )
+    task_dir = mantinc_task_path()
+    task_config_path = task_dir / MANTINC_TASK_NAME / f"{MANTINC_TASK_NAME}.yaml"
 
     from lm_eval.utils import load_yaml_config
 
@@ -896,18 +892,13 @@ def run_catalan_drift(
     revision = os.environ.get("MANTINC_DATASET_REVISION")
     task_config["dataset_kwargs"] = {"revision": revision} if revision else {}
 
-    cwd = Path.cwd()
-    try:
-        os.chdir(mantinc_dir)
-        return run_ifeval(
-            model_name,
-            task=task_config,
-            task_label="Mantinc",
-            include_path=task_dir,
-            **kwargs,
-        )
-    finally:
-        os.chdir(cwd)
+    return run_ifeval(
+        model_name,
+        task=task_config,
+        task_label="Mantinc",
+        include_path=task_dir,
+        **kwargs,
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -957,11 +948,6 @@ def main():
         ],
         default=["all"],
         help="Which benchmarks to run (default: all)",
-    )
-    parser.add_argument(
-        "--mantinc-dir",
-        type=Path,
-        help="Mantinc checkout containing the Catalan Drift lm-eval task and scorer",
     )
     parser.add_argument(
         "--n-samples",
@@ -1153,11 +1139,8 @@ def main():
 
         if "catalan_drift" in to_run:
             try:
-                if args.mantinc_dir is None:
-                    raise ValueError("--mantinc-dir is required for Catalan Drift")
                 results["benchmarks"]["catalan_drift"] = run_catalan_drift(
                     lm_eval_model_name,
-                    args.mantinc_dir,
                     base_url=lm_eval_base_url,
                     tokenizer=tokenizer_id,
                     n_samples=args.n_samples,

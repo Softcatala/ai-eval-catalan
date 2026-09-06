@@ -120,8 +120,9 @@ executat localment amb lm-evaluation-harness.
 
 Les dades es descarreguen de
 [`softcatala/mantinc-catalan-drift`](https://huggingface.co/datasets/softcatala/mantinc-catalan-drift).
-El checkout de Mantinc només aporta la tasca lm-eval i l'avaluador fastText:
-`uv run python model.py --benchmarks catalan_drift --mantinc-dir /camí/a/mantinc`.
+La tasca lm-eval i l'avaluador fastText s'instal·len com una dependència Git de
+Mantinc fixada a un commit concret; no cal tenir-ne un checkout local:
+`uv run python model.py --benchmarks catalan_drift`.
 Per fixar una versió concreta del dataset, definiu `MANTINC_DATASET_REVISION`
 amb una etiqueta o un hash de commit de Hugging Face.
 

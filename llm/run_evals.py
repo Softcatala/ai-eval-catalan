@@ -78,10 +78,6 @@ def main():
         ],
     )
     parser.add_argument(
-        "--mantinc-dir",
-        help="Mantinc checkout containing the Catalan Drift lm-eval task and scorer",
-    )
-    parser.add_argument(
         "--rerun-benchmarks",
         action="store_true",
         help="Run selected benchmarks even when an output JSON already exists",
@@ -207,9 +203,6 @@ def main():
 
         if model.get("needs_api_key"):
             cmd += ["--api-key", google_api_key]
-
-        if args.mantinc_dir:
-            cmd += ["--mantinc-dir", args.mantinc_dir]
 
         display_cmd = cmd.copy()
         if "--api-key" in display_cmd:
