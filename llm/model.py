@@ -41,7 +41,6 @@ from pathlib import Path
 from comet_config import COMET_CHECKPOINT, drop_legacy_translation_metrics
 from inference import call_with_retries, chat_completion_params, lm_eval_params
 from model_specs import is_gguf_model
-from mantinc import DATASET_ID as MANTINC_DATASET_ID
 from mantinc import TASK_NAME as MANTINC_TASK_NAME
 from mantinc import task_path as mantinc_task_path
 
@@ -882,19 +881,18 @@ def run_catalan_drift(
 ) -> dict:
     """Run Mantinc's Catalan Drift task with lm-evaluation-harness."""
     task_dir = mantinc_task_path()
-    task_config_path = task_dir / MANTINC_TASK_NAME / f"{MANTINC_TASK_NAME}.yaml"
-
-    from lm_eval.utils import load_yaml_config
-
-    task_config = load_yaml_config(yaml_path=task_config_path)
-    task_config["dataset_path"] = MANTINC_DATASET_ID
-    task_config["dataset_name"] = None
+    task: str | dict = MANTINC_TASK_NAME
     revision = os.environ.get("MANTINC_DATASET_REVISION")
-    task_config["dataset_kwargs"] = {"revision": revision} if revision else {}
+    if revision:
+        from lm_eval.utils import load_yaml_config
+
+        task_config_path = task_dir / MANTINC_TASK_NAME / f"{MANTINC_TASK_NAME}.yaml"
+        task = load_yaml_config(yaml_path=task_config_path)
+        task["dataset_kwargs"] = {"revision": revision}
 
     return run_ifeval(
         model_name,
-        task=task_config,
+        task=task,
         task_label="Mantinc",
         include_path=task_dir,
         **kwargs,
@@ -1065,6 +1063,20 @@ def main():
         )
         lm_eval_model_name = args.llama_server_model or args.model
         memory_gb = _estimate_memory_gb(args.params_b, args.model)
+        lm_eval_kwargs = {
+            "base_url": lm_eval_base_url,
+            "tokenizer": tokenizer_id,
+            "n_samples": args.n_samples,
+            "openai_model": args.openai_model if args.model == "openai" else None,
+            "gemini_model": args.gemini_model if args.model == "gemini" else None,
+            "gemini_api_key": args.api_key if args.model == "gemini" else None,
+            "openrouter_model": (args.openai_model if args.model == "claude" else None),
+            "openrouter_api_key": (
+                args.api_key or os.environ.get("OPENROUTER_API_KEY")
+                if args.model == "claude"
+                else None
+            ),
+        }
         results = {
             "model": model_label,
             "display_name": args.display_name,
@@ -1093,21 +1105,8 @@ def main():
             try:
                 results["benchmarks"]["flores"] = run_flores(
                     lm_eval_model_name,
-                    lm_eval_base_url,
-                    tokenizer_id,
-                    args.n_samples,
-                    openai_model=args.openai_model if args.model == "openai" else None,
-                    gemini_model=args.gemini_model if args.model == "gemini" else None,
-                    gemini_api_key=args.api_key if args.model == "gemini" else None,
-                    openrouter_model=args.openai_model
-                    if args.model == "claude"
-                    else None,
-                    openrouter_api_key=(
-                        args.api_key or os.environ.get("OPENROUTER_API_KEY")
-                    )
-                    if args.model == "claude"
-                    else None,
                     tasks=args.flores_tasks,
+                    **lm_eval_kwargs,
                 )
                 results["flores_comet_checkpoint"] = COMET_CHECKPOINT
             except Exception as e:
@@ -1118,20 +1117,7 @@ def main():
             try:
                 results["benchmarks"]["ifeval"] = run_ifeval(
                     lm_eval_model_name,
-                    lm_eval_base_url,
-                    tokenizer_id,
-                    args.n_samples,
-                    openai_model=args.openai_model if args.model == "openai" else None,
-                    gemini_model=args.gemini_model if args.model == "gemini" else None,
-                    gemini_api_key=args.api_key if args.model == "gemini" else None,
-                    openrouter_model=args.openai_model
-                    if args.model == "claude"
-                    else None,
-                    openrouter_api_key=(
-                        args.api_key or os.environ.get("OPENROUTER_API_KEY")
-                    )
-                    if args.model == "claude"
-                    else None,
+                    **lm_eval_kwargs,
                 )
             except Exception as e:
                 print(f"[warn] IFEval-ca failed: {e}")
@@ -1141,20 +1127,7 @@ def main():
             try:
                 results["benchmarks"]["catalan_drift"] = run_catalan_drift(
                     lm_eval_model_name,
-                    base_url=lm_eval_base_url,
-                    tokenizer=tokenizer_id,
-                    n_samples=args.n_samples,
-                    openai_model=args.openai_model if args.model == "openai" else None,
-                    gemini_model=args.gemini_model if args.model == "gemini" else None,
-                    gemini_api_key=args.api_key if args.model == "gemini" else None,
-                    openrouter_model=args.openai_model
-                    if args.model == "claude"
-                    else None,
-                    openrouter_api_key=(
-                        args.api_key or os.environ.get("OPENROUTER_API_KEY")
-                    )
-                    if args.model == "claude"
-                    else None,
+                    **lm_eval_kwargs,
                 )
             except Exception as e:
                 print(f"[warn] Catalan Drift failed: {e}")
