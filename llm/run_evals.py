@@ -27,6 +27,7 @@ except ImportError:
 
 SCRIPT_DIR = Path(__file__).parent
 
+
 def _llama_server_url_from_env() -> str | None:
     url = os.environ.get("LLAMA_SERVER_URL")
     if url:
@@ -158,9 +159,8 @@ def main():
 
         if args.llama_server_url and not model.get("cloud"):
             cmd += ["--llama-server-url", args.llama_server_url.rstrip("/")]
-            llama_server_model = (
-                args.llama_server_model
-                or arg_value(model.get("args", []), "--model")
+            llama_server_model = args.llama_server_model or arg_value(
+                model.get("args", []), "--model"
             )
             if llama_server_model:
                 cmd += ["--llama-server-model", llama_server_model]
