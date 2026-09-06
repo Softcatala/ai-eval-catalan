@@ -8,7 +8,7 @@ dependencies = [
     "transformers",
     "scikit-learn",
     "unbabel-comet>=2.2.0",
-    "lm-eval[api]",
+    "lm-eval[api]==0.4.12",
     "google-generativeai",
     "accelerate",
     "openai>=2.31.0",
