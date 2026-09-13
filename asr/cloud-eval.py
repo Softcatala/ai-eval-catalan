@@ -98,9 +98,9 @@ class GeminiASRWrapper:
         from google import genai
         from google.genai import types
 
-        api_key = os.environ.get("GOOGLE_API_KEY")
+        api_key = os.environ.get("GEMINI_API_KEY")
         if not api_key:
-            raise ValueError("GOOGLE_API_KEY environment variable is required")
+            raise ValueError("GEMINI_API_KEY environment variable is required")
         self.client = genai.Client(api_key=api_key)
         self.types = types
         self.model_name = model_name
@@ -262,6 +262,8 @@ def main():
         default=None,
         help="Output JSON file path",
     )
+    parser.add_argument("--params-b", type=float)
+    parser.add_argument("--memory-gb", type=float)
     parser.add_argument(
         "--list-models",
         action="store_true",
@@ -275,7 +277,7 @@ def main():
         print("\nOpenAI (OPENAI_API_KEY required):")
         for m in OPENAI_ASR_MODELS:
             print(f"  - {m}")
-        print("\nGemini (GOOGLE_API_KEY required):")
+        print("\nGemini (GEMINI_API_KEY required):")
         for m in GEMINI_ASR_MODELS:
             print(f"  - {m}")
         return

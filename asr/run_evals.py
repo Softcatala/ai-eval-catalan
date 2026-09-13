@@ -5,13 +5,17 @@ whose output JSON already exists.
 Usage:
   python run_evals.py
   python run_evals.py --device cuda
+  python run_evals.py --device cuda --jobs 2
   python run_evals.py --overwrite
 """
 
 import argparse
+import os
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from queue import Empty, Queue
 
 SCRIPT_DIR = Path(__file__).parent
 
@@ -130,9 +134,43 @@ MODELS = [
 ]
 
 
+def run_model(model, device, gpu_id=None):
+    output_path = SCRIPT_DIR / model["output"]
+    script = model.get("script", "hf-eval.py")
+    cmd = [sys.executable, "-u", script, *model["args"]]
+    env = os.environ.copy()
+
+    if script == "hf-eval.py":
+        cmd += ["--device", device]
+        if gpu_id is not None:
+            env["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+
+    cmd += ["--output", model["output"]]
+    location = f" on GPU {gpu_id}" if gpu_id is not None else ""
+    print(f"\n[RUN]{location} {model['label']}: {' '.join(cmd)}\n{'=' * 60}")
+    result = subprocess.run(cmd, cwd=SCRIPT_DIR, stdin=subprocess.DEVNULL, env=env)
+
+    if result.returncode != 0:
+        print(f"[ERROR] {model['label']} exited with code {result.returncode}")
+        return
+
+    print(f"[DONE] {model['label']} -> {output_path}")
+    subprocess.run(
+        [sys.executable, "-m", "asr.summarize_results"],
+        cwd=SCRIPT_DIR.parent,
+        stdin=subprocess.DEVNULL,
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description="Run ASR evals for all models")
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
+    parser.add_argument(
+        "--jobs",
+        type=int,
+        default=2,
+        help="Maximum concurrent local evaluations (default: 2)",
+    )
     parser.add_argument(
         "--overwrite",
         action="store_true",
@@ -140,11 +178,12 @@ def main():
     )
     args = parser.parse_args()
 
-    import os
-
+    if args.jobs < 1:
+        parser.error("--jobs must be at least 1")
     openai_api_key = os.environ.get("OPENAI_API_KEY")
-    google_api_key = os.environ.get("GOOGLE_API_KEY")
-    python = sys.executable
+    gemini_api_key = os.environ.get("GEMINI_API_KEY")
+    local_models = []
+    cloud_models = []
 
     for model in MODELS:
         output_path = SCRIPT_DIR / model["output"]
@@ -159,32 +198,51 @@ def main():
             )
             continue
 
-        if model.get("needs_google_api_key") and not google_api_key:
+        if model.get("needs_google_api_key") and not gemini_api_key:
             print(
-                f"[SKIP] {model['label']} — GOOGLE_API_KEY env var required but not set"
+                f"[SKIP] {model['label']} — GEMINI_API_KEY env var required but not set"
             )
             continue
 
-        script = model.get("script", "hf-eval.py")
-        cmd = [python, "-u", script, *model["args"]]
-
-        if script == "hf-eval.py":
-            cmd += ["--device", args.device]
-
-        cmd += ["--output", model["output"]]
-
-        print(f"\n[RUN] {model['label']}: {' '.join(cmd)}\n{'=' * 60}")
-        result = subprocess.run(cmd, cwd=SCRIPT_DIR, stdin=subprocess.DEVNULL)
-
-        if result.returncode != 0:
-            print(f"[ERROR] {model['label']} exited with code {result.returncode}")
+        if model.get("script", "hf-eval.py") == "cloud-eval.py":
+            cloud_models.append(model)
         else:
-            print(f"[DONE] {model['label']} -> {output_path}")
-            subprocess.run(
-                [python, "-m", "asr.summarize_results"],
-                cwd=SCRIPT_DIR.parent,
-                stdin=subprocess.DEVNULL,
-            )
+            local_models.append(model)
+
+    if args.device == "cuda":
+        import torch
+
+        gpu_count = torch.cuda.device_count()
+        if not gpu_count:
+            parser.error("--device cuda requested but no CUDA GPUs are available")
+        local_workers = min(args.jobs, gpu_count)
+        gpu_ids = range(local_workers)
+    else:
+        local_workers = args.jobs
+        gpu_ids = [None] * local_workers
+
+    local_queue = Queue()
+    for model in local_models:
+        local_queue.put(model)
+
+    def run_local_queue(gpu_id):
+        while True:
+            try:
+                model = local_queue.get_nowait()
+            except Empty:
+                return
+            run_model(model, args.device, gpu_id)
+
+    def run_cloud_queue():
+        for model in cloud_models:
+            run_model(model, args.device)
+
+    with ThreadPoolExecutor(max_workers=local_workers + bool(cloud_models)) as executor:
+        futures = [executor.submit(run_local_queue, gpu_id) for gpu_id in gpu_ids]
+        if cloud_models:
+            futures.append(executor.submit(run_cloud_queue))
+        for future in futures:
+            future.result()
 
 
 if __name__ == "__main__":

@@ -19,13 +19,12 @@ dependencies = [
     "google-genai",
 ]
 
+[dependency-groups]
+vibe = ["vibevoice"]
+
 [tool.uv]
 # omnilingual_asr is a local/private package not available on PyPI.
-# Install it separately before running: pip install -e /path/to/omnilingual_asr
-#
-# VibeVoice is also not on PyPI. Clone and install before using microsoft/VibeVoice-ASR:
-#   git clone https://github.com/microsoft/VibeVoice
-#   uv pip install -e VibeVoice
+# Install it separately before running: uv pip install -e /path/to/omnilingual_asr
 
 [[tool.uv.index]]
 name = "pytorch-cu124"
@@ -36,3 +35,4 @@ explicit = true
 torch = [{ index = "pytorch-cu124", marker = "sys_platform == 'linux'" }]
 torchaudio = [{ index = "pytorch-cu124", marker = "sys_platform == 'linux'" }]
 torchvision = [{ index = "pytorch-cu124", marker = "sys_platform == 'linux'" }]
+vibevoice = { path = "VibeVoice", editable = true }
