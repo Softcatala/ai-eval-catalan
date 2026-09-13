@@ -1,13 +1,14 @@
 {
   "model": "omniASR_CTC_1B",
-  "params_b": 1,
-  "memory_gb": 2,
+  "params_b": 1.0,
+  "memory_gb": 2.0,
+  "evaluated_at": "2026-09-13T05:42:06+00:00",
   "benchmarks": {
     "fleurs_ca": {
-      "wer": 0.1149,
-      "cer": 0.0359,
-      "rtf": 0.0039,
-      "n": 200
+      "wer": 0.1116,
+      "cer": 0.0341,
+      "rtf": 0.0517,
+      "n": 400
     }
   }
 }
