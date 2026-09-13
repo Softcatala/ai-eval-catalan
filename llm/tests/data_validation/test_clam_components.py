@@ -18,7 +18,7 @@ class ClamComponentsTest(unittest.TestCase):
     def test_all_result_files_have_every_clam_component(self):
         missing = []
 
-        for path in sorted(RESULTS_DIR.glob("results_*.json")):
+        for path in sorted(RESULTS_DIR.glob("*.json")):
             data = json.loads(path.read_text(encoding="utf-8"))
             metrics = extract_metrics(data)
             missing.extend(

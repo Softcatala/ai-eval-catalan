@@ -5,8 +5,8 @@ Evaluates Word Error Rate on FLEURS dataset for Catalan.
 Writes results to a JSON file with the same structure as llm/model.py.
 
 Usage:
-    python hf-eval.py whisper-small --output evals/results_whisper_small.json
-    python hf-eval.py omniASR_CTC_300M --device cuda --output evals/results_omni_ctc_300m.json
+    python hf-eval.py whisper-small --output evals/whisper_small.json
+    python hf-eval.py omniASR_CTC_300M --device cuda --output evals/omni_ctc_300m.json
     python hf-eval.py --list-models
 """
 
@@ -403,7 +403,7 @@ def main():
         "--output",
         type=str,
         default=None,
-        help="Output JSON file path (default: evals/results_<model>.json)",
+        help="Output JSON file path (default: evals/<model>.json)",
     )
     parser.add_argument("--params-b", type=float)
     parser.add_argument("--memory-gb", type=float)

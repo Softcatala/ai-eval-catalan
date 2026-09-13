@@ -20,7 +20,7 @@ def is_cloud(d) -> bool:
 
 def load_rows(results_dir: Path) -> list[dict]:
     rows = []
-    for p in sorted(results_dir.glob("results_*.json")):
+    for p in sorted(results_dir.glob("*.json")):
         d = json.loads(p.read_text())
         bench = d.get("benchmarks", {})
         xq = bench.get("xquad_ca_retrieval", {})

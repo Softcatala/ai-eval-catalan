@@ -5,7 +5,7 @@ import os
 MODELS = [
     {
         "display_name": "gemma3-4b-q2",
-        "output": "evals/results_gemma3_4b_q2.json",
+        "output": "evals/gemma3_4b_q2.json",
         "args": [
             "--model",
             "unsloth/gemma-3-4b-it-GGUF:Q2_K",
@@ -16,7 +16,7 @@ MODELS = [
     },
     {
         "display_name": "gemma3-4b",
-        "output": "evals/results_gemma3_4b_q4.json",
+        "output": "evals/gemma3_4b_q4.json",
         "args": [
             "--model",
             "unsloth/gemma-3-4b-it-GGUF:Q4_K_M",
@@ -26,7 +26,7 @@ MODELS = [
     },
     {
         "display_name": "gemma3-4b-q8",
-        "output": "evals/results_gemma3_4b_q8.json",
+        "output": "evals/gemma3_4b_q8.json",
         "args": [
             "--model",
             "unsloth/gemma-3-4b-it-GGUF:Q8_0",
@@ -37,7 +37,7 @@ MODELS = [
     },
     {
         "display_name": "gemma3-12b-q2",
-        "output": "evals/results_gemma3_12b_q2.json",
+        "output": "evals/gemma3_12b_q2.json",
         "args": [
             "--model",
             "unsloth/gemma-3-12b-it-GGUF:Q2_K",
@@ -48,7 +48,7 @@ MODELS = [
     },
     {
         "display_name": "gemma3-12b",
-        "output": "evals/results_gemma3_12b_q4.json",
+        "output": "evals/gemma3_12b_q4.json",
         "args": [
             "--model",
             "unsloth/gemma-3-12b-it-GGUF:Q4_K_M",
@@ -58,7 +58,7 @@ MODELS = [
     },
     {
         "display_name": "gemma3-12b-q8",
-        "output": "evals/results_gemma3_12b.json",
+        "output": "evals/gemma3_12b.json",
         "args": [
             "--model",
             "unsloth/gemma-3-12b-it-GGUF:Q8_0",
@@ -69,7 +69,7 @@ MODELS = [
     },
     {
         "display_name": "gemma3-27b-q2",
-        "output": "evals/results_gemma3_27b_q2.json",
+        "output": "evals/gemma3_27b_q2.json",
         "args": [
             "--model",
             "unsloth/gemma-3-27b-it-GGUF:Q2_K",
@@ -80,7 +80,7 @@ MODELS = [
     },
     {
         "display_name": "gemma3-27b",
-        "output": "evals/results_gemma3_27b_q4.json",
+        "output": "evals/gemma3_27b_q4.json",
         "args": [
             "--model",
             "unsloth/gemma-3-27b-it-GGUF:Q4_K_M",
@@ -90,7 +90,7 @@ MODELS = [
     },
     {
         "display_name": "gemma3-27b-q8",
-        "output": "evals/results_gemma3_27b.json",
+        "output": "evals/gemma3_27b.json",
         "args": [
             "--model",
             "unsloth/gemma-3-27b-it-GGUF:Q8_0",
@@ -101,7 +101,7 @@ MODELS = [
     },
     {
         "display_name": "mistral-small-24b",
-        "output": "evals/results_mistral_small_24b_q4.json",
+        "output": "evals/mistral_small_24b_q4.json",
         "args": [
             "--model",
             "unsloth/Mistral-Small-3.2-24B-Instruct-2506-GGUF:Q4_K_M",
@@ -111,7 +111,7 @@ MODELS = [
     },
     {
         "display_name": "ministral3-8b",
-        "output": "evals/results_ministral3_8b_q4.json",
+        "output": "evals/ministral3_8b_q4.json",
         "args": [
             "--model",
             "unsloth/Ministral-3-8B-Instruct-2512-GGUF:Q4_K_M",
@@ -121,7 +121,7 @@ MODELS = [
     },
     {
         "display_name": "ministral3-14b",
-        "output": "evals/results_ministral3_14b_q4.json",
+        "output": "evals/ministral3_14b_q4.json",
         "args": [
             "--model",
             "unsloth/Ministral-3-14B-Instruct-2512-GGUF:Q4_K_M",
@@ -131,14 +131,14 @@ MODELS = [
     },
     {
         "display_name": "qwen3-14b",
-        "output": "evals/results_qwen3_14b_q4.json",
+        "output": "evals/qwen3_14b_q4.json",
         "args": ["--model", "unsloth/Qwen3-14B-GGUF:Q4_K_M"],
         "params_b": 14.0,
         "quantization": "q4",
     },
     {
         "display_name": "phi-4-14b",
-        "output": "evals/results_phi4_q4.json",
+        "output": "evals/phi4_q4.json",
         "args": [
             "--model",
             "unsloth/phi-4-GGUF:Q4_K_M",
@@ -148,21 +148,21 @@ MODELS = [
     },
     {
         "display_name": "qwen3.5-9b",
-        "output": "evals/results_qwen3.5_9b_q4.json",
+        "output": "evals/qwen3.5_9b_q4.json",
         "args": ["--model", "unsloth/Qwen3.5-9B-GGUF:Q4_K_M"],
         "params_b": 9.0,
         "quantization": "q4",
     },
     {
         "display_name": "qwen3.8-27b",
-        "output": "evals/results_qwen3.8_27b.json",
+        "output": "evals/qwen3.8_27b.json",
         "args": ["--model", "unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_M"],
         "params_b": 27.0,
         "quantization": "q4",
     },
     {
         "display_name": "muse-glimmer-30b",
-        "output": "evals/results_muse_glimmer_30b_q4.json",
+        "output": "evals/muse_glimmer_30b_q4.json",
         "args": [
             "--model",
             "unsloth/Muse-Glimmer-30B-GGUF:UD-Q4_K_XL",
@@ -172,7 +172,7 @@ MODELS = [
     },
     {
         "display_name": "llama3.1-8b",
-        "output": "evals/results_llama3.1_8b_q4.json",
+        "output": "evals/llama3.1_8b_q4.json",
         "args": [
             "--model",
             "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M",
@@ -182,7 +182,7 @@ MODELS = [
     },
     {
         "display_name": "aya-expanse-8b",
-        "output": "evals/results_aya_expanse_8b_q4.json",
+        "output": "evals/aya_expanse_8b_q4.json",
         "args": [
             "--model",
             "bartowski/aya-expanse-8b-GGUF:Q4_K_M",
@@ -192,7 +192,7 @@ MODELS = [
     },
     {
         "display_name": "eurollm-9b",
-        "output": "evals/results_eurollm_9b_q4.json",
+        "output": "evals/eurollm_9b_q4.json",
         "args": [
             "--model",
             "bartowski/EuroLLM-9B-Instruct-GGUF:Q4_K_M",
@@ -202,7 +202,7 @@ MODELS = [
     },
     {
         "display_name": "salamandra-7b",
-        "output": "evals/results_salamandra_7b_fc_2607_q4_0.json",
+        "output": "evals/salamandra_7b_fc_2607_q4_0.json",
         "args": [
             "--model",
             "BSC-LT/salamandra-7b-fc-2607-GGUF:Q4_0",
@@ -212,7 +212,7 @@ MODELS = [
     },
     {
         "display_name": "gemma4-12b",
-        "output": "evals/results_gemma4_12b_q4.json",
+        "output": "evals/gemma4_12b_q4.json",
         "args": [
             "--model",
             "unsloth/gemma-4-12b-it-GGUF:Q4_K_M",
@@ -222,7 +222,7 @@ MODELS = [
     },
     {
         "display_name": "gemma4-e4b",
-        "output": "evals/results_gemma4_e4b_q4.json",
+        "output": "evals/gemma4_e4b_q4.json",
         "args": [
             "--model",
             "bartowski/google_gemma-4-E4B-it-GGUF:Q4_K_M",
@@ -232,7 +232,7 @@ MODELS = [
     },
     {
         "display_name": "gemma4-26b",
-        "output": "evals/results_gemma4_26b_q4.json",
+        "output": "evals/gemma4_26b_q4.json",
         "args": [
             "--model",
             "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q4_K_M",
@@ -242,7 +242,7 @@ MODELS = [
     },
     {
         "display_name": "gemini-3-1-preview",
-        "output": "evals/results_gemini_3_1_preview.json",
+        "output": "evals/gemini_3_1_preview.json",
         "args": [
             "--model",
             "gemini",
@@ -256,7 +256,7 @@ MODELS = [
     },
     {
         "display_name": "gemini-3-8-flash",
-        "output": "evals/results_gemini_3_8_flash.json",
+        "output": "evals/gemini_3_8_flash.json",
         "args": [
             "--model",
             "gemini",
@@ -270,7 +270,7 @@ MODELS = [
     },
     {
         "display_name": "gpt-5.4-mini",
-        "output": "evals/results_gpt_5_4_mini.json",
+        "output": "evals/gpt_5_4_mini.json",
         "args": [
             "--model",
             "openai",
@@ -284,7 +284,7 @@ MODELS = [
     },
     {
         "display_name": "gpt-6-astra",
-        "output": "evals/results_gpt_6_astra.json",
+        "output": "evals/gpt_6_astra.json",
         "args": [
             "--model",
             "openai",
@@ -298,7 +298,7 @@ MODELS = [
     },
     {
         "display_name": "claude-opus-4-7",
-        "output": "evals/results_claude_opus_4_7.json",
+        "output": "evals/claude_opus_4_7.json",
         "args": [
             "--model",
             "openai",
