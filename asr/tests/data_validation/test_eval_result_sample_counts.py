@@ -14,6 +14,7 @@ REQUIRED_FIELDS = {
     "benchmarks",
 }
 EXPECTED_SAMPLE_COUNT = 400
+PARLAMENT_BENCHMARK = "parlament_parla_v3"
 
 
 class EvalResultSampleCountsTest(unittest.TestCase):
@@ -39,4 +40,20 @@ class EvalResultSampleCountsTest(unittest.TestCase):
 
         self.assertFalse(
             incomplete, "Incomplete FLEURS evaluations:\n" + "\n".join(incomplete)
+        )
+
+    def test_parlament_results_use_all_samples(self):
+        incomplete = []
+        for path in sorted(RESULTS_DIR.glob("*.json")):
+            data = json.loads(path.read_text(encoding="utf-8"))
+            n = data.get("benchmarks", {}).get(PARLAMENT_BENCHMARK, {}).get("n")
+            if n != EXPECTED_SAMPLE_COUNT:
+                incomplete.append(
+                    f"{path.name}: {PARLAMENT_BENCHMARK} n={n}, "
+                    f"expected {EXPECTED_SAMPLE_COUNT}"
+                )
+
+        self.assertFalse(
+            incomplete,
+            "Incomplete ParlamentParla evaluations:\n" + "\n".join(incomplete),
         )
