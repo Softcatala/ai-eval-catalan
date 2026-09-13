@@ -22,7 +22,7 @@ import soundfile as sf
 import torch
 import torchaudio
 from jiwer import wer, cer
-from asr_eval_common import load_manifest, normalize_text
+from asr_eval_common import hardware_string, load_manifest, normalize_text
 from result_io import write_json
 from tqdm import tqdm
 
@@ -306,6 +306,7 @@ def main():
         "params_b": args.params_b,
         "memory_gb": args.memory_gb,
         "cloud": True,
+        "hardware": hardware_string("cloud"),
         "evaluated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "benchmarks": {
             "fleurs_ca": {

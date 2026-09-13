@@ -5,7 +5,14 @@ from pathlib import Path
 
 ASR_ROOT = Path(__file__).resolve().parents[2]
 RESULTS_DIR = ASR_ROOT / "evals"
-REQUIRED_FIELDS = {"model", "params_b", "memory_gb", "evaluated_at", "benchmarks"}
+REQUIRED_FIELDS = {
+    "model",
+    "params_b",
+    "memory_gb",
+    "hardware",
+    "evaluated_at",
+    "benchmarks",
+}
 EXPECTED_SAMPLE_COUNT = 400
 
 
