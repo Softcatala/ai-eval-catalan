@@ -1,13 +1,15 @@
 {
   "model": "gemma-4-E2B",
+  "hardware": "Tesla T4 15360 MiB",
   "params_b": 2.3,
   "memory_gb": 4.6,
+  "evaluated_at": "2026-09-12T18:53:39+00:00",
   "benchmarks": {
     "fleurs_ca": {
-      "wer": 0.2859,
-      "cer": 0.2179,
-      "rtf": 0.2638,
-      "n": 200
+      "wer": 0.2711,
+      "cer": 0.2088,
+      "rtf": 0.3471,
+      "n": 400
     }
   }
 }

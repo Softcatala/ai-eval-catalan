@@ -10,19 +10,20 @@ Usage:
 """
 
 import argparse
-import json
 import os
 import tempfile
 import time
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
 import soundfile as sf
 import torch
 import torchaudio
-from datasets import load_dataset
 from jiwer import wer, cer
+from asr_eval_common import hardware_string, load_manifest, normalize_text
+from result_io import write_json
 from tqdm import tqdm
 
 
@@ -34,6 +35,9 @@ class EvalResult:
     cer: float
     total_time: float
     avg_rtf: float
+
+
+DEFAULT_MANIFEST = Path(__file__).parent / "benchmarks/fleurs_ca_test_400/manifest.json"
 
 
 LANGUAGE_CONFIG = {
@@ -49,8 +53,8 @@ OPENAI_ASR_MODELS = [
 ]
 
 GEMINI_ASR_MODELS = [
-    "gemini-3.6-flash",
-    "gemini-3-pro-preview",
+    "gemini-3.8-flash",
+    "gemini-3.1-pro-preview",
 ]
 
 ALL_MODELS = OPENAI_ASR_MODELS + GEMINI_ASR_MODELS
@@ -94,9 +98,9 @@ class GeminiASRWrapper:
         from google import genai
         from google.genai import types
 
-        api_key = os.environ.get("GOOGLE_API_KEY")
+        api_key = os.environ.get("GEMINI_API_KEY")
         if not api_key:
-            raise ValueError("GOOGLE_API_KEY environment variable is required")
+            raise ValueError("GEMINI_API_KEY environment variable is required")
         self.client = genai.Client(api_key=api_key)
         self.types = types
         self.model_name = model_name
@@ -139,43 +143,23 @@ def load_model(model_name: str):
         raise ValueError(f"Unknown model: {model_name}. Available: {ALL_MODELS}")
 
 
-def normalize_text(text: str) -> str:
-    import re
-    import unicodedata
-
-    text = text.lower()
-    text = unicodedata.normalize("NFKC", text)
-    text = re.sub(r"[^\w\s]", "", text)
-    text = re.sub(r"\s+", " ", text).strip()
-    return text
-
-
 def evaluate_language(
     model,
     model_name: str,
-    lang_code: str,
-    num_samples: int,
+    manifest_path: Path,
     warmup: int = 3,
 ) -> EvalResult:
-    lang_config = LANGUAGE_CONFIG[lang_code]
-    locale = lang_config["fleurs_locale"]
+    manifest = load_manifest(manifest_path)
+    lang_config = LANGUAGE_CONFIG["ca"]
     model_lang = lang_config["lang"]
 
     print(f"\n{'=' * 60}")
-    print(f"Evaluating {lang_config['name']} ({lang_code}) on FLEURS")
+    print(f"Evaluating {lang_config['name']} (ca) on FLEURS")
     print(f"Model: {model_name} | Lang code: {model_lang}")
+    print(f"Manifest: {manifest_path} ({manifest['sha256'][:12]})")
     print(f"{'=' * 60}")
 
-    print(f"Loading FLEURS dataset for {lang_config['name']} (streaming)...")
-    dataset = load_dataset(
-        "google/fleurs",
-        locale,
-        split="test",
-        streaming=True,
-        trust_remote_code=True,
-    )
-
-    print(f"Evaluating on {num_samples} samples...")
+    print(f"Evaluating {len(manifest['records'])} local samples...")
 
     references = []
     hypotheses = []
@@ -184,26 +168,21 @@ def evaluate_language(
     processed = 0
     start_time = time.time()
 
-    resampler = torchaudio.transforms.Resample(48000, 16000)
-
     with torch.no_grad():
-        for sample in tqdm(
-            dataset, desc=f"Processing {lang_config['name']}", total=num_samples
+        for record in tqdm(
+            manifest["records"], desc=f"Processing {lang_config['name']}"
         ):
-            if processed >= num_samples:
-                break
-
             try:
-                reference = sample["transcription"]
-                audio_array = sample["audio"]["array"]
-                sample_rate = sample["audio"]["sampling_rate"]
+                audio_path = manifest_path.parent / record["audio"]
+                audio_array, sample_rate = sf.read(audio_path, dtype="float32")
+                if audio_array.ndim == 2:
+                    audio_array = audio_array.mean(axis=1)
                 duration = len(audio_array) / sample_rate
 
                 waveform = torch.tensor(audio_array, dtype=torch.float32)
 
                 if sample_rate != 16000:
-                    if sample_rate != 48000:
-                        resampler = torchaudio.transforms.Resample(sample_rate, 16000)
+                    resampler = torchaudio.transforms.Resample(sample_rate, 16000)
                     waveform = resampler(waveform.unsqueeze(0)).squeeze(0)
                     sample_rate = 16000
 
@@ -215,7 +194,7 @@ def evaluate_language(
                     rtf = (inference_end - inference_start) / duration
                     rtfs.append(rtf)
 
-                ref_normalized = normalize_text(reference)
+                ref_normalized = normalize_text(record["reference"])
                 hyp_normalized = normalize_text(hypothesis)
 
                 if ref_normalized:
@@ -272,10 +251,10 @@ def main():
         nargs="?",
     )
     parser.add_argument(
-        "--num_samples",
-        type=int,
-        default=200,
-        help="Number of samples to evaluate (default: 200)",
+        "--manifest",
+        type=Path,
+        default=DEFAULT_MANIFEST,
+        help="Local manifest created by dataset_preparation.py",
     )
     parser.add_argument(
         "--output",
@@ -283,6 +262,8 @@ def main():
         default=None,
         help="Output JSON file path",
     )
+    parser.add_argument("--params-b", type=float)
+    parser.add_argument("--memory-gb", type=float)
     parser.add_argument(
         "--list-models",
         action="store_true",
@@ -296,7 +277,7 @@ def main():
         print("\nOpenAI (OPENAI_API_KEY required):")
         for m in OPENAI_ASR_MODELS:
             print(f"  - {m}")
-        print("\nGemini (GOOGLE_API_KEY required):")
+        print("\nGemini (GEMINI_API_KEY required):")
         for m in GEMINI_ASR_MODELS:
             print(f"  - {m}")
         return
@@ -316,8 +297,7 @@ def main():
     result = evaluate_language(
         model=model,
         model_name=args.model,
-        lang_code="ca",
-        num_samples=args.num_samples,
+        manifest_path=args.manifest,
     )
 
     elapsed = time.time() - t_start
@@ -325,7 +305,11 @@ def main():
 
     results = {
         "model": args.model,
+        "params_b": args.params_b,
+        "memory_gb": args.memory_gb,
         "cloud": True,
+        "hardware": hardware_string("cloud"),
+        "evaluated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "benchmarks": {
             "fleurs_ca": {
                 "wer": round(result.wer, 4),
@@ -337,9 +321,7 @@ def main():
     }
 
     if output_path:
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(results, f, ensure_ascii=False, indent=2)
+        write_json(output_path, results)
         print(f"\nResults saved to: {output_path}")
 
     print(f"\n{'=' * 60}")

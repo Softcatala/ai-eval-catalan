@@ -11,17 +11,19 @@ Usage:
 """
 
 import argparse
-import json
 import time
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, Protocol
 
 import numpy as np
+import soundfile as sf
 import torch
 import torchaudio
-from datasets import load_dataset
 from jiwer import wer, cer
+from asr_eval_common import hardware_string, load_manifest, normalize_text
+from result_io import write_json
 from tqdm import tqdm
 
 
@@ -29,10 +31,14 @@ from tqdm import tqdm
 class EvalResult:
     language: str
     num_samples: int
+    num_errors: int
     wer: float
     cer: float
     total_time: float
     avg_rtf: float  # Real-Time Factor (processing_time / audio_duration)
+
+
+DEFAULT_MANIFEST = Path(__file__).parent / "benchmarks/fleurs_ca_test_400/manifest.json"
 
 
 # Language configuration: FLEURS locale -> model lang codes
@@ -69,7 +75,7 @@ WHISPER_MODELS = [
 ]
 
 VIBEVOICE_MODELS = [
-    "microsoft/VibeVoice-ASR",
+    "microsoft/VibeVoice-ASR-HF",
 ]
 
 GEMMA_MODELS = [
@@ -142,75 +148,25 @@ class WhisperWrapper:
 
 class VibeVoiceWrapper:
     def __init__(self, model_name: str, device: str):
-        from vibevoice.modular.modeling_vibevoice_asr import (
-            VibeVoiceASRForConditionalGeneration,
-        )
-        from vibevoice.processor.vibevoice_asr_processor import VibeVoiceASRProcessor
+        from transformers import AutoProcessor, VibeVoiceAsrForConditionalGeneration
 
-        self.processor = VibeVoiceASRProcessor.from_pretrained(
-            model_name,
-            language_model_pretrained_name="Qwen/Qwen2.5-7B",
+        self.processor = AutoProcessor.from_pretrained(model_name)
+        self.model = VibeVoiceAsrForConditionalGeneration.from_pretrained(
+            model_name, dtype=torch.bfloat16, device_map="auto"
         )
-        self.model = VibeVoiceASRForConditionalGeneration.from_pretrained(
-            model_name,
-            dtype=torch.bfloat16,
-            attn_implementation="eager",
-            trust_remote_code=True,
-        ).to(device)
         self.model.eval()
-        self.device = device
-        self.model_name = model_name
 
     def transcribe(self, waveform: torch.Tensor, sample_rate: int, lang: str) -> str:
-        target_sr = self.processor.target_sample_rate
-        if sample_rate != target_sr:
-            resampler = torchaudio.transforms.Resample(sample_rate, target_sr)
-            waveform = resampler(waveform.unsqueeze(0)).squeeze(0)
-
-        inputs = self.processor(
-            audio=[waveform.numpy()],
-            sampling_rate=target_sr,
-            return_tensors="pt",
-            padding=True,
-            add_generation_prompt=True,
-            context_info="The audio is in Catalan language.",
+        inputs = self.processor.apply_transcription_request(audio=waveform.numpy()).to(
+            self.model.device, torch.bfloat16
         )
-        inputs = {
-            k: v.to(self.device) if isinstance(v, torch.Tensor) else v
-            for k, v in inputs.items()
-        }
-
         with torch.no_grad():
-            output_ids = self.model.generate(
-                **inputs,
-                max_new_tokens=512,
-                pad_token_id=self.processor.pad_id,
-                eos_token_id=self.processor.tokenizer.eos_token_id,
-                do_sample=False,
-            )
+            output_ids = self.model.generate(**inputs, max_new_tokens=512)
 
         input_length = inputs["input_ids"].shape[1]
-        generated_ids = output_ids[0, input_length:]
-        eos_pos = (generated_ids == self.processor.tokenizer.eos_token_id).nonzero(
-            as_tuple=True
+        return self.processor.decode(
+            output_ids[:, input_length:], return_format="transcription_only"
         )[0]
-        if len(eos_pos) > 0:
-            generated_ids = generated_ids[: eos_pos[0] + 1]
-        raw_text = self.processor.decode(generated_ids, skip_special_tokens=True)
-
-        PLACEHOLDERS = {"[Silence]", "[Unintelligible Speech]", "[noise]", "[music]"}
-        try:
-            segments = self.processor.post_process_transcription(raw_text)
-            if segments:
-                texts = [
-                    seg.get("text", "")
-                    for seg in segments
-                    if seg.get("text", "") not in PLACEHOLDERS
-                ]
-                return " ".join(texts).strip()
-        except Exception:
-            pass
-        return raw_text
 
 
 class Gemma4Wrapper:
@@ -304,27 +260,14 @@ def load_model(model_name: str, device: str) -> ASRModel:
         raise ValueError(f"Unknown model: {model_name}. Available: {ALL_MODELS}")
 
 
-def normalize_text(text: str) -> str:
-    import re
-    import unicodedata
-
-    text = text.lower()
-    text = unicodedata.normalize("NFKC", text)
-    text = re.sub(r"[^\w\s]", "", text)
-    text = re.sub(r"\s+", " ", text).strip()
-    return text
-
-
 def evaluate_language(
     model: ASRModel,
     model_name: str,
-    lang_code: str,
-    num_samples: int,
-    max_duration: float = 40.0,
+    manifest_path: Path,
     warmup: int = 3,
 ) -> EvalResult:
-    lang_config = LANGUAGE_CONFIG[lang_code]
-    locale = lang_config["fleurs_locale"]
+    manifest = load_manifest(manifest_path)
+    lang_config = LANGUAGE_CONFIG["ca"]
 
     if model_name in OMNILINGUAL_MODELS:
         model_lang = lang_config["omni_lang"]
@@ -332,20 +275,12 @@ def evaluate_language(
         model_lang = lang_config["whisper_lang"]
 
     print(f"\n{'=' * 60}")
-    print(f"Evaluating {lang_config['name']} ({lang_code}) on FLEURS")
+    print(f"Evaluating {lang_config['name']} (ca) on FLEURS")
     print(f"Model: {model_name} | Lang code: {model_lang}")
+    print(f"Manifest: {manifest_path} ({manifest['sha256'][:12]})")
     print(f"{'=' * 60}")
 
-    print(f"Loading FLEURS dataset for {lang_config['name']} (streaming)...")
-    dataset = load_dataset(
-        "google/fleurs",
-        locale,
-        split="test",
-        streaming=True,
-        trust_remote_code=True,
-    )
-
-    print(f"Evaluating on {num_samples} samples...")
+    print(f"Evaluating {len(manifest['records'])} local samples...")
 
     references = []
     hypotheses = []
@@ -354,42 +289,42 @@ def evaluate_language(
     processed = 0
     start_time = time.time()
 
-    resampler = torchaudio.transforms.Resample(48000, 16000)
-
     with torch.no_grad():
-        for sample in tqdm(
-            dataset, desc=f"Processing {lang_config['name']}", total=num_samples
+        for record in tqdm(
+            manifest["records"], desc=f"Processing {lang_config['name']}"
         ):
-            if processed >= num_samples:
-                break
-
             try:
-                reference = sample["transcription"]
-                audio_array = sample["audio"]["array"]
-                sample_rate = sample["audio"]["sampling_rate"]
+                audio_path = manifest_path.parent / record["audio"]
+                audio_array, sample_rate = sf.read(audio_path, dtype="float32")
+                if audio_array.ndim == 2:
+                    audio_array = audio_array.mean(axis=1)
                 duration = len(audio_array) / sample_rate
-
-                if duration > max_duration:
-                    skipped += 1
-                    continue
-
                 waveform = torch.tensor(audio_array, dtype=torch.float32)
 
                 if sample_rate != 16000:
-                    if sample_rate != 48000:
-                        resampler = torchaudio.transforms.Resample(sample_rate, 16000)
+                    resampler = torchaudio.transforms.Resample(sample_rate, 16000)
                     waveform = resampler(waveform.unsqueeze(0)).squeeze(0)
                     sample_rate = 16000
 
+                if (
+                    torch.cuda.is_available()
+                    and getattr(model, "device", None) == "cuda"
+                ):
+                    torch.cuda.synchronize()
                 inference_start = time.perf_counter()
                 hypothesis = model.transcribe(waveform, sample_rate, model_lang)
+                if (
+                    torch.cuda.is_available()
+                    and getattr(model, "device", None) == "cuda"
+                ):
+                    torch.cuda.synchronize()
                 inference_end = time.perf_counter()
 
                 if processed >= warmup:
                     rtf = (inference_end - inference_start) / duration
                     rtfs.append(rtf)
 
-                ref_normalized = normalize_text(reference)
+                ref_normalized = normalize_text(record["reference"])
                 hyp_normalized = normalize_text(hypothesis)
 
                 if ref_normalized:
@@ -422,6 +357,7 @@ def evaluate_language(
     result = EvalResult(
         language=lang_config["name"],
         num_samples=len(references),
+        num_errors=skipped,
         wer=word_error_rate,
         cer=char_error_rate,
         total_time=total_time,
@@ -458,10 +394,10 @@ def main():
         help="Device to run inference on (default: cpu)",
     )
     parser.add_argument(
-        "--num_samples",
-        type=int,
-        default=200,
-        help="Number of samples to evaluate (default: 200)",
+        "--manifest",
+        type=Path,
+        default=DEFAULT_MANIFEST,
+        help="Local manifest created by dataset_preparation.py",
     )
     parser.add_argument(
         "--output",
@@ -469,6 +405,8 @@ def main():
         default=None,
         help="Output JSON file path (default: evals/results_<model>.json)",
     )
+    parser.add_argument("--params-b", type=float)
+    parser.add_argument("--memory-gb", type=float)
     parser.add_argument(
         "--list-models",
         action="store_true",
@@ -506,15 +444,10 @@ def main():
     t_start = time.time()
     model = load_model(args.model, args.device)
 
-    max_duration = (
-        Gemma4Wrapper.MAX_AUDIO_DURATION if args.model in GEMMA_MODELS else 40.0
-    )
     result = evaluate_language(
         model=model,
         model_name=args.model,
-        lang_code="ca",
-        num_samples=args.num_samples,
-        max_duration=max_duration,
+        manifest_path=args.manifest,
     )
 
     elapsed = time.time() - t_start
@@ -522,20 +455,23 @@ def main():
 
     results = {
         "model": args.model,
+        "params_b": args.params_b,
+        "memory_gb": args.memory_gb,
+        "hardware": hardware_string(args.device),
+        "evaluated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "benchmarks": {
             "fleurs_ca": {
                 "wer": round(result.wer, 4),
                 "cer": round(result.cer, 4),
-                "rtf": round(result.avg_rtf, 4),
-                "n": result.num_samples,
+                **({"rtf": round(result.avg_rtf, 4)} if args.device == "cuda" else {}),
+                "n": result.num_samples + result.num_errors,
+                **({"num_errors": result.num_errors} if result.num_errors else {}),
             }
         },
     }
 
     if output_path:
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(results, f, ensure_ascii=False, indent=2)
+        write_json(output_path, results)
         print(f"\nResults saved to: {output_path}")
 
     print(f"\n{'=' * 60}")

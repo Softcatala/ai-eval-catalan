@@ -1,13 +1,15 @@
 {
   "model": "whisper-small",
+  "hardware": "Tesla T4 15360 MiB",
   "params_b": 0.244,
   "memory_gb": 0.49,
+  "evaluated_at": "2026-09-12T17:01:40+00:00",
   "benchmarks": {
     "fleurs_ca": {
-      "wer": 0.1312,
-      "cer": 0.0424,
-      "rtf": 0.0711,
-      "n": 200
+      "wer": 0.1255,
+      "cer": 0.0403,
+      "rtf": 0.074,
+      "n": 400
     }
   }
 }

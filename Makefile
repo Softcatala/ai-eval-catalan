@@ -26,7 +26,7 @@ unit-test:
 	cd llm && PYTHONPATH=.. uv run --with pytest python -m pytest tests --ignore=tests/data_validation
 
 data-validation:
-	cd llm && PYTHONPATH=.. uv run --with pytest python -m pytest tests/data_validation
+	cd llm && PYTHONPATH=.. uv run --with pytest python -m pytest --import-mode=importlib tests/data_validation ../asr/tests/data_validation
 
 llm-download-ggufs:
 	cd llm && uv run python download_ggufs.py --output-dir "$(abspath $(GGUF_DIR))" --presets-file "$(abspath $(GGUF_DIR))/presets.ini" $(if $(GGUF_MODELS),--models $(GGUF_MODELS),) $(if $(GGUF_INCLUDE_QUANTIZED_ANALYSIS),--include-quantized-analysis,)

@@ -1,13 +1,15 @@
 {
   "model": "omniASR_CTC_3B",
+  "hardware": "Tesla T4 15360 MiB",
   "params_b": 3.0,
   "memory_gb": 6.0,
+  "evaluated_at": "2026-09-13T05:59:03+00:00",
   "benchmarks": {
     "fleurs_ca": {
-      "wer": 0.0976,
-      "cer": 0.0298,
-      "rtf": 0.0048,
-      "n": 200
+      "wer": 0.0944,
+      "cer": 0.028,
+      "rtf": 0.1444,
+      "n": 400
     }
   }
 }
