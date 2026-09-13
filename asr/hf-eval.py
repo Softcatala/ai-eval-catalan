@@ -35,7 +35,6 @@ class EvalResult:
     cer: float
     total_time: float
     avg_rtf: float  # Real-Time Factor (processing_time / audio_duration)
-    utterances: list[dict]
 
 
 DEFAULT_MANIFEST = Path(__file__).parent / "benchmarks/fleurs_ca_test_400/manifest.json"
@@ -337,7 +336,6 @@ def evaluate_language(
     rtfs = []
     skipped = 0
     processed = 0
-    utterances = []
     start_time = time.time()
 
     with torch.no_grad():
@@ -383,18 +381,6 @@ def evaluate_language(
                     hypotheses.append(hyp_normalized)
 
                 processed += 1
-                utterances.append(
-                    {
-                        "id": record["id"],
-                        "duration_s": record["duration_s"],
-                        "reference": record["reference"],
-                        "hypothesis_raw": hypothesis,
-                        "reference_normalized": ref_normalized,
-                        "hypothesis_normalized": hyp_normalized,
-                        "latency_s": round(inference_end - inference_start, 6),
-                        "status": "ok",
-                    }
-                )
 
                 del waveform, audio_array
 
@@ -404,9 +390,6 @@ def evaluate_language(
             except Exception as e:
                 print(f"\nError processing sample: {e}")
                 skipped += 1
-                utterances.append(
-                    {"id": record["id"], "status": "error", "error": str(e)}
-                )
                 continue
 
     total_time = time.time() - start_time
@@ -427,7 +410,6 @@ def evaluate_language(
         cer=char_error_rate,
         total_time=total_time,
         avg_rtf=avg_rtf,
-        utterances=utterances,
     )
 
     print(f"\nResults for {lang_config['name']}:")
