@@ -2,13 +2,13 @@
 """Download a fixed, local FLEURS Catalan evaluation set."""
 
 import argparse
-import hashlib
-import json
 from pathlib import Path
 
 import numpy as np
 import soundfile as sf
 from datasets import load_dataset
+
+from benchmark_preparation import prepare_output, write_manifest
 
 
 REVISION = "a3c817cbf7c08863e0c472861c7c39e27ce7f38e"
@@ -24,14 +24,10 @@ def main():
     args = parser.parse_args()
 
     output = args.output_dir
-    audio_dir = output / "audio"
-    if output.exists() and (
-        (output / "manifest.json").exists()
-        or any(path != audio_dir for path in output.iterdir())
-        or (audio_dir.exists() and any(audio_dir.iterdir()))
-    ):
-        parser.error(f"{output} already exists")
-    audio_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        audio_dir = prepare_output(output)
+    except ValueError as error:
+        parser.error(str(error))
 
     records = []
     dataset = load_dataset(
@@ -71,14 +67,7 @@ def main():
         },
         "records": records,
     }
-    payload["sha256"] = hashlib.sha256(
-        json.dumps(
-            payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")
-        ).encode()
-    ).hexdigest()
-    (output / "manifest.json").write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
-    )
+    write_manifest(output, payload)
     print(f"Wrote {len(records)} clips to {output}")
 
 
