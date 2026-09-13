@@ -3,6 +3,10 @@
 Aquest repositori conté eines per avaluar les capacitats de models de llenguatge gran (LLM) i de reconeixement automàtic de la parla (ASR), amb focus especial en la llengua catalana.
 Els resultats estan compartits a https://www.softcatala.org/ia-local/models-en-catala/
 
+## Vols que avaluem un model?
+
+[Obre un issue](https://github.com/Softcatala/ai-eval-catalan/issues/new) indicant l'URL de Hugging Face del model, el tipus (LLM, ASR o embeddings) i per què és rellevant per al català.
+
 ## Estructura del projecte
 
 ```
