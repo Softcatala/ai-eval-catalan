@@ -3,12 +3,18 @@
   "hardware": "Tesla T4 15360 MiB",
   "params_b": 1.6,
   "memory_gb": 3.26,
-  "evaluated_at": "2026-09-13T06:16:41+00:00",
+  "evaluated_at": "2026-09-13T16:14:56+00:00",
   "benchmarks": {
     "fleurs_ca": {
       "wer": 0.1068,
       "cer": 0.0353,
       "rtf": 0.3173,
+      "n": 400
+    },
+    "parlament_parla_v3": {
+      "wer": 0.2849,
+      "cer": 0.1317,
+      "rtf": 0.4255,
       "n": 400
     }
   }

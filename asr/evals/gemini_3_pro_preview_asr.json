@@ -4,13 +4,19 @@
   "memory_gb": null,
   "cloud": true,
   "hardware": null,
-  "evaluated_at": "2026-09-13T08:01:55+00:00",
+  "evaluated_at": "2026-09-13T16:43:02+00:00",
   "benchmarks": {
     "fleurs_ca": {
       "wer": 0.0456,
       "cer": 0.027,
       "rtf": null,
       "n": 400
+    },
+    "parlament_parla_v3": {
+      "wer": 0.1509,
+      "cer": 0.0939,
+      "rtf": null,
+      "n": 399
     }
   }
 }

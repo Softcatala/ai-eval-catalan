@@ -235,7 +235,7 @@ class Gemma4Wrapper:
             response = self.processor.decode(
                 outputs[0][input_len:], skip_special_tokens=False
             )
-            parsed = self.processor.parse_response(response)
+            parsed = self.processor.parse_response(response, prefix="")
             if isinstance(parsed, dict):
                 return parsed.get("text", parsed.get("transcription", str(parsed)))
             return parsed
