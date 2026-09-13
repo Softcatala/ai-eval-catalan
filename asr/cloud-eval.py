@@ -55,7 +55,7 @@ OPENAI_ASR_MODELS = [
 
 GEMINI_ASR_MODELS = [
     "gemini-3.8-flash",
-    "gemini-3-pro-preview",
+    "gemini-3.1-pro-preview",
 ]
 
 ALL_MODELS = OPENAI_ASR_MODELS + GEMINI_ASR_MODELS
