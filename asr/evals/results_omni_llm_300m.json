@@ -1,5 +1,6 @@
 {
   "model": "omniASR_LLM_300M",
+  "hardware": "Tesla T4 15360 MiB",
   "params_b": 1.6,
   "memory_gb": 3.26,
   "evaluated_at": "2026-09-13T06:16:41+00:00",
