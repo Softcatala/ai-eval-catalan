@@ -117,8 +117,12 @@ def main():
             "model": f"(*) {r['model']}" if r.get("cloud", False) else r["model"],
             "repo_url": r["repo_url"],
             "cloud": r.get("cloud", False),
-            "params_b": r.get("params_b"),
-            "memory_gb": r.get("memory_gb"),
+            "params_b": round(r["params_b"], 1)
+            if r.get("params_b") is not None
+            else None,
+            "memory_gb": round(r["memory_gb"], 1)
+            if r.get("memory_gb") is not None
+            else None,
             **{k: round(r[k], 4) if r.get(k) is not None else None for k in METRICS},
         }
         for r in rows
