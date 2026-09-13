@@ -440,6 +440,7 @@ def main():
         )
 
     output_path = Path(args.output) if args.output else None
+    benchmark_key = load_manifest(args.manifest).get("benchmark", {}).get("key", "fleurs_ca")
 
     t_start = time.time()
     model = load_model(args.model, args.device)
@@ -460,7 +461,7 @@ def main():
         "hardware": hardware_string(args.device),
         "evaluated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "benchmarks": {
-            "fleurs_ca": {
+            benchmark_key: {
                 "wer": round(result.wer, 4),
                 "cer": round(result.cer, 4),
                 **({"rtf": round(result.avg_rtf, 4)} if args.device == "cuda" else {}),

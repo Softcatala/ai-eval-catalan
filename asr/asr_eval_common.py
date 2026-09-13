@@ -27,6 +27,8 @@ def load_manifest(path: Path) -> dict:
         raise ValueError(f"manifest hash mismatch: {path}")
     if not data.get("records"):
         raise ValueError(f"manifest contains no records: {path}")
+    if data.get("dataset", {}).get("path") == "projecte-aina/parlament_parla_v3":
+        data.setdefault("benchmark", {"key": "parlament_parla_v3", "label": "ParlamentParla v3"})
     return {**data, "sha256": expected}
 
 
