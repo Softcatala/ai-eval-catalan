@@ -33,8 +33,28 @@
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
-            "wer": 0.0309,
-            "cer": 0.0154,
+            "wer": 0.0284,
+            "cer": 0.0134,
+            "rtf": null
+        },
+        {
+            "model": "(*) gemini-3.8-flash",
+            "repo_url": "https://ai.google.dev/gemini-api/docs/models",
+            "cloud": true,
+            "params_b": null,
+            "memory_gb": null,
+            "wer": 0.0343,
+            "cer": 0.0192,
+            "rtf": null
+        },
+        {
+            "model": "(*) gemini-3.1-pro-preview",
+            "repo_url": "https://ai.google.dev/gemini-api/docs/models",
+            "cloud": true,
+            "params_b": null,
+            "memory_gb": null,
+            "wer": 0.0456,
+            "cer": 0.027,
             "rtf": null
         },
         {
@@ -43,9 +63,9 @@
             "cloud": false,
             "params_b": 1.55,
             "memory_gb": 3.1,
-            "wer": 0.0441,
-            "cer": 0.0146,
-            "rtf": 0.1659
+            "wer": 0.0482,
+            "cer": 0.0171,
+            "rtf": 0.2297
         },
         {
             "model": "whisper-large-v3-turbo",
@@ -53,29 +73,9 @@
             "cloud": false,
             "params_b": 0.809,
             "memory_gb": 1.62,
-            "wer": 0.0476,
-            "cer": 0.0153,
-            "rtf": 0.0343
-        },
-        {
-            "model": "(*) gemini-3-pro-preview",
-            "repo_url": "https://ai.google.dev/gemini-api/docs/models",
-            "cloud": true,
-            "params_b": null,
-            "memory_gb": null,
-            "wer": 0.0487,
-            "cer": 0.031,
-            "rtf": null
-        },
-        {
-            "model": "(*) gemini-3.6-flash",
-            "repo_url": "https://ai.google.dev/gemini-api/docs/models",
-            "cloud": true,
-            "params_b": null,
-            "memory_gb": null,
-            "wer": 0.0545,
-            "cer": 0.0256,
-            "rtf": null
+            "wer": 0.0505,
+            "cer": 0.0173,
+            "rtf": 0.0543
         },
         {
             "model": "projecte-aina/whisper-large-v3-ca-3catparla",
@@ -83,9 +83,9 @@
             "cloud": false,
             "params_b": 1.55,
             "memory_gb": 3.1,
-            "wer": 0.0633,
-            "cer": 0.034,
-            "rtf": 0.161
+            "wer": 0.0619,
+            "cer": 0.0339,
+            "rtf": 0.3651
         },
         {
             "model": "whisper-medium",
@@ -93,9 +93,9 @@
             "cloud": false,
             "params_b": 0.769,
             "memory_gb": 1.54,
-            "wer": 0.0711,
-            "cer": 0.0245,
-            "rtf": 0.1289
+            "wer": 0.074,
+            "cer": 0.0244,
+            "rtf": 0.1531
         },
         {
             "model": "omniASR_CTC_3B",
@@ -103,19 +103,9 @@
             "cloud": false,
             "params_b": 3.0,
             "memory_gb": 6.0,
-            "wer": 0.0976,
-            "cer": 0.0298,
-            "rtf": 0.0048
-        },
-        {
-            "model": "microsoft/VibeVoice-ASR",
-            "repo_url": "https://huggingface.co/microsoft/VibeVoice-ASR",
-            "cloud": false,
-            "params_b": 9.0,
-            "memory_gb": 18.0,
-            "wer": 0.0984,
-            "cer": 0.0469,
-            "rtf": 0.0
+            "wer": 0.0944,
+            "cer": 0.028,
+            "rtf": 0.1444
         },
         {
             "model": "omniASR_LLM_300M",
@@ -123,9 +113,9 @@
             "cloud": false,
             "params_b": 1.6,
             "memory_gb": 3.26,
-            "wer": 0.1093,
-            "cer": 0.0382,
-            "rtf": 0.2123
+            "wer": 0.1068,
+            "cer": 0.0353,
+            "rtf": 0.3173
         },
         {
             "model": "omniASR_CTC_1B",
@@ -133,9 +123,9 @@
             "cloud": false,
             "params_b": 1.0,
             "memory_gb": 2.0,
-            "wer": 0.1149,
-            "cer": 0.0359,
-            "rtf": 0.0039
+            "wer": 0.1116,
+            "cer": 0.0341,
+            "rtf": 0.0517
         },
         {
             "model": "whisper-small",
@@ -143,9 +133,9 @@
             "cloud": false,
             "params_b": 0.244,
             "memory_gb": 0.49,
-            "wer": 0.1312,
-            "cer": 0.0424,
-            "rtf": 0.0711
+            "wer": 0.1255,
+            "cer": 0.0403,
+            "rtf": 0.074
         },
         {
             "model": "omniASR_CTC_300M",
@@ -153,19 +143,19 @@
             "cloud": false,
             "params_b": 0.3,
             "memory_gb": 0.6,
-            "wer": 0.2023,
-            "cer": 0.054,
-            "rtf": 0.0027
+            "wer": 0.2011,
+            "cer": 0.0537,
+            "rtf": 0.0206
         },
         {
             "model": "gemma-4-E4B",
             "repo_url": "https://huggingface.co/google/gemma-4-E4B-it",
             "cloud": false,
             "params_b": 4.5,
-            "memory_gb": 9.0,
-            "wer": 0.2385,
-            "cer": 0.199,
-            "rtf": 0.3284
+            "memory_gb": 9,
+            "wer": 0.2304,
+            "cer": 0.1964,
+            "rtf": 3.5222
         },
         {
             "model": "whisper-base",
@@ -173,9 +163,9 @@
             "cloud": false,
             "params_b": 0.074,
             "memory_gb": 0.15,
-            "wer": 0.2431,
-            "cer": 0.0793,
-            "rtf": 0.0414
+            "wer": 0.2501,
+            "cer": 0.0823,
+            "rtf": 0.0435
         },
         {
             "model": "gemma-4-E2B",
@@ -183,9 +173,9 @@
             "cloud": false,
             "params_b": 2.3,
             "memory_gb": 4.6,
-            "wer": 0.2859,
-            "cer": 0.2179,
-            "rtf": 0.2638
+            "wer": 0.2711,
+            "cer": 0.2088,
+            "rtf": 0.3471
         },
         {
             "model": "whisper-tiny",
@@ -194,8 +184,18 @@
             "params_b": 0.039,
             "memory_gb": 0.08,
             "wer": 0.3806,
-            "cer": 0.1328,
-            "rtf": 0.0326
+            "cer": 0.1385,
+            "rtf": 0.0325
+        },
+        {
+            "model": "microsoft/VibeVoice-ASR-HF",
+            "repo_url": "https://huggingface.co/microsoft/VibeVoice-ASR-HF",
+            "cloud": false,
+            "params_b": 9.0,
+            "memory_gb": 18.0,
+            "wer": 0.7695,
+            "cer": 0.5168,
+            "rtf": 0.5181
         }
     ]
 }
