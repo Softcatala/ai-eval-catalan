@@ -1,0 +1,14 @@
+{
+  "model": "gemini-3.8-flash",
+  "hardware": null,
+  "cloud": true,
+  "evaluated_at": "2026-09-12T18:17:40+00:00",
+  "benchmarks": {
+    "fleurs_ca": {
+      "wer": 0.0343,
+      "cer": 0.0192,
+      "rtf": null,
+      "n": 400
+    }
+  }
+}
