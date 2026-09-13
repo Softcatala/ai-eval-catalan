@@ -267,7 +267,7 @@ uv run python hf-eval.py --list-models
 
 ```bash
 uv run python hf-eval.py whisper-large-v3 --device cuda --num_samples 500
-uv run python hf-eval.py whisper-small --output evals/results_whisper_small.json
+uv run python hf-eval.py whisper-small --output evals/whisper_small.json
 ```
 
 

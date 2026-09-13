@@ -5,7 +5,7 @@ Evaluates Word Error Rate on FLEURS dataset for Catalan.
 Writes results to a JSON file with the same structure as hf-eval.py.
 
 Usage:
-    python cloud-eval.py gpt-4o-transcribe --output evals/results_gpt4o_transcribe.json
+    python cloud-eval.py gpt-4o-transcribe --output evals/gpt4o_transcribe.json
     python cloud-eval.py --list-models
 """
 

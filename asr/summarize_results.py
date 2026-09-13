@@ -32,7 +32,7 @@ METRICS = ["wer", "cer", "rtf"]
 
 def load_results(results_dir: Path) -> list[dict]:
     rows = []
-    for path in sorted(results_dir.glob("results_*.json")):
+    for path in sorted(results_dir.glob("*.json")):
         try:
             with open(path) as f:
                 data = json.load(f)
