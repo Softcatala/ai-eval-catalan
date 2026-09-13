@@ -3,7 +3,7 @@ Orchestrator script: runs model.py for each model, skipping those
 whose output JSON already exists.
 
 Models:
-  - google/gemma-3-1b-it -> results_gemma3_1b.json
+  - google/gemma-3-1b-it -> gemma3_1b.json
 
 Usage:
   python run_evals.py --models gemma3-12b

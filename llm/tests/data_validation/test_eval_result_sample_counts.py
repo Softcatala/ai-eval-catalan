@@ -30,8 +30,7 @@ EXPECTED_SAMPLE_COUNTS = {
 
 def result_files():
     return sorted(
-        str(path.relative_to(ROOT))
-        for path in (ROOT / "llm" / "evals").glob("results_*.json")
+        str(path.relative_to(ROOT)) for path in (ROOT / "llm" / "evals").glob("*.json")
     )
 
 

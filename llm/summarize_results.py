@@ -24,9 +24,9 @@ SCRIPT_DIR = Path(__file__).parent
 
 
 def discover_result_files(results_dir: Path) -> list[tuple[str, Path]]:
-    """Find all results_*.json files and return (model_label, path) pairs."""
+    """Find all *.json files and return (model_label, path) pairs."""
     entries = []
-    for path in sorted(results_dir.glob("results_*.json")):
+    for path in sorted(results_dir.glob("*.json")):
         try:
             with open(path) as f:
                 data = json.load(f)

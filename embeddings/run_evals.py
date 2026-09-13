@@ -135,11 +135,7 @@ OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
 GOOGLE_KEY = os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")
 
 for m in MODELS:
-    out = (
-        SCRIPT_DIR
-        / "evals"
-        / f"results_{m['name'].replace('-', '_').replace('.', '_')}.json"
-    )
+    out = SCRIPT_DIR / "evals" / f"{m['name'].replace('-', '_').replace('.', '_')}.json"
 
     # Gate cloud models behind an explicit opt-in and key presence.
     if m.get("cloud"):

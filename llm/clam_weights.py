@@ -29,7 +29,7 @@ def label(key):
 
 def load_rows(results_dir):
     rows = []
-    for path in sorted(results_dir.glob("results_*.json")):
+    for path in sorted(results_dir.glob("*.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
         metrics = extract_metrics(data)
         components = {

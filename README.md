@@ -302,8 +302,8 @@ uv run python model.py --model "<nom_model>" --output evals/<nom_model>.json
 **Avaluar amb l'API d'OpenAI o Google:**
 
 ```bash
-uv run python model.py --cloud-provider openai --model text-embedding-3-large --output evals/results_openai_text_embedding_3_large.json
-uv run python model.py --cloud-provider google --model gemini-embedding-001 --output evals/results_google_gemini_embedding_001.json
+uv run python model.py --cloud-provider openai --model text-embedding-3-large --output evals/openai_text_embedding_3_large.json
+uv run python model.py --cloud-provider google --model gemini-embedding-001 --output evals/google_gemini_embedding_001.json
 ```
 
 **Executar l'orquestrador per a múltiples models:**
