@@ -1,5 +1,6 @@
 {
   "model": "gemma-4-E4B",
+  "hardware": "Tesla T4 15360 MiB",
   "params_b": 4.5,
   "memory_gb": 9,
   "evaluated_at": "2026-09-12T22:19:21+00:00",

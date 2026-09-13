@@ -1,5 +1,6 @@
 {
   "model": "projecte-aina/whisper-large-v3-ca-3catparla",
+  "hardware": "Tesla T4 15360 MiB",
   "params_b": 1.55,
   "memory_gb": 3.1,
   "evaluated_at": "2026-09-12T18:10:21+00:00",

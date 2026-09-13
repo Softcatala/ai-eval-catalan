@@ -1,5 +1,6 @@
 {
   "model": "gpt-4o-transcribe",
+  "hardware": null,
   "cloud": true,
   "evaluated_at": "2026-09-12T16:58:56+00:00",
   "benchmarks": {
