@@ -1,13 +1,16 @@
 {
-  "model": "microsoft/VibeVoice-ASR",
-  "params_b": 9,
-  "memory_gb": 18,
+  "model": "microsoft/VibeVoice-ASR-HF",
+  "params_b": 9.0,
+  "memory_gb": 18.0,
+  "hardware": "Tesla T4 15360 MiB",
+  "evaluated_at": "2026-09-13T10:52:16+00:00",
   "benchmarks": {
     "fleurs_ca": {
-      "wer": 0.0984,
-      "cer": 0.0469,
-      "rtf": 0,
-      "n": 200
+      "wer": 0.7695,
+      "cer": 0.5168,
+      "rtf": 0.5181,
+      "n": 400,
+      "num_errors": 22
     }
   }
 }

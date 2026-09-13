@@ -93,7 +93,7 @@ MODELS = [
     },
     {
         "label": "vibevoice",
-        "args": ["microsoft/VibeVoice-ASR"],
+        "args": ["microsoft/VibeVoice-ASR-HF"],
         "output": "evals/results_vibevoice.json",
     },
     {

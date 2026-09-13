@@ -31,6 +31,7 @@ from tqdm import tqdm
 class EvalResult:
     language: str
     num_samples: int
+    num_errors: int
     wer: float
     cer: float
     total_time: float
@@ -74,7 +75,7 @@ WHISPER_MODELS = [
 ]
 
 VIBEVOICE_MODELS = [
-    "microsoft/VibeVoice-ASR",
+    "microsoft/VibeVoice-ASR-HF",
 ]
 
 GEMMA_MODELS = [
@@ -147,75 +148,25 @@ class WhisperWrapper:
 
 class VibeVoiceWrapper:
     def __init__(self, model_name: str, device: str):
-        from vibevoice.modular.modeling_vibevoice_asr import (
-            VibeVoiceASRForConditionalGeneration,
-        )
-        from vibevoice.processor.vibevoice_asr_processor import VibeVoiceASRProcessor
+        from transformers import AutoProcessor, VibeVoiceAsrForConditionalGeneration
 
-        self.processor = VibeVoiceASRProcessor.from_pretrained(
-            model_name,
-            language_model_pretrained_name="Qwen/Qwen2.5-7B",
+        self.processor = AutoProcessor.from_pretrained(model_name)
+        self.model = VibeVoiceAsrForConditionalGeneration.from_pretrained(
+            model_name, dtype=torch.bfloat16, device_map="auto"
         )
-        self.model = VibeVoiceASRForConditionalGeneration.from_pretrained(
-            model_name,
-            dtype=torch.bfloat16,
-            attn_implementation="eager",
-            trust_remote_code=True,
-        ).to(device)
         self.model.eval()
-        self.device = device
-        self.model_name = model_name
 
     def transcribe(self, waveform: torch.Tensor, sample_rate: int, lang: str) -> str:
-        target_sr = self.processor.target_sample_rate
-        if sample_rate != target_sr:
-            resampler = torchaudio.transforms.Resample(sample_rate, target_sr)
-            waveform = resampler(waveform.unsqueeze(0)).squeeze(0)
-
-        inputs = self.processor(
-            audio=[waveform.numpy()],
-            sampling_rate=target_sr,
-            return_tensors="pt",
-            padding=True,
-            add_generation_prompt=True,
-            context_info="The audio is in Catalan language.",
+        inputs = self.processor.apply_transcription_request(audio=waveform.numpy()).to(
+            self.model.device, torch.bfloat16
         )
-        inputs = {
-            k: v.to(self.device) if isinstance(v, torch.Tensor) else v
-            for k, v in inputs.items()
-        }
-
         with torch.no_grad():
-            output_ids = self.model.generate(
-                **inputs,
-                max_new_tokens=512,
-                pad_token_id=self.processor.pad_id,
-                eos_token_id=self.processor.tokenizer.eos_token_id,
-                do_sample=False,
-            )
+            output_ids = self.model.generate(**inputs, max_new_tokens=512)
 
         input_length = inputs["input_ids"].shape[1]
-        generated_ids = output_ids[0, input_length:]
-        eos_pos = (generated_ids == self.processor.tokenizer.eos_token_id).nonzero(
-            as_tuple=True
+        return self.processor.decode(
+            output_ids[:, input_length:], return_format="transcription_only"
         )[0]
-        if len(eos_pos) > 0:
-            generated_ids = generated_ids[: eos_pos[0] + 1]
-        raw_text = self.processor.decode(generated_ids, skip_special_tokens=True)
-
-        PLACEHOLDERS = {"[Silence]", "[Unintelligible Speech]", "[noise]", "[music]"}
-        try:
-            segments = self.processor.post_process_transcription(raw_text)
-            if segments:
-                texts = [
-                    seg.get("text", "")
-                    for seg in segments
-                    if seg.get("text", "") not in PLACEHOLDERS
-                ]
-                return " ".join(texts).strip()
-        except Exception:
-            pass
-        return raw_text
 
 
 class Gemma4Wrapper:
@@ -406,6 +357,7 @@ def evaluate_language(
     result = EvalResult(
         language=lang_config["name"],
         num_samples=len(references),
+        num_errors=skipped,
         wer=word_error_rate,
         cer=char_error_rate,
         total_time=total_time,
@@ -511,8 +463,9 @@ def main():
             "fleurs_ca": {
                 "wer": round(result.wer, 4),
                 "cer": round(result.cer, 4),
-                "rtf": round(result.avg_rtf, 4),
-                "n": result.num_samples,
+                **({"rtf": round(result.avg_rtf, 4)} if args.device == "cuda" else {}),
+                "n": result.num_samples + result.num_errors,
+                **({"num_errors": result.num_errors} if result.num_errors else {}),
             }
         },
     }
