@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 WER Evaluation Script for a single ASR model.
-Evaluates Word Error Rate on FLEURS dataset for Catalan.
+Evaluates Word Error Rate on FLEURS and OpenSLR-69 Catalan datasets.
 Writes results to a JSON file with the same structure as llm/model.py.
 
 Usage:
@@ -11,6 +11,7 @@ Usage:
 """
 
 import argparse
+import json
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -39,6 +40,11 @@ class EvalResult:
 
 
 DEFAULT_MANIFEST = Path(__file__).parent / "benchmarks/fleurs_ca_test_400/manifest.json"
+OPENSLR69_MANIFEST = Path(__file__).parent / "benchmarks/openslr69_ca_eval_400/manifest.json"
+BENCHMARKS = {
+    "fleurs": ("fleurs_ca", DEFAULT_MANIFEST),
+    "openslr69": ("openslr69_ca", OPENSLR69_MANIFEST),
+}
 
 
 # Language configuration: FLEURS locale -> model lang codes
@@ -275,7 +281,10 @@ def evaluate_language(
         model_lang = lang_config["whisper_lang"]
 
     print(f"\n{'=' * 60}")
-    print(f"Evaluating {lang_config['name']} (ca) on FLEURS")
+    print(
+        f"Evaluating {lang_config['name']} (ca) on "
+        f"{manifest.get('benchmark', {}).get('label', 'custom benchmark')}"
+    )
     print(f"Model: {model_name} | Lang code: {model_lang}")
     print(f"Manifest: {manifest_path} ({manifest['sha256'][:12]})")
     print(f"{'=' * 60}")
@@ -378,7 +387,7 @@ def evaluate_language(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Evaluate a single ASR model on FLEURS and write a JSON results file"
+        description="Evaluate a single ASR model on Catalan benchmarks and write a JSON results file"
     )
     parser.add_argument(
         "model",
@@ -396,8 +405,14 @@ def main():
     parser.add_argument(
         "--manifest",
         type=Path,
-        default=DEFAULT_MANIFEST,
-        help="Local manifest created by dataset_preparation.py",
+        default=None,
+        help="Custom local manifest (cannot be combined with --benchmark)",
+    )
+    parser.add_argument(
+        "--benchmark",
+        choices=["all", *BENCHMARKS],
+        default="all",
+        help="Benchmark to run (default: all)",
     )
     parser.add_argument(
         "--output",
@@ -439,16 +454,41 @@ def main():
             f"Unknown model '{args.model}'. Use --list-models to see available options."
         )
 
+    if args.manifest and args.benchmark != "all":
+        parser.error("--manifest cannot be combined with --benchmark")
+    if args.manifest:
+        manifests = [(None, args.manifest)]
+    elif args.benchmark == "all":
+        manifests = list(BENCHMARKS.values())
+    else:
+        manifests = [BENCHMARKS[args.benchmark]]
+    for _, manifest_path in manifests:
+        if not manifest_path.exists():
+            parser.error(f"Missing manifest: {manifest_path}. Prepare that benchmark first.")
+
     output_path = Path(args.output) if args.output else None
 
     t_start = time.time()
     model = load_model(args.model, args.device)
 
-    result = evaluate_language(
-        model=model,
-        model_name=args.model,
-        manifest_path=args.manifest,
-    )
+    benchmark_results = {}
+    for benchmark_key, manifest_path in manifests:
+        result = evaluate_language(
+            model=model,
+            model_name=args.model,
+            manifest_path=manifest_path,
+        )
+        if benchmark_key is None:
+            benchmark_key = load_manifest(manifest_path).get("benchmark", {}).get(
+                "key", "custom"
+            )
+        benchmark_results[benchmark_key] = {
+            "wer": round(result.wer, 4),
+            "cer": round(result.cer, 4),
+            **({"rtf": round(result.avg_rtf, 4)} if args.device == "cuda" else {}),
+            "n": result.num_samples + result.num_errors,
+            **({"num_errors": result.num_errors} if result.num_errors else {}),
+        }
 
     elapsed = time.time() - t_start
     elapsed_str = time.strftime("%H:%M:%S", time.gmtime(elapsed))
@@ -459,18 +499,15 @@ def main():
         "memory_gb": args.memory_gb,
         "hardware": hardware_string(args.device),
         "evaluated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "benchmarks": {
-            "fleurs_ca": {
-                "wer": round(result.wer, 4),
-                "cer": round(result.cer, 4),
-                **({"rtf": round(result.avg_rtf, 4)} if args.device == "cuda" else {}),
-                "n": result.num_samples + result.num_errors,
-                **({"num_errors": result.num_errors} if result.num_errors else {}),
-            }
-        },
+        "benchmarks": benchmark_results,
     }
 
     if output_path:
+        if output_path.exists():
+            previous = json.loads(output_path.read_text(encoding="utf-8"))
+            previous.update({key: value for key, value in results.items() if key != "benchmarks"})
+            previous.setdefault("benchmarks", {}).update(benchmark_results)
+            results = previous
         write_json(output_path, results)
         print(f"\nResults saved to: {output_path}")
 
@@ -478,10 +515,10 @@ def main():
     print("  SUMMARY")
     print(f"{'=' * 60}")
     print(f"  Model      : {args.model}")
-    print(f"  WER        : {result.wer:.2%}")
-    print(f"  CER        : {result.cer:.2%}")
-    print(f"  RTF        : {result.avg_rtf:.3f}")
-    print(f"  Samples    : {result.num_samples}")
+    for benchmark_key, metric in benchmark_results.items():
+        print(f"  {benchmark_key} WER : {metric['wer']:.2%}")
+        print(f"  {benchmark_key} CER : {metric['cer']:.2%}")
+        print(f"  {benchmark_key} N   : {metric['n']}")
     print(f"  Total time : {elapsed_str}")
     print(f"{'=' * 60}\n")
 

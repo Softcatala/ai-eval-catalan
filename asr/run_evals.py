@@ -10,6 +10,7 @@ Usage:
 """
 
 import argparse
+import json
 import os
 import subprocess
 import sys
@@ -134,10 +135,10 @@ MODELS = [
 ]
 
 
-def run_model(model, device, gpu_id=None):
+def run_model(model, device, benchmark, gpu_id=None):
     output_path = SCRIPT_DIR / model["output"]
     script = model.get("script", "hf-eval.py")
-    cmd = [sys.executable, "-u", script, *model["args"]]
+    cmd = [sys.executable, "-u", script, *model["args"], "--benchmark", benchmark]
     env = os.environ.copy()
 
     if script == "hf-eval.py":
@@ -166,6 +167,12 @@ def main():
     parser = argparse.ArgumentParser(description="Run ASR evals for all models")
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
     parser.add_argument(
+        "--benchmark",
+        choices=["all", "fleurs", "openslr69"],
+        default="all",
+        help="Benchmark to run (default: all)",
+    )
+    parser.add_argument(
         "--jobs",
         type=int,
         default=2,
@@ -185,12 +192,23 @@ def main():
     local_models = []
     cloud_models = []
 
+    required_benchmarks = {
+        "all": {"fleurs_ca", "openslr69_ca"},
+        "fleurs": {"fleurs_ca"},
+        "openslr69": {"openslr69_ca"},
+    }[args.benchmark]
+
     for model in MODELS:
         output_path = SCRIPT_DIR / model["output"]
 
         if output_path.exists() and not args.overwrite:
-            print(f"[SKIP] {model['label']} — {output_path} already exists")
-            continue
+            try:
+                completed = set(json.loads(output_path.read_text()).get("benchmarks", {}))
+            except (OSError, json.JSONDecodeError):
+                completed = set()
+            if required_benchmarks <= completed:
+                print(f"[SKIP] {model['label']} — requested benchmarks already exist")
+                continue
 
         if model.get("needs_openai_api_key") and not openai_api_key:
             print(
@@ -231,11 +249,11 @@ def main():
                 model = local_queue.get_nowait()
             except Empty:
                 return
-            run_model(model, args.device, gpu_id)
+            run_model(model, args.device, args.benchmark, gpu_id)
 
     def run_cloud_queue():
         for model in cloud_models:
-            run_model(model, args.device)
+            run_model(model, args.device, args.benchmark)
 
     with ThreadPoolExecutor(max_workers=local_workers + bool(cloud_models)) as executor:
         futures = [executor.submit(run_local_queue, gpu_id) for gpu_id in gpu_ids]
