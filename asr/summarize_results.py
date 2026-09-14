@@ -22,12 +22,15 @@ COLUMN_LABELS = {
     "model": "Model",
     "params_b": "Paràmetres (B)",
     "memory_gb": "Memòria (GB)",
-    "wer": "WER",
-    "cer": "CER",
+    "weighted_wer": "WER combinat",
+    "wer": "WER Fleurs",
+    "cer": "CER Fleurs",
+    "openslr_wer": "WER OpenSLR",
+    "openslr_cer": "CER OpenSLR",
     "rtf": "RTF",
 }
 
-METRICS = ["wer", "cer", "rtf"]
+METRICS = ["weighted_wer", "wer", "cer", "openslr_wer", "openslr_cer", "rtf"]
 
 
 def load_results(results_dir: Path) -> list[dict]:
@@ -37,6 +40,14 @@ def load_results(results_dir: Path) -> list[dict]:
             with open(path) as f:
                 data = json.load(f)
             fleurs = data.get("benchmarks", {}).get("fleurs_ca", {})
+            openslr = data.get("benchmarks", {}).get("openslr69_ca", {})
+            fleurs_wer, fleurs_n = fleurs.get("wer"), fleurs.get("n")
+            openslr_wer, openslr_n = openslr.get("wer"), openslr.get("n")
+            weighted_wer = None
+            if None not in (fleurs_wer, fleurs_n, openslr_wer, openslr_n):
+                weighted_wer = (fleurs_wer * fleurs_n + openslr_wer * openslr_n) / (
+                    fleurs_n + openslr_n
+                )
             rows.append(
                 {
                     "model": data.get("model", path.stem),
@@ -44,8 +55,11 @@ def load_results(results_dir: Path) -> list[dict]:
                     "cloud": data.get("cloud", False),
                     "params_b": data.get("params_b"),
                     "memory_gb": data.get("memory_gb"),
-                    "wer": fleurs.get("wer"),
+                    "weighted_wer": weighted_wer,
+                    "wer": fleurs_wer,
                     "cer": fleurs.get("cer"),
+                    "openslr_wer": openslr_wer,
+                    "openslr_cer": openslr.get("cer"),
                     "rtf": fleurs.get("rtf"),
                     "n": fleurs.get("n"),
                 }
@@ -78,11 +92,16 @@ def main():
         print("No result files found.")
         return
 
-    rows.sort(key=lambda r: r["wer"] if r["wer"] is not None else 9999)
+    rows.sort(
+        key=lambda r: r["weighted_wer"] if r["weighted_wer"] is not None else 9999
+    )
 
     # ── Console table ─────────────────────────────────────────────────────────
     label_w = max(len(r["model"]) for r in rows) + 2
-    header = f"{'Model':<{label_w}}{'WER':>10}{'CER':>10}{'RTF':>10}{'Real-time':>12}{'N':>6}"
+    header = (
+        f"{'Model':<{label_w}}{'WER combinat':>14}{'WER Fleurs':>12}{'CER Fleurs':>12}"
+        f"{'WER OpenSLR':>13}{'CER OpenSLR':>13}{'RTF':>10}{'Real-time':>12}{'N':>6}"
+    )
     sep = "-" * len(header)
 
     print(f"\nASR Results — FLEURS Catalan ({len(rows)} model(s))")
@@ -93,7 +112,10 @@ def main():
         rt = f"{1 / r['rtf']:.1f}x" if r["rtf"] else "—"
         n = str(r["n"]) if r["n"] else "—"
         print(
-            f"{r['model']:<{label_w}}{fmt_pct(r['wer']):>10}{fmt_pct(r['cer']):>10}{fmt(r['rtf']):>10}{rt:>12}{n:>6}"
+            f"{r['model']:<{label_w}}{fmt_pct(r['weighted_wer']):>14}"
+            f"{fmt_pct(r['wer']):>12}{fmt_pct(r['cer']):>12}"
+            f"{fmt_pct(r['openslr_wer']):>13}{fmt_pct(r['openslr_cer']):>13}"
+            f"{fmt(r['rtf']):>10}{rt:>12}{n:>6}"
         )
     print(sep)
 
@@ -117,12 +139,12 @@ def main():
             "model": f"(*) {r['model']}" if r.get("cloud", False) else r["model"],
             "repo_url": r["repo_url"],
             "cloud": r.get("cloud", False),
-            "params_b": round(r["params_b"], 1)
-            if r.get("params_b") is not None
-            else None,
-            "memory_gb": round(r["memory_gb"], 1)
-            if r.get("memory_gb") is not None
-            else None,
+            "params_b": (
+                round(r["params_b"], 1) if r.get("params_b") is not None else None
+            ),
+            "memory_gb": (
+                round(r["memory_gb"], 1) if r.get("memory_gb") is not None else None
+            ),
             **{k: round(r[k], 4) if r.get(k) is not None else None for k in METRICS},
         }
         for r in rows

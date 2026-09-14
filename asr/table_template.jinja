@@ -15,7 +15,7 @@
 {% for row in rows %}
 <tr>
 <td>{% if row.cloud %}<b>{{ row.model }}</b>{% else %}{{ row.model }}{% endif %}</td>
-{% for col in cols %}<td>{% if col in ('wer', 'cer') %}{{ row[col] | fmt_dec_pct }}{% else %}{{ row[col] | fmt }}{% endif %}</td>{% endfor %}
+{% for col in cols %}<td>{% if col in ('weighted_wer', 'wer', 'cer', 'openslr_wer', 'openslr_cer') %}{{ row[col] | fmt_dec_pct }}{% else %}{{ row[col] | fmt }}{% endif %}</td>{% endfor %}
 </tr>
 {% endfor %}
 </tbody>

@@ -9,6 +9,12 @@
       "cer": 0.0192,
       "rtf": null,
       "n": 400
+    },
+    "openslr69_ca": {
+      "wer": 0.0571,
+      "cer": 0.0355,
+      "rtf": null,
+      "n": 400
     }
   },
   "params_b": null,
