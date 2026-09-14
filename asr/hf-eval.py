@@ -440,7 +440,9 @@ def main():
         )
 
     output_path = Path(args.output) if args.output else None
-    benchmark_key = load_manifest(args.manifest).get("benchmark", {}).get("key", "fleurs_ca")
+    benchmark_key = (
+        load_manifest(args.manifest).get("benchmark", {}).get("key", "fleurs_ca")
+    )
 
     t_start = time.time()
     model = load_model(args.model, args.device)
