@@ -45,9 +45,9 @@ def load_results(results_dir: Path) -> list[dict]:
             openslr_wer, openslr_n = openslr.get("wer"), openslr.get("n")
             weighted_wer = None
             if None not in (fleurs_wer, fleurs_n, openslr_wer, openslr_n):
-                weighted_wer = (
-                    fleurs_wer * fleurs_n + openslr_wer * openslr_n
-                ) / (fleurs_n + openslr_n)
+                weighted_wer = (fleurs_wer * fleurs_n + openslr_wer * openslr_n) / (
+                    fleurs_n + openslr_n
+                )
             rows.append(
                 {
                     "model": data.get("model", path.stem),
@@ -93,9 +93,7 @@ def main():
         return
 
     rows.sort(
-        key=lambda r: r["weighted_wer"]
-        if r["weighted_wer"] is not None
-        else 9999
+        key=lambda r: r["weighted_wer"] if r["weighted_wer"] is not None else 9999
     )
 
     # ── Console table ─────────────────────────────────────────────────────────
@@ -141,12 +139,12 @@ def main():
             "model": f"(*) {r['model']}" if r.get("cloud", False) else r["model"],
             "repo_url": r["repo_url"],
             "cloud": r.get("cloud", False),
-            "params_b": round(r["params_b"], 1)
-            if r.get("params_b") is not None
-            else None,
-            "memory_gb": round(r["memory_gb"], 1)
-            if r.get("memory_gb") is not None
-            else None,
+            "params_b": (
+                round(r["params_b"], 1) if r.get("params_b") is not None else None
+            ),
+            "memory_gb": (
+                round(r["memory_gb"], 1) if r.get("memory_gb") is not None else None
+            ),
             **{k: round(r[k], 4) if r.get(k) is not None else None for k in METRICS},
         }
         for r in rows

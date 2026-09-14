@@ -40,7 +40,9 @@ class EvalResult:
 
 
 DEFAULT_MANIFEST = Path(__file__).parent / "benchmarks/fleurs_ca_test_400/manifest.json"
-OPENSLR69_MANIFEST = Path(__file__).parent / "benchmarks/openslr69_ca_eval_400/manifest.json"
+OPENSLR69_MANIFEST = (
+    Path(__file__).parent / "benchmarks/openslr69_ca_eval_400/manifest.json"
+)
 BENCHMARKS = {
     "fleurs": ("fleurs_ca", DEFAULT_MANIFEST),
     "openslr69": ("openslr69_ca", OPENSLR69_MANIFEST),
@@ -317,7 +319,9 @@ def main():
         manifests = [BENCHMARKS[args.benchmark]]
     for _, manifest_path in manifests:
         if not manifest_path.exists():
-            parser.error(f"Missing manifest: {manifest_path}. Prepare that benchmark first.")
+            parser.error(
+                f"Missing manifest: {manifest_path}. Prepare that benchmark first."
+            )
 
     output_path = Path(args.output) if args.output else None
 
@@ -331,8 +335,8 @@ def main():
             manifest_path=manifest_path,
         )
         if benchmark_key is None:
-            benchmark_key = load_manifest(manifest_path).get("benchmark", {}).get(
-                "key", "custom"
+            benchmark_key = (
+                load_manifest(manifest_path).get("benchmark", {}).get("key", "custom")
             )
         benchmark_results[benchmark_key] = {
             "wer": round(result.wer, 4),
@@ -358,7 +362,9 @@ def main():
     if output_path:
         if output_path.exists():
             previous = json.loads(output_path.read_text(encoding="utf-8"))
-            previous.update({key: value for key, value in results.items() if key != "benchmarks"})
+            previous.update(
+                {key: value for key, value in results.items() if key != "benchmarks"}
+            )
             previous.setdefault("benchmarks", {}).update(benchmark_results)
             results = previous
         write_json(output_path, results)
