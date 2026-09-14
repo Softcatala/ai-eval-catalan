@@ -3,8 +3,11 @@
         "model": "Model",
         "params_b": "Paràmetres (B)",
         "memory_gb": "Memòria (GB)",
-        "wer": "WER",
-        "cer": "CER",
+        "weighted_wer": "WER combinat",
+        "wer": "WER Fleurs",
+        "cer": "CER Fleurs",
+        "openslr_wer": "WER OpenSLR",
+        "openslr_cer": "CER OpenSLR",
         "rtf": "RTF"
     },
     "metrics": {
@@ -33,8 +36,11 @@
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
+            "weighted_wer": 0.0352,
             "wer": 0.0284,
             "cer": 0.0134,
+            "openslr_wer": 0.0419,
+            "openslr_cer": 0.0193,
             "rtf": null
         },
         {
@@ -43,8 +49,11 @@
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
+            "weighted_wer": 0.0457,
             "wer": 0.0343,
             "cer": 0.0192,
+            "openslr_wer": 0.0571,
+            "openslr_cer": 0.0355,
             "rtf": null
         },
         {
@@ -53,29 +62,12 @@
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
+            "weighted_wer": 0.0563,
             "wer": 0.0456,
             "cer": 0.027,
+            "openslr_wer": 0.067,
+            "openslr_cer": 0.0422,
             "rtf": null
-        },
-        {
-            "model": "whisper-large-v3",
-            "repo_url": "https://huggingface.co/openai/whisper-large-v3",
-            "cloud": false,
-            "params_b": 1.6,
-            "memory_gb": 3.1,
-            "wer": 0.0482,
-            "cer": 0.0171,
-            "rtf": 0.2297
-        },
-        {
-            "model": "whisper-large-v3-turbo",
-            "repo_url": "https://huggingface.co/openai/whisper-large-v3-turbo",
-            "cloud": false,
-            "params_b": 0.8,
-            "memory_gb": 1.6,
-            "wer": 0.0505,
-            "cer": 0.0173,
-            "rtf": 0.0543
         },
         {
             "model": "projecte-aina/whisper-large-v3-ca-3catparla",
@@ -83,9 +75,38 @@
             "cloud": false,
             "params_b": 1.6,
             "memory_gb": 3.1,
+            "weighted_wer": 0.0593,
             "wer": 0.0619,
             "cer": 0.0339,
+            "openslr_wer": 0.0567,
+            "openslr_cer": 0.019,
             "rtf": 0.3651
+        },
+        {
+            "model": "whisper-large-v3-turbo",
+            "repo_url": "https://huggingface.co/openai/whisper-large-v3-turbo",
+            "cloud": false,
+            "params_b": 0.8,
+            "memory_gb": 1.6,
+            "weighted_wer": 0.0629,
+            "wer": 0.0505,
+            "cer": 0.0173,
+            "openslr_wer": 0.0752,
+            "openslr_cer": 0.0285,
+            "rtf": 0.0543
+        },
+        {
+            "model": "whisper-large-v3",
+            "repo_url": "https://huggingface.co/openai/whisper-large-v3",
+            "cloud": false,
+            "params_b": 1.6,
+            "memory_gb": 3.1,
+            "weighted_wer": 0.067,
+            "wer": 0.0482,
+            "cer": 0.0171,
+            "openslr_wer": 0.0858,
+            "openslr_cer": 0.036,
+            "rtf": 0.2297
         },
         {
             "model": "whisper-medium",
@@ -93,8 +114,11 @@
             "cloud": false,
             "params_b": 0.8,
             "memory_gb": 1.5,
+            "weighted_wer": 0.0906,
             "wer": 0.074,
             "cer": 0.0244,
+            "openslr_wer": 0.1072,
+            "openslr_cer": 0.0425,
             "rtf": 0.1531
         },
         {
@@ -103,8 +127,11 @@
             "cloud": false,
             "params_b": 3.0,
             "memory_gb": 6.0,
+            "weighted_wer": 0.1089,
             "wer": 0.0944,
             "cer": 0.028,
+            "openslr_wer": 0.1234,
+            "openslr_cer": 0.0357,
             "rtf": 0.1444
         },
         {
@@ -113,8 +140,11 @@
             "cloud": false,
             "params_b": 1.6,
             "memory_gb": 3.3,
+            "weighted_wer": 0.1162,
             "wer": 0.1068,
             "cer": 0.0353,
+            "openslr_wer": 0.1256,
+            "openslr_cer": 0.0388,
             "rtf": 0.3173
         },
         {
@@ -123,8 +153,11 @@
             "cloud": false,
             "params_b": 1.0,
             "memory_gb": 2.0,
+            "weighted_wer": 0.1309,
             "wer": 0.1116,
             "cer": 0.0341,
+            "openslr_wer": 0.1502,
+            "openslr_cer": 0.0419,
             "rtf": 0.0517
         },
         {
@@ -133,8 +166,11 @@
             "cloud": false,
             "params_b": 0.2,
             "memory_gb": 0.5,
+            "weighted_wer": 0.1467,
             "wer": 0.1255,
             "cer": 0.0403,
+            "openslr_wer": 0.1679,
+            "openslr_cer": 0.0626,
             "rtf": 0.074
         },
         {
@@ -143,19 +179,12 @@
             "cloud": false,
             "params_b": 0.3,
             "memory_gb": 0.6,
+            "weighted_wer": 0.2249,
             "wer": 0.2011,
             "cer": 0.0537,
+            "openslr_wer": 0.2488,
+            "openslr_cer": 0.0665,
             "rtf": 0.0206
-        },
-        {
-            "model": "gemma-4-E4B",
-            "repo_url": "https://huggingface.co/google/gemma-4-E4B-it",
-            "cloud": false,
-            "params_b": 4.5,
-            "memory_gb": 9,
-            "wer": 0.2304,
-            "cer": 0.1964,
-            "rtf": 3.5222
         },
         {
             "model": "whisper-base",
@@ -163,8 +192,11 @@
             "cloud": false,
             "params_b": 0.1,
             "memory_gb": 0.1,
+            "weighted_wer": 0.2793,
             "wer": 0.2501,
             "cer": 0.0823,
+            "openslr_wer": 0.3085,
+            "openslr_cer": 0.1214,
             "rtf": 0.0435
         },
         {
@@ -173,8 +205,11 @@
             "cloud": false,
             "params_b": 2.3,
             "memory_gb": 4.6,
+            "weighted_wer": 0.3761,
             "wer": 0.2711,
             "cer": 0.2088,
+            "openslr_wer": 0.4811,
+            "openslr_cer": 0.4569,
             "rtf": 0.3471
         },
         {
@@ -183,19 +218,25 @@
             "cloud": false,
             "params_b": 0.0,
             "memory_gb": 0.1,
+            "weighted_wer": 0.3982,
             "wer": 0.3806,
             "cer": 0.1385,
+            "openslr_wer": 0.4157,
+            "openslr_cer": 0.1835,
             "rtf": 0.0325
         },
         {
-            "model": "microsoft/VibeVoice-ASR-HF",
-            "repo_url": "https://huggingface.co/microsoft/VibeVoice-ASR-HF",
+            "model": "gemma-4-E4B",
+            "repo_url": "https://huggingface.co/google/gemma-4-E4B-it",
             "cloud": false,
-            "params_b": 9.0,
-            "memory_gb": 18.0,
-            "wer": 0.7695,
-            "cer": 0.5168,
-            "rtf": 0.5181
+            "params_b": 4.5,
+            "memory_gb": 9,
+            "weighted_wer": 0.3986,
+            "wer": 0.2304,
+            "cer": 0.1964,
+            "openslr_wer": 0.5669,
+            "openslr_cer": 0.5164,
+            "rtf": 3.5222
         }
     ]
 }
