@@ -3,7 +3,7 @@
   "display_name": "gemma3-12b-q2",
   "cloud": false,
   "params_b": 12,
-  "memory_gb": 12.8,
+  "memory_gb": 3.9,
   "evaluated_at": "2026-08-27T08:32:52+00:00",
   "benchmarks": {
     "sts_ca": {

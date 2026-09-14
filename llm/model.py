@@ -1008,6 +1008,7 @@ def main():
             return None
         # bits per parameter for common GGUF quantization levels
         _BITS = {
+            "Q2_K": 2.625,
             "Q8_0": 8.5,
             "UD-Q8_K_XL": 8.5,
             "Q4_K_M": 4.5,
