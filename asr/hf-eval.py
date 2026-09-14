@@ -40,7 +40,9 @@ class EvalResult:
 
 
 DEFAULT_MANIFEST = Path(__file__).parent / "benchmarks/fleurs_ca_test_400/manifest.json"
-OPENSLR69_MANIFEST = Path(__file__).parent / "benchmarks/openslr69_ca_eval_400/manifest.json"
+OPENSLR69_MANIFEST = (
+    Path(__file__).parent / "benchmarks/openslr69_ca_eval_400/manifest.json"
+)
 BENCHMARKS = {
     "fleurs": ("fleurs_ca", DEFAULT_MANIFEST),
     "openslr69": ("openslr69_ca", OPENSLR69_MANIFEST),
@@ -80,16 +82,12 @@ WHISPER_MODELS = [
     "projecte-aina/whisper-large-v3-ca-3catparla",
 ]
 
-VIBEVOICE_MODELS = [
-    "microsoft/VibeVoice-ASR-HF",
-]
-
 GEMMA_MODELS = [
     "gemma-4-E4B",
     "gemma-4-E2B",
 ]
 
-ALL_MODELS = OMNILINGUAL_MODELS + WHISPER_MODELS + VIBEVOICE_MODELS + GEMMA_MODELS
+ALL_MODELS = OMNILINGUAL_MODELS + WHISPER_MODELS + GEMMA_MODELS
 
 
 class ASRModel(Protocol):
@@ -150,29 +148,6 @@ class WhisperWrapper:
             generate_kwargs={"language": lang},
         )
         return result["text"] if result else ""
-
-
-class VibeVoiceWrapper:
-    def __init__(self, model_name: str, device: str):
-        from transformers import AutoProcessor, VibeVoiceAsrForConditionalGeneration
-
-        self.processor = AutoProcessor.from_pretrained(model_name)
-        self.model = VibeVoiceAsrForConditionalGeneration.from_pretrained(
-            model_name, dtype=torch.bfloat16, device_map="auto"
-        )
-        self.model.eval()
-
-    def transcribe(self, waveform: torch.Tensor, sample_rate: int, lang: str) -> str:
-        inputs = self.processor.apply_transcription_request(audio=waveform.numpy()).to(
-            self.model.device, torch.bfloat16
-        )
-        with torch.no_grad():
-            output_ids = self.model.generate(**inputs, max_new_tokens=512)
-
-        input_length = inputs["input_ids"].shape[1]
-        return self.processor.decode(
-            output_ids[:, input_length:], return_format="transcription_only"
-        )[0]
 
 
 class Gemma4Wrapper:
@@ -256,9 +231,6 @@ def load_model(model_name: str, device: str) -> ASRModel:
     elif model_name in WHISPER_MODELS:
         print(f"Loading Whisper model: {model_name}")
         return WhisperWrapper(model_name, device)
-    elif model_name in VIBEVOICE_MODELS:
-        print(f"Loading VibeVoice model: {model_name}")
-        return VibeVoiceWrapper(model_name, device)
     elif model_name in GEMMA_MODELS:
         print(f"Loading Gemma 4 model: {model_name}")
         return Gemma4Wrapper(model_name, device)
@@ -438,9 +410,6 @@ def main():
         print("\nWhisper:")
         for m in WHISPER_MODELS:
             print(f"  - {m}")
-        print("\nVibeVoice (custom library required):")
-        for m in VIBEVOICE_MODELS:
-            print(f"  - {m}")
         print("\nGemma 4 (audio, max 30s):")
         for m in GEMMA_MODELS:
             print(f"  - {m}")
@@ -464,7 +433,9 @@ def main():
         manifests = [BENCHMARKS[args.benchmark]]
     for _, manifest_path in manifests:
         if not manifest_path.exists():
-            parser.error(f"Missing manifest: {manifest_path}. Prepare that benchmark first.")
+            parser.error(
+                f"Missing manifest: {manifest_path}. Prepare that benchmark first."
+            )
 
     output_path = Path(args.output) if args.output else None
 
@@ -479,8 +450,8 @@ def main():
             manifest_path=manifest_path,
         )
         if benchmark_key is None:
-            benchmark_key = load_manifest(manifest_path).get("benchmark", {}).get(
-                "key", "custom"
+            benchmark_key = (
+                load_manifest(manifest_path).get("benchmark", {}).get("key", "custom")
             )
         benchmark_results[benchmark_key] = {
             "wer": round(result.wer, 4),
@@ -505,7 +476,9 @@ def main():
     if output_path:
         if output_path.exists():
             previous = json.loads(output_path.read_text(encoding="utf-8"))
-            previous.update({key: value for key, value in results.items() if key != "benchmarks"})
+            previous.update(
+                {key: value for key, value in results.items() if key != "benchmarks"}
+            )
             previous.setdefault("benchmarks", {}).update(benchmark_results)
             results = previous
         write_json(output_path, results)

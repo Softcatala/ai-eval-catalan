@@ -97,11 +97,6 @@ MODELS = [
         "output": "evals/omni_llm_7b.json",
     },
     {
-        "label": "vibevoice",
-        "args": ["microsoft/VibeVoice-ASR-HF"],
-        "output": "evals/vibevoice.json",
-    },
-    {
         "label": "gemma-4-E4B",
         "args": ["gemma-4-E4B"],
         "output": "evals/gemma4_e4b.json",
@@ -203,7 +198,9 @@ def main():
 
         if output_path.exists() and not args.overwrite:
             try:
-                completed = set(json.loads(output_path.read_text()).get("benchmarks", {}))
+                completed = set(
+                    json.loads(output_path.read_text()).get("benchmarks", {})
+                )
             except (OSError, json.JSONDecodeError):
                 completed = set()
             if required_benchmarks <= completed:
