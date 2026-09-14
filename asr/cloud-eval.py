@@ -31,6 +31,7 @@ from tqdm import tqdm
 class EvalResult:
     language: str
     num_samples: int
+    num_errors: int
     wer: float
     cer: float
     total_time: float
@@ -221,7 +222,8 @@ def evaluate_language(
 
     result = EvalResult(
         language=lang_config["name"],
-        num_samples=len(references),
+        num_samples=len(manifest["records"]),
+        num_errors=skipped,
         wer=word_error_rate,
         cer=char_error_rate,
         total_time=total_time,
@@ -229,7 +231,10 @@ def evaluate_language(
     )
 
     print(f"\nResults for {lang_config['name']}:")
-    print(f"  Samples: {result.num_samples} (skipped: {skipped})")
+    print(
+        f"  Samples: {result.num_samples - result.num_errors}/{result.num_samples} "
+        f"(failed: {result.num_errors})"
+    )
     print(f"  WER: {result.wer:.2%} | CER: {result.cer:.2%}")
     print(
         f"  RTF: {result.avg_rtf:.3f} ({1 / result.avg_rtf:.1f}x real-time)"
@@ -319,6 +324,7 @@ def main():
                 "cer": round(result.cer, 4),
                 "rtf": None,
                 "n": result.num_samples,
+                "num_errors": result.num_errors,
             }
         },
     }

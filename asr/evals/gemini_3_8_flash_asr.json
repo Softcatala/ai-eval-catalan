@@ -14,7 +14,8 @@
       "wer": 0.1041,
       "cer": 0.0581,
       "rtf": null,
-      "n": 397
+      "n": 400,
+      "num_errors": 3
     }
   },
   "params_b": null,
