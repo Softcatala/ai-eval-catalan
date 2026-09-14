@@ -1,6 +1,6 @@
 # Eines d'avaluació de models LLM, ASR i Embeddings
 
-Aquest repositori conté eines per avaluar les capacitats de models de llenguatge gran (LLM) i de reconeixement automàtic de la parla (ASR), amb focus especial en la llengua catalana.
+Aquest repositori conté eines per avaluar les capacitats de models de llenguatge gran (LLM), de reconeixement automàtic de la parla (ASR) i d'embeddings, amb focus especial en la llengua catalana.
 Els resultats estan compartits a https://www.softcatala.org/ia-local/models-en-catala/
 
 ## Vols que avaluem un model?
@@ -20,7 +20,10 @@ ai-eval-catalan/
 │   ├── table_template.jinja  # Plantilla per a la taula de resultats
 │   └── evals/                # Resultats JSON per model
 ├── asr/                      # Avaluació de models ASR
-│   ├── hf-eval.py            # Avaluació de WER/CER sobre FLEURS
+│   ├── hf-eval.py            # Avaluació local de WER/CER sobre FLEURS i OpenSLR-69
+│   ├── cloud-eval.py         # Avaluació ASR amb APIs d'OpenAI i Gemini
+│   ├── dataset_preparation.py          # Prepara el benchmark local FLEURS
+│   ├── openslr69_dataset_preparation.py # Prepara el benchmark local OpenSLR-69
 │   ├── run_evals.py          # Orquestrador per executar múltiples models
 │   ├── summarize_results.py  # Agrega els resultats en un JSON
 │   ├── table_template.jinja  # Plantilla per a la taula de resultats
@@ -69,7 +72,7 @@ Aquesta ordre genera les taules HTML i les agrupa a `index_local.html`.
 
 ## LLM — Avaluació de models de llenguatge
 
-El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models de l'API de Google AI (Gemini/Gemma) sobre benchmarks de català:
+El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models d'API de Google AI (Gemini/Gemma), OpenAI i serveis compatibles, inclòs OpenRouter, sobre benchmarks de català:
 
 | Benchmark | Tasca | Mètrica |
 |-----------|-------|---------|
@@ -198,6 +201,8 @@ Cada benchmark pot sobreescriure `max_tokens`. Els adaptadors tradueixen aquesta
 
 ### Execució (LLM)
 
+Executa els passos 1 i 2 des de l'arrel del repositori. Les ordres Python del pas 3 i dels exemples posteriors s'executen des de `llm/`.
+
 **1. Descarregar els GGUF necessaris:**
 
 ```bash
@@ -219,12 +224,15 @@ Per defecte les eines fan servir `http://localhost:9090/v1`. Es pot canviar amb 
 **3. Executar l'avaluació local:**
 
 ```bash
+cd llm
 uv run python run_evals.py --models salamandra-7b
 uv run python run_evals.py --models gemma3-12b --n-samples 200
 uv run python run_evals.py --models gemma3-12b --benchmarks catcola flores
 ```
 
 Amb `presets.ini`, l'orquestrador permet avaluar diversos models per execució amb `--models`. Només `--server-model` requereix seleccionar exactament un model local.
+
+L'orquestrador usa 400 mostres per benchmark per defecte i omet els models que ja tenen un fitxer de resultats. Per repetir benchmarks concrets i fusionar-los amb els resultats existents, usa `--rerun-benchmarks --benchmarks <benchmark>`. En canvi, `model.py` usa 100 mostres per defecte; en tots dos casos es pot indicar `--n-samples`.
 
 Si el servidor requereix un identificador de model concret:
 
@@ -240,13 +248,13 @@ uv run python model.py --model gemini --api-key "LA_TEVA_CLAU" --gemini-model ge
 OPENAI_API_KEY="LA_TEVA_CLAU" uv run python model.py --model openai --openai-model gpt-4o
 ```
 
-Els resultats es desen com a JSON a `llm/evals/`.
+Els resultats es desen com a JSON a `llm/evals/`. L'orquestrador assigna un fitxer a cada model; si executes `model.py` directament, indica `--output evals/<nom_model>.json` per evitar reutilitzar el fitxer per defecte `evals/catalan_eval_results.json`.
 
 ---
 
 ## ASR — Avaluació de models de reconeixement de la parla
 
-L'script `asr/hf-eval.py` mesura la taxa d'error de paraules (WER) i de caràcters (CER) sobre el dataset FLEURS per al català. Suporta models Omnilingual ASR i OpenAI Whisper.
+L'script `asr/hf-eval.py` mesura la taxa d'error de paraules (WER) i de caràcters (CER) sobre FLEURS i OpenSLR-69 en català. Suporta models Omnilingual ASR, Whisper i Gemma 4 amb entrada d'àudio. El script `asr/cloud-eval.py` avalua models d'API d'OpenAI i Gemini sobre els mateixos benchmarks.
 
 ### Instal·lació (ASR)
 
@@ -261,18 +269,46 @@ Per avaluar models Omnilingual ASR, cal instal·lar també el paquet `omnilingua
 
 ### Execució (ASR)
 
+Executa les ordres següents des de `asr/`.
+
+**Preparar els benchmarks locals una vegada:**
+
+```bash
+uv run python dataset_preparation.py
+uv run python openslr69_dataset_preparation.py
+```
+
+Cada script descarrega 400 mostres de fins a 30 segons i genera els àudios i un `manifest.json` a `benchmarks/fleurs_ca_test_400/` o `benchmarks/openslr69_ca_eval_400/`. Els avaluadors executen tots dos benchmarks per defecte; usa `--benchmark fleurs` o `--benchmark openslr69` per seleccionar-ne un. Per a un conjunt propi, usa `--manifest <ruta/manifest.json>`.
+
 **Llistar els models disponibles:**
 
 ```bash
 uv run python hf-eval.py --list-models
 ```
 
-**Avaluar un o més models:**
+**Avaluar un model local:**
 
 ```bash
-uv run python hf-eval.py whisper-large-v3 --device cuda --num_samples 500
+uv run python hf-eval.py whisper-large-v3 --device cuda --output evals/whisper_large_v3.json
 uv run python hf-eval.py whisper-small --output evals/whisper_small.json
 ```
+
+**Avaluar un model d'API:**
+
+```bash
+uv run python cloud-eval.py --list-models
+OPENAI_API_KEY="LA_TEVA_CLAU" uv run python cloud-eval.py gpt-4o-transcribe --output evals/gpt4o_transcribe.json
+```
+
+Els models de Gemini requereixen la variable `GEMINI_API_KEY`.
+
+**Executar l'orquestrador per a múltiples models:**
+
+```bash
+uv run python run_evals.py --device cuda --jobs 2
+```
+
+L'orquestrador omet els models que ja tenen els benchmarks sol·licitats i els models d'API sense la clau corresponent. Usa `--overwrite` per repetir les avaluacions. Els resultats es desen a `asr/evals/`; en executar els avaluadors directament, cal indicar `--output` per desar el JSON.
 
 
 ## Embeddings — Avaluació de models d'embeddings
@@ -296,14 +332,17 @@ uv sync
 
 ### Execució (Embeddings)
 
+Executa les ordres següents des de `embeddings/`.
+
 **Avaluar un model de Hugging Face / Sentence Transformers:**
 
 ```bash
-cd embeddings
 uv run python model.py --model "<nom_model>" --output evals/<nom_model>.json
 ```
 
 **Avaluar amb l'API d'OpenAI o Google:**
+
+Defineix `OPENAI_API_KEY` per a OpenAI, o `GOOGLE_API_KEY` (també s'accepta `GEMINI_API_KEY`) per a Google.
 
 ```bash
 uv run python model.py --cloud-provider openai --model text-embedding-3-large --output evals/openai_text_embedding_3_large.json
@@ -317,6 +356,21 @@ uv run python run_evals.py
 ```
 
 Els resultats es desen com a JSON a `embeddings/evals/`.
+
+---
+
+## Comprovacions de desenvolupament
+
+Des de l'arrel del repositori, pots executar les mateixes comprovacions que el workflow `.github/workflows/tests.yml`:
+
+```bash
+make format-check
+make publish-check
+make unit-test
+make data-validation
+```
+
+Aquestes ordres comproven el format del codi, la generació dels fitxers de publicació, les proves unitàries i la coherència de les dades d'avaluació. Per aplicar el format automàticament, usa `make format`.
 
 ---
 
