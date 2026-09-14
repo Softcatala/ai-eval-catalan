@@ -1,0 +1,21 @@
+{
+  "model": "omniASR_LLM_3B",
+  "params_b": 4.3,
+  "memory_gb": 8.6,
+  "hardware": "Tesla T4 15360 MiB",
+  "evaluated_at": "2026-09-14T06:01:17+00:00",
+  "benchmarks": {
+    "fleurs_ca": {
+      "wer": 0.0725,
+      "cer": 0.0257,
+      "rtf": 0.4418,
+      "n": 400
+    },
+    "parlament_parla_v3": {
+      "wer": 0.2199,
+      "cer": 0.1003,
+      "rtf": 0.5703,
+      "n": 400
+    }
+  }
+}
