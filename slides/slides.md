@@ -34,6 +34,7 @@ Per respondre aquesta pregunta, hem de tenir en compte:
 - Humanes: avaluacions humanes
     - Iniciativa: [Arena.cat](https://github.com/Softcatala/arena-cat)
     - Limitacions: discrepància entre humans, capacitat d'avaluar allò que se't demana, etc.
+    - Repte: captar i mantenir prou avaluadors (objectiu inicial: uns 20, amb unes 3 h per persona).
 
 <!-- end_slide -->
 <!-- no_footer -->
@@ -70,3 +71,19 @@ La derivada d'una funció en un punt ens diu com canvia la funció en aquell mom
 <span style="color: #ef5350">**[ A és millor ]   [ B és millor ]   [ Empat ]   [ Cap de les dues ]**</span>
 
 <span style="color: #8892a6">Recreació de la interfície · textos abreujats</span>
+
+<!-- end_slide -->
+
+# Què volem aportar a l'ecosistema?
+
+- **Conjunts de dades reutilitzables**
+    - Preferències humanes a partir dels resultats d'Arena.
+    - Traducció i correcció basades en patrons reals de producció.
+- **Avaluacions obertes i rellevants per a l'usuari final**
+    - Benchmarks com mantic (Catalan drift).
+    - Eines i metodologia per reproduir les avaluacions.
+- **Resultats útils per a la comunitat**
+    - Identificació de mancances per orientar la millora dels models.
+    - Recomanacions per als usuaris domèstics segons la tasca i el maquinari.
+
+Volem compartir resultats i contrastar criteris amb AINA/BSC i la resta de la comunitat.
