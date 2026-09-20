@@ -69,16 +69,25 @@ try:
             for attempt in range(attempts):
                 try:
                     response = original(self, messages, *args, **kwargs)
-                    if isinstance(response, dict) and isinstance(response.get("choices"), list):
+                    if isinstance(response, dict) and isinstance(
+                        response.get("choices"), list
+                    ):
                         return response
                     raise ValueError("API response has no choices")
-                except (requests.RequestException, ValueError, KeyError, TypeError) as error:
+                except (
+                    requests.RequestException,
+                    ValueError,
+                    KeyError,
+                    TypeError,
+                ) as error:
                     if attempt + 1 < attempts:
                         time.sleep(min(2**attempt, 4))
                         continue
                     if _api_error_tracker is not None:
                         _api_error_tracker["n_errors"] += len(messages)
-                    print(f"[warn] API request skipped after {attempts} attempts: {error}")
+                    print(
+                        f"[warn] API request skipped after {attempts} attempts: {error}"
+                    )
                     return {
                         "choices": [
                             {"index": index, "text": ""}
