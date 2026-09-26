@@ -93,15 +93,17 @@ def test_table_shows_llm_alternatives_and_gap(capsys):
 
 
 @pytest.mark.parametrize("capacity", [0, -8, float("nan"), float("inf")])
-def test_invalid_memory(capacity):
+@pytest.mark.parametrize("generate", [recommend, web_table])
+def test_invalid_memory(capacity, generate):
     with pytest.raises(ValueError, match="capacitats"):
-        recommend({}, [capacity])
+        generate({}, [capacity])
 
 
 @pytest.mark.parametrize("reserve", [-1, 100, float("nan"), float("inf")])
-def test_invalid_reserve(reserve):
+@pytest.mark.parametrize("generate", [recommend, web_table])
+def test_invalid_reserve(reserve, generate):
     with pytest.raises(ValueError, match="reserva"):
-        recommend({}, [8], reserve)
+        generate({}, [8], reserve)
 
 
 def test_asr_weights_samples_and_requires_both_benchmarks():
@@ -211,10 +213,8 @@ def test_web_json_cli_and_preview(tmp_path, capsys):
 
 
 def test_web_table_empty_models_includes_only_llms(tmp_path, capsys):
-    main(["--memory", "0.001", "--format", "json"])
-    report = json.loads(capsys.readouterr().out)
-    candidates, _ = load_candidates(ROOT)
-    table = web_table(report, candidates)
+    main(["--memory", "0.001", "--format", "web-json"])
+    table = json.loads(capsys.readouterr().out)
     assert "category" not in table["text"]
     assert len(table["data"]) == 1
     assert set(table) == {"text", "data"}
@@ -246,7 +246,7 @@ def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
     ]
     report = {"configurations": recommend(candidates, [8, 4, 3, 1])}
     assert report["configurations"][0]["llm_alternatives"] == []
-    rows = web_table(report, candidates)["data"]
+    rows = web_table(candidates, [8, 4, 3, 1])["data"]
     assert [(row["recommended"], row["alternatives"]) for row in rows] == [
         ("best", "second"),
         ("second", "third"),
@@ -262,7 +262,6 @@ def test_web_alternative_breaks_score_ties_by_memory_then_model_id():
         candidate("b", 3, 60),
         candidate("a", 3, 60),
     ]
-    report = {"configurations": recommend(candidates, [8])}
-    row = web_table(report, candidates)["data"][0]
+    row = web_table(candidates, [8])["data"][0]
     assert row["recommended"] == "a"
     assert row["alternatives"] == "b"

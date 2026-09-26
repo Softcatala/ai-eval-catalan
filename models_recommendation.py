@@ -90,23 +90,20 @@ def load_candidates(root, memory_file=MEMORY_FILE):
             if reason:
                 skipped.append({"source": source, "model": model, "reason": reason})
                 continue
-            candidates[category].append(
-                {
-                    "model": model,
-                    "model_id": model_id,
-                    "precision": precision,
-                    "score": score,
-                    "metric": METRICS[category],
-                    "memory_gb": memory,
-                    "memory_source": memory_source,
-                    "eval_source": source,
-                }
-            )
+            candidate = {
+                "model": model,
+                "model_id": model_id,
+                "precision": precision,
+                "score": score,
+                "metric": METRICS[category],
+                "memory_gb": memory,
+                "memory_source": memory_source,
+                "eval_source": source,
+            }
             if category == "asr":
                 rtf = data.get("benchmarks", {}).get("fleurs_ca", {}).get("rtf")
-                candidates[category][-1]["rtf"] = (
-                    rtf if finite_number(rtf) and rtf >= 0 else None
-                )
+                candidate["rtf"] = rtf if finite_number(rtf) and rtf >= 0 else None
+            candidates[category].append(candidate)
     return candidates, skipped
 
 
@@ -121,18 +118,22 @@ def rank_candidates(candidates, category, budget):
     )
 
 
-def recommend(
-    candidates, capacities=(4, 8, 16, 32), reserve_percent=25, llm_uncertainty=2
-):
+def memory_budgets(capacities, reserve_percent):
     if not finite_number(reserve_percent) or not 0 <= reserve_percent < 100:
         raise ValueError("La reserva ha de ser entre 0 i menys de 100%.")
-    if not finite_number(llm_uncertainty) or llm_uncertainty < 0:
-        raise ValueError("El marge CLAM ha de ser un nombre finit no negatiu.")
-    configurations = []
     for capacity in capacities:
         if not finite_number(capacity) or capacity <= 0:
             raise ValueError("Les capacitats han de ser nombres positius i finits.")
-        budget = capacity * (1 - reserve_percent / 100)
+        yield capacity, capacity * (1 - reserve_percent / 100)
+
+
+def recommend(
+    candidates, capacities=(4, 8, 16, 32), reserve_percent=25, llm_uncertainty=2
+):
+    if not finite_number(llm_uncertainty) or llm_uncertainty < 0:
+        raise ValueError("El marge CLAM ha de ser un nombre finit no negatiu.")
+    configurations = []
+    for capacity, budget in memory_budgets(capacities, reserve_percent):
         models = {}
         llm_alternatives = []
         for category in CATEGORIES:
@@ -160,6 +161,19 @@ def recommend(
             }
         )
     return configurations
+
+
+def format_score(category, model):
+    if model is None:
+        return "—"
+    score = model["score"]
+    if category == "asr":
+        value = f"{score * 100:.2f}%"
+    elif category == "llm":
+        value = f"{score:.1f}"
+    else:
+        value = f"{score:.4f}"
+    return f"{value} {METRICS[category]}"
 
 
 def print_table(report):
@@ -207,15 +221,7 @@ def print_table(report):
                     else "Cap model compatible amb dades completes",
                     model["precision"] or "—" if model else "—",
                     f"{model['memory_gb']:.2f}" if model else "—",
-                    (
-                        f"{model['score'] * 100:.2f}% {METRICS[category]}"
-                        if category == "asr"
-                        else f"{model['score']:.1f} {METRICS[category]}"
-                        if category == "llm"
-                        else f"{model['score']:.4f} {METRICS[category]}"
-                    )
-                    if model
-                    else "—",
+                    format_score(category, model),
                 ]
                 if category == "llm":
                     row.append(f"{model['score_gap']:.1f}" if model else "—")
@@ -236,7 +242,7 @@ def print_table(report):
             print(f"- {item['model']}: {item['reason']} ({item['source']})")
 
 
-def web_table(report, candidates):
+def web_table(candidates, capacities=(4, 8, 16, 32), reserve_percent=25):
     """Export LLM recommendations using the published text/data contract."""
 
     def model_label(model):
@@ -251,13 +257,13 @@ def web_table(report, candidates):
         "alternatives": "Alternativa",
     }
     rows = []
-    for config in report["configurations"]:
-        model = config["models"]["llm"]
-        ranked = rank_candidates(candidates, "llm", config["budget_gb"])
+    for capacity, budget in memory_budgets(capacities, reserve_percent):
+        ranked = rank_candidates(candidates, "llm", budget)
+        model = ranked[0] if ranked else None
         alternative = ranked[1] if len(ranked) > 1 else None
         rows.append(
             {
-                "capacity_gb": config["capacity_gb"],
+                "capacity_gb": capacity,
                 "recommended": model_label(model),
                 "alternatives": model_label(alternative),
             }
@@ -291,7 +297,7 @@ def main(argv=None):
         "--llm-uncertainty",
         type=float,
         default=2,
-        help="Llindar de diferència CLAM respecte del millor, exclusiu (defecte: 2); 0: només empats exactes",
+        help="Llindar de diferència CLAM per a table/json, exclusiu (defecte: 2); 0: només empats exactes",
     )
     parser.add_argument(
         "--format", choices=("table", "json", "web-json"), default="table"
@@ -302,22 +308,22 @@ def main(argv=None):
         parser.error("--output requereix --format json o web-json")
     try:
         candidates, skipped = load_candidates(args.repo_root)
-        configurations = recommend(
-            candidates, args.memory, args.reserve_percent, args.llm_uncertainty
-        )
+        if args.format == "web-json":
+            report = web_table(candidates, args.memory, args.reserve_percent)
+        else:
+            report = {
+                "memory_kind": args.memory_kind,
+                "reserve_percent": args.reserve_percent,
+                "llm_uncertainty_points": args.llm_uncertainty,
+                "individual_models": True,
+                "configurations": recommend(
+                    candidates, args.memory, args.reserve_percent, args.llm_uncertainty
+                ),
+                "skipped": skipped,
+            }
     except (OSError, ValueError) as error:
         parser.error(str(error))
-    report = {
-        "memory_kind": args.memory_kind,
-        "reserve_percent": args.reserve_percent,
-        "llm_uncertainty_points": args.llm_uncertainty,
-        "individual_models": True,
-        "configurations": configurations,
-        "skipped": skipped,
-    }
     if args.format in ("json", "web-json"):
-        if args.format == "web-json":
-            report = web_table(report, candidates)
         output = (
             json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
         )

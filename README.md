@@ -69,9 +69,10 @@ make render-local
 ```
 
 Aquesta ordre genera les taules HTML i les agrupa a `index_local.html`.
-Inclou la taula de models recomanats segons la memòria, amb les columnes
-de memòria, model recomanat i alternatives. El contracte de `llms_recommendations.json`
-es descriu a [HARDWARE_MODELS.md](HARDWARE_MODELS.md#taula-web-i-publicació).
+Inclou la taula de models recomanats segons la memòria. `llms_recommendations.json`
+conté només `text` (etiquetes) i `data` (files), amb tres camps: `capacity_gb`,
+`recommended` i `alternatives`. Mostra el millor LLM i el segon millor que càpiguen
+en la memòria disponible; les cel·les sense model són `null`.
 
 ---
 
@@ -137,8 +138,11 @@ checkout local ni descarregar el dataset per separat:
 
 L'eina [`models_recommendation.py`](models_recommendation.py), situada a l'arrel, recomana
 models locals de LLM, embeddings i ASR segons les avaluacions i la memòria
-disponible. Executeu `make recommendation` des de
-l'arrel; consulteu les opcions a [HARDWARE_MODELS.md](HARDWARE_MODELS.md).
+disponible. Executeu `make recommendation` des de l'arrel o
+`uv run --project llm python models_recommendation.py --help` per consultar les opcions.
+Per defecte reserva un 25% de la memòria i assumeix que cada model s'executa
+individualment. L'informe detallat mostra alternatives a menys de 2 punts CLAM;
+la taula web mostra només el segon millor LLM compatible, sense aquest llindar.
 
 Per a models GGUF quantitzats amb **Q4_K_M**, aquestes són les mides orientatives
 segons la memòria disponible del sistema:
