@@ -38,7 +38,7 @@ def test_memory_boundary_reserve_and_score_direction():
     assert recommendations_json(candidates, [8])["data"] == [
         {
             "capacity_gb": "8 GB",
-            "recommended": "fits · CLAM 60.0",
+            "recommended": "fits",
             "repo_url": "https://huggingface.co/org/fits",
             "alternatives": None,
         }
@@ -209,8 +209,8 @@ def test_json_output(tmp_path, capsys):
     assert table == expected
     assert set(table) == {"text", "data"}
     assert list(table["text"].items()) == [
-        ("capacity_gb", "Memòria de l’ordinador"),
         ("recommended", "Model recomanat"),
+        ("capacity_gb", "Memòria de l’ordinador"),
         ("alternatives", "Alternativa"),
     ]
     assert [row["capacity_gb"] for row in table["data"]] == ["8 GB", "16 GB", "32 GB"]
@@ -219,7 +219,8 @@ def test_json_output(tmp_path, capsys):
         assert all(isinstance(row[field], str) for field in table["text"])
         assert row["repo_url"].startswith("https://huggingface.co/")
         for field in ("recommended", "alternatives"):
-            assert " · CLAM " in row[field]
+            assert " · " in row[field]
+            assert "CLAM" not in row[field]
 
 
 def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
@@ -233,9 +234,9 @@ def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
     assert recommendations_json({"llm": models}, [8])["data"] == [
         {
             "capacity_gb": "8 GB",
-            "recommended": "best · Q4_K_M · CLAM 60.0",
+            "recommended": "best · Q4_K_M",
             "repo_url": "https://huggingface.co/org/best",
-            "alternatives": "second · CLAM 50.2",
+            "alternatives": "second",
         }
     ]
 
@@ -252,9 +253,9 @@ def test_json_uses_sorted_disjoint_memory_bands():
     rows = recommendations_json({"llm": models}, [32, 8, 1, 16, 8, 64])["data"]
     assert [(r["capacity_gb"], r["recommended"], r["alternatives"]) for r in rows] == [
         ("1 GB", None, None),
-        ("8 GB", "small · CLAM 100.0", None),
-        ("16 GB", "medium · CLAM 60.0", "medium_alt · CLAM 50.0"),
-        ("32 GB", "large · CLAM 45.0", "large_alt · CLAM 30.0"),
+        ("8 GB", "small", None),
+        ("16 GB", "medium", "medium_alt"),
+        ("32 GB", "large", "large_alt"),
         ("64 GB", None, None),
     ]
 
@@ -268,8 +269,8 @@ def test_web_alternative_breaks_score_ties_by_memory_then_model_id():
     assert recommendations_json({"llm": models}, [8])["data"] == [
         {
             "capacity_gb": "8 GB",
-            "recommended": "a · CLAM 60.0",
+            "recommended": "a",
             "repo_url": "https://huggingface.co/org/a",
-            "alternatives": "b · CLAM 60.0",
+            "alternatives": "b",
         }
     ]

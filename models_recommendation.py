@@ -249,12 +249,11 @@ def recommendations_json(candidates, capacities=(8, 16, 32)):
         if model is None:
             return None
         precision = model.get("precision")
-        name = model["model"] + (f" · {precision}" if precision else "")
-        return f"{name} · CLAM {model['score']:.1f}"
+        return model["model"] + (f" · {precision}" if precision else "")
 
     columns = {
-        "capacity_gb": "Memòria de l’ordinador",
         "recommended": "Model recomanat",
+        "capacity_gb": "Memòria de l’ordinador",
         "alternatives": "Alternativa",
     }
     rows = []
@@ -265,10 +264,10 @@ def recommendations_json(candidates, capacities=(8, 16, 32)):
         alternative = ranked[1] if len(ranked) > 1 else None
         rows.append(
             {
-                "capacity_gb": f"{capacity:g} GB",
                 "recommended": model_label(model),
-                "repo_url": repo_url(model["model_id"]) if model else None,
+                "capacity_gb": f"{capacity:g} GB",
                 "alternatives": model_label(alternative),
+                "repo_url": repo_url(model["model_id"]) if model else None,
             }
         )
         previous_budget = budget
