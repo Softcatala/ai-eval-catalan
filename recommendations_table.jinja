@@ -2,23 +2,15 @@
   .recommendations-table { border-collapse: collapse; font-size: 14px; width: 100%; }
   .recommendations-table th, .recommendations-table td { border: 1px solid #ddd; padding: 10px 14px; text-align: left; }
 </style>
-{% macro model_link(model) -%}
-<a href="{{ model.repo_url }}">{{ model.model }}</a>{% if model.precision %} · {{ model.precision }}{% endif %}
-{%- endmacro %}
 <table class="recommendations-table">
   <thead><tr>{% for label in text.values() %}<th scope="col">{{ label }}</th>{% endfor %}</tr></thead>
   <tbody>
   {% for row in data %}
     <tr>
       <th scope="row">{{ row.capacity_gb | fmt }} GB</th>
-      <td>{% if row.recommended_model %}{{ model_link(row.recommended_model) }}{% else %}Cap model compatible amb dades completes{% endif %}</td>
-      <td>{% for model in row.alternative_models %}{{ model_link(model) }}{% if not loop.last %}<br>{% endif %}{% else %}—{% endfor %}</td>
+      <td>{{ row.recommended or 'Cap model compatible amb dades completes' }}</td>
+      <td>{{ row.alternatives or '—' }}</td>
     </tr>
   {% endfor %}
   </tbody>
 </table>
-<p>Memòria: {{ memory_kind }}. Reserva de memòria: {{ reserve_percent | fmt }}%. Cada model s'executa individualment.
-La memòria és orientativa i el consum real depèn del context, el lot i el motor.</p>
-<p>Recomanacions calculades a partir de les avaluacions del repositori.
-{% if llm_uncertainty_points > 0 %}Les alternatives LLM queden a menys de {{ llm_uncertainty_points | fmt }} punts CLAM del millor model; aquestes diferències es consideren no concloents.
-{% else %}Les alternatives LLM tenen la mateixa puntuació CLAM que el millor model.{% endif %}</p>

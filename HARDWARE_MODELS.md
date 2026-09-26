@@ -90,16 +90,15 @@ el llindar CLAM. Els noms inclouen la precisió avaluada.
 
 El JSON segueix el contracte `text` (etiquetes de columnes) i `data` (files):
 
-- Columnes: `capacity_gb`, `recommended` i `alternatives` (text pla).
-- Cada fila conserva `budget_gb`, `recommended_model`
-  i `alternative_models`, amb els identificadors, puntuacions, memòria, precisió,
-  fonts i `repo_url` dels models. Sense candidats, `recommended_model` és `null`
-  i `alternative_models` és una llista buida; les cel·les buides són `null`.
-- Metadades: `memory_kind`, `reserve_percent`, `llm_uncertainty_points`,
-  `individual_models` i `skipped`.
+- `capacity_gb`: memòria de l'ordinador, com a nombre en GB.
+- `recommended`: nom del model recomanat i precisió, en text pla.
+- `alternatives`: noms i precisions de les alternatives, separats per punt i coma.
+
+Cada fila conté només aquests tres camps. Les cel·les sense model o alternativa
+són `null`. El JSON només conté `text` i `data`, sense metadades ni detalls
+addicionals dels models.
 
 `--format web-json` genera exclusivament la taula de recomanacions de LLM.
-La llista `skipped` també es limita a les avaluacions de LLM excloses.
 `--format json` conserva l'informe detallat existent; `--output` permet desar
 qualsevol dels dos formats JSON en un fitxer.
 

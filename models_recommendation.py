@@ -6,7 +6,6 @@ import math
 from pathlib import Path
 
 from embeddings.summarize_results import composite, is_cloud
-from eval_common.model_urls import repo_url
 from llm.summarize_results import CLAM_TASKS, clam_score, extract_metrics
 
 ROOT = Path(__file__).resolve().parent
@@ -245,9 +244,6 @@ def web_table(report):
         precision = model.get("precision")
         return model["model"] + (f" · {precision}" if precision else "")
 
-    def model_details(model):
-        return {**model, "repo_url": repo_url(model["model_id"])} if model else None
-
     columns = {
         "capacity_gb": "Memòria de l’ordinador",
         "recommended": "Model recomanat",
@@ -260,22 +256,11 @@ def web_table(report):
         rows.append(
             {
                 "capacity_gb": config["capacity_gb"],
-                "budget_gb": config["budget_gb"],
                 "recommended": model_label(model),
                 "alternatives": "; ".join(map(model_label, alternatives)) or None,
-                "recommended_model": model_details(model),
-                "alternative_models": [model_details(m) for m in alternatives],
             }
         )
-    return {
-        "text": columns,
-        "data": rows,
-        "memory_kind": report["memory_kind"],
-        "reserve_percent": report["reserve_percent"],
-        "llm_uncertainty_points": report["llm_uncertainty_points"],
-        "individual_models": report["individual_models"],
-        "skipped": [r for r in report["skipped"] if r["source"].startswith("llm/")],
-    }
+    return {"text": columns, "data": rows}
 
 
 def main(argv=None):

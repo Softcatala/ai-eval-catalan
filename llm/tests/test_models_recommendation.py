@@ -182,6 +182,7 @@ def test_web_json_cli_and_preview(tmp_path, capsys):
     main(["--memory", "8", "16", "32", "--format", "web-json", "--output", str(output)])
     assert capsys.readouterr().out == ""
     table = json.loads(output.read_text())
+    assert set(table) == {"text", "data"}
     assert list(table["text"]) == ["capacity_gb", "recommended", "alternatives"]
     assert list(table["text"].values()) == [
         "Memòria de l’ordinador",
@@ -189,19 +190,20 @@ def test_web_json_cli_and_preview(tmp_path, capsys):
         "Alternativa",
     ]
     assert [row["capacity_gb"] for row in table["data"]] == [8, 16, 32]
-    assert table["reserve_percent"] == 25
     candidates, _ = load_candidates(ROOT)
     for row, config in zip(table["data"], recommend(candidates, [8, 16, 32])):
-        model = row["recommended_model"]
-        assert model["model_id"] == config["models"]["llm"]["model_id"]
-        assert model["repo_url"].startswith("https://huggingface.co/")
-        assert model["memory_gb"] <= row["budget_gb"]
-        assert [m["model_id"] for m in row["alternative_models"]] == [
-            m["model_id"] for m in config["llm_alternatives"]
-        ]
+        assert set(row) == {"capacity_gb", "recommended", "alternatives"}
+        model = config["models"]["llm"]
+        assert model["model"] in row["recommended"]
         assert model["precision"] in row["recommended"]
+        if config["llm_alternatives"]:
+            for alternative in config["llm_alternatives"]:
+                assert alternative["model"] in row["alternatives"]
+                assert alternative["precision"] in row["alternatives"]
+        else:
+            assert row["alternatives"] is None
     # Model names are data, never markup in the preview.
-    table["data"][0]["recommended_model"]["model"] = "<script>alert(1)</script>"
+    table["data"][0]["recommended"] = "<script>alert(1)</script>"
     output.write_text(json.dumps(table))
     html_path = tmp_path / "table.html"
     render_recommendations(output, html_path)
@@ -209,27 +211,19 @@ def test_web_json_cli_and_preview(tmp_path, capsys):
     assert "<script>" not in html
     assert "&lt;script&gt;" in html
     assert "16 GB" in html
-    assert "href=" in html
-    assert "no concloents" in html
+    assert "Model recomanat" in html
 
 
 def test_web_table_empty_models_includes_only_llms(tmp_path, capsys):
     main(["--memory", "0.001", "--format", "json"])
     report = json.loads(capsys.readouterr().out)
-    report["skipped"] = [
-        {"source": "llm/evals/incomplete.json", "model": "incomplete"},
-        {"source": "asr/evals/incomplete.json", "model": "incomplete"},
-        {"source": "embeddings/evals/incomplete.json", "model": "incomplete"},
-    ]
     table = web_table(report)
     assert "category" not in table["text"]
     assert len(table["data"]) == 1
-    assert table["skipped"] == [report["skipped"][0]]
+    assert set(table) == {"text", "data"}
     for row in table["data"]:
         assert row["recommended"] is None
-        assert row["recommended_model"] is None
         assert row["alternatives"] is None
-        assert row["alternative_models"] == []
     output = tmp_path / "empty.json"
     output.write_text(json.dumps(table))
     html_path = tmp_path / "empty.html"
