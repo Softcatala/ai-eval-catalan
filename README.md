@@ -145,7 +145,7 @@ L'eina [`models_recommendation.py`](models_recommendation.py), situada a l'arrel
 models locals de LLM, embeddings i ASR segons les avaluacions i la memòria
 disponible. Executeu `make recommendation` des de l'arrel o
 `uv run --project llm python models_recommendation.py --help` per consultar les opcions.
-Per defecte reserva un 25% de la memòria i assumeix que cada model s'executa
+Reserva un 25% fix de la memòria i assumeix que cada model s'executa
 individualment. `--format table` (per defecte) mostra l'informe de consola amb
 alternatives a menys de 2 punts CLAM. `--format json` genera el JSON de tres
 columnes amb el millor LLM i el segon millor compatible, sense aquest llindar.

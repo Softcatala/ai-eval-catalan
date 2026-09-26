@@ -30,7 +30,9 @@ def test_memory_boundary_reserve_and_score_direction():
     assert result["models"]["llm"]["model"] == "fits"
     assert result["models"]["embeddings"]["model"] == "good"
     assert result["models"]["asr"]["model"] == "good"
-    assert recommend(candidates, [8], 0)[0]["models"]["llm"]["model"] == "large"
+    assert recommendations_json(candidates, [8])["data"] == [
+        {"capacity_gb": 8, "recommended": "fits", "alternatives": None}
+    ]
 
 
 def test_ties_prefer_smaller_model_and_empty_categories_are_explicit():
@@ -85,6 +87,7 @@ def test_table_shows_llm_alternatives_and_gap(capsys):
     main(["--memory", "16"])
     output = capsys.readouterr().out
     assert "(RAM)" in output
+    assert "Reserva: 25%" in output
     assert "menys de 2 punts" in output
     assert "no concloents" in output
     assert "LLM (semblant)" in output
@@ -97,13 +100,6 @@ def test_table_shows_llm_alternatives_and_gap(capsys):
 def test_invalid_memory(capacity, generate):
     with pytest.raises(ValueError, match="capacitats"):
         generate({}, [capacity])
-
-
-@pytest.mark.parametrize("reserve", [-1, 100, float("nan"), float("inf")])
-@pytest.mark.parametrize("generate", [recommend, recommendations_json])
-def test_invalid_reserve(reserve, generate):
-    with pytest.raises(ValueError, match="reserva"):
-        generate({}, [8], reserve)
 
 
 def test_asr_weights_samples_and_requires_both_benchmarks():

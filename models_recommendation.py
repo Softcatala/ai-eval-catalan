@@ -11,6 +11,7 @@ from llm.summarize_results import CLAM_TASKS, clam_score, extract_metrics
 
 ROOT = Path(__file__).resolve().parent
 MEMORY_FILE = ROOT / "llm" / "embedding_memory.json"
+RESERVE_PERCENT = 25
 CATEGORIES = {"llm": "LLM", "embeddings": "Embeddings", "asr": "ASR"}
 METRICS = {"llm": "CLAM ↑", "embeddings": "Composta ↑", "asr": "WER combinat ↓"}
 SCORE_FORMATS = {"llm": ".1f", "embeddings": ".4f", "asr": ".2%"}
@@ -133,22 +134,18 @@ def rank_candidates(candidates, category, budget):
     )
 
 
-def memory_budgets(capacities, reserve_percent):
-    if not finite_number(reserve_percent) or not 0 <= reserve_percent < 100:
-        raise ValueError("La reserva ha de ser entre 0 i menys de 100%.")
+def memory_budgets(capacities):
     for capacity in capacities:
         if not finite_number(capacity) or capacity <= 0:
             raise ValueError("Les capacitats han de ser nombres positius i finits.")
-        yield capacity, capacity * (1 - reserve_percent / 100)
+        yield capacity, capacity * (1 - RESERVE_PERCENT / 100)
 
 
-def recommend(
-    candidates, capacities=(4, 8, 16, 32), reserve_percent=25, llm_uncertainty=2
-):
+def recommend(candidates, capacities=(4, 8, 16, 32), llm_uncertainty=2):
     if not finite_number(llm_uncertainty) or llm_uncertainty < 0:
         raise ValueError("El marge CLAM ha de ser un nombre finit no negatiu.")
     configurations = []
-    for capacity, budget in memory_budgets(capacities, reserve_percent):
+    for capacity, budget in memory_budgets(capacities):
         models = {}
         llm_alternatives = []
         for category in CATEGORIES:
@@ -184,7 +181,7 @@ def format_value(value, spec, suffix=""):
 def print_table(report):
     print(
         "Millors models locals segons les avaluacions del repositori (RAM)\n"
-        f"Reserva: {report['reserve_percent']:g}%. Cada model s'executa individualment.\n"
+        f"Reserva: {RESERVE_PERCENT:g}%. Cada model s'executa individualment.\n"
         "Memòria orientativa; el consum real depèn del context, el lot i el motor.\n"
     )
     threshold = report["llm_uncertainty_points"]
@@ -240,7 +237,7 @@ def print_table(report):
             print(f"- {item['model']}: {item['reason']} ({item['source']})")
 
 
-def recommendations_json(candidates, capacities=(4, 8, 16, 32), reserve_percent=25):
+def recommendations_json(candidates, capacities=(4, 8, 16, 32)):
     """Export LLM recommendations using the published text/data contract."""
 
     def model_label(model):
@@ -255,7 +252,7 @@ def recommendations_json(candidates, capacities=(4, 8, 16, 32), reserve_percent=
         "alternatives": "Alternativa",
     }
     rows = []
-    for capacity, budget in memory_budgets(capacities, reserve_percent):
+    for capacity, budget in memory_budgets(capacities):
         ranked = rank_candidates(candidates, "llm", budget)
         model = ranked[0] if ranked else None
         alternative = ranked[1] if len(ranked) > 1 else None
@@ -280,9 +277,6 @@ def main(argv=None):
         default=[4, 8, 16, 32],
         help="Capacitats de RAM en GB",
     )
-    parser.add_argument(
-        "--reserve-percent", type=float, default=25, help="Reserva de memòria (%%)"
-    )
     parser.add_argument("--repo-root", type=Path, default=ROOT)
     parser.add_argument(
         "--llm-uncertainty",
@@ -298,14 +292,12 @@ def main(argv=None):
     try:
         candidates, skipped = load_candidates(args.repo_root)
         if args.format == "json":
-            report = recommendations_json(candidates, args.memory, args.reserve_percent)
+            report = recommendations_json(candidates, args.memory)
         else:
             report = {
-                "reserve_percent": args.reserve_percent,
                 "llm_uncertainty_points": args.llm_uncertainty,
-                "individual_models": True,
                 "configurations": recommend(
-                    candidates, args.memory, args.reserve_percent, args.llm_uncertainty
+                    candidates, args.memory, llm_uncertainty=args.llm_uncertainty
                 ),
                 "skipped": skipped,
             }
