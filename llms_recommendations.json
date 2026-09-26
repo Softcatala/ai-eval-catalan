@@ -1,0 +1,42 @@
+{
+  "text": {
+    "capacity_gb": "Memòria de l’ordinador",
+    "recommended": "Model recomanat",
+    "alternatives": "Alternativa"
+  },
+  "data": [
+    {
+      "capacity_gb": 8.0,
+      "recommended": {
+        "name": "qwen3.5-9b · Q4_K_M · CLAM 58.4",
+        "url": "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF"
+      },
+      "alternatives": {
+        "name": "tiny-aya-water · Q4_K_M · CLAM 51.7",
+        "url": "https://huggingface.co/CohereLabs/tiny-aya-water-GGUF"
+      }
+    },
+    {
+      "capacity_gb": 16.0,
+      "recommended": {
+        "name": "qwen3-14b · Q4_K_M · CLAM 59.0",
+        "url": "https://huggingface.co/unsloth/Qwen3-14B-GGUF"
+      },
+      "alternatives": {
+        "name": "gemma3-12b · Q4_K_M · CLAM 57.3",
+        "url": "https://huggingface.co/unsloth/gemma-3-12b-it-GGUF"
+      }
+    },
+    {
+      "capacity_gb": 32.0,
+      "recommended": {
+        "name": "qwen3.8-27b · Q4_K_M · CLAM 62.9",
+        "url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF"
+      },
+      "alternatives": {
+        "name": "muse-glimmer-30b · UD-Q4_K_XL · CLAM 60.0",
+        "url": "https://huggingface.co/unsloth/Muse-Glimmer-30B-GGUF"
+      }
+    }
+  ]
+}
