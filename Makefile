@@ -2,7 +2,7 @@ GGUF_DIR ?= models/gguf
 GGUF_MODELS ?=
 PYTHON_SOURCES := render_index_local.py render_tables.py eval_common asr embeddings llm
 
-.PHONY: render-local format format-check publish-check unit-test data-validation llm-download-ggufs
+.PHONY: render-local recommendation format format-check publish-check unit-test data-validation llm-download-ggufs
 
 render-local:
 	uv run --project llm python -m llm.summarize_results > /dev/null
@@ -10,6 +10,9 @@ render-local:
 	uv run --project embeddings python -m embeddings.summarize_results > /dev/null
 	uv run --with jinja2 render_tables.py
 	uv run render_index_local.py
+
+recommendation:
+	uv run --project llm python models_recommendation.py $(RECOMMENDATION_ARGS)
 
 format:
 	cd llm && uv run ruff format $(addprefix ../,$(PYTHON_SOURCES))

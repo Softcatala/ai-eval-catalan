@@ -130,6 +130,11 @@ checkout local ni descarregar el dataset per separat:
 
 ### Mida de model recomanada segons la memòria
 
+L'eina [`models_recommendation.py`](models_recommendation.py), situada a l'arrel, recomana
+models locals de LLM, embeddings i ASR segons les avaluacions i la memòria
+disponible. Executeu `make recommendation` des de
+l'arrel; consulteu les opcions a [HARDWARE_MODELS.md](HARDWARE_MODELS.md).
+
 Per a models GGUF quantitzats amb **Q4_K_M**, aquestes són les mides orientatives
 segons la memòria disponible del sistema:
 
