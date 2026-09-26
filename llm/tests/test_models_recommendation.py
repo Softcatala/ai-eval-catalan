@@ -196,12 +196,8 @@ def test_web_json_cli_and_preview(tmp_path, capsys):
         model = config["models"]["llm"]
         assert model["model"] in row["recommended"]
         assert model["precision"] in row["recommended"]
-        if config["llm_alternatives"]:
-            for alternative in config["llm_alternatives"]:
-                assert alternative["model"] in row["alternatives"]
-                assert alternative["precision"] in row["alternatives"]
-        else:
-            assert row["alternatives"] is None
+        assert row["alternatives"]
+        assert ";" not in row["alternatives"]
     # Model names are data, never markup in the preview.
     table["data"][0]["recommended"] = "<script>alert(1)</script>"
     output.write_text(json.dumps(table))
@@ -217,7 +213,8 @@ def test_web_json_cli_and_preview(tmp_path, capsys):
 def test_web_table_empty_models_includes_only_llms(tmp_path, capsys):
     main(["--memory", "0.001", "--format", "json"])
     report = json.loads(capsys.readouterr().out)
-    table = web_table(report)
+    candidates, _ = load_candidates(ROOT)
+    table = web_table(report, candidates)
     assert "category" not in table["text"]
     assert len(table["data"]) == 1
     assert set(table) == {"text", "data"}
@@ -237,3 +234,35 @@ def test_json_file_matches_existing_json_stdout(tmp_path, capsys):
     output = tmp_path / "report.json"
     main(["--format", "json", "--output", str(output)])
     assert json.loads(output.read_text()) == expected
+
+
+def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
+    candidates = {category: [] for category in CATEGORIES}
+    candidates["llm"] = [
+        candidate("over_budget", 6.01, 100),
+        candidate("third", 2, 49),
+        candidate("second", 3, 50),
+        candidate("best", 6, 60),
+    ]
+    report = {"configurations": recommend(candidates, [8, 4, 3, 1])}
+    assert report["configurations"][0]["llm_alternatives"] == []
+    rows = web_table(report, candidates)["data"]
+    assert [(row["recommended"], row["alternatives"]) for row in rows] == [
+        ("best", "second"),
+        ("second", "third"),
+        ("third", None),
+        (None, None),
+    ]
+
+
+def test_web_alternative_breaks_score_ties_by_memory_then_model_id():
+    candidates = {category: [] for category in CATEGORIES}
+    candidates["llm"] = [
+        candidate("larger", 4, 60),
+        candidate("b", 3, 60),
+        candidate("a", 3, 60),
+    ]
+    report = {"configurations": recommend(candidates, [8])}
+    row = web_table(report, candidates)["data"][0]
+    assert row["recommended"] == "a"
+    assert row["alternatives"] == "b"

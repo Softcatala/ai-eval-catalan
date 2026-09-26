@@ -110,6 +110,17 @@ def load_candidates(root, memory_file=MEMORY_FILE):
     return candidates, skipped
 
 
+def rank_candidates(candidates, category, budget):
+    return sorted(
+        (model for model in candidates[category] if model["memory_gb"] <= budget),
+        key=lambda m: (
+            m["score"] if category == "asr" else -m["score"],
+            m["memory_gb"],
+            m["model_id"],
+        ),
+    )
+
+
 def recommend(
     candidates, capacities=(4, 8, 16, 32), reserve_percent=25, llm_uncertainty=2
 ):
@@ -125,17 +136,7 @@ def recommend(
         models = {}
         llm_alternatives = []
         for category in CATEGORIES:
-            eligible = [
-                model for model in candidates[category] if model["memory_gb"] <= budget
-            ]
-            ranked = sorted(
-                eligible,
-                key=lambda m: (
-                    m["score"] if category == "asr" else -m["score"],
-                    m["memory_gb"],
-                    m["model_id"],
-                ),
-            )
+            ranked = rank_candidates(candidates, category, budget)
             models[category] = ranked[0] if ranked else None
             if category == "llm" and ranked:
                 best_score = ranked[0]["score"]
@@ -235,7 +236,7 @@ def print_table(report):
             print(f"- {item['model']}: {item['reason']} ({item['source']})")
 
 
-def web_table(report):
+def web_table(report, candidates):
     """Export LLM recommendations using the published text/data contract."""
 
     def model_label(model):
@@ -252,12 +253,13 @@ def web_table(report):
     rows = []
     for config in report["configurations"]:
         model = config["models"]["llm"]
-        alternatives = config["llm_alternatives"]
+        ranked = rank_candidates(candidates, "llm", config["budget_gb"])
+        alternative = ranked[1] if len(ranked) > 1 else None
         rows.append(
             {
                 "capacity_gb": config["capacity_gb"],
                 "recommended": model_label(model),
-                "alternatives": "; ".join(map(model_label, alternatives)) or None,
+                "alternatives": model_label(alternative),
             }
         )
     return {"text": columns, "data": rows}
@@ -315,7 +317,7 @@ def main(argv=None):
     }
     if args.format in ("json", "web-json"):
         if args.format == "web-json":
-            report = web_table(report)
+            report = web_table(report, candidates)
         output = (
             json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
         )

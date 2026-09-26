@@ -83,16 +83,18 @@ make render-local
 ```
 
 La taula publicada mostra els **LLM per a 8, 16 i 32 GB de RAM**, amb un 25% de
-reserva. Les columnes són memòria, model recomanat i alternatives. Es calcula
-amb els criteris anteriors a partir de les avaluacions; pot diferir de les
-recomanacions editorials del web. No s'afegeix cap alternativa si no compleix
-el llindar CLAM. Els noms inclouen la precisió avaluada.
+reserva. Les columnes són memòria, model recomanat i alternativa. Mostra el LLM
+amb més puntuació CLAM i, com a única alternativa, el segon millor que càpiga
+en el pressupost de memòria, si n'hi ha. En cas d'empat, prioritza menys memòria
+i després l'identificador del model. No aplica el llindar de 2 punts CLAM a
+aquesta alternativa. Pot diferir de les recomanacions editorials del web.
+Els noms inclouen la precisió avaluada.
 
 El JSON segueix el contracte `text` (etiquetes de columnes) i `data` (files):
 
 - `capacity_gb`: memòria de l'ordinador, com a nombre en GB.
 - `recommended`: nom del model recomanat i precisió, en text pla.
-- `alternatives`: noms i precisions de les alternatives, separats per punt i coma.
+- `alternatives`: nom i precisió del segon millor LLM compatible, si n'hi ha.
 
 Cada fila conté només aquests tres camps. Les cel·les sense model o alternativa
 són `null`. El JSON només conté `text` i `data`, sense metadades ni detalls
