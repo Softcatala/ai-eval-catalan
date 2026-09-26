@@ -46,7 +46,7 @@ Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/wo
    - `python -m llm.summarize_results` → `llm/llms.json` i `llm/llms_quantized.json`
    - `python -m asr.summarize_results` → `asr/asrs.json`
    - `python -m embeddings.summarize_results` → `embeddings/embeddings.json`
-   - `python models_recommendation.py --memory 4 8 16 32 --format json --output llms_recommendations.json` → `llms_recommendations.json`
+   - `python models_recommendation.py --memory 8 16 32 --format json --output llms_recommendations.json` → `llms_recommendations.json`
 
 2. **Puja només els JSON a la branca `prod-data`**, que actua com a repositori de dades en producció:
    ```
@@ -66,7 +66,7 @@ repeticions i amb un 25% de reserva. Conté `text` (etiquetes) i `data` (files a
 i CLAM) i `url`; si no n'hi ha, és `null`. Per generar-lo localment:
 
 ```bash
-make recommendation RECOMMENDATION_ARGS="--memory 4 8 16 32 --format json --output llms_recommendations.json"
+make recommendation RECOMMENDATION_ARGS="--memory 8 16 32 --format json --output llms_recommendations.json"
 ```
 
 ### Informes HTML de depuració

@@ -146,7 +146,7 @@ def memory_budgets(capacities):
         yield capacity, capacity * (1 - RESERVE_PERCENT / 100)
 
 
-def recommend(candidates, capacities=(4, 8, 16, 32), llm_uncertainty=2):
+def recommend(candidates, capacities=(8, 16, 32), llm_uncertainty=2):
     if not finite_number(llm_uncertainty) or llm_uncertainty < 0:
         raise ValueError("El marge CLAM ha de ser un nombre finit no negatiu.")
     configurations = []
@@ -242,7 +242,7 @@ def print_table(report):
             print(f"- {item['model']}: {item['reason']} ({item['source']})")
 
 
-def recommendations_json(candidates, capacities=(4, 8, 16, 32)):
+def recommendations_json(candidates, capacities=(8, 16, 32)):
     """Export the two best LLMs in each non-overlapping RAM budget band."""
 
     def model_link(model):
@@ -285,7 +285,7 @@ def main(argv=None):
         "--memory",
         type=float,
         nargs="+",
-        default=[4, 8, 16, 32],
+        default=[8, 16, 32],
         help="Capacitats de RAM en GB",
     )
     parser.add_argument("--repo-root", type=Path, default=ROOT)

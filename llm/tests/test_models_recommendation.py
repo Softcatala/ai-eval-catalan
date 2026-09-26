@@ -171,7 +171,7 @@ def test_cli_runs_from_another_directory_and_emits_json(tmp_path):
     )
     report = json.loads(result.stdout)
     assert set(report) == {"text", "data"}
-    assert [row["capacity_gb"] for row in report["data"]] == [4, 8, 16, 32]
+    assert [row["capacity_gb"] for row in report["data"]] == [8, 16, 32]
 
 
 @pytest.mark.parametrize(
@@ -201,7 +201,7 @@ def test_missing_evaluation_directory_is_an_error(tmp_path):
 
 
 def test_json_output(tmp_path, capsys):
-    args = ["--memory", "4", "8", "16", "32", "--format", "json"]
+    args = ["--memory", "8", "16", "32", "--format", "json"]
     main(args)
     expected = json.loads(capsys.readouterr().out)
     output = tmp_path / "llms_recommendations.json"
@@ -215,7 +215,7 @@ def test_json_output(tmp_path, capsys):
         ("recommended", "Model recomanat"),
         ("alternatives", "Alternativa"),
     ]
-    assert [row["capacity_gb"] for row in table["data"]] == [4, 8, 16, 32]
+    assert [row["capacity_gb"] for row in table["data"]] == [8, 16, 32]
     for row in table["data"]:
         assert row.keys() == table["text"].keys()
         for field in ("recommended", "alternatives"):

@@ -24,7 +24,7 @@ publish-check:
 	PYTHONPATH=$(CURDIR) uv run --with jinja2 python -m llm.summarize_results --json-norm /tmp/llms.json --html /tmp/llms-summary.html
 	PYTHONPATH=$(CURDIR) uv run --with jinja2 python -m asr.summarize_results --json-out /tmp/asrs.json
 	PYTHONPATH=$(CURDIR) uv run --with jinja2 python -m embeddings.summarize_results --json-out /tmp/embeddings.json
-	PYTHONPATH=$(CURDIR) uv run --with jinja2 python models_recommendation.py --memory 4 8 16 32 --format json --output /tmp/llms_recommendations.json
+	PYTHONPATH=$(CURDIR) uv run --with jinja2 python models_recommendation.py --memory 8 16 32 --format json --output /tmp/llms_recommendations.json
 
 unit-test:
 	cd llm && PYTHONPATH=.. uv run --with pytest python -m pytest tests --ignore=tests/data_validation
