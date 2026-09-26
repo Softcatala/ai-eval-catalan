@@ -5,6 +5,7 @@ FILENAME_OVERRIDES = {
     "RichardErkhov/BSC-LT_-_salamandra-7b-instruct-gguf": "salamandra-7b-instruct.{quant}.gguf",
     "BSC-LT/salamandra-7b-fc-2607-GGUF": "ALIA-7b-fc-2607-{quant}.gguf",
     "CohereLabs/tiny-aya-water-GGUF": "tiny-aya-water-{quant_lower}.gguf",
+    "mradermacher/ALIA-40b-instruct-2605-GGUF": "ALIA-40b-instruct-2605.{quant}.gguf",
 }
 
 

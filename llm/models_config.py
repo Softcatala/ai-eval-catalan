@@ -147,6 +147,16 @@ MODELS = [
         "quantization": "q4",
     },
     {
+        "display_name": "qwen3.5-4b",
+        "output": "evals/qwen3.5_4b_q4.json",
+        "args": ["--model", "unsloth/Qwen3.5-4B-GGUF:Q4_K_M"],
+        "params_b": 4.0,
+        "quantization": "q4",
+        # The evaluation and download target is configured, but the local
+        # throughput measurement still has to be collected on this hardware.
+        "speed_benchmark_pending": True,
+    },
+    {
         "display_name": "qwen3.5-9b",
         "output": "evals/qwen3.5_9b_q4.json",
         "args": ["--model", "unsloth/Qwen3.5-9B-GGUF:Q4_K_M"],
@@ -169,6 +179,19 @@ MODELS = [
         ],
         "params_b": 30.0,
         "quantization": "q4",
+    },
+    {
+        "display_name": "glm-4.7-flash",
+        "output": "evals/glm_4_7_flash_q4.json",
+        "args": [
+            "--model",
+            "unsloth/GLM-4.7-Flash-GGUF:Q4_K_M",
+        ],
+        "params_b": 30.0,
+        "quantization": "q4",
+        # The evaluation and download target is configured, but the local
+        # throughput measurement still has to be collected on this hardware.
+        "speed_benchmark_pending": True,
     },
     {
         "display_name": "llama3.1-8b",
@@ -209,6 +232,19 @@ MODELS = [
         ],
         "params_b": 7.0,
         "quantization": "q4",
+    },
+    {
+        "display_name": "alia-40b-instruct-2605",
+        "output": "evals/alia_40b_instruct_2605_q4.json",
+        "args": [
+            "--model",
+            "mradermacher/ALIA-40b-instruct-2605-GGUF:Q4_K_M",
+        ],
+        "params_b": 40.0,
+        "quantization": "q4",
+        # The evaluation and download target is configured, but the local
+        # throughput measurement still has to be collected on this hardware.
+        "speed_benchmark_pending": True,
     },
     {
         "display_name": "gemma4-12b",
