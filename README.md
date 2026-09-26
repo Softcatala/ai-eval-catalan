@@ -46,7 +46,7 @@ Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/wo
    - `python -m llm.summarize_results` → `llm/llms.json` i `llm/llms_quantized.json`
    - `python -m asr.summarize_results` → `asr/asrs.json`
    - `python -m embeddings.summarize_results` → `embeddings/embeddings.json`
-   - `python models_recommendation.py --memory 8 16 32 --format json --output llms_recommendations.json` → `llms_recommendations.json`
+   - `python models_recommendation.py --memory 4 8 16 32 --format json --output llms_recommendations.json` → `llms_recommendations.json`
 
 2. **Puja només els JSON a la branca `prod-data`**, que actua com a repositori de dades en producció:
    ```
@@ -65,12 +65,14 @@ amb tres camps: `capacity_gb`, `recommended` i `alternatives`. Mostra el millor
 LLM i el segon millor de cada franja de memòria, sense repetir models entre files.
 Les capacitats s'ordenen de menor a major i s'eliminen els duplicats. Cada franja
 inclou models amb `pressupost_anterior < memory_gb <= pressupost_actual`,
-descomptant el 25% de reserva. Amb 8, 16 i 32 GB de RAM, les franges són
-`(0, 6]`, `(6, 12]` i `(12, 24]` GB. Les cel·les sense model són `null`.
+descomptant el 25% de reserva. Amb 4, 8, 16 i 32 GB de RAM, les franges són
+`(0, 3]`, `(3, 6]`, `(6, 12]` i `(12, 24]` GB. Les cel·les sense model són `null`.
+La franja de 4 GB indica poca memòria disponible; no implica compatibilitat
+validada amb mòbils.
 Per generar-lo localment:
 
 ```bash
-make recommendation RECOMMENDATION_ARGS="--memory 8 16 32 --format json --output llms_recommendations.json"
+make recommendation RECOMMENDATION_ARGS="--memory 4 8 16 32 --format json --output llms_recommendations.json"
 ```
 
 ### Informes HTML de depuració
