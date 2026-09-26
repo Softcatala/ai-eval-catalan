@@ -11,8 +11,13 @@ from llm.summarize_results import CLAM_TASKS, clam_score, extract_metrics
 
 ROOT = Path(__file__).resolve().parent
 MEMORY_FILE = ROOT / "llm" / "embedding_memory.json"
-CATEGORIES = ("llm", "embeddings", "asr")
+CATEGORIES = {"llm": "LLM", "embeddings": "Embeddings", "asr": "ASR"}
 METRICS = {"llm": "CLAM ↑", "embeddings": "Composta ↑", "asr": "WER combinat ↓"}
+SCORE_FORMATS = {"llm": ".1f", "embeddings": ".4f", "asr": ".2%"}
+EXTRA_COLUMNS = {
+    "llm": ("Δ CLAM", "score_gap", ".1f"),
+    "asr": ("RTF (FLEURS)", "rtf", ".4f"),
+}
 
 
 def finite_number(value):
@@ -148,10 +153,9 @@ def recommend(
         llm_alternatives = []
         for category in CATEGORIES:
             ranked = rank_candidates(candidates, category, budget)
-            models[category] = ranked[0] if ranked else None
             if category == "llm" and ranked:
                 best_score = ranked[0]["score"]
-                comparable = [
+                ranked = [
                     {
                         **model,
                         "score_gap": best_score - model["score"],
@@ -160,8 +164,8 @@ def recommend(
                     if model["score"] == best_score
                     or best_score - model["score"] < llm_uncertainty
                 ]
-                models[category] = comparable[0]
-                llm_alternatives = comparable[1:]
+                llm_alternatives = ranked[1:]
+            models[category] = ranked[0] if ranked else None
         configurations.append(
             {
                 "capacity_gb": capacity,
@@ -173,27 +177,16 @@ def recommend(
     return configurations
 
 
-def format_score(category, model):
-    if model is None:
-        return "—"
-    score = model["score"]
-    if category == "asr":
-        value = f"{score * 100:.2f}%"
-    elif category == "llm":
-        value = f"{score:.1f}"
-    else:
-        value = f"{score:.4f}"
-    return f"{value} {METRICS[category]}"
+def format_value(value, spec, suffix=""):
+    return "—" if value is None else f"{value:{spec}}{suffix}"
 
 
 def print_table(report):
     print(
-        f"Millors models locals segons les avaluacions del repositori ({report['memory_kind']})"
+        f"Millors models locals segons les avaluacions del repositori ({report['memory_kind']})\n"
+        f"Reserva: {report['reserve_percent']:g}%. Cada model s'executa individualment.\n"
+        "Memòria orientativa; el consum real depèn del context, el lot i el motor.\n"
     )
-    print(
-        f"Reserva: {report['reserve_percent']:g}%. Cada model s'executa individualment."
-    )
-    print("Memòria orientativa; el consum real depèn del context, el lot i el motor.\n")
     threshold = report["llm_uncertainty_points"]
     print(
         f"Diferències CLAM de menys de {threshold:g} punts respecte del millor "
@@ -201,17 +194,12 @@ def print_table(report):
         if threshold > 0
         else "Alternatives CLAM: només empats exactes amb el millor LLM.\n"
     )
-    for category, title in (
-        ("llm", "LLM"),
-        ("embeddings", "Embeddings"),
-        ("asr", "ASR"),
-    ):
+    for category, title in CATEGORIES.items():
         print(title)
         header = ["GB", "Útils", "Tipus", "Model", "Precisió", "GB model", "Puntuació"]
-        if category == "llm":
-            header.append("Δ CLAM")
-        elif category == "asr":
-            header.append("RTF (FLEURS)")
+        extra = EXTRA_COLUMNS.get(category)
+        if extra:
+            header.append(extra[0])
         rows = [header]
         group_starts = set()
         for config in report["configurations"]:
@@ -222,24 +210,24 @@ def print_table(report):
                     (model, "LLM (semblant)") for model in config["llm_alternatives"]
                 )
             for model, label in entries:
+                model = model or {}
                 row = [
                     f"{config['capacity_gb']:g}",
                     f"{config['budget_gb']:g}",
                     label,
-                    model["model"]
-                    if model
-                    else "Cap model compatible amb dades completes",
-                    model["precision"] or "—" if model else "—",
-                    f"{model['memory_gb']:.2f}" if model else "—",
-                    format_score(category, model),
+                    model.get("model", "Cap model compatible amb dades completes"),
+                    model.get("precision") or "—",
+                    format_value(model.get("memory_gb"), ".2f"),
+                    format_value(
+                        model.get("score"),
+                        SCORE_FORMATS[category],
+                        f" {METRICS[category]}",
+                    ),
                 ]
-                if category == "llm":
-                    row.append(f"{model['score_gap']:.1f}" if model else "—")
-                elif category == "asr":
-                    rtf = model.get("rtf") if model else None
-                    row.append(f"{rtf:.4f}" if rtf is not None else "—")
+                if extra:
+                    row.append(format_value(model.get(extra[1]), extra[2]))
                 rows.append(row)
-        widths = [max(len(row[i]) for row in rows) for i in range(len(header))]
+        widths = [max(map(len, column)) for column in zip(*rows)]
         separator = "  ".join("─" * width for width in widths)
         for index, row in enumerate(rows):
             if index in group_starts:
@@ -282,32 +270,31 @@ def web_table(candidates, capacities=(4, 8, 16, 32), reserve_percent=25):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
     parser.add_argument(
         "--memory",
         type=float,
         nargs="+",
         default=[4, 8, 16, 32],
-        help="Capacitats en GB (defecte: 4 8 16 32)",
+        help="Capacitats en GB",
     )
     parser.add_argument(
-        "--reserve-percent",
-        type=float,
-        default=25,
-        help="Percentatge reservat per al sistema i la inferència (defecte: 25)",
+        "--reserve-percent", type=float, default=25, help="Reserva de memòria (%)"
     )
     parser.add_argument(
         "--memory-kind",
         choices=("RAM", "VRAM"),
         default="RAM",
-        help="Tipus de memòria on es carrega el model sencer",
+        help="Memòria on es carrega el model sencer",
     )
     parser.add_argument("--repo-root", type=Path, default=ROOT)
     parser.add_argument(
         "--llm-uncertainty",
         type=float,
         default=2,
-        help="Llindar de diferència CLAM per a table/json, exclusiu (defecte: 2); 0: només empats exactes",
+        help="Llindar CLAM exclusiu per a table/json; 0: només empats",
     )
     parser.add_argument(
         "--format", choices=("table", "json", "web-json"), default="table"
