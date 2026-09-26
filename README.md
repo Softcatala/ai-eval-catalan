@@ -62,8 +62,12 @@ La web de [Softcatalà](https://www.softcatala.org) llegeix directament els fitx
 
 `llms_recommendations.json` conté només `text` (etiquetes) i `data` (files),
 amb tres camps: `capacity_gb`, `recommended` i `alternatives`. Mostra el millor
-LLM i el segon millor que càpiguen en la memòria disponible; les cel·les sense
-model són `null`. Per generar-lo localment:
+LLM i el segon millor de cada franja de memòria, sense repetir models entre files.
+Les capacitats s'ordenen de menor a major i s'eliminen els duplicats. Cada franja
+inclou models amb `pressupost_anterior < memory_gb <= pressupost_actual`,
+descomptant el 25% de reserva. Amb 8, 16 i 32 GB de RAM, les franges són
+`(0, 6]`, `(6, 12]` i `(12, 24]` GB. Les cel·les sense model són `null`.
+Per generar-lo localment:
 
 ```bash
 make recommendation RECOMMENDATION_ARGS="--memory 8 16 32 --format json --output llms_recommendations.json"
@@ -148,7 +152,7 @@ disponible. Executeu `make recommendation` des de l'arrel o
 Reserva un 25% fix de la memòria i assumeix que cada model s'executa
 individualment. `--format table` (per defecte) mostra l'informe de consola amb
 alternatives a menys de 2 punts CLAM. `--format json` genera el JSON de tres
-columnes amb el millor LLM i el segon millor compatible, sense aquest llindar.
+columnes amb els dos millors LLM de cada franja de memòria, sense aquest llindar.
 Tots els formats exclouen els models marcats com a `quantized_analysis_only`
 a `llm/models_config.py` o al JSON d'avaluació.
 

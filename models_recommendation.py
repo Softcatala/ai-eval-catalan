@@ -123,9 +123,13 @@ def load_candidates(root, memory_file=MEMORY_FILE):
     return candidates, skipped
 
 
-def rank_candidates(candidates, category, budget):
+def rank_candidates(candidates, category, budget, min_memory_gb=0):
     return sorted(
-        (model for model in candidates[category] if model["memory_gb"] <= budget),
+        (
+            model
+            for model in candidates[category]
+            if min_memory_gb < model["memory_gb"] <= budget
+        ),
         key=lambda m: (
             m["score"] if category == "asr" else -m["score"],
             m["memory_gb"],
@@ -238,7 +242,7 @@ def print_table(report):
 
 
 def recommendations_json(candidates, capacities=(4, 8, 16, 32)):
-    """Export LLM recommendations using the published text/data contract."""
+    """Export the two best LLMs in each non-overlapping RAM budget band."""
 
     def model_label(model):
         if model is None:
@@ -252,8 +256,9 @@ def recommendations_json(candidates, capacities=(4, 8, 16, 32)):
         "alternatives": "Alternativa",
     }
     rows = []
-    for capacity, budget in memory_budgets(capacities):
-        ranked = rank_candidates(candidates, "llm", budget)
+    previous_budget = 0
+    for capacity, budget in sorted(set(memory_budgets(capacities))):
+        ranked = rank_candidates(candidates, "llm", budget, previous_budget)
         model = ranked[0] if ranked else None
         alternative = ranked[1] if len(ranked) > 1 else None
         rows.append(
@@ -263,6 +268,7 @@ def recommendations_json(candidates, capacities=(4, 8, 16, 32)):
                 "alternatives": model_label(alternative),
             }
         )
+        previous_budget = budget
     return {"text": columns, "data": rows}
 
 

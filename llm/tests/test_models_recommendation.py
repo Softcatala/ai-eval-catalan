@@ -218,12 +218,27 @@ def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
         candidate("second", 3, 50),
         candidate("best", 6, 60),
     ]
-    rows = recommendations_json({"llm": models}, [8, 4, 3, 1])["data"]
-    assert [(row["recommended"], row["alternatives"]) for row in rows] == [
-        ("best", "second"),
-        ("second", "third"),
-        ("third", None),
-        (None, None),
+    assert recommendations_json({"llm": models}, [8])["data"] == [
+        {"capacity_gb": 8, "recommended": "best", "alternatives": "second"}
+    ]
+
+
+def test_json_uses_sorted_disjoint_memory_bands():
+    models = [
+        candidate("small", 6, 100),
+        candidate("medium", 12, 60),
+        candidate("medium_alt", 6.01, 50),
+        candidate("large", 24, 45),
+        candidate("large_alt", 12.01, 30),
+        candidate("too_large", 48.01, 110),
+    ]
+    rows = recommendations_json({"llm": models}, [32, 8, 1, 16, 8, 64])["data"]
+    assert [(r["capacity_gb"], r["recommended"], r["alternatives"]) for r in rows] == [
+        (1, None, None),
+        (8, "small", None),
+        (16, "medium", "medium_alt"),
+        (32, "large", "large_alt"),
+        (64, None, None),
     ]
 
 
