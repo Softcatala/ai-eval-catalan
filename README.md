@@ -46,6 +46,7 @@ Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/wo
    - `python -m llm.summarize_results` → `llm/llms.json` i `llm/llms_quantized.json`
    - `python -m asr.summarize_results` → `asr/asrs.json`
    - `python -m embeddings.summarize_results` → `embeddings/embeddings.json`
+   - `python models_recommendation.py --memory 8 16 32 --format json --output llms_recommendations.json` → `llms_recommendations.json`
 
 2. **Puja només els JSON a la branca `prod-data`**, que actua com a repositori de dades en producció:
    ```
@@ -53,10 +54,20 @@ Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/wo
    ├── llms.json
    ├── llms_quantized.json
    ├── asrs.json
-   └── embeddings.json
+   ├── embeddings.json
+   └── llms_recommendations.json
    ```
 
 La web de [Softcatalà](https://www.softcatala.org) llegeix directament els fitxers de la branca `prod-data` per mostrar els resultats actualitzats.
+
+`llms_recommendations.json` mostra els dos millors LLM per franja de RAM, sense
+repeticions i amb un 25% de reserva. Conté `text` (etiquetes) i `data` (files amb
+`capacity_gb` (p. ex. `16 GB`), `recommended` i `alternatives`, amb nom i precisió).
+Per generar-lo localment:
+
+```bash
+make recommendation RECOMMENDATION_ARGS="--memory 8 16 32 --format json --output llms_recommendations.json"
+```
 
 ### Informes HTML de depuració
 
@@ -132,8 +143,14 @@ checkout local ni descarregar el dataset per separat:
 
 L'eina [`models_recommendation.py`](models_recommendation.py), situada a l'arrel, recomana
 models locals de LLM, embeddings i ASR segons les avaluacions i la memòria
-disponible. Executeu `make recommendation` des de
-l'arrel; consulteu les opcions a [HARDWARE_MODELS.md](HARDWARE_MODELS.md).
+disponible. Executeu `make recommendation` des de l'arrel o
+`uv run --project llm python models_recommendation.py --help` per consultar les opcions.
+Reserva un 25% fix de la memòria i assumeix que cada model s'executa
+individualment. `--format table` (per defecte) mostra l'informe de consola amb
+alternatives a menys de 2 punts CLAM. `--format json` genera el JSON de tres
+columnes amb els dos millors LLM de cada franja de memòria, sense aquest llindar.
+Tots els formats exclouen els models marcats com a `quantized_analysis_only`
+a `llm/models_config.py` o al JSON d'avaluació.
 
 Per a models GGUF quantitzats amb **Q4_K_M**, aquestes són les mides orientatives
 segons la memòria disponible del sistema:

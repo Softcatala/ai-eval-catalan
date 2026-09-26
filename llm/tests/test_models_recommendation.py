@@ -11,6 +11,7 @@ from models_recommendation import (
     load_candidates,
     main,
     recommend,
+    recommendations_json,
 )
 
 
@@ -29,7 +30,13 @@ def test_memory_boundary_reserve_and_score_direction():
     assert result["models"]["llm"]["model"] == "fits"
     assert result["models"]["embeddings"]["model"] == "good"
     assert result["models"]["asr"]["model"] == "good"
-    assert recommend(candidates, [8], 0)[0]["models"]["llm"]["model"] == "large"
+    assert recommendations_json(candidates, [8])["data"] == [
+        {
+            "capacity_gb": "8 GB",
+            "recommended": "fits",
+            "alternatives": None,
+        }
+    ]
 
 
 def test_ties_prefer_smaller_model_and_empty_categories_are_explicit():
@@ -83,6 +90,8 @@ def test_invalid_llm_uncertainty(margin):
 def test_table_shows_llm_alternatives_and_gap(capsys):
     main(["--memory", "16"])
     output = capsys.readouterr().out
+    assert "(RAM)" in output
+    assert "Reserva: 25%" in output
     assert "menys de 2 punts" in output
     assert "no concloents" in output
     assert "LLM (semblant)" in output
@@ -91,15 +100,10 @@ def test_table_shows_llm_alternatives_and_gap(capsys):
 
 
 @pytest.mark.parametrize("capacity", [0, -8, float("nan"), float("inf")])
-def test_invalid_memory(capacity):
+@pytest.mark.parametrize("generate", [recommend, recommendations_json])
+def test_invalid_memory(capacity, generate):
     with pytest.raises(ValueError, match="capacitats"):
-        recommend({}, [capacity])
-
-
-@pytest.mark.parametrize("reserve", [-1, 100, float("nan"), float("inf")])
-def test_invalid_reserve(reserve):
-    with pytest.raises(ValueError, match="reserva"):
-        recommend({}, [8], reserve)
+        generate({}, [capacity])
 
 
 def test_asr_weights_samples_and_requires_both_benchmarks():
@@ -145,7 +149,6 @@ def test_loader_uses_raw_evals_filters_cloud_and_reports_unknown_memory(tmp_path
     model = candidates["embeddings"][0]
     assert model["score"] == pytest.approx(0.8)
     assert model["memory_gb"] == 2.24
-    assert model["eval_source"] == "embeddings/evals/local.json"
     assert [row["model"] for row in skipped] == ["unknown"]
 
 
@@ -158,18 +161,106 @@ def test_cli_runs_from_another_directory_and_emits_json(tmp_path):
         check=True,
     )
     report = json.loads(result.stdout)
-    assert report["llm_uncertainty_points"] == 2
-    assert [r["capacity_gb"] for r in report["configurations"]] == [4, 8, 16, 32]
-    for config in report["configurations"]:
-        for model in config["models"].values():
-            assert model is not None
-            assert model["memory_gb"] <= config["budget_gb"]
-            assert (ROOT / model["eval_source"]).is_file()
-        for alternative in config["llm_alternatives"]:
-            assert alternative["memory_gb"] <= config["budget_gb"]
-            assert 0 <= alternative["score_gap"] < 2
+    assert set(report) == {"text", "data"}
+    assert [row["capacity_gb"] for row in report["data"]] == ["8 GB", "16 GB", "32 GB"]
+
+
+@pytest.mark.parametrize(
+    "filename, flags",
+    [
+        ("gemma3_12b_q2.json", {}),
+        ("gemma3_12b_q2.json", {"quantized_analysis_only": False}),
+        ("custom_analysis.json", {"quantized_analysis_only": True}),
+    ],
+)
+def test_loader_excludes_analysis_only_models(tmp_path, filename, flags):
+    for category in CATEGORIES:
+        (tmp_path / category / "evals").mkdir(parents=True)
+    data = json.loads((ROOT / "llm/evals/gemma3_12b_q4.json").read_text())
+    directory = tmp_path / "llm/evals"
+    (directory / "gemma3_12b_q4.json").write_text(json.dumps(data))
+    (directory / filename).write_text(
+        json.dumps({**data, "display_name": "analysis-only", **flags})
+    )
+    candidates, _ = load_candidates(tmp_path)
+    assert [m["model"] for m in candidates["llm"]] == [data["display_name"]]
 
 
 def test_missing_evaluation_directory_is_an_error(tmp_path):
     with pytest.raises(ValueError, match="directori"):
         load_candidates(tmp_path)
+
+
+def test_json_output(tmp_path, capsys):
+    args = ["--memory", "8", "16", "32", "--format", "json"]
+    main(args)
+    expected = json.loads(capsys.readouterr().out)
+    output = tmp_path / "llms_recommendations.json"
+    main([*args, "--output", str(output)])
+    assert capsys.readouterr().out == ""
+    table = json.loads(output.read_text())
+    assert table == expected
+    assert set(table) == {"text", "data"}
+    assert list(table["text"].items()) == [
+        ("capacity_gb", "Memòria de l’ordinador"),
+        ("recommended", "Model recomanat"),
+        ("alternatives", "Alternativa"),
+    ]
+    assert [row["capacity_gb"] for row in table["data"]] == ["8 GB", "16 GB", "32 GB"]
+    for row in table["data"]:
+        assert set(row) == set(table["text"])
+        assert all(isinstance(row[field], str) for field in table["text"])
+        for field in ("recommended", "alternatives"):
+            assert " · " in row[field]
+            assert "CLAM" not in row[field]
+
+
+def test_json_alternative_is_second_best_eligible_llm_regardless_of_gap():
+    models = [
+        candidate("over_budget", 6.01, 100),
+        candidate("third", 2, 49),
+        candidate("second", 3, 50),
+        candidate("best", 6, 60),
+    ]
+    models[-1]["precision"] = "Q4_K_M"
+    assert recommendations_json({"llm": models}, [8])["data"] == [
+        {
+            "capacity_gb": "8 GB",
+            "recommended": "best · Q4_K_M",
+            "alternatives": "second",
+        }
+    ]
+
+
+def test_json_uses_sorted_disjoint_memory_bands():
+    models = [
+        candidate("small", 6, 100),
+        candidate("medium", 12, 60),
+        candidate("medium_alt", 6.01, 50),
+        candidate("large", 24, 45),
+        candidate("large_alt", 12.01, 30),
+        candidate("too_large", 48.01, 110),
+    ]
+    rows = recommendations_json({"llm": models}, [32, 8, 1, 16, 8, 64])["data"]
+    assert [(r["capacity_gb"], r["recommended"], r["alternatives"]) for r in rows] == [
+        ("1 GB", None, None),
+        ("8 GB", "small", None),
+        ("16 GB", "medium", "medium_alt"),
+        ("32 GB", "large", "large_alt"),
+        ("64 GB", None, None),
+    ]
+
+
+def test_json_alternative_breaks_score_ties_by_memory_then_model_id():
+    models = [
+        candidate("larger", 4, 60),
+        candidate("b", 3, 60),
+        candidate("a", 3, 60),
+    ]
+    assert recommendations_json({"llm": models}, [8])["data"] == [
+        {
+            "capacity_gb": "8 GB",
+            "recommended": "a",
+            "alternatives": "b",
+        }
+    ]
