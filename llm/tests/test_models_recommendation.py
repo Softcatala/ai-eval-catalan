@@ -16,12 +16,7 @@ from models_recommendation import (
 
 
 def candidate(name, memory, score):
-    return {
-        "model_id": f"org/{name}",
-        "model": name,
-        "memory_gb": memory,
-        "score": score,
-    }
+    return {"model_id": name, "model": name, "memory_gb": memory, "score": score}
 
 
 def test_memory_boundary_reserve_and_score_direction():
@@ -154,7 +149,6 @@ def test_loader_uses_raw_evals_filters_cloud_and_reports_unknown_memory(tmp_path
     model = candidates["embeddings"][0]
     assert model["score"] == pytest.approx(0.8)
     assert model["memory_gb"] == 2.24
-    assert model["eval_source"] == "embeddings/evals/local.json"
     assert [row["model"] for row in skipped] == ["unknown"]
 
 
@@ -221,14 +215,14 @@ def test_json_output(tmp_path, capsys):
             assert "CLAM" not in row[field]
 
 
-def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
+def test_json_alternative_is_second_best_eligible_llm_regardless_of_gap():
     models = [
         candidate("over_budget", 6.01, 100),
         candidate("third", 2, 49),
-        candidate("second", 3, 50.16),
-        candidate("best", 6, 60.04),
+        candidate("second", 3, 50),
+        candidate("best", 6, 60),
     ]
-    models[-1].update(model_id="org/best:Q4_K_M", precision="Q4_K_M")
+    models[-1]["precision"] = "Q4_K_M"
     assert recommendations_json({"llm": models}, [8])["data"] == [
         {
             "capacity_gb": "8 GB",
@@ -257,7 +251,7 @@ def test_json_uses_sorted_disjoint_memory_bands():
     ]
 
 
-def test_web_alternative_breaks_score_ties_by_memory_then_model_id():
+def test_json_alternative_breaks_score_ties_by_memory_then_model_id():
     models = [
         candidate("larger", 4, 60),
         candidate("b", 3, 60),

@@ -12,6 +12,7 @@ from llm.summarize_results import CLAM_TASKS, clam_score, extract_metrics
 ROOT = Path(__file__).resolve().parent
 MEMORY_FILE = ROOT / "llm" / "embedding_memory.json"
 RESERVE_PERCENT = 25
+DEFAULT_CAPACITIES = (8, 16, 32)
 CATEGORIES = {"llm": "LLM", "embeddings": "Embeddings", "asr": "ASR"}
 METRICS = {"llm": "CLAM ↑", "embeddings": "Composta ↑", "asr": "WER combinat ↓"}
 SCORE_FORMATS = {"llm": ".1f", "embeddings": ".4f", "asr": ".2%"}
@@ -89,14 +90,12 @@ def load_candidates(root, memory_file=MEMORY_FILE):
             source = str(path.relative_to(root))
             score = evaluation_score(category, data)
             memory = data.get("memory_gb")
-            memory_source = source
             precision = data.get("quantization", "")
             if category == "llm" and ":" in model_id:
                 precision = model_id.rsplit(":", 1)[1]
             if memory is None and category == "embeddings":
                 spec = memory_catalog.get(model_id, {})
                 memory = spec.get("memory_gb")
-                memory_source = spec.get("source")
                 precision = spec.get("precision", "")
             reason = None
             if score is None:
@@ -111,10 +110,7 @@ def load_candidates(root, memory_file=MEMORY_FILE):
                 "model_id": model_id,
                 "precision": precision,
                 "score": score,
-                "metric": METRICS[category],
                 "memory_gb": memory,
-                "memory_source": memory_source,
-                "eval_source": source,
             }
             if category == "asr":
                 rtf = data.get("benchmarks", {}).get("fleurs_ca", {}).get("rtf")
@@ -145,7 +141,7 @@ def memory_budgets(capacities):
         yield capacity, capacity * (1 - RESERVE_PERCENT / 100)
 
 
-def recommend(candidates, capacities=(8, 16, 32), llm_uncertainty=2):
+def recommend(candidates, capacities=DEFAULT_CAPACITIES, llm_uncertainty=2):
     if not finite_number(llm_uncertainty) or llm_uncertainty < 0:
         raise ValueError("El marge CLAM ha de ser un nombre finit no negatiu.")
     configurations = []
@@ -241,7 +237,7 @@ def print_table(report):
             print(f"- {item['model']}: {item['reason']} ({item['source']})")
 
 
-def recommendations_json(candidates, capacities=(8, 16, 32)):
+def recommendations_json(candidates, capacities=DEFAULT_CAPACITIES):
     """Export the two best LLMs in each non-overlapping RAM budget band."""
 
     def model_label(model):
@@ -280,7 +276,7 @@ def main(argv=None):
         "--memory",
         type=float,
         nargs="+",
-        default=[8, 16, 32],
+        default=DEFAULT_CAPACITIES,
         help="Capacitats de RAM en GB",
     )
     parser.add_argument("--repo-root", type=Path, default=ROOT)
