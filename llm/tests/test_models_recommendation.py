@@ -16,7 +16,12 @@ from models_recommendation import (
 
 
 def candidate(name, memory, score):
-    return {"model_id": name, "model": name, "memory_gb": memory, "score": score}
+    return {
+        "model_id": f"org/{name}",
+        "model": name,
+        "memory_gb": memory,
+        "score": score,
+    }
 
 
 def test_memory_boundary_reserve_and_score_direction():
@@ -31,7 +36,14 @@ def test_memory_boundary_reserve_and_score_direction():
     assert result["models"]["embeddings"]["model"] == "good"
     assert result["models"]["asr"]["model"] == "good"
     assert recommendations_json(candidates, [8])["data"] == [
-        {"capacity_gb": 8, "recommended": "fits · CLAM 60.0", "alternatives": None}
+        {
+            "capacity_gb": 8,
+            "recommended": {
+                "name": "fits · CLAM 60.0",
+                "url": "https://huggingface.co/org/fits",
+            },
+            "alternatives": None,
+        }
     ]
 
 
@@ -206,9 +218,11 @@ def test_json_output(tmp_path, capsys):
     assert [row["capacity_gb"] for row in table["data"]] == [4, 8, 16, 32]
     for row in table["data"]:
         assert row.keys() == table["text"].keys()
-        assert " · CLAM " in row["recommended"]
-        assert " · CLAM " in row["alternatives"]
-        assert ";" not in row["alternatives"]
+        for field in ("recommended", "alternatives"):
+            model = row[field]
+            assert set(model) == {"name", "url"}
+            assert " · CLAM " in model["name"]
+            assert model["url"].startswith("https://huggingface.co/")
 
 
 def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
@@ -218,11 +232,18 @@ def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
         candidate("second", 3, 50.16),
         candidate("best", 6, 60.04),
     ]
+    models[-1].update(model_id="org/best:Q4_K_M", precision="Q4_K_M")
     assert recommendations_json({"llm": models}, [8])["data"] == [
         {
             "capacity_gb": 8,
-            "recommended": "best · CLAM 60.0",
-            "alternatives": "second · CLAM 50.2",
+            "recommended": {
+                "name": "best · Q4_K_M · CLAM 60.0",
+                "url": "https://huggingface.co/org/best",
+            },
+            "alternatives": {
+                "name": "second · CLAM 50.2",
+                "url": "https://huggingface.co/org/second",
+            },
         }
     ]
 
@@ -237,7 +258,14 @@ def test_json_uses_sorted_disjoint_memory_bands():
         candidate("too_large", 48.01, 110),
     ]
     rows = recommendations_json({"llm": models}, [32, 8, 1, 16, 8, 64])["data"]
-    assert [(r["capacity_gb"], r["recommended"], r["alternatives"]) for r in rows] == [
+    assert [
+        (
+            r["capacity_gb"],
+            (r["recommended"] or {}).get("name"),
+            (r["alternatives"] or {}).get("name"),
+        )
+        for r in rows
+    ] == [
         (1, None, None),
         (8, "small · CLAM 100.0", None),
         (16, "medium · CLAM 60.0", "medium_alt · CLAM 50.0"),
@@ -255,7 +283,13 @@ def test_web_alternative_breaks_score_ties_by_memory_then_model_id():
     assert recommendations_json({"llm": models}, [8])["data"] == [
         {
             "capacity_gb": 8,
-            "recommended": "a · CLAM 60.0",
-            "alternatives": "b · CLAM 60.0",
+            "recommended": {
+                "name": "a · CLAM 60.0",
+                "url": "https://huggingface.co/org/a",
+            },
+            "alternatives": {
+                "name": "b · CLAM 60.0",
+                "url": "https://huggingface.co/org/b",
+            },
         }
     ]

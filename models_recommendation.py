@@ -6,6 +6,7 @@ import math
 from pathlib import Path
 
 from embeddings.summarize_results import composite, is_cloud
+from eval_common.model_urls import repo_url
 from llm.models_config import MODELS
 from llm.summarize_results import CLAM_TASKS, clam_score, extract_metrics
 
@@ -244,12 +245,15 @@ def print_table(report):
 def recommendations_json(candidates, capacities=(4, 8, 16, 32)):
     """Export the two best LLMs in each non-overlapping RAM budget band."""
 
-    def model_label(model):
+    def model_link(model):
         if model is None:
             return None
         precision = model.get("precision")
         name = model["model"] + (f" · {precision}" if precision else "")
-        return f"{name} · CLAM {model['score']:.1f}"
+        return {
+            "name": f"{name} · CLAM {model['score']:.1f}",
+            "url": repo_url(model["model_id"]),
+        }
 
     columns = {
         "capacity_gb": "Memòria de l’ordinador",
@@ -265,8 +269,8 @@ def recommendations_json(candidates, capacities=(4, 8, 16, 32)):
         rows.append(
             {
                 "capacity_gb": capacity,
-                "recommended": model_label(model),
-                "alternatives": model_label(alternative),
+                "recommended": model_link(model),
+                "alternatives": model_link(alternative),
             }
         )
         previous_budget = budget

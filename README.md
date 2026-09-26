@@ -63,8 +63,9 @@ La web de [Softcatalà](https://www.softcatala.org) llegeix directament els fitx
 `llms_recommendations.json` conté només `text` (etiquetes) i `data` (files),
 amb tres camps: `capacity_gb`, `recommended` i `alternatives`. Mostra el millor
 LLM i el segon millor de cada franja de memòria, sense repetir models entre files.
-El text de cada model inclou la precisió i CLAM amb un decimal,
-per exemple `qwen3-14b · Q4_K_M · CLAM 59.0`.
+Cada model és un objecte amb `name` (nom, precisió i CLAM amb un decimal,
+per exemple `qwen3-14b · Q4_K_M · CLAM 59.0`) i `url` (enllaç al repositori).
+La web ha de renderitzar `name` com un enllaç a `url`.
 Les capacitats s'ordenen de menor a major i s'eliminen els duplicats. Cada franja
 inclou models amb `pressupost_anterior < memory_gb <= pressupost_actual`,
 descomptant el 25% de reserva. Amb 4, 8, 16 i 32 GB de RAM, les franges són
