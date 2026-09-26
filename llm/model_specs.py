@@ -4,6 +4,7 @@ from pathlib import Path
 FILENAME_OVERRIDES = {
     "RichardErkhov/BSC-LT_-_salamandra-7b-instruct-gguf": "salamandra-7b-instruct.{quant}.gguf",
     "BSC-LT/salamandra-7b-fc-2607-GGUF": "ALIA-7b-fc-2607-{quant}.gguf",
+    "CohereLabs/tiny-aya-water-GGUF": "tiny-aya-water-{quant_lower}.gguf",
 }
 
 
@@ -30,7 +31,9 @@ def expected_gguf_filename(model_spec: str, default_quant: str = "Q4_K_M") -> st
         repo, quant = model_spec, default_quant
 
     if repo in FILENAME_OVERRIDES:
-        return FILENAME_OVERRIDES[repo].format(quant=quant)
+        return FILENAME_OVERRIDES[repo].format(
+            quant=quant, quant_lower=quant.lower()
+        )
 
     model_base = repo.split("/")[-1].replace("-GGUF", "")
     return f"{model_base}-{quant}.gguf"
