@@ -1,27 +1,27 @@
 {
   "text": {
-    "capacity_gb": "Memòria de l’ordinador",
     "recommended": "Model recomanat",
+    "capacity_gb": "Memòria de l’ordinador",
     "alternatives": "Alternativa"
   },
   "data": [
     {
+      "recommended": "qwen3.5-9b · Q4_K_M",
       "capacity_gb": "8 GB",
-      "recommended": "qwen3.5-9b · Q4_K_M · CLAM 58.4",
-      "repo_url": "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF",
-      "alternatives": "tiny-aya-water · Q4_K_M · CLAM 51.7"
+      "alternatives": "tiny-aya-water · Q4_K_M",
+      "repo_url": "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF"
     },
     {
+      "recommended": "qwen3-14b · Q4_K_M",
       "capacity_gb": "16 GB",
-      "recommended": "qwen3-14b · Q4_K_M · CLAM 59.0",
-      "repo_url": "https://huggingface.co/unsloth/Qwen3-14B-GGUF",
-      "alternatives": "gemma3-12b · Q4_K_M · CLAM 57.3"
+      "alternatives": "gemma3-12b · Q4_K_M",
+      "repo_url": "https://huggingface.co/unsloth/Qwen3-14B-GGUF"
     },
     {
+      "recommended": "qwen3.8-27b · Q4_K_M",
       "capacity_gb": "32 GB",
-      "recommended": "qwen3.8-27b · Q4_K_M · CLAM 62.9",
-      "repo_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
-      "alternatives": "muse-glimmer-30b · UD-Q4_K_XL · CLAM 60.0"
+      "alternatives": "muse-glimmer-30b · UD-Q4_K_XL",
+      "repo_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF"
     }
   ]
 }
