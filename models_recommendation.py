@@ -281,7 +281,7 @@ def main(argv=None):
         help="Capacitats en GB",
     )
     parser.add_argument(
-        "--reserve-percent", type=float, default=25, help="Reserva de memòria (%)"
+        "--reserve-percent", type=float, default=25, help="Reserva de memòria (%%)"
     )
     parser.add_argument(
         "--memory-kind",
@@ -294,18 +294,16 @@ def main(argv=None):
         "--llm-uncertainty",
         type=float,
         default=2,
-        help="Llindar CLAM exclusiu per a table/json; 0: només empats",
+        help="Llindar CLAM exclusiu per a table; 0: només empats",
     )
-    parser.add_argument(
-        "--format", choices=("table", "json", "web-json"), default="table"
-    )
+    parser.add_argument("--format", choices=("table", "json"), default="table")
     parser.add_argument("--output", type=Path, help="Fitxer de sortida JSON")
     args = parser.parse_args(argv)
     if args.output and args.format == "table":
-        parser.error("--output requereix --format json o web-json")
+        parser.error("--output requereix --format json")
     try:
         candidates, skipped = load_candidates(args.repo_root)
-        if args.format == "web-json":
+        if args.format == "json":
             report = recommendations_json(candidates, args.memory, args.reserve_percent)
         else:
             report = {
@@ -320,7 +318,7 @@ def main(argv=None):
             }
     except (OSError, ValueError) as error:
         parser.error(str(error))
-    if args.format in ("json", "web-json"):
+    if args.format == "json":
         output = (
             json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
         )

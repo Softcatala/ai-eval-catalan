@@ -46,7 +46,7 @@ Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/wo
    - `python -m llm.summarize_results` → `llm/llms.json` i `llm/llms_quantized.json`
    - `python -m asr.summarize_results` → `asr/asrs.json`
    - `python -m embeddings.summarize_results` → `embeddings/embeddings.json`
-   - `python models_recommendation.py --memory 8 16 32 --format web-json --output llms_recommendations.json` → `llms_recommendations.json`
+   - `python models_recommendation.py --memory 8 16 32 --format json --output llms_recommendations.json` → `llms_recommendations.json`
 
 2. **Puja només els JSON a la branca `prod-data`**, que actua com a repositori de dades en producció:
    ```
@@ -66,7 +66,7 @@ LLM i el segon millor que càpiguen en la memòria disponible; les cel·les sens
 model són `null`. Per generar-lo localment:
 
 ```bash
-make recommendation RECOMMENDATION_ARGS="--memory 8 16 32 --format web-json --output llms_recommendations.json"
+make recommendation RECOMMENDATION_ARGS="--memory 8 16 32 --format json --output llms_recommendations.json"
 ```
 
 ### Informes HTML de depuració
@@ -146,8 +146,9 @@ models locals de LLM, embeddings i ASR segons les avaluacions i la memòria
 disponible. Executeu `make recommendation` des de l'arrel o
 `uv run --project llm python models_recommendation.py --help` per consultar les opcions.
 Per defecte reserva un 25% de la memòria i assumeix que cada model s'executa
-individualment. L'informe detallat mostra alternatives a menys de 2 punts CLAM;
-la taula web mostra només el segon millor LLM compatible, sense aquest llindar.
+individualment. `--format table` (per defecte) mostra l'informe de consola amb
+alternatives a menys de 2 punts CLAM. `--format json` genera el JSON de tres
+columnes amb el millor LLM i el segon millor compatible, sense aquest llindar.
 Tots els formats exclouen els models marcats com a `quantized_analysis_only`
 a `llm/models_config.py` o al JSON d'avaluació.
 

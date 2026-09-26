@@ -161,16 +161,8 @@ def test_cli_runs_from_another_directory_and_emits_json(tmp_path):
         check=True,
     )
     report = json.loads(result.stdout)
-    assert report["llm_uncertainty_points"] == 2
-    assert [r["capacity_gb"] for r in report["configurations"]] == [4, 8, 16, 32]
-    for config in report["configurations"]:
-        for model in config["models"].values():
-            assert model is not None
-            assert model["memory_gb"] <= config["budget_gb"]
-            assert (ROOT / model["eval_source"]).is_file()
-        for alternative in config["llm_alternatives"]:
-            assert alternative["memory_gb"] <= config["budget_gb"]
-            assert 0 <= alternative["score_gap"] < 2
+    assert set(report) == {"text", "data"}
+    assert [row["capacity_gb"] for row in report["data"]] == [4, 8, 16, 32]
 
 
 @pytest.mark.parametrize(
@@ -199,9 +191,8 @@ def test_missing_evaluation_directory_is_an_error(tmp_path):
         load_candidates(tmp_path)
 
 
-@pytest.mark.parametrize("format", ["json", "web-json"])
-def test_json_output(tmp_path, capsys, format):
-    args = ["--memory", "8", "16", "32", "--format", format]
+def test_json_output(tmp_path, capsys):
+    args = ["--memory", "8", "16", "32", "--format", "json"]
     main(args)
     expected = json.loads(capsys.readouterr().out)
     output = tmp_path / "llms_recommendations.json"
@@ -209,8 +200,6 @@ def test_json_output(tmp_path, capsys, format):
     assert capsys.readouterr().out == ""
     table = json.loads(output.read_text())
     assert table == expected
-    if format == "json":
-        return
     assert set(table) == {"text", "data"}
     assert list(table["text"].items()) == [
         ("capacity_gb", "Memòria de l’ordinador"),

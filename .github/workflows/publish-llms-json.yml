@@ -35,7 +35,7 @@ jobs:
         run: python -m embeddings.summarize_results --json-out embeddings/embeddings.json
 
       - name: Generate llms_recommendations.json
-        run: python models_recommendation.py --memory 8 16 32 --format web-json --output llms_recommendations.json
+        run: python models_recommendation.py --memory 8 16 32 --format json --output llms_recommendations.json
 
       - name: Checkout prod-data branch
         uses: actions/checkout@v4
