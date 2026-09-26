@@ -106,7 +106,7 @@ def load_candidates(root, memory_file=MEMORY_FILE):
 
 
 def recommend(
-    candidates, capacities=(8, 16, 32), reserve_percent=25, llm_uncertainty=2
+    candidates, capacities=(4, 8, 16, 32), reserve_percent=25, llm_uncertainty=2
 ):
     if not finite_number(reserve_percent) or not 0 <= reserve_percent < 100:
         raise ValueError("La reserva ha de ser entre 0 i menys de 100%.")
@@ -220,8 +220,8 @@ def main(argv=None):
         "--memory",
         type=float,
         nargs="+",
-        default=[8, 16, 32],
-        help="Capacitats en GB (defecte: 8 16 32)",
+        default=[4, 8, 16, 32],
+        help="Capacitats en GB (defecte: 4 8 16 32)",
     )
     parser.add_argument(
         "--reserve-percent",

@@ -4,7 +4,7 @@ Des de l'arrel del repositori:
 
 ```bash
 python3 hardware_models.py
-python3 hardware_models.py --memory 8 16 32 --reserve-percent 25
+python3 hardware_models.py --memory 4 8 16 32 --reserve-percent 25
 python3 hardware_models.py --memory-kind VRAM --format json
 python3 hardware_models.py --llm-uncertainty 2
 ```
@@ -52,9 +52,9 @@ La sortida JSON inclou `llm_uncertainty_points` i, per configuració,
 representa el llindar de diferència, no un marge ± per model.
 Aquest llindar només s'aplica als LLM.
 
-Les configuracions per defecte són **8, 16 i 32 GB de RAM**, amb un **25% de
+Les configuracions per defecte són **4, 8, 16 i 32 GB de RAM**, amb un **25% de
 reserva** per al sistema, el motor, les activacions i la memòria cau. Això deixa
-6, 12 i 24 GB per als models. `--reserve-percent` permet ajustar aquest marge.
+3, 6, 12 i 24 GB per als models. `--reserve-percent` permet ajustar aquest marge.
 `--memory-kind VRAM` aplica el mateix pressupost a la memòria de la GPU, assumint
 que el model s'hi carrega sencer; no suma RAM i VRAM ni calcula offloading.
 

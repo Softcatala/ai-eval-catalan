@@ -159,7 +159,7 @@ def test_cli_runs_from_another_directory_and_emits_json(tmp_path):
     )
     report = json.loads(result.stdout)
     assert report["llm_uncertainty_points"] == 2
-    assert [r["capacity_gb"] for r in report["configurations"]] == [8, 16, 32]
+    assert [r["capacity_gb"] for r in report["configurations"]] == [4, 8, 16, 32]
     for config in report["configurations"]:
         for model in config["models"].values():
             assert model is not None
