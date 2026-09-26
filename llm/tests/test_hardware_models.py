@@ -43,23 +43,21 @@ def test_ties_prefer_smaller_model_and_empty_categories_are_explicit():
     assert recommend(candidates, [1])[0]["llm_alternatives"] == []
 
 
-def test_llm_alternatives_overlap_best_interval_and_fit_memory():
+def test_llm_alternatives_use_strict_gap_from_best_and_fit_memory():
     candidates = {category: [] for category in CATEGORIES}
     candidates["llm"] = [
-        candidate("touches_boundary", 4, 56),
-        candidate("outside", 2, 55.99),
+        candidate("touches_boundary", 4, 58),
+        candidate("outside", 2, 57.99),
         candidate("best", 6, 60),
         candidate("over_budget", 6.01, 61),
-        candidate("close", 5, 58),
-        candidate("chained_overlap", 2, 53),
+        candidate("close", 5, 58.01),
+        candidate("chained_overlap", 2, 57),
     ]
     config = recommend(candidates, [8])[0]
     assert config["models"]["llm"]["model"] == "best"
-    assert config["models"]["llm"]["score_interval"] == [58, 62]
     alternatives = config["llm_alternatives"]
-    assert [model["model"] for model in alternatives] == ["close", "touches_boundary"]
-    assert [model["score_gap"] for model in alternatives] == [2, 4]
-    assert alternatives[-1]["score_interval"] == [54, 58]
+    assert [model["model"] for model in alternatives] == ["close"]
+    assert [model["score_gap"] for model in alternatives] == pytest.approx([1.99])
     assert "score_gap" not in candidates["llm"][0]
 
 
@@ -72,7 +70,7 @@ def test_llm_uncertainty_is_configurable_and_zero_preserves_exact_ties():
     ]
     strict = recommend(candidates, [8], llm_uncertainty=0)[0]
     assert [m["model"] for m in strict["llm_alternatives"]] == ["tied"]
-    relaxed = recommend(candidates, [8], llm_uncertainty=1)[0]
+    relaxed = recommend(candidates, [8], llm_uncertainty=3)[0]
     assert [m["model"] for m in relaxed["llm_alternatives"]] == ["tied", "near"]
 
 
@@ -85,7 +83,8 @@ def test_invalid_llm_uncertainty(margin):
 def test_table_shows_llm_alternatives_and_gap(capsys):
     main(["--memory", "16"])
     output = capsys.readouterr().out
-    assert "±2 punts per model" in output
+    assert "menys de 2 punts" in output
+    assert "no concloents" in output
     assert "LLM (semblant)" in output
     assert "Δ CLAM" in output
     assert "gemma3-12b" in output
@@ -152,7 +151,7 @@ def test_loader_uses_raw_evals_filters_cloud_and_reports_unknown_memory(tmp_path
 
 def test_cli_runs_from_another_directory_and_emits_json(tmp_path):
     result = subprocess.run(
-        [sys.executable, str(ROOT / "llm" / "hardware_models.py"), "--format", "json"],
+        [sys.executable, str(ROOT / "hardware_models.py"), "--format", "json"],
         cwd=tmp_path,
         capture_output=True,
         text=True,
@@ -168,11 +167,7 @@ def test_cli_runs_from_another_directory_and_emits_json(tmp_path):
             assert (ROOT / model["eval_source"]).is_file()
         for alternative in config["llm_alternatives"]:
             assert alternative["memory_gb"] <= config["budget_gb"]
-            assert 0 <= alternative["score_gap"] <= 4
-            assert (
-                alternative["score_interval"][1]
-                >= config["models"]["llm"]["score_interval"][0]
-            )
+            assert 0 <= alternative["score_gap"] < 2
 
 
 def test_missing_evaluation_directory_is_an_error(tmp_path):

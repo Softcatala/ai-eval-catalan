@@ -3,18 +3,13 @@
 import argparse
 import json
 import math
-import sys
 from pathlib import Path
-
-# Support both `python hardware_models.py` and `python -m llm.hardware_models`.
-if __package__ in (None, ""):
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from embeddings.summarize_results import composite, is_cloud
 from llm.summarize_results import CLAM_TASKS, clam_score, extract_metrics
 
-ROOT = Path(__file__).resolve().parents[1]
-MEMORY_FILE = Path(__file__).with_name("embedding_memory.json")
+ROOT = Path(__file__).resolve().parent
+MEMORY_FILE = ROOT / "llm" / "embedding_memory.json"
 CATEGORIES = ("llm", "embeddings", "asr")
 METRICS = {"llm": "CLAM ↑", "embeddings": "Composta ↑", "asr": "WER combinat ↓"}
 
@@ -143,13 +138,10 @@ def recommend(
                     {
                         **model,
                         "score_gap": best_score - model["score"],
-                        "score_interval": [
-                            max(0, model["score"] - llm_uncertainty),
-                            min(100, model["score"] + llm_uncertainty),
-                        ],
                     }
                     for model in ranked
-                    if model["score"] + llm_uncertainty >= best_score - llm_uncertainty
+                    if model["score"] == best_score
+                    or best_score - model["score"] < llm_uncertainty
                 ]
                 models[category] = comparable[0]
                 llm_alternatives = comparable[1:]
@@ -172,25 +164,27 @@ def print_table(report):
         f"Reserva: {report['reserve_percent']:g}%. Cada model s'executa individualment."
     )
     print("Memòria orientativa; el consum real depèn del context, el lot i el motor.\n")
+    threshold = report["llm_uncertainty_points"]
     print(
-        f"Marge CLAM: ±{report['llm_uncertainty_points']:g} punts per model. "
-        "Alternatives amb intervals que se solapen amb el millor LLM.\n"
+        f"Diferències CLAM de menys de {threshold:g} punts respecte del millor "
+        "LLM es consideren no concloents.\n"
+        if threshold > 0
+        else "Alternatives CLAM: només empats exactes amb el millor LLM.\n"
     )
-    rows = [
-        ["GB", "Útils", "Tipus", "Model", "Precisió", "GB model", "Puntuació", "Δ CLAM"]
-    ]
-    for config in report["configurations"]:
-        entries = [("llm", config["models"]["llm"], "LLM")]
-        entries.extend(
-            ("llm", model, "LLM (semblant)") for model in config["llm_alternatives"]
-        )
-        entries.extend(
-            (category, config["models"][category], label)
-            for category, label in (("embeddings", "Embeddings"), ("asr", "ASR"))
-        )
-        for category, model, label in entries:
-            rows.append(
-                [
+    for category, title in (("llm", "LLM"), ("embeddings", "Embeddings"), ("asr", "ASR")):
+        print(title)
+        header = ["GB", "Útils", "Tipus", "Model", "Precisió", "GB model", "Puntuació"]
+        if category == "llm":
+            header.append("Δ CLAM")
+        rows = [header]
+        for config in report["configurations"]:
+            entries = [(config["models"][category], title)]
+            if category == "llm":
+                entries.extend(
+                    (model, "LLM (semblant)") for model in config["llm_alternatives"]
+                )
+            for model, label in entries:
+                row = [
                     f"{config['capacity_gb']:g}",
                     f"{config['budget_gb']:g}",
                     label,
@@ -206,12 +200,14 @@ def print_table(report):
                     )
                     if model
                     else "—",
-                    f"{model['score_gap']:.2f}" if model and category == "llm" else "—",
                 ]
-            )
-    widths = [max(len(row[i]) for row in rows) for i in range(len(rows[0]))]
-    for row in rows:
-        print("  ".join(value.ljust(width) for value, width in zip(row, widths)))
+                if category == "llm":
+                    row.append(f"{model['score_gap']:.2f}" if model else "—")
+                rows.append(row)
+        widths = [max(len(row[i]) for row in rows) for i in range(len(header))]
+        for row in rows:
+            print("  ".join(value.ljust(width) for value, width in zip(row, widths)))
+        print()
     if report["skipped"]:
         print("\nAvaluacions locals excloses:")
         for item in report["skipped"]:
@@ -244,7 +240,7 @@ def main(argv=None):
         "--llm-uncertainty",
         type=float,
         default=2,
-        help="Marge ± en punts CLAM per model; mostra alternatives amb intervals solapats (defecte: 2)",
+        help="Llindar de diferència CLAM respecte del millor, exclusiu (defecte: 2); 0: només empats exactes",
     )
     parser.add_argument("--format", choices=("table", "json"), default="table")
     args = parser.parse_args(argv)
