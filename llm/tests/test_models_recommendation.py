@@ -209,8 +209,8 @@ def test_json_output(tmp_path, capsys):
     assert table == expected
     assert set(table) == {"text", "data"}
     assert list(table["text"].items()) == [
-        ("recommended", "Model recomanat"),
         ("capacity_gb", "Memòria de l’ordinador"),
+        ("recommended", "Model recomanat"),
         ("alternatives", "Alternativa"),
     ]
     assert [row["capacity_gb"] for row in table["data"]] == ["8 GB", "16 GB", "32 GB"]
