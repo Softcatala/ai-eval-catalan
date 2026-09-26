@@ -102,6 +102,11 @@ def load_candidates(root, memory_file=MEMORY_FILE):
                     "eval_source": source,
                 }
             )
+            if category == "asr":
+                rtf = data.get("benchmarks", {}).get("fleurs_ca", {}).get("rtf")
+                candidates[category][-1]["rtf"] = (
+                    rtf if finite_number(rtf) and rtf >= 0 else None
+                )
     return candidates, skipped
 
 
@@ -176,6 +181,8 @@ def print_table(report):
         header = ["GB", "Útils", "Tipus", "Model", "Precisió", "GB model", "Puntuació"]
         if category == "llm":
             header.append("Δ CLAM")
+        elif category == "asr":
+            header.append("RTF (FLEURS)")
         rows = [header]
         group_starts = set()
         for config in report["configurations"]:
@@ -205,6 +212,9 @@ def print_table(report):
                 ]
                 if category == "llm":
                     row.append(f"{model['score_gap']:.2f}" if model else "—")
+                elif category == "asr":
+                    rtf = model.get("rtf") if model else None
+                    row.append(f"{rtf:.4f}" if rtf is not None else "—")
                 rows.append(row)
         widths = [max(len(row[i]) for row in rows) for i in range(len(header))]
         separator = "  ".join("─" * width for width in widths)
