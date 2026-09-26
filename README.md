@@ -46,6 +46,7 @@ Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/wo
    - `python -m llm.summarize_results` → `llm/llms.json` i `llm/llms_quantized.json`
    - `python -m asr.summarize_results` → `asr/asrs.json`
    - `python -m embeddings.summarize_results` → `embeddings/embeddings.json`
+   - `python models_recommendation.py --memory 8 16 32 --format web-json --output recommendations.json` → `recommendations.json`
 
 2. **Puja només els JSON a la branca `prod-data`**, que actua com a repositori de dades en producció:
    ```
@@ -53,7 +54,8 @@ Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/wo
    ├── llms.json
    ├── llms_quantized.json
    ├── asrs.json
-   └── embeddings.json
+   ├── embeddings.json
+   └── recommendations.json
    ```
 
 La web de [Softcatalà](https://www.softcatala.org) llegeix directament els fitxers de la branca `prod-data` per mostrar els resultats actualitzats.
@@ -67,6 +69,9 @@ make render-local
 ```
 
 Aquesta ordre genera les taules HTML i les agrupa a `index_local.html`.
+Inclou la taula de models recomanats segons la memòria, amb les columnes
+de memòria, model recomanat i alternatives. El contracte de `recommendations.json`
+es descriu a [HARDWARE_MODELS.md](HARDWARE_MODELS.md#taula-web-i-publicació).
 
 ---
 

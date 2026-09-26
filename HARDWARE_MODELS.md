@@ -71,3 +71,38 @@ un catàleg local amb fonts de Hugging Face fixades a una revisió. Estima els
 pesos en FP32 a 4 bytes per paràmetre, en GB decimals i arrodonint cap amunt.
 Aquestes estimacions no són mesures del pic de memòria durant la inferència.
 El catàleg s'ha d'ampliar quan s'avaluen nous embeddings sense `memory_gb`.
+
+## Taula web i publicació
+
+El workflow de publicació genera `recommendations.json` i el publica a l'arrel
+de `prod-data` amb la resta de taules. Per generar-lo localment:
+
+```bash
+uv run --project llm python models_recommendation.py --memory 8 16 32 --format web-json --output recommendations.json
+make render-local
+```
+
+La taula publicada mostra els **LLM per a 8, 16 i 32 GB de RAM**, amb un 25% de
+reserva. Les columnes són memòria, model recomanat i alternatives. Es calcula
+amb els criteris anteriors a partir de les avaluacions; pot diferir de les
+recomanacions editorials del web. No s'afegeix cap alternativa si no compleix
+el llindar CLAM. Els noms inclouen la precisió avaluada.
+
+El JSON segueix el contracte `text` (etiquetes de columnes) i `data` (files):
+
+- Columnes: `capacity_gb`, `recommended` i `alternatives` (text pla).
+- Cada fila conserva `budget_gb`, `category_id`, `category`, `recommended_model`
+  i `alternative_models`, amb els identificadors, puntuacions, memòria, precisió,
+  fonts i `repo_url` dels models. Sense candidats, `recommended_model` és `null`
+  i `alternative_models` és una llista buida; les cel·les buides són `null`.
+- Metadades: `memory_kind`, `reserve_percent`, `llm_uncertainty_points`,
+  `individual_models` i `skipped`.
+
+`--categories llm embeddings asr` permet incloure les tres categories a la taula
+web i afegeix la columna de tipus de model. Només els LLM tenen alternatives.
+`--format json` conserva l'informe detallat existent; `--output` permet desar
+qualsevol dels dos formats JSON en un fitxer.
+
+`make render-local` genera `recommendations_table.html` i l'inclou a
+`index_local.html`. El HTML és una previsualització local; el web consumidor
+ha de carregar el nou JSON i representar-ne les columnes.

@@ -11,7 +11,9 @@ from models_recommendation import (
     load_candidates,
     main,
     recommend,
+    web_table,
 )
+from render_tables import render_recommendations
 
 
 def candidate(name, memory, score):
@@ -173,3 +175,60 @@ def test_cli_runs_from_another_directory_and_emits_json(tmp_path):
 def test_missing_evaluation_directory_is_an_error(tmp_path):
     with pytest.raises(ValueError, match="directori"):
         load_candidates(tmp_path)
+
+
+def test_web_json_cli_and_preview(tmp_path, capsys):
+    output = tmp_path / "recommendations.json"
+    main(["--memory", "8", "16", "32", "--format", "web-json", "--output", str(output)])
+    assert capsys.readouterr().out == ""
+    table = json.loads(output.read_text())
+    assert list(table["text"]) == ["capacity_gb", "recommended", "alternatives"]
+    assert [row["capacity_gb"] for row in table["data"]] == [8, 16, 32]
+    assert table["reserve_percent"] == 25
+    candidates, _ = load_candidates(ROOT)
+    for row, config in zip(table["data"], recommend(candidates, [8, 16, 32])):
+        model = row["recommended_model"]
+        assert model["model_id"] == config["models"]["llm"]["model_id"]
+        assert model["repo_url"].startswith("https://huggingface.co/")
+        assert model["memory_gb"] <= row["budget_gb"]
+        assert [m["model_id"] for m in row["alternative_models"]] == [
+            m["model_id"] for m in config["llm_alternatives"]
+        ]
+        assert model["precision"] in row["recommended"]
+    # Model names are data, never markup in the preview.
+    table["data"][0]["recommended_model"]["model"] = "<script>alert(1)</script>"
+    output.write_text(json.dumps(table))
+    html_path = tmp_path / "table.html"
+    render_recommendations(output, html_path)
+    html = html_path.read_text()
+    assert "<script>" not in html
+    assert "&lt;script&gt;" in html
+    assert "16 GB" in html
+    assert "href=" in html
+    assert "no concloents" in html
+
+
+def test_web_table_empty_models_and_multiple_categories(tmp_path, capsys):
+    main(["--memory", "0.001", "--format", "json"])
+    report = json.loads(capsys.readouterr().out)
+    table = web_table(report, CATEGORIES)
+    assert table["text"]["category"] == "Tipus de model"
+    assert [row["category_id"] for row in table["data"]] == list(CATEGORIES)
+    for row in table["data"]:
+        assert row["recommended"] is None
+        assert row["recommended_model"] is None
+        assert row["alternatives"] is None
+        assert row["alternative_models"] == []
+    output = tmp_path / "empty.json"
+    output.write_text(json.dumps(table))
+    html_path = tmp_path / "empty.html"
+    render_recommendations(output, html_path)
+    assert html_path.read_text().count("Cap model compatible") == 3
+
+
+def test_json_file_matches_existing_json_stdout(tmp_path, capsys):
+    main(["--format", "json"])
+    expected = json.loads(capsys.readouterr().out)
+    output = tmp_path / "report.json"
+    main(["--format", "json", "--output", str(output)])
+    assert json.loads(output.read_text()) == expected
