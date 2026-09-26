@@ -8,7 +8,6 @@ render-local:
 	uv run --project llm python -m llm.summarize_results > /dev/null
 	uv run --project asr python -m asr.summarize_results > /dev/null
 	uv run --project embeddings python -m embeddings.summarize_results > /dev/null
-	uv run --project llm python models_recommendation.py --memory 8 16 32 --format web-json --output llms_recommendations.json
 	uv run --with jinja2 render_tables.py
 	uv run render_index_local.py
 

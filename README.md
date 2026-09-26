@@ -60,6 +60,15 @@ Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/wo
 
 La web de [Softcatalà](https://www.softcatala.org) llegeix directament els fitxers de la branca `prod-data` per mostrar els resultats actualitzats.
 
+`llms_recommendations.json` conté només `text` (etiquetes) i `data` (files),
+amb tres camps: `capacity_gb`, `recommended` i `alternatives`. Mostra el millor
+LLM i el segon millor que càpiguen en la memòria disponible; les cel·les sense
+model són `null`. Per generar-lo localment:
+
+```bash
+make recommendation RECOMMENDATION_ARGS="--memory 8 16 32 --format web-json --output llms_recommendations.json"
+```
+
 ### Informes HTML de depuració
 
 Els informes HTML no es publiquen ni formen part del contracte de dades de la web. Es poden generar localment per inspeccionar els resultats:
@@ -69,10 +78,6 @@ make render-local
 ```
 
 Aquesta ordre genera les taules HTML i les agrupa a `index_local.html`.
-Inclou la taula de models recomanats segons la memòria. `llms_recommendations.json`
-conté només `text` (etiquetes) i `data` (files), amb tres camps: `capacity_gb`,
-`recommended` i `alternatives`. Mostra el millor LLM i el segon millor que càpiguen
-en la memòria disponible; les cel·les sense model són `null`.
 
 ---
 
@@ -143,6 +148,8 @@ disponible. Executeu `make recommendation` des de l'arrel o
 Per defecte reserva un 25% de la memòria i assumeix que cada model s'executa
 individualment. L'informe detallat mostra alternatives a menys de 2 punts CLAM;
 la taula web mostra només el segon millor LLM compatible, sense aquest llindar.
+Tots els formats exclouen els models marcats com a `quantized_analysis_only`
+a `llm/models_config.py` o al JSON d'avaluació.
 
 Per a models GGUF quantitzats amb **Q4_K_M**, aquestes són les mides orientatives
 segons la memòria disponible del sistema:

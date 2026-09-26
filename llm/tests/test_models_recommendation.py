@@ -13,7 +13,6 @@ from models_recommendation import (
     recommend,
     web_table,
 )
-from render_tables import render_recommendations
 
 
 def candidate(name, memory, score):
@@ -174,12 +173,41 @@ def test_cli_runs_from_another_directory_and_emits_json(tmp_path):
             assert 0 <= alternative["score_gap"] < 2
 
 
+@pytest.mark.parametrize(
+    "filename, flags",
+    [
+        ("gemma3_12b_q2.json", {}),
+        ("gemma3_12b_q2.json", {"quantized_analysis_only": False}),
+        ("custom_analysis.json", {"quantized_analysis_only": True}),
+    ],
+)
+def test_analysis_only_models_are_excluded_from_all_recommendations(
+    tmp_path, filename, flags
+):
+    for category in CATEGORIES:
+        (tmp_path / category / "evals").mkdir(parents=True)
+    data = json.loads((ROOT / "llm/evals/gemma3_12b_q4.json").read_text())
+    directory = tmp_path / "llm/evals"
+    (directory / "gemma3_12b_q4.json").write_text(json.dumps(data))
+    (directory / filename).write_text(
+        json.dumps({**data, "display_name": "analysis-only", **flags})
+    )
+    candidates, _ = load_candidates(tmp_path)
+    assert [m["model"] for m in candidates["llm"]] == [data["display_name"]]
+    config = recommend(candidates, [32])[0]
+    assert config["models"]["llm"]["model"] == data["display_name"]
+    assert config["llm_alternatives"] == []
+    row = web_table(candidates, [32])["data"][0]
+    assert data["display_name"] in row["recommended"]
+    assert row["alternatives"] is None
+
+
 def test_missing_evaluation_directory_is_an_error(tmp_path):
     with pytest.raises(ValueError, match="directori"):
         load_candidates(tmp_path)
 
 
-def test_web_json_cli_and_preview(tmp_path, capsys):
+def test_web_json_cli(tmp_path, capsys):
     output = tmp_path / "llms_recommendations.json"
     main(["--memory", "8", "16", "32", "--format", "web-json", "--output", str(output)])
     assert capsys.readouterr().out == ""
@@ -200,19 +228,9 @@ def test_web_json_cli_and_preview(tmp_path, capsys):
         assert model["precision"] in row["recommended"]
         assert row["alternatives"]
         assert ";" not in row["alternatives"]
-    # Model names are data, never markup in the preview.
-    table["data"][0]["recommended"] = "<script>alert(1)</script>"
-    output.write_text(json.dumps(table))
-    html_path = tmp_path / "table.html"
-    render_recommendations(output, html_path)
-    html = html_path.read_text()
-    assert "<script>" not in html
-    assert "&lt;script&gt;" in html
-    assert "16 GB" in html
-    assert "Model recomanat" in html
 
 
-def test_web_table_empty_models_includes_only_llms(tmp_path, capsys):
+def test_web_table_empty_models_includes_only_llms(capsys):
     main(["--memory", "0.001", "--format", "web-json"])
     table = json.loads(capsys.readouterr().out)
     assert "category" not in table["text"]
@@ -221,11 +239,6 @@ def test_web_table_empty_models_includes_only_llms(tmp_path, capsys):
     for row in table["data"]:
         assert row["recommended"] is None
         assert row["alternatives"] is None
-    output = tmp_path / "empty.json"
-    output.write_text(json.dumps(table))
-    html_path = tmp_path / "empty.html"
-    render_recommendations(output, html_path)
-    assert html_path.read_text().count("Cap model compatible") == 1
 
 
 def test_json_file_matches_existing_json_stdout(tmp_path, capsys):

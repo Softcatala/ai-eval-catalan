@@ -108,8 +108,6 @@ def main():
     parser.add_argument("--asr-out", default="asr/asrs_table.html")
     parser.add_argument("--emb-json", default="embeddings/embeddings.json")
     parser.add_argument("--emb-out", default="embeddings/embeddings_table.html")
-    parser.add_argument("--recommendations-json", default="llms_recommendations.json")
-    parser.add_argument("--recommendations-out", default="recommendations_table.html")
     args = parser.parse_args()
 
     render(
@@ -137,20 +135,6 @@ def main():
         sort_key=lambda r: -(r.get("composite") or -1),
         show_params=False,
     )
-    render_recommendations(
-        Path(args.recommendations_json), Path(args.recommendations_out)
-    )
-
-
-def render_recommendations(json_path: Path, out: Path) -> None:
-    data = json.loads(json_path.read_text(encoding="utf-8"))
-    env = Environment(
-        loader=FileSystemLoader(str(Path(__file__).resolve().parent)), autoescape=True
-    )
-    env.filters["fmt"] = lambda value: f"{value:g}"
-    html = env.get_template("recommendations_table.jinja").render(**data)
-    out.write_text(html, encoding="utf-8")
-    print(f"Saved to {out}")
 
 
 if __name__ == "__main__":

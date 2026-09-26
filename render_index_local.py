@@ -1,12 +1,11 @@
 """
-Assemble index_local.html by inlining the rendered HTML table fragments.
+Assemble index_local.html by inlining the four rendered HTML table fragments.
 Produces a self-contained file that works when opened directly via file://.
 """
 
 from pathlib import Path
 
 FRAGMENTS = [
-    ("Models de llenguatge recomanats", "recommendations_table.html"),
     ("LLM — Taula", "llm/llms_table.html"),
     ("LLM — Taula Quantitzada", "llm/llms_quantized_table.html"),
     ("ASR — Taula", "asr/asrs_table.html"),

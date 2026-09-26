@@ -6,6 +6,7 @@ import math
 from pathlib import Path
 
 from embeddings.summarize_results import composite, is_cloud
+from llm.models_config import MODELS
 from llm.summarize_results import CLAM_TASKS, clam_score, extract_metrics
 
 ROOT = Path(__file__).resolve().parent
@@ -58,6 +59,11 @@ def evaluation_score(category, data):
 
 def load_candidates(root, memory_file=MEMORY_FILE):
     memory_catalog = json.loads(memory_file.read_text(encoding="utf-8"))["models"]
+    analysis_only = {
+        Path(model["output"]).name
+        for model in MODELS
+        if model.get("quantized_analysis_only")
+    }
     candidates = {category: [] for category in CATEGORIES}
     skipped = []
     for category in CATEGORIES:
@@ -66,6 +72,10 @@ def load_candidates(root, memory_file=MEMORY_FILE):
             raise ValueError(f"No existeix el directori d'avaluacions: {directory}")
         for path in sorted(directory.glob("*.json")):
             data = json.loads(path.read_text(encoding="utf-8"))
+            if data.get("quantized_analysis_only") or (
+                category == "llm" and path.name in analysis_only
+            ):
+                continue
             if data.get("cloud") or (category == "embeddings" and is_cloud(data)):
                 continue
             model_id = data.get("model", path.stem)
