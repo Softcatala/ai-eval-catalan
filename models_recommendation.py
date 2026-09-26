@@ -183,7 +183,7 @@ def format_value(value, spec, suffix=""):
 
 def print_table(report):
     print(
-        f"Millors models locals segons les avaluacions del repositori ({report['memory_kind']})\n"
+        "Millors models locals segons les avaluacions del repositori (RAM)\n"
         f"Reserva: {report['reserve_percent']:g}%. Cada model s'executa individualment.\n"
         "Memòria orientativa; el consum real depèn del context, el lot i el motor.\n"
     )
@@ -278,16 +278,10 @@ def main(argv=None):
         type=float,
         nargs="+",
         default=[4, 8, 16, 32],
-        help="Capacitats en GB",
+        help="Capacitats de RAM en GB",
     )
     parser.add_argument(
         "--reserve-percent", type=float, default=25, help="Reserva de memòria (%%)"
-    )
-    parser.add_argument(
-        "--memory-kind",
-        choices=("RAM", "VRAM"),
-        default="RAM",
-        help="Memòria on es carrega el model sencer",
     )
     parser.add_argument("--repo-root", type=Path, default=ROOT)
     parser.add_argument(
@@ -307,7 +301,6 @@ def main(argv=None):
             report = recommendations_json(candidates, args.memory, args.reserve_percent)
         else:
             report = {
-                "memory_kind": args.memory_kind,
                 "reserve_percent": args.reserve_percent,
                 "llm_uncertainty_points": args.llm_uncertainty,
                 "individual_models": True,

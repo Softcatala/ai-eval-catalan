@@ -84,6 +84,7 @@ def test_invalid_llm_uncertainty(margin):
 def test_table_shows_llm_alternatives_and_gap(capsys):
     main(["--memory", "16"])
     output = capsys.readouterr().out
+    assert "(RAM)" in output
     assert "menys de 2 punts" in output
     assert "no concloents" in output
     assert "LLM (semblant)" in output
