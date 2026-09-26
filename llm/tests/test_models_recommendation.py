@@ -31,7 +31,7 @@ def test_memory_boundary_reserve_and_score_direction():
     assert result["models"]["embeddings"]["model"] == "good"
     assert result["models"]["asr"]["model"] == "good"
     assert recommendations_json(candidates, [8])["data"] == [
-        {"capacity_gb": 8, "recommended": "fits", "alternatives": None}
+        {"capacity_gb": 8, "recommended": "fits · CLAM 60.0", "alternatives": None}
     ]
 
 
@@ -206,8 +206,8 @@ def test_json_output(tmp_path, capsys):
     assert [row["capacity_gb"] for row in table["data"]] == [4, 8, 16, 32]
     for row in table["data"]:
         assert row.keys() == table["text"].keys()
-        assert " · " in row["recommended"]
-        assert " · " in row["alternatives"]
+        assert " · CLAM " in row["recommended"]
+        assert " · CLAM " in row["alternatives"]
         assert ";" not in row["alternatives"]
 
 
@@ -215,11 +215,15 @@ def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
     models = [
         candidate("over_budget", 6.01, 100),
         candidate("third", 2, 49),
-        candidate("second", 3, 50),
-        candidate("best", 6, 60),
+        candidate("second", 3, 50.16),
+        candidate("best", 6, 60.04),
     ]
     assert recommendations_json({"llm": models}, [8])["data"] == [
-        {"capacity_gb": 8, "recommended": "best", "alternatives": "second"}
+        {
+            "capacity_gb": 8,
+            "recommended": "best · CLAM 60.0",
+            "alternatives": "second · CLAM 50.2",
+        }
     ]
 
 
@@ -235,9 +239,9 @@ def test_json_uses_sorted_disjoint_memory_bands():
     rows = recommendations_json({"llm": models}, [32, 8, 1, 16, 8, 64])["data"]
     assert [(r["capacity_gb"], r["recommended"], r["alternatives"]) for r in rows] == [
         (1, None, None),
-        (8, "small", None),
-        (16, "medium", "medium_alt"),
-        (32, "large", "large_alt"),
+        (8, "small · CLAM 100.0", None),
+        (16, "medium · CLAM 60.0", "medium_alt · CLAM 50.0"),
+        (32, "large · CLAM 45.0", "large_alt · CLAM 30.0"),
         (64, None, None),
     ]
 
@@ -249,5 +253,9 @@ def test_web_alternative_breaks_score_ties_by_memory_then_model_id():
         candidate("a", 3, 60),
     ]
     assert recommendations_json({"llm": models}, [8])["data"] == [
-        {"capacity_gb": 8, "recommended": "a", "alternatives": "b"}
+        {
+            "capacity_gb": 8,
+            "recommended": "a · CLAM 60.0",
+            "alternatives": "b · CLAM 60.0",
+        }
     ]

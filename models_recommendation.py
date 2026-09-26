@@ -248,7 +248,8 @@ def recommendations_json(candidates, capacities=(4, 8, 16, 32)):
         if model is None:
             return None
         precision = model.get("precision")
-        return model["model"] + (f" · {precision}" if precision else "")
+        name = model["model"] + (f" · {precision}" if precision else "")
+        return f"{name} · CLAM {model['score']:.1f}"
 
     columns = {
         "capacity_gb": "Memòria de l’ordinador",
