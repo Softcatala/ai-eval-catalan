@@ -245,15 +245,12 @@ def print_table(report):
 def recommendations_json(candidates, capacities=(8, 16, 32)):
     """Export the two best LLMs in each non-overlapping RAM budget band."""
 
-    def model_link(model):
+    def model_label(model):
         if model is None:
             return None
         precision = model.get("precision")
         name = model["model"] + (f" · {precision}" if precision else "")
-        return {
-            "name": f"{name} · CLAM {model['score']:.1f}",
-            "url": repo_url(model["model_id"]),
-        }
+        return f"{name} · CLAM {model['score']:.1f}"
 
     columns = {
         "capacity_gb": "Memòria de l’ordinador",
@@ -269,8 +266,9 @@ def recommendations_json(candidates, capacities=(8, 16, 32)):
         rows.append(
             {
                 "capacity_gb": f"{capacity:g} GB",
-                "recommended": model_link(model),
-                "alternatives": model_link(alternative),
+                "recommended": model_label(model),
+                "repo_url": repo_url(model["model_id"]) if model else None,
+                "alternatives": model_label(alternative),
             }
         )
         previous_budget = budget
