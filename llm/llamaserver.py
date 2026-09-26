@@ -78,7 +78,7 @@ class LlamaServerModel:
             "messages": messages,
             **params,
         }
-        if "aya-expanse" in self.model_spec.lower():
+        if "aya" in self.model_spec.lower():
             payload_data["stop"] = [_AYA_END_OF_TURN_TOKEN]
         if self.request_model:
             payload_data["model"] = self.request_model

@@ -1,0 +1,107 @@
+{
+  "model": "CohereLabs/tiny-aya-water-GGUF:Q4_K_M",
+  "display_name": "tiny-aya-water",
+  "cloud": false,
+  "params_b": 3.35,
+  "memory_gb": 1.9,
+  "evaluated_at": "2026-09-25T19:25:41+00:00",
+  "benchmarks": {
+    "sts_ca": {
+      "pearson": 0.4775,
+      "n": 400
+    },
+    "casum": {
+      "rouge1": 0.4513,
+      "rouge2": 0.2432,
+      "rougeL": 0.3831,
+      "n": 400
+    },
+    "catcola": {
+      "mcc": 0.1358,
+      "accuracy": 0.745,
+      "invalid_rate": 0.0,
+      "coverage": 1.0,
+      "n": 400,
+      "n_valid": 400,
+      "n_invalid": 0
+    },
+    "club_qa": {
+      "exact_match_approx": 0.7925,
+      "token_f1": 0.725,
+      "n": 400
+    },
+    "flores": {
+      "catalan_bench_flores_en-ca": {
+        "name": "catalan_bench_flores_en-ca",
+        "alias": "catalan_bench_flores_en-ca",
+        "sample_len": 400,
+        "n": 400,
+        "comet": 0.8736528883874416
+      },
+      "catalan_bench_flores_ca-en": {
+        "name": "catalan_bench_flores_ca-en",
+        "alias": "catalan_bench_flores_ca-en",
+        "sample_len": 400,
+        "n": 400,
+        "comet": 0.8795134918391705
+      },
+      "catalan_bench_flores_es-ca": {
+        "name": "catalan_bench_flores_es-ca",
+        "alias": "catalan_bench_flores_es-ca",
+        "sample_len": 400,
+        "n": 400,
+        "comet": 0.8594255067408085
+      },
+      "catalan_bench_flores_ca-es": {
+        "name": "catalan_bench_flores_ca-es",
+        "alias": "catalan_bench_flores_ca-es",
+        "sample_len": 400,
+        "n": 400,
+        "comet": 0.8574162137508392
+      }
+    },
+    "ifeval": {
+      "name": "ifeval_ca",
+      "alias": "ifeval_ca",
+      "sample_len": 400,
+      "prompt_level_strict_acc,none": 0.66,
+      "prompt_level_strict_acc_stderr,none": 0.02371510099151159,
+      "inst_level_strict_acc,none": 0.7420965058236273,
+      "inst_level_strict_acc_stderr,none": "N/A",
+      "prompt_level_loose_acc,none": 0.69,
+      "prompt_level_loose_acc_stderr,none": 0.023153622298981952,
+      "inst_level_loose_acc,none": 0.7670549084858569,
+      "inst_level_loose_acc_stderr,none": "N/A",
+      "n": 400,
+      "n_errors": 0,
+      "error_rate": 0.0
+    },
+    "catalan_drift": {
+      "name": "catalan_drift",
+      "alias": "Catalan Drift",
+      "sample_len": 60,
+      "drift_pass,none": 0.8566666666666667,
+      "drift_pass_stderr,none": 0.020264875529605365,
+      "language_fail,none": 0.14333333333333334,
+      "language_fail_stderr,none": 0.020264875529605365,
+      "api_or_empty_fail,none": 0.0,
+      "api_or_empty_fail_stderr,none": 0.0,
+      "catalan_token_ratio,none": 0.8738139772147594,
+      "catalan_token_ratio_stderr,none": "N/A",
+      "monolingual_pass,none": 1.0,
+      "monolingual_pass_stderr,none": 0.0,
+      "crosslingual_basic_pass,none": 0.75,
+      "crosslingual_basic_pass_stderr,none": 0.05637345210021216,
+      "multi_turn_pass,none": 0.7166666666666667,
+      "multi_turn_pass_stderr,none": 0.05866531842313124,
+      "crosslingual_advanced_pass,none": 0.8833333333333333,
+      "crosslingual_advanced_pass_stderr,none": 0.04179359199028117,
+      "rag_context_pass,none": 0.9333333333333333,
+      "rag_context_pass_stderr,none": 0.0324748200298303,
+      "n": 300,
+      "n_errors": 0,
+      "error_rate": 0.0
+    }
+  },
+  "flores_comet_checkpoint": "Unbabel/wmt22-comet-da"
+}

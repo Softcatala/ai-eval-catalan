@@ -27,3 +27,7 @@ def test_expected_gguf_filename_uses_quant_and_overrides():
         expected_gguf_filename("BSC-LT/salamandra-7b-fc-2607-GGUF:Q4_0")
         == "ALIA-7b-fc-2607-Q4_0.gguf"
     )
+    assert (
+        expected_gguf_filename("CohereLabs/tiny-aya-water-GGUF:Q4_K_M")
+        == "tiny-aya-water-q4_k_m.gguf"
+    )

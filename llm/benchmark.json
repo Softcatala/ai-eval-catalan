@@ -300,6 +300,18 @@
       "generation_seconds": 49.4867,
       "generation_tokens_per_sec": 5.17,
       "timestamp": "2026-08-27T14:18:29.729716+00:00"
+    },
+    {
+      "model": "tiny-aya-water",
+      "model_spec": "CohereLabs/tiny-aya-water-GGUF:Q4_K_M",
+      "server_model": "CohereLabs/tiny-aya-water-GGUF:Q4_K_M",
+      "backend": "eval-http",
+      "device": "cuda",
+      "prompt_tokens": 5,
+      "generated_tokens": 256,
+      "generation_seconds": 8.9001,
+      "generation_tokens_per_sec": 28.76,
+      "timestamp": "2026-09-26T07:05:21.726795+00:00"
     }
   ]
 }

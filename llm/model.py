@@ -705,7 +705,7 @@ def run_flores(
             f"model={model_name},"
             f"base_url={base_url}/chat/completions,"
             f"num_concurrent=1,max_retries=3,tokenized_requests=False"
-            f"{',eos_string=<|END_OF_TURN_TOKEN|>' if 'aya-expanse' in model_name.lower() else ''}"
+            f"{',eos_string=<|END_OF_TURN_TOKEN|>' if 'aya' in model_name.lower() else ''}"
         )
     else:
         lm_model = "hf"
@@ -852,7 +852,7 @@ def run_ifeval(
             f"model={model_name},"
             f"base_url={base_url}/chat/completions,"
             f"num_concurrent=1,max_retries=3,timeout=120,tokenized_requests=False"
-            f"{',eos_string=<|END_OF_TURN_TOKEN|>' if 'aya-expanse' in model_name.lower() else ''}"
+            f"{',eos_string=<|END_OF_TURN_TOKEN|>' if 'aya' in model_name.lower() else ''}"
         )
     else:
         lm_model = "hf"

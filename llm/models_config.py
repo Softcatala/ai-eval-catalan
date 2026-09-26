@@ -181,13 +181,13 @@ MODELS = [
         "quantization": "q4",
     },
     {
-        "display_name": "aya-expanse-8b",
-        "output": "evals/aya_expanse_8b_q4.json",
+        "display_name": "tiny-aya-water",
+        "output": "evals/tiny_aya_water_q4.json",
         "args": [
             "--model",
-            "bartowski/aya-expanse-8b-GGUF:Q4_K_M",
+            "CohereLabs/tiny-aya-water-GGUF:Q4_K_M",
         ],
-        "params_b": 8.0,
+        "params_b": 3.35,
         "quantization": "q4",
     },
     {
