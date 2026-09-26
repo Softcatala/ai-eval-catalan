@@ -6,7 +6,6 @@ import math
 from pathlib import Path
 
 from embeddings.summarize_results import composite, is_cloud
-from eval_common.model_urls import repo_url
 from llm.models_config import MODELS
 from llm.summarize_results import CLAM_TASKS, clam_score, extract_metrics
 
@@ -267,7 +266,6 @@ def recommendations_json(candidates, capacities=(8, 16, 32)):
                 "capacity_gb": f"{capacity:g} GB",
                 "recommended": model_label(model),
                 "alternatives": model_label(alternative),
-                "repo_url": repo_url(model["model_id"]) if model else None,
             }
         )
         previous_budget = budget

@@ -39,7 +39,6 @@ def test_memory_boundary_reserve_and_score_direction():
         {
             "capacity_gb": "8 GB",
             "recommended": "fits",
-            "repo_url": "https://huggingface.co/org/fits",
             "alternatives": None,
         }
     ]
@@ -215,9 +214,8 @@ def test_json_output(tmp_path, capsys):
     ]
     assert [row["capacity_gb"] for row in table["data"]] == ["8 GB", "16 GB", "32 GB"]
     for row in table["data"]:
-        assert set(row) == set(table["text"]) | {"repo_url"}
+        assert set(row) == set(table["text"])
         assert all(isinstance(row[field], str) for field in table["text"])
-        assert row["repo_url"].startswith("https://huggingface.co/")
         for field in ("recommended", "alternatives"):
             assert " · " in row[field]
             assert "CLAM" not in row[field]
@@ -235,7 +233,6 @@ def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
         {
             "capacity_gb": "8 GB",
             "recommended": "best · Q4_K_M",
-            "repo_url": "https://huggingface.co/org/best",
             "alternatives": "second",
         }
     ]
@@ -270,7 +267,6 @@ def test_web_alternative_breaks_score_ties_by_memory_then_model_id():
         {
             "capacity_gb": "8 GB",
             "recommended": "a",
-            "repo_url": "https://huggingface.co/org/a",
             "alternatives": "b",
         }
     ]
