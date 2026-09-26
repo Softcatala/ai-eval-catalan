@@ -205,13 +205,15 @@ def print_table(report):
                     (
                         f"{model['score'] * 100:.2f}% {METRICS[category]}"
                         if category == "asr"
+                        else f"{model['score']:.1f} {METRICS[category]}"
+                        if category == "llm"
                         else f"{model['score']:.4f} {METRICS[category]}"
                     )
                     if model
                     else "—",
                 ]
                 if category == "llm":
-                    row.append(f"{model['score_gap']:.2f}" if model else "—")
+                    row.append(f"{model['score_gap']:.1f}" if model else "—")
                 elif category == "asr":
                     rtf = model.get("rtf") if model else None
                     row.append(f"{rtf:.4f}" if rtf is not None else "—")

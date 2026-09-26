@@ -3,15 +3,17 @@
 Des de l'arrel del repositori:
 
 ```bash
-python3 hardware_models.py
-python3 hardware_models.py --memory 4 8 16 32 --reserve-percent 25
-python3 hardware_models.py --memory-kind VRAM --format json
-python3 hardware_models.py --llm-uncertainty 2
+make recommendation
+make recommendation RECOMMENDATION_ARGS="--memory 8 16 --format json"
+python3 models_recommendation.py
+python3 models_recommendation.py --memory 4 8 16 32 --reserve-percent 25
+python3 models_recommendation.py --memory-kind VRAM --format json
+python3 models_recommendation.py --llm-uncertainty 2
 ```
 
-També es pot executar des de l'arrel amb `python3 -m hardware_models`.
+També es pot executar des de l'arrel amb `python3 -m models_recommendation`.
 Reutilitza els càlculs dels scripts de resum i necessita `jinja2`, ja inclòs
-a l'entorn d'avaluació (`uv run --project llm python hardware_models.py`). No executa
+a l'entorn d'avaluació (`uv run --project llm python models_recommendation.py`). No executa
 inferència, no descarrega models i no necessita connexió a Internet.
 
 Llegeix directament els JSON de `llm/evals/`, `embeddings/evals/` i `asr/evals/`.

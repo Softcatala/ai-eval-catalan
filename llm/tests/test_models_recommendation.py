@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from hardware_models import (
+from models_recommendation import (
     CATEGORIES,
     ROOT,
     evaluation_score,
@@ -151,7 +151,7 @@ def test_loader_uses_raw_evals_filters_cloud_and_reports_unknown_memory(tmp_path
 
 def test_cli_runs_from_another_directory_and_emits_json(tmp_path):
     result = subprocess.run(
-        [sys.executable, str(ROOT / "hardware_models.py"), "--format", "json"],
+        [sys.executable, str(ROOT / "models_recommendation.py"), "--format", "json"],
         cwd=tmp_path,
         capture_output=True,
         text=True,
