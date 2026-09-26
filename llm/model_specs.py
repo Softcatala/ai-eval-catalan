@@ -31,9 +31,7 @@ def expected_gguf_filename(model_spec: str, default_quant: str = "Q4_K_M") -> st
         repo, quant = model_spec, default_quant
 
     if repo in FILENAME_OVERRIDES:
-        return FILENAME_OVERRIDES[repo].format(
-            quant=quant, quant_lower=quant.lower()
-        )
+        return FILENAME_OVERRIDES[repo].format(quant=quant, quant_lower=quant.lower())
 
     model_base = repo.split("/")[-1].replace("-GGUF", "")
     return f"{model_base}-{quant}.gguf"
