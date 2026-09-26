@@ -6,7 +6,7 @@
   },
   "data": [
     {
-      "capacity_gb": 8.0,
+      "capacity_gb": "8 GB",
       "recommended": {
         "name": "qwen3.5-9b · Q4_K_M · CLAM 58.4",
         "url": "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF"
@@ -17,7 +17,7 @@
       }
     },
     {
-      "capacity_gb": 16.0,
+      "capacity_gb": "16 GB",
       "recommended": {
         "name": "qwen3-14b · Q4_K_M · CLAM 59.0",
         "url": "https://huggingface.co/unsloth/Qwen3-14B-GGUF"
@@ -28,7 +28,7 @@
       }
     },
     {
-      "capacity_gb": 32.0,
+      "capacity_gb": "32 GB",
       "recommended": {
         "name": "qwen3.8-27b · Q4_K_M · CLAM 62.9",
         "url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF"
