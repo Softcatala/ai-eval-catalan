@@ -339,6 +339,29 @@
             "clam": 55.47
         },
         {
+            "model": "tiny-aya-water",
+            "quantization": "q4",
+            "repo_url": "https://huggingface.co/CohereLabs/tiny-aya-water-GGUF",
+            "cloud": false,
+            "params_b": 3.35,
+            "memory_gb": 1.9,
+            "generation_tokens_per_sec": 28.76,
+            "quantized_analysis_only": false,
+            "sts_ca": 0.4775,
+            "catcola_mcc": 0.1358,
+            "club_qa_f1": 0.725,
+            "casum_rougeL": 0.3831,
+            "flores_en_ca": 0.5625,
+            "flores_es_ca": 0.2023,
+            "ifeval_prompt_strict": 0.66,
+            "catalan_drift_pass_rate": 0.8567,
+            "flores_en2ca": 0.8737,
+            "flores_ca2en": 0.8795,
+            "flores_es2ca": 0.8594,
+            "flores_ca2es": 0.8574,
+            "clam": 51.72
+        },
+        {
             "model": "salamandra-7b",
             "quantization": "q4",
             "repo_url": "https://huggingface.co/BSC-LT/salamandra-7b-fc-2607-GGUF",
@@ -521,29 +544,6 @@
             "flores_es2ca": 0.8405,
             "flores_ca2es": 0.8202,
             "clam": 43.87
-        },
-        {
-            "model": "aya-expanse-8b",
-            "quantization": "q4",
-            "repo_url": "https://huggingface.co/bartowski/aya-expanse-8b-GGUF",
-            "cloud": false,
-            "params_b": 8,
-            "memory_gb": 4.5,
-            "generation_tokens_per_sec": 31.38,
-            "quantized_analysis_only": false,
-            "sts_ca": 0.5717,
-            "catcola_mcc": 0.1614,
-            "club_qa_f1": 0.6897,
-            "casum_rougeL": 0.3841,
-            "flores_en_ca": 0.4584,
-            "flores_es_ca": 0.0898,
-            "ifeval_prompt_strict": 0.3725,
-            "catalan_drift_pass_rate": 0.4967,
-            "flores_en2ca": 0.8175,
-            "flores_ca2en": 0.8769,
-            "flores_es2ca": 0.8194,
-            "flores_ca2es": 0.8575,
-            "clam": 42.15
         }
     ]
 }
