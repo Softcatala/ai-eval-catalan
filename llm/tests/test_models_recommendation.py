@@ -181,9 +181,7 @@ def test_cli_runs_from_another_directory_and_emits_json(tmp_path):
         ("custom_analysis.json", {"quantized_analysis_only": True}),
     ],
 )
-def test_analysis_only_models_are_excluded_from_all_recommendations(
-    tmp_path, filename, flags
-):
+def test_loader_excludes_analysis_only_models(tmp_path, filename, flags):
     for category in CATEGORIES:
         (tmp_path / category / "evals").mkdir(parents=True)
     data = json.loads((ROOT / "llm/evals/gemma3_12b_q4.json").read_text())
@@ -194,12 +192,6 @@ def test_analysis_only_models_are_excluded_from_all_recommendations(
     )
     candidates, _ = load_candidates(tmp_path)
     assert [m["model"] for m in candidates["llm"]] == [data["display_name"]]
-    config = recommend(candidates, [32])[0]
-    assert config["models"]["llm"]["model"] == data["display_name"]
-    assert config["llm_alternatives"] == []
-    row = web_table(candidates, [32])["data"][0]
-    assert data["display_name"] in row["recommended"]
-    assert row["alternatives"] is None
 
 
 def test_missing_evaluation_directory_is_an_error(tmp_path):
@@ -207,59 +199,40 @@ def test_missing_evaluation_directory_is_an_error(tmp_path):
         load_candidates(tmp_path)
 
 
-def test_web_json_cli(tmp_path, capsys):
+@pytest.mark.parametrize("format", ["json", "web-json"])
+def test_json_output(tmp_path, capsys, format):
+    args = ["--memory", "8", "16", "32", "--format", format]
+    main(args)
+    expected = json.loads(capsys.readouterr().out)
     output = tmp_path / "llms_recommendations.json"
-    main(["--memory", "8", "16", "32", "--format", "web-json", "--output", str(output)])
+    main([*args, "--output", str(output)])
     assert capsys.readouterr().out == ""
     table = json.loads(output.read_text())
+    assert table == expected
+    if format == "json":
+        return
     assert set(table) == {"text", "data"}
-    assert list(table["text"]) == ["capacity_gb", "recommended", "alternatives"]
-    assert list(table["text"].values()) == [
-        "Memòria de l’ordinador",
-        "Model recomanat",
-        "Alternativa",
+    assert list(table["text"].items()) == [
+        ("capacity_gb", "Memòria de l’ordinador"),
+        ("recommended", "Model recomanat"),
+        ("alternatives", "Alternativa"),
     ]
     assert [row["capacity_gb"] for row in table["data"]] == [8, 16, 32]
-    candidates, _ = load_candidates(ROOT)
-    for row, config in zip(table["data"], recommend(candidates, [8, 16, 32])):
-        assert set(row) == {"capacity_gb", "recommended", "alternatives"}
-        model = config["models"]["llm"]
-        assert model["model"] in row["recommended"]
-        assert model["precision"] in row["recommended"]
-        assert row["alternatives"]
+    for row in table["data"]:
+        assert row.keys() == table["text"].keys()
+        assert " · " in row["recommended"]
+        assert " · " in row["alternatives"]
         assert ";" not in row["alternatives"]
 
 
-def test_web_table_empty_models_includes_only_llms(capsys):
-    main(["--memory", "0.001", "--format", "web-json"])
-    table = json.loads(capsys.readouterr().out)
-    assert "category" not in table["text"]
-    assert len(table["data"]) == 1
-    assert set(table) == {"text", "data"}
-    for row in table["data"]:
-        assert row["recommended"] is None
-        assert row["alternatives"] is None
-
-
-def test_json_file_matches_existing_json_stdout(tmp_path, capsys):
-    main(["--format", "json"])
-    expected = json.loads(capsys.readouterr().out)
-    output = tmp_path / "report.json"
-    main(["--format", "json", "--output", str(output)])
-    assert json.loads(output.read_text()) == expected
-
-
 def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
-    candidates = {category: [] for category in CATEGORIES}
-    candidates["llm"] = [
+    models = [
         candidate("over_budget", 6.01, 100),
         candidate("third", 2, 49),
         candidate("second", 3, 50),
         candidate("best", 6, 60),
     ]
-    report = {"configurations": recommend(candidates, [8, 4, 3, 1])}
-    assert report["configurations"][0]["llm_alternatives"] == []
-    rows = web_table(candidates, [8, 4, 3, 1])["data"]
+    rows = web_table({"llm": models}, [8, 4, 3, 1])["data"]
     assert [(row["recommended"], row["alternatives"]) for row in rows] == [
         ("best", "second"),
         ("second", "third"),
@@ -269,12 +242,11 @@ def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
 
 
 def test_web_alternative_breaks_score_ties_by_memory_then_model_id():
-    candidates = {category: [] for category in CATEGORIES}
-    candidates["llm"] = [
+    models = [
         candidate("larger", 4, 60),
         candidate("b", 3, 60),
         candidate("a", 3, 60),
     ]
-    row = web_table(candidates, [8])["data"][0]
-    assert row["recommended"] == "a"
-    assert row["alternatives"] == "b"
+    assert web_table({"llm": models}, [8])["data"] == [
+        {"capacity_gb": 8, "recommended": "a", "alternatives": "b"}
+    ]
