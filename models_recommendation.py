@@ -236,9 +236,8 @@ def print_table(report):
             print(f"- {item['model']}: {item['reason']} ({item['source']})")
 
 
-def web_table(report, categories):
-    """Export display columns and model details using the published text/data contract."""
-    labels = {"llm": "LLM", "embeddings": "Embeddings", "asr": "Transcripció"}
+def web_table(report):
+    """Export LLM recommendations using the published text/data contract."""
 
     def model_label(model):
         if model is None:
@@ -249,27 +248,25 @@ def web_table(report, categories):
     def model_details(model):
         return {**model, "repo_url": repo_url(model["model_id"])} if model else None
 
-    columns = {"capacity_gb": f"Memòria de l'ordinador (GB de {report['memory_kind']})"}
-    if len(categories) > 1:
-        columns["category"] = "Tipus de model"
-    columns.update({"recommended": "Model recomanat", "alternatives": "Alternatives"})
+    columns = {
+        "capacity_gb": "Memòria de l’ordinador",
+        "recommended": "Model recomanat",
+        "alternatives": "Alternativa",
+    }
     rows = []
-    for category in categories:
-        for config in report["configurations"]:
-            model = config["models"][category]
-            alternatives = config["llm_alternatives"] if category == "llm" else []
-            rows.append(
-                {
-                    "capacity_gb": config["capacity_gb"],
-                    "budget_gb": config["budget_gb"],
-                    "category": labels[category],
-                    "category_id": category,
-                    "recommended": model_label(model),
-                    "alternatives": "; ".join(map(model_label, alternatives)) or None,
-                    "recommended_model": model_details(model),
-                    "alternative_models": [model_details(m) for m in alternatives],
-                }
-            )
+    for config in report["configurations"]:
+        model = config["models"]["llm"]
+        alternatives = config["llm_alternatives"]
+        rows.append(
+            {
+                "capacity_gb": config["capacity_gb"],
+                "budget_gb": config["budget_gb"],
+                "recommended": model_label(model),
+                "alternatives": "; ".join(map(model_label, alternatives)) or None,
+                "recommended_model": model_details(model),
+                "alternative_models": [model_details(m) for m in alternatives],
+            }
+        )
     return {
         "text": columns,
         "data": rows,
@@ -277,7 +274,7 @@ def web_table(report, categories):
         "reserve_percent": report["reserve_percent"],
         "llm_uncertainty_points": report["llm_uncertainty_points"],
         "individual_models": report["individual_models"],
-        "skipped": report["skipped"],
+        "skipped": [r for r in report["skipped"] if r["source"].startswith("llm/")],
     }
 
 
@@ -312,13 +309,6 @@ def main(argv=None):
     parser.add_argument(
         "--format", choices=("table", "json", "web-json"), default="table"
     )
-    parser.add_argument(
-        "--categories",
-        choices=CATEGORIES,
-        nargs="+",
-        default=["llm"],
-        help="Categories de la taula web (defecte: llm)",
-    )
     parser.add_argument("--output", type=Path, help="Fitxer de sortida JSON")
     args = parser.parse_args(argv)
     if args.output and args.format == "table":
@@ -340,7 +330,7 @@ def main(argv=None):
     }
     if args.format in ("json", "web-json"):
         if args.format == "web-json":
-            report = web_table(report, list(dict.fromkeys(args.categories)))
+            report = web_table(report)
         output = (
             json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
         )

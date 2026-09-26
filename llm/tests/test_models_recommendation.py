@@ -178,11 +178,16 @@ def test_missing_evaluation_directory_is_an_error(tmp_path):
 
 
 def test_web_json_cli_and_preview(tmp_path, capsys):
-    output = tmp_path / "recommendations.json"
+    output = tmp_path / "lmms_recommendations.json"
     main(["--memory", "8", "16", "32", "--format", "web-json", "--output", str(output)])
     assert capsys.readouterr().out == ""
     table = json.loads(output.read_text())
     assert list(table["text"]) == ["capacity_gb", "recommended", "alternatives"]
+    assert list(table["text"].values()) == [
+        "Memòria de l’ordinador",
+        "Model recomanat",
+        "Alternativa",
+    ]
     assert [row["capacity_gb"] for row in table["data"]] == [8, 16, 32]
     assert table["reserve_percent"] == 25
     candidates, _ = load_candidates(ROOT)
@@ -208,12 +213,18 @@ def test_web_json_cli_and_preview(tmp_path, capsys):
     assert "no concloents" in html
 
 
-def test_web_table_empty_models_and_multiple_categories(tmp_path, capsys):
+def test_web_table_empty_models_includes_only_llms(tmp_path, capsys):
     main(["--memory", "0.001", "--format", "json"])
     report = json.loads(capsys.readouterr().out)
-    table = web_table(report, CATEGORIES)
-    assert table["text"]["category"] == "Tipus de model"
-    assert [row["category_id"] for row in table["data"]] == list(CATEGORIES)
+    report["skipped"] = [
+        {"source": "llm/evals/incomplete.json", "model": "incomplete"},
+        {"source": "asr/evals/incomplete.json", "model": "incomplete"},
+        {"source": "embeddings/evals/incomplete.json", "model": "incomplete"},
+    ]
+    table = web_table(report)
+    assert "category" not in table["text"]
+    assert len(table["data"]) == 1
+    assert table["skipped"] == [report["skipped"][0]]
     for row in table["data"]:
         assert row["recommended"] is None
         assert row["recommended_model"] is None
@@ -223,7 +234,7 @@ def test_web_table_empty_models_and_multiple_categories(tmp_path, capsys):
     output.write_text(json.dumps(table))
     html_path = tmp_path / "empty.html"
     render_recommendations(output, html_path)
-    assert html_path.read_text().count("Cap model compatible") == 3
+    assert html_path.read_text().count("Cap model compatible") == 1
 
 
 def test_json_file_matches_existing_json_stdout(tmp_path, capsys):

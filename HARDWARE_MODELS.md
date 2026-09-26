@@ -74,11 +74,11 @@ El catàleg s'ha d'ampliar quan s'avaluen nous embeddings sense `memory_gb`.
 
 ## Taula web i publicació
 
-El workflow de publicació genera `recommendations.json` i el publica a l'arrel
+El workflow de publicació genera `lmms_recommendations.json` i el publica a l'arrel
 de `prod-data` amb la resta de taules. Per generar-lo localment:
 
 ```bash
-uv run --project llm python models_recommendation.py --memory 8 16 32 --format web-json --output recommendations.json
+uv run --project llm python models_recommendation.py --memory 8 16 32 --format web-json --output lmms_recommendations.json
 make render-local
 ```
 
@@ -91,15 +91,15 @@ el llindar CLAM. Els noms inclouen la precisió avaluada.
 El JSON segueix el contracte `text` (etiquetes de columnes) i `data` (files):
 
 - Columnes: `capacity_gb`, `recommended` i `alternatives` (text pla).
-- Cada fila conserva `budget_gb`, `category_id`, `category`, `recommended_model`
+- Cada fila conserva `budget_gb`, `recommended_model`
   i `alternative_models`, amb els identificadors, puntuacions, memòria, precisió,
   fonts i `repo_url` dels models. Sense candidats, `recommended_model` és `null`
   i `alternative_models` és una llista buida; les cel·les buides són `null`.
 - Metadades: `memory_kind`, `reserve_percent`, `llm_uncertainty_points`,
   `individual_models` i `skipped`.
 
-`--categories llm embeddings asr` permet incloure les tres categories a la taula
-web i afegeix la columna de tipus de model. Només els LLM tenen alternatives.
+`--format web-json` genera exclusivament la taula de recomanacions de LLM.
+La llista `skipped` també es limita a les avaluacions de LLM excloses.
 `--format json` conserva l'informe detallat existent; `--output` permet desar
 qualsevol dels dos formats JSON en un fitxer.
 

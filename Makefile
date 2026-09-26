@@ -8,7 +8,7 @@ render-local:
 	uv run --project llm python -m llm.summarize_results > /dev/null
 	uv run --project asr python -m asr.summarize_results > /dev/null
 	uv run --project embeddings python -m embeddings.summarize_results > /dev/null
-	uv run --project llm python models_recommendation.py --memory 8 16 32 --format web-json --output recommendations.json
+	uv run --project llm python models_recommendation.py --memory 8 16 32 --format web-json --output lmms_recommendations.json
 	uv run --with jinja2 render_tables.py
 	uv run render_index_local.py
 
@@ -25,7 +25,7 @@ publish-check:
 	PYTHONPATH=$(CURDIR) uv run --with jinja2 python -m llm.summarize_results --json-norm /tmp/llms.json --html /tmp/llms-summary.html
 	PYTHONPATH=$(CURDIR) uv run --with jinja2 python -m asr.summarize_results --json-out /tmp/asrs.json
 	PYTHONPATH=$(CURDIR) uv run --with jinja2 python -m embeddings.summarize_results --json-out /tmp/embeddings.json
-	PYTHONPATH=$(CURDIR) uv run --with jinja2 python models_recommendation.py --memory 8 16 32 --format web-json --output /tmp/recommendations.json
+	PYTHONPATH=$(CURDIR) uv run --with jinja2 python models_recommendation.py --memory 8 16 32 --format web-json --output /tmp/lmms_recommendations.json
 
 unit-test:
 	cd llm && PYTHONPATH=.. uv run --with pytest python -m pytest tests --ignore=tests/data_validation
