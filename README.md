@@ -62,7 +62,7 @@ La web de [Softcatalà](https://www.softcatala.org) llegeix directament els fitx
 
 `llms_recommendations.json` mostra els dos millors LLM per franja de RAM, sense
 repeticions i amb un 25% de reserva. Conté `text` (etiquetes) i `data` (files amb
-`capacity_gb`, `recommended` i `alternatives`). Cada model té `name` (nom, precisió
+`capacity_gb` (p. ex. `16 GB`), `recommended` i `alternatives`). Cada model té `name` (nom, precisió
 i CLAM) i `url`; si no n'hi ha, és `null`. Per generar-lo localment:
 
 ```bash
