@@ -108,7 +108,7 @@ def main():
     parser.add_argument("--asr-out", default="asr/asrs_table.html")
     parser.add_argument("--emb-json", default="embeddings/embeddings.json")
     parser.add_argument("--emb-out", default="embeddings/embeddings_table.html")
-    parser.add_argument("--recommendations-json", default="lmms_recommendations.json")
+    parser.add_argument("--recommendations-json", default="llms_recommendations.json")
     parser.add_argument("--recommendations-out", default="recommendations_table.html")
     args = parser.parse_args()
 

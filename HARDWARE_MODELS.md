@@ -74,11 +74,11 @@ El catàleg s'ha d'ampliar quan s'avaluen nous embeddings sense `memory_gb`.
 
 ## Taula web i publicació
 
-El workflow de publicació genera `lmms_recommendations.json` i el publica a l'arrel
+El workflow de publicació genera `llms_recommendations.json` i el publica a l'arrel
 de `prod-data` amb la resta de taules. Per generar-lo localment:
 
 ```bash
-uv run --project llm python models_recommendation.py --memory 8 16 32 --format web-json --output lmms_recommendations.json
+uv run --project llm python models_recommendation.py --memory 8 16 32 --format web-json --output llms_recommendations.json
 make render-local
 ```
 

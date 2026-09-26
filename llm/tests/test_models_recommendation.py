@@ -178,7 +178,7 @@ def test_missing_evaluation_directory_is_an_error(tmp_path):
 
 
 def test_web_json_cli_and_preview(tmp_path, capsys):
-    output = tmp_path / "lmms_recommendations.json"
+    output = tmp_path / "llms_recommendations.json"
     main(["--memory", "8", "16", "32", "--format", "web-json", "--output", str(output)])
     assert capsys.readouterr().out == ""
     table = json.loads(output.read_text())
