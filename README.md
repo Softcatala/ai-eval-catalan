@@ -60,19 +60,10 @@ Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/wo
 
 La web de [Softcatalà](https://www.softcatala.org) llegeix directament els fitxers de la branca `prod-data` per mostrar els resultats actualitzats.
 
-`llms_recommendations.json` conté només `text` (etiquetes) i `data` (files),
-amb tres camps: `capacity_gb`, `recommended` i `alternatives`. Mostra el millor
-LLM i el segon millor de cada franja de memòria, sense repetir models entre files.
-Cada model és un objecte amb `name` (nom, precisió i CLAM amb un decimal,
-per exemple `qwen3-14b · Q4_K_M · CLAM 59.0`) i `url` (enllaç al repositori).
-La web ha de renderitzar `name` com un enllaç a `url`.
-Les capacitats s'ordenen de menor a major i s'eliminen els duplicats. Cada franja
-inclou models amb `pressupost_anterior < memory_gb <= pressupost_actual`,
-descomptant el 25% de reserva. Amb 4, 8, 16 i 32 GB de RAM, les franges són
-`(0, 3]`, `(3, 6]`, `(6, 12]` i `(12, 24]` GB. Les cel·les sense model són `null`.
-La franja de 4 GB indica poca memòria disponible; no implica compatibilitat
-validada amb mòbils.
-Per generar-lo localment:
+`llms_recommendations.json` mostra els dos millors LLM per franja de RAM, sense
+repeticions i amb un 25% de reserva. Conté `text` (etiquetes) i `data` (files amb
+`capacity_gb`, `recommended` i `alternatives`). Cada model té `name` (nom, precisió
+i CLAM) i `url`; si no n'hi ha, és `null`. Per generar-lo localment:
 
 ```bash
 make recommendation RECOMMENDATION_ARGS="--memory 4 8 16 32 --format json --output llms_recommendations.json"
