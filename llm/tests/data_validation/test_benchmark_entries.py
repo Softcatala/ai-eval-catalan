@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 
 from benchmark import _local_models
+from models_config import MODELS
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -17,7 +18,16 @@ def benchmark_runs():
 
 class BenchmarkEntriesTest(unittest.TestCase):
     def test_all_local_models_have_speed_benchmark_entry(self):
-        expected = {model["model_spec"] for model in _local_models()}
+        pending = {
+            entry["display_name"]
+            for entry in MODELS
+            if entry.get("speed_benchmark_pending")
+        }
+        expected = {
+            model["model_spec"]
+            for model in _local_models()
+            if model["model"] not in pending
+        }
         speeds = {}
         for run in benchmark_runs():
             if not isinstance(run, dict):

@@ -181,6 +181,16 @@ def main():
             display_cmd[display_cmd.index("--api-key") + 1] = "[redacted]"
         print(f"\n[RUN] {name}: {' '.join(display_cmd)}\n{'=' * 60}")
         run_env = os.environ.copy()
+        # The base environment can put the system libstdc++ ahead of Conda's
+        # newer copy.  NLTK imports sqlite3 via ICU, which needs the latter.
+        # Keep the evaluator self-contained without affecting llama-server.
+        conda_lib = "/opt/conda/lib"
+        library_paths = [
+            path
+            for path in run_env.get("LD_LIBRARY_PATH", "").split(":")
+            if path and path != conda_lib
+        ]
+        run_env["LD_LIBRARY_PATH"] = ":".join([conda_lib, *library_paths])
         if model.get("needs_bedrock_token"):
             run_env["OPENAI_API_KEY"] = bedrock_token
         result = subprocess.run(
