@@ -8,20 +8,17 @@
     {
       "capacity_gb": "8 GB",
       "recommended": "qwen3.5-9b · Q4_K_M",
-      "alternatives": "tiny-aya-water · Q4_K_M",
-      "repo_url": "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF"
+      "alternatives": "tiny-aya-water · Q4_K_M"
     },
     {
       "capacity_gb": "16 GB",
       "recommended": "qwen3-14b · Q4_K_M",
-      "alternatives": "gemma3-12b · Q4_K_M",
-      "repo_url": "https://huggingface.co/unsloth/Qwen3-14B-GGUF"
+      "alternatives": "gemma3-12b · Q4_K_M"
     },
     {
       "capacity_gb": "32 GB",
       "recommended": "qwen3.8-27b · Q4_K_M",
-      "alternatives": "muse-glimmer-30b · UD-Q4_K_XL",
-      "repo_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF"
+      "alternatives": "muse-glimmer-30b · UD-Q4_K_XL"
     }
   ]
 }
