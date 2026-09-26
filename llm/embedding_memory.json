@@ -1,0 +1,92 @@
+{
+  "description": "Estimated weight memory in decimal GB, FP32 (4 bytes per parameter), rounded up. Runtime overhead is covered separately by --reserve-percent. These are not measured peak memory values.",
+  "retrieved_at": "2026-09-26",
+  "models": {
+    "BAAI/bge-m3": {
+      "memory_gb": 2.28,
+      "precision": "FP32",
+      "parameters": 567754752,
+      "source": "https://huggingface.co/BAAI/bge-m3/blob/5617a9f61b028005a4858fdac845db406aefb181/config.json",
+      "note": "XLM-RoBERTa large: 559890432 + (8194 - 514) * 1024 parameters; dense encoder only."
+    },
+    "Qwen/Qwen3-Embedding-0.6B": {
+      "memory_gb": 2.39,
+      "precision": "FP32",
+      "parameters": 595776512,
+      "source": "https://huggingface.co/api/models/Qwen/Qwen3-Embedding-0.6B/revision/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3"
+    },
+    "Qwen/Qwen3-Embedding-4B": {
+      "memory_gb": 16.09,
+      "precision": "FP32",
+      "parameters": 4021774336,
+      "source": "https://huggingface.co/api/models/Qwen/Qwen3-Embedding-4B/revision/5cf2132abc99cad020ac570b19d031efec650f2b"
+    },
+    "Qwen/Qwen3-Embedding-8B": {
+      "memory_gb": 30.27,
+      "precision": "FP32",
+      "parameters": 7567295488,
+      "source": "https://huggingface.co/api/models/Qwen/Qwen3-Embedding-8B/revision/1d8ad4ca9b3dd8059ad90a75d4983776a23d44af"
+    },
+    "Snowflake/snowflake-arctic-embed-l-v2.0": {
+      "memory_gb": 2.28,
+      "precision": "FP32",
+      "parameters": 567754752,
+      "source": "https://huggingface.co/api/models/Snowflake/snowflake-arctic-embed-l-v2.0/revision/ac6544c8a46e00af67e330e85a9028c66b8cfd9a"
+    },
+    "intfloat/multilingual-e5-base": {
+      "memory_gb": 1.12,
+      "precision": "FP32",
+      "parameters": 278044162,
+      "source": "https://huggingface.co/api/models/intfloat/multilingual-e5-base/revision/d128750597153bb5987e10b1c3493a34e5a4502a"
+    },
+    "intfloat/multilingual-e5-large": {
+      "memory_gb": 2.24,
+      "precision": "FP32",
+      "parameters": 559890946,
+      "source": "https://huggingface.co/api/models/intfloat/multilingual-e5-large/revision/3d7cfbdacd47fdda877c5cd8a79fbcc4f2a574f3"
+    },
+    "intfloat/multilingual-e5-small": {
+      "memory_gb": 0.48,
+      "precision": "FP32",
+      "parameters": 117654272,
+      "source": "https://huggingface.co/api/models/intfloat/multilingual-e5-small/revision/614241f622f53c4eeff9890bdc4f31cfecc418b3"
+    },
+    "nomic-ai/nomic-embed-text-v2-moe": {
+      "memory_gb": 1.91,
+      "precision": "FP32",
+      "parameters": 475292928,
+      "source": "https://huggingface.co/api/models/nomic-ai/nomic-embed-text-v2-moe/revision/1066b6599d099fbb93dfcb64f9c37a7c9e503e85"
+    },
+    "projecte-aina/ST-NLI-ca_paraphrase-multilingual-mpnet-base": {
+      "memory_gb": 1.12,
+      "precision": "FP32",
+      "parameters": 278043648,
+      "source": "https://huggingface.co/projecte-aina/ST-NLI-ca_paraphrase-multilingual-mpnet-base/blob/3354aea2cb9d91091495e9f1e1241b488f32e47c/config.json",
+      "note": "XLM-RoBERTa base with the same dimensions as sentence-transformers/paraphrase-multilingual-mpnet-base-v2."
+    },
+    "sentence-transformers/LaBSE": {
+      "memory_gb": 1.89,
+      "precision": "FP32",
+      "parameters": 470927360,
+      "source": "https://huggingface.co/api/models/sentence-transformers/LaBSE/revision/836121a0533e5664b21c7aacc5d22951f2b8b25b"
+    },
+    "sentence-transformers/distiluse-base-multilingual-cased-v2": {
+      "memory_gb": 0.54,
+      "precision": "FP32",
+      "parameters": 134734080,
+      "source": "https://huggingface.co/api/models/sentence-transformers/distiluse-base-multilingual-cased-v2/revision/bfe45d0732ca50787611c0fe107ba278c7f3f889"
+    },
+    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2": {
+      "memory_gb": 0.48,
+      "precision": "FP32",
+      "parameters": 117654272,
+      "source": "https://huggingface.co/api/models/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2/revision/e8f8c211226b894fcb81acc59f3b34ba3efd5f42"
+    },
+    "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
+      "memory_gb": 1.12,
+      "precision": "FP32",
+      "parameters": 278044162,
+      "source": "https://huggingface.co/api/models/sentence-transformers/paraphrase-multilingual-mpnet-base-v2/revision/4328cf26390c98c5e3c738b4460a05b95f4911f5"
+    }
+  }
+}

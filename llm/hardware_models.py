@@ -1,0 +1,273 @@
+"""Recommend local models using this repository's raw evaluation results."""
+
+import argparse
+import json
+import math
+import sys
+from pathlib import Path
+
+# Support both `python hardware_models.py` and `python -m llm.hardware_models`.
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from embeddings.summarize_results import composite, is_cloud
+from llm.summarize_results import CLAM_TASKS, clam_score, extract_metrics
+
+ROOT = Path(__file__).resolve().parents[1]
+MEMORY_FILE = Path(__file__).with_name("embedding_memory.json")
+CATEGORIES = ("llm", "embeddings", "asr")
+METRICS = {"llm": "CLAM ↑", "embeddings": "Composta ↑", "asr": "WER combinat ↓"}
+
+
+def finite_number(value):
+    return (
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and math.isfinite(value)
+    )
+
+
+def evaluation_score(category, data):
+    """Only compare models with every benchmark required by their category."""
+    benchmarks = data.get("benchmarks", {})
+    if category == "llm":
+        metrics = extract_metrics(data)
+        if all(finite_number(metrics.get(key)) for key in CLAM_TASKS):
+            return clam_score(metrics)
+    elif category == "embeddings":
+        metrics = {
+            "xquad_ndcg_at_10": benchmarks.get("xquad_ca_retrieval", {}).get(
+                "ndcg_at_10"
+            ),
+            "sts_ca_spearman": benchmarks.get("sts_ca", {}).get("spearman"),
+            "tecla_macro_f1": benchmarks.get("tecla_classification", {}).get(
+                "macro_f1"
+            ),
+        }
+        if all(finite_number(value) for value in metrics.values()):
+            return composite(metrics)
+    else:
+        results = [benchmarks.get(key, {}) for key in ("fleurs_ca", "openslr69_ca")]
+        if all(
+            finite_number(r.get("wer"))
+            and r["wer"] >= 0
+            and finite_number(r.get("n"))
+            and r["n"] > 0
+            for r in results
+        ):
+            return sum(r["wer"] * r["n"] for r in results) / sum(
+                r["n"] for r in results
+            )
+    return None
+
+
+def load_candidates(root, memory_file=MEMORY_FILE):
+    memory_catalog = json.loads(memory_file.read_text(encoding="utf-8"))["models"]
+    candidates = {category: [] for category in CATEGORIES}
+    skipped = []
+    for category in CATEGORIES:
+        directory = root / category / "evals"
+        if not directory.is_dir():
+            raise ValueError(f"No existeix el directori d'avaluacions: {directory}")
+        for path in sorted(directory.glob("*.json")):
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if data.get("cloud") or (category == "embeddings" and is_cloud(data)):
+                continue
+            model_id = data.get("model", path.stem)
+            model = data.get("display_name") or model_id
+            source = str(path.relative_to(root))
+            score = evaluation_score(category, data)
+            memory = data.get("memory_gb")
+            memory_source = source
+            precision = data.get("quantization", "")
+            if category == "llm" and ":" in model_id:
+                precision = model_id.rsplit(":", 1)[1]
+            if memory is None and category == "embeddings":
+                spec = memory_catalog.get(model_id, {})
+                memory = spec.get("memory_gb")
+                memory_source = spec.get("source")
+                precision = spec.get("precision", "")
+            reason = None
+            if score is None:
+                reason = "avaluació incompleta"
+            elif not finite_number(memory) or memory <= 0:
+                reason = "memòria desconeguda o invàlida"
+            if reason:
+                skipped.append({"source": source, "model": model, "reason": reason})
+                continue
+            candidates[category].append(
+                {
+                    "model": model,
+                    "model_id": model_id,
+                    "precision": precision,
+                    "score": score,
+                    "metric": METRICS[category],
+                    "memory_gb": memory,
+                    "memory_source": memory_source,
+                    "eval_source": source,
+                }
+            )
+    return candidates, skipped
+
+
+def recommend(
+    candidates, capacities=(8, 16, 32), reserve_percent=25, llm_uncertainty=2
+):
+    if not finite_number(reserve_percent) or not 0 <= reserve_percent < 100:
+        raise ValueError("La reserva ha de ser entre 0 i menys de 100%.")
+    if not finite_number(llm_uncertainty) or llm_uncertainty < 0:
+        raise ValueError("El marge CLAM ha de ser un nombre finit no negatiu.")
+    configurations = []
+    for capacity in capacities:
+        if not finite_number(capacity) or capacity <= 0:
+            raise ValueError("Les capacitats han de ser nombres positius i finits.")
+        budget = capacity * (1 - reserve_percent / 100)
+        models = {}
+        llm_alternatives = []
+        for category in CATEGORIES:
+            eligible = [
+                model for model in candidates[category] if model["memory_gb"] <= budget
+            ]
+            ranked = sorted(
+                eligible,
+                key=lambda m: (
+                    m["score"] if category == "asr" else -m["score"],
+                    m["memory_gb"],
+                    m["model_id"],
+                ),
+            )
+            models[category] = ranked[0] if ranked else None
+            if category == "llm" and ranked:
+                best_score = ranked[0]["score"]
+                comparable = [
+                    {
+                        **model,
+                        "score_gap": best_score - model["score"],
+                        "score_interval": [
+                            max(0, model["score"] - llm_uncertainty),
+                            min(100, model["score"] + llm_uncertainty),
+                        ],
+                    }
+                    for model in ranked
+                    if model["score"] + llm_uncertainty >= best_score - llm_uncertainty
+                ]
+                models[category] = comparable[0]
+                llm_alternatives = comparable[1:]
+        configurations.append(
+            {
+                "capacity_gb": capacity,
+                "budget_gb": budget,
+                "models": models,
+                "llm_alternatives": llm_alternatives,
+            }
+        )
+    return configurations
+
+
+def print_table(report):
+    print(
+        f"Millors models locals segons les avaluacions del repositori ({report['memory_kind']})"
+    )
+    print(
+        f"Reserva: {report['reserve_percent']:g}%. Cada model s'executa individualment."
+    )
+    print("Memòria orientativa; el consum real depèn del context, el lot i el motor.\n")
+    print(
+        f"Marge CLAM: ±{report['llm_uncertainty_points']:g} punts per model. "
+        "Alternatives amb intervals que se solapen amb el millor LLM.\n"
+    )
+    rows = [
+        ["GB", "Útils", "Tipus", "Model", "Precisió", "GB model", "Puntuació", "Δ CLAM"]
+    ]
+    for config in report["configurations"]:
+        entries = [("llm", config["models"]["llm"], "LLM")]
+        entries.extend(
+            ("llm", model, "LLM (semblant)") for model in config["llm_alternatives"]
+        )
+        entries.extend(
+            (category, config["models"][category], label)
+            for category, label in (("embeddings", "Embeddings"), ("asr", "ASR"))
+        )
+        for category, model, label in entries:
+            rows.append(
+                [
+                    f"{config['capacity_gb']:g}",
+                    f"{config['budget_gb']:g}",
+                    label,
+                    model["model"]
+                    if model
+                    else "Cap model compatible amb dades completes",
+                    model["precision"] or "—" if model else "—",
+                    f"{model['memory_gb']:.2f}" if model else "—",
+                    (
+                        f"{model['score'] * 100:.2f}% {METRICS[category]}"
+                        if category == "asr"
+                        else f"{model['score']:.4f} {METRICS[category]}"
+                    )
+                    if model
+                    else "—",
+                    f"{model['score_gap']:.2f}" if model and category == "llm" else "—",
+                ]
+            )
+    widths = [max(len(row[i]) for row in rows) for i in range(len(rows[0]))]
+    for row in rows:
+        print("  ".join(value.ljust(width) for value, width in zip(row, widths)))
+    if report["skipped"]:
+        print("\nAvaluacions locals excloses:")
+        for item in report["skipped"]:
+            print(f"- {item['model']}: {item['reason']} ({item['source']})")
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--memory",
+        type=float,
+        nargs="+",
+        default=[8, 16, 32],
+        help="Capacitats en GB (defecte: 8 16 32)",
+    )
+    parser.add_argument(
+        "--reserve-percent",
+        type=float,
+        default=25,
+        help="Percentatge reservat per al sistema i la inferència (defecte: 25)",
+    )
+    parser.add_argument(
+        "--memory-kind",
+        choices=("RAM", "VRAM"),
+        default="RAM",
+        help="Tipus de memòria on es carrega el model sencer",
+    )
+    parser.add_argument("--repo-root", type=Path, default=ROOT)
+    parser.add_argument(
+        "--llm-uncertainty",
+        type=float,
+        default=2,
+        help="Marge ± en punts CLAM per model; mostra alternatives amb intervals solapats (defecte: 2)",
+    )
+    parser.add_argument("--format", choices=("table", "json"), default="table")
+    args = parser.parse_args(argv)
+    try:
+        candidates, skipped = load_candidates(args.repo_root)
+        configurations = recommend(
+            candidates, args.memory, args.reserve_percent, args.llm_uncertainty
+        )
+    except (OSError, ValueError) as error:
+        parser.error(str(error))
+    report = {
+        "memory_kind": args.memory_kind,
+        "reserve_percent": args.reserve_percent,
+        "llm_uncertainty_points": args.llm_uncertainty,
+        "individual_models": True,
+        "configurations": configurations,
+        "skipped": skipped,
+    }
+    if args.format == "json":
+        print(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False))
+    else:
+        print_table(report)
+
+
+if __name__ == "__main__":
+    main()
