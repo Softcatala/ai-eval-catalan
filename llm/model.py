@@ -59,6 +59,43 @@ from sklearn.metrics import matthews_corrcoef
 try:
     import lm_eval
     import lm_eval.models.openai_completions as _lm_oai
+    import requests
+
+    _api_error_tracker: dict[str, int] | None = None
+
+    def _resilient_model_call(original):
+        def wrapped(self, messages, *args, **kwargs):
+            attempts = max(1, getattr(self, "max_retries", 3))
+            for attempt in range(attempts):
+                try:
+                    response = original(self, messages, *args, **kwargs)
+                    if isinstance(response, dict) and isinstance(
+                        response.get("choices"), list
+                    ):
+                        return response
+                    raise ValueError("API response has no choices")
+                except (
+                    requests.RequestException,
+                    ValueError,
+                    KeyError,
+                    TypeError,
+                ) as error:
+                    if attempt + 1 < attempts:
+                        time.sleep(min(2**attempt, 4))
+                        continue
+                    if _api_error_tracker is not None:
+                        _api_error_tracker["n_errors"] += len(messages)
+                    print(
+                        f"[warn] API request skipped after {attempts} attempts: {error}"
+                    )
+                    return {
+                        "choices": [
+                            {"index": index, "text": ""}
+                            for index in range(len(messages))
+                        ]
+                    }
+
+        return wrapped
 
     def _patched_parse_logprobs(self, outputs, tokens=None, ctxlens=None, **kwargs):
         """
@@ -95,6 +132,8 @@ try:
         return res
 
     _lm_oai.LocalCompletionsAPI.parse_logprobs = _patched_parse_logprobs
+    for _api_class in (_lm_oai.LocalCompletionsAPI, _lm_oai.OpenAIChatCompletion):
+        _api_class.model_call = _resilient_model_call(_api_class.model_call)
 
     # Gemini's OpenAI-compatible endpoint rejects the optional `seed` field that
     # lm-eval unconditionally adds to chat-completion payloads. Both it and the
@@ -765,7 +804,8 @@ def run_ifeval(
     # Mantinc's long RAG prompts keep an API request open for much longer than
     # IFEval. lm-eval's async adapter can close its aiohttp session while
     # retrying concurrent requests, so keep this custom task serial on APIs.
-    api_concurrency = 1 if task_name == "catalan_drift" else 8
+    # Keep errors attributable to one sample, like the ASR evaluator.
+    api_concurrency = 1
 
     if gemini_model:
         lm_model = "openai-chat-completions"
@@ -831,6 +871,10 @@ def run_ifeval(
 
         task_manager = TaskManager(include_path=str(include_path))
 
+    global _api_error_tracker
+    previous_error_tracker = _api_error_tracker
+    error_tracker = {"n_errors": 0}
+    _api_error_tracker = error_tracker
     try:
         results = lm_eval.simple_evaluate(
             model=lm_model,
@@ -846,6 +890,7 @@ def run_ifeval(
             task_manager=task_manager,
         )
     finally:
+        _api_error_tracker = previous_error_tracker
         if needs_env_restore:
             if _orig_api_key is None:
                 os.environ.pop("OPENAI_API_KEY", None)
@@ -863,6 +908,8 @@ def run_ifeval(
     if task_name == MANTINC_TASK_NAME:
         with mantinc_dataset_path().open(encoding="utf-8") as dataset_file:
             score["n"] = min(n_samples, sum(1 for _ in dataset_file))
+    score["n_errors"] = error_tracker["n_errors"]
+    score["error_rate"] = error_tracker["n_errors"] / score["n"] if score["n"] else 0.0
     if task_name == "ifeval_ca":
         p_strict = score.get("prompt_level_strict_acc,none", "n/a")
         i_strict = score.get("inst_level_strict_acc,none", "n/a")
