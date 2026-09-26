@@ -11,7 +11,7 @@ from models_recommendation import (
     load_candidates,
     main,
     recommend,
-    web_table,
+    recommendations_json,
 )
 
 
@@ -92,14 +92,14 @@ def test_table_shows_llm_alternatives_and_gap(capsys):
 
 
 @pytest.mark.parametrize("capacity", [0, -8, float("nan"), float("inf")])
-@pytest.mark.parametrize("generate", [recommend, web_table])
+@pytest.mark.parametrize("generate", [recommend, recommendations_json])
 def test_invalid_memory(capacity, generate):
     with pytest.raises(ValueError, match="capacitats"):
         generate({}, [capacity])
 
 
 @pytest.mark.parametrize("reserve", [-1, 100, float("nan"), float("inf")])
-@pytest.mark.parametrize("generate", [recommend, web_table])
+@pytest.mark.parametrize("generate", [recommend, recommendations_json])
 def test_invalid_reserve(reserve, generate):
     with pytest.raises(ValueError, match="reserva"):
         generate({}, [8], reserve)
@@ -232,7 +232,7 @@ def test_web_alternative_is_second_best_eligible_llm_regardless_of_gap():
         candidate("second", 3, 50),
         candidate("best", 6, 60),
     ]
-    rows = web_table({"llm": models}, [8, 4, 3, 1])["data"]
+    rows = recommendations_json({"llm": models}, [8, 4, 3, 1])["data"]
     assert [(row["recommended"], row["alternatives"]) for row in rows] == [
         ("best", "second"),
         ("second", "third"),
@@ -247,6 +247,6 @@ def test_web_alternative_breaks_score_ties_by_memory_then_model_id():
         candidate("b", 3, 60),
         candidate("a", 3, 60),
     ]
-    assert web_table({"llm": models}, [8])["data"] == [
+    assert recommendations_json({"llm": models}, [8])["data"] == [
         {"capacity_gb": 8, "recommended": "a", "alternatives": "b"}
     ]

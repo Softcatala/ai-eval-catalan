@@ -240,7 +240,7 @@ def print_table(report):
             print(f"- {item['model']}: {item['reason']} ({item['source']})")
 
 
-def web_table(candidates, capacities=(4, 8, 16, 32), reserve_percent=25):
+def recommendations_json(candidates, capacities=(4, 8, 16, 32), reserve_percent=25):
     """Export LLM recommendations using the published text/data contract."""
 
     def model_label(model):
@@ -306,7 +306,7 @@ def main(argv=None):
     try:
         candidates, skipped = load_candidates(args.repo_root)
         if args.format == "web-json":
-            report = web_table(candidates, args.memory, args.reserve_percent)
+            report = recommendations_json(candidates, args.memory, args.reserve_percent)
         else:
             report = {
                 "memory_kind": args.memory_kind,
