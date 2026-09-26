@@ -21,7 +21,8 @@ mateixa estructura. La sortida JSON conserva el fitxer d'avaluació i la font
 de la memòria de cada recomanació.
 
 La sortida de text s'organitza en blocs de **LLM, embeddings i ASR**, en aquest
-ordre, amb totes les configuracions de memòria dins de cada bloc.
+ordre, amb totes les configuracions de memòria dins de cada bloc. Una línia
+horitzontal separa les recomanacions de cada capacitat de memòria.
 
 Per a cada capacitat, selecciona **un model per categoria**, amb aquests criteris:
 

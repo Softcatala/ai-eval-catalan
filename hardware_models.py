@@ -177,7 +177,9 @@ def print_table(report):
         if category == "llm":
             header.append("Δ CLAM")
         rows = [header]
+        group_starts = set()
         for config in report["configurations"]:
+            group_starts.add(len(rows))
             entries = [(config["models"][category], title)]
             if category == "llm":
                 entries.extend(
@@ -205,7 +207,10 @@ def print_table(report):
                     row.append(f"{model['score_gap']:.2f}" if model else "—")
                 rows.append(row)
         widths = [max(len(row[i]) for row in rows) for i in range(len(header))]
-        for row in rows:
+        separator = "  ".join("─" * width for width in widths)
+        for index, row in enumerate(rows):
+            if index in group_starts:
+                print(separator)
             print("  ".join(value.ljust(width) for value, width in zip(row, widths)))
         print()
     if report["skipped"]:
