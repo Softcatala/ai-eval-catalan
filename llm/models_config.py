@@ -152,9 +152,6 @@ MODELS = [
         "args": ["--model", "unsloth/Qwen3.5-4B-GGUF:Q4_K_M"],
         "params_b": 4.0,
         "quantization": "q4",
-        # The evaluation and download target is configured, but the local
-        # throughput measurement still has to be collected on this hardware.
-        "speed_benchmark_pending": True,
     },
     {
         "display_name": "qwen3.5-9b",
@@ -189,9 +186,6 @@ MODELS = [
         ],
         "params_b": 30.0,
         "quantization": "q4",
-        # The evaluation and download target is configured, but the local
-        # throughput measurement still has to be collected on this hardware.
-        "speed_benchmark_pending": True,
     },
     {
         "display_name": "llama3.1-8b",
