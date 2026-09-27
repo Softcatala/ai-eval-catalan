@@ -234,19 +234,6 @@ MODELS = [
         "quantization": "q4",
     },
     {
-        "display_name": "alia-40b-instruct-2605",
-        "output": "evals/alia_40b_instruct_2605_q4.json",
-        "args": [
-            "--model",
-            "mradermacher/ALIA-40b-instruct-2605-GGUF:Q4_K_M",
-        ],
-        "params_b": 40.0,
-        "quantization": "q4",
-        # The evaluation and download target is configured, but the local
-        # throughput measurement still has to be collected on this hardware.
-        "speed_benchmark_pending": True,
-    },
-    {
         "display_name": "gemma4-12b",
         "output": "evals/gemma4_12b_q4.json",
         "args": [
