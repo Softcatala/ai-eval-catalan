@@ -147,6 +147,13 @@ MODELS = [
         "quantization": "q4",
     },
     {
+        "display_name": "qwen3.5-4b",
+        "output": "evals/qwen3.5_4b_q4.json",
+        "args": ["--model", "unsloth/Qwen3.5-4B-GGUF:Q4_K_M"],
+        "params_b": 4.0,
+        "quantization": "q4",
+    },
+    {
         "display_name": "qwen3.5-9b",
         "output": "evals/qwen3.5_9b_q4.json",
         "args": ["--model", "unsloth/Qwen3.5-9B-GGUF:Q4_K_M"],
@@ -166,6 +173,16 @@ MODELS = [
         "args": [
             "--model",
             "unsloth/Muse-Glimmer-30B-GGUF:UD-Q4_K_XL",
+        ],
+        "params_b": 30.0,
+        "quantization": "q4",
+    },
+    {
+        "display_name": "glm-4.7-flash",
+        "output": "evals/glm_4_7_flash_q4.json",
+        "args": [
+            "--model",
+            "unsloth/GLM-4.7-Flash-GGUF:Q4_K_M",
         ],
         "params_b": 30.0,
         "quantization": "q4",

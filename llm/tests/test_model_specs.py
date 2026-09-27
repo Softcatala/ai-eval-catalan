@@ -31,3 +31,11 @@ def test_expected_gguf_filename_uses_quant_and_overrides():
         expected_gguf_filename("CohereLabs/tiny-aya-water-GGUF:Q4_K_M")
         == "tiny-aya-water-q4_k_m.gguf"
     )
+    assert (
+        expected_gguf_filename("unsloth/GLM-4.7-Flash-GGUF:Q4_K_M")
+        == "GLM-4.7-Flash-Q4_K_M.gguf"
+    )
+    assert (
+        expected_gguf_filename("unsloth/Qwen3.5-4B-GGUF:Q4_K_M")
+        == "Qwen3.5-4B-Q4_K_M.gguf"
+    )
