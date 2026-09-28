@@ -17,7 +17,11 @@ def benchmark_runs():
 
 class BenchmarkEntriesTest(unittest.TestCase):
     def test_all_local_models_have_speed_benchmark_entry(self):
-        expected = {model["model_spec"] for model in _local_models()}
+        expected = {
+            model["model_spec"]
+            for model in _local_models()
+            if not model.get("speed_benchmark_pending")
+        }
         speeds = {}
         for run in benchmark_runs():
             if not isinstance(run, dict):

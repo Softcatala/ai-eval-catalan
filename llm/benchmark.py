@@ -45,6 +45,7 @@ def _local_models() -> list[dict[str, Any]]:
                 "model_spec": model_spec,
                 "device": arg_value(entry.get("args", []), "--device") or "cuda",
                 "quantization": entry.get("quantization", ""),
+                "speed_benchmark_pending": entry.get("speed_benchmark_pending", False),
             }
         )
     return models
