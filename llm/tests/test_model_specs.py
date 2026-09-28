@@ -40,8 +40,6 @@ def test_expected_gguf_filename_uses_quant_and_overrides():
         == "Qwen3.5-4B-Q4_K_M.gguf"
     )
     assert (
-        expected_gguf_filename(
-            "mradermacher/ALIA-40b-instruct-2605-GGUF:Q4_K_M"
-        )
+        expected_gguf_filename("mradermacher/ALIA-40b-instruct-2605-GGUF:Q4_K_M")
         == "ALIA-40b-instruct-2605.Q4_K_M.gguf"
     )
