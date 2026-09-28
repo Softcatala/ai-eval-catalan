@@ -236,9 +236,6 @@ MODELS = [
         ],
         "params_b": 40.0,
         "quantization": "q4",
-        # The evaluation and download target is configured, but the local
-        # throughput measurement still has to be collected on this hardware.
-        "speed_benchmark_pending": True,
     },
     {
         "display_name": "gemma4-12b",
