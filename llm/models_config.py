@@ -8,7 +8,7 @@ MODELS = [
         "output": "evals/gemma4_e4b_q2.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-4-E4B-it-GGUF:Q2_K",
+            "unsloth/gemma-4-E4B-it-GGUF:UD-Q2_K_XL",
         ],
         "params_b": 4.0,
         "quantization": "q2",
@@ -20,7 +20,7 @@ MODELS = [
         "output": "evals/gemma4_e4b_q8.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-4-E4B-it-GGUF:Q8_0",
+            "unsloth/gemma-4-E4B-it-GGUF:Q8_0",
         ],
         "params_b": 4.0,
         "quantization": "q8",
@@ -56,7 +56,7 @@ MODELS = [
         "output": "evals/gemma4_26b_q2.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q2_K",
+            "unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q2_K_XL",
         ],
         "params_b": 26.0,
         "quantization": "q2",
@@ -68,7 +68,7 @@ MODELS = [
         "output": "evals/gemma4_26b_q8.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q8_0",
+            "unsloth/gemma-4-26B-A4B-it-GGUF:Q8_0",
         ],
         "params_b": 26.0,
         "quantization": "q8",
@@ -248,20 +248,22 @@ MODELS = [
         "output": "evals/gemma4_e4b_q4.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-4-E4B-it-GGUF:Q4_K_M",
+            "unsloth/gemma-4-E4B-it-GGUF:Q4_K_M",
         ],
         "params_b": 4.0,
         "quantization": "q4",
+        "speed_benchmark_pending": True,
     },
     {
         "display_name": "gemma4-26b",
         "output": "evals/gemma4_26b_q4.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q4_K_M",
+            "unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q4_K_M",
         ],
         "params_b": 26.0,
         "quantization": "q4",
+        "speed_benchmark_pending": True,
     },
     {
         "display_name": "gemini-3-1-preview",
