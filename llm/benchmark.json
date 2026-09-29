@@ -228,6 +228,30 @@
       "generation_seconds": 30.09,
       "generation_tokens_per_sec": 8.51,
       "timestamp": "2026-09-28T17:12:58.163505+00:00"
+    },
+    {
+      "model": "gemma4-12b-q2",
+      "model_spec": "unsloth/gemma-4-12b-it-GGUF:UD-Q2_K_XL",
+      "server_model": "UD-Q2_K_XL",
+      "backend": "eval-http",
+      "device": "cuda",
+      "prompt_tokens": 4,
+      "generated_tokens": 256,
+      "generation_seconds": 10.5875,
+      "generation_tokens_per_sec": 24.18,
+      "timestamp": "2026-09-29T05:41:00.617996+00:00"
+    },
+    {
+      "model": "gemma4-12b-q8",
+      "model_spec": "unsloth/gemma-4-12b-it-GGUF:Q8_0",
+      "server_model": "gemma-4-12b-it-Q8_0",
+      "backend": "eval-http",
+      "device": "cuda",
+      "prompt_tokens": 5,
+      "generated_tokens": 256,
+      "generation_seconds": 16.611,
+      "generation_tokens_per_sec": 15.41,
+      "timestamp": "2026-09-29T05:45:51.736356+00:00"
     }
   ]
 }
