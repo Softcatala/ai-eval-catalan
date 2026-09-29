@@ -76,6 +76,36 @@ MODELS = [
         "speed_benchmark_pending": True,
     },
     {
+        "display_name": "gemma3-4b",
+        "output": "evals/gemma3_4b_q4.json",
+        "args": [
+            "--model",
+            "unsloth/gemma-3-4b-it-GGUF:Q4_K_M",
+        ],
+        "params_b": 4.0,
+        "quantization": "q4",
+    },
+    {
+        "display_name": "gemma3-12b",
+        "output": "evals/gemma3_12b_q4.json",
+        "args": [
+            "--model",
+            "unsloth/gemma-3-12b-it-GGUF:Q4_K_M",
+        ],
+        "params_b": 12.0,
+        "quantization": "q4",
+    },
+    {
+        "display_name": "gemma3-27b",
+        "output": "evals/gemma3_27b_q4.json",
+        "args": [
+            "--model",
+            "unsloth/gemma-3-27b-it-GGUF:Q4_K_M",
+        ],
+        "params_b": 27.0,
+        "quantization": "q4",
+    },
+    {
         "display_name": "mistral-small-24b",
         "output": "evals/mistral_small_24b_q4.json",
         "args": [
