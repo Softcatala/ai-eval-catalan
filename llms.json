@@ -229,7 +229,7 @@
             "repo_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
             "cloud": false,
             "params_b": 26.0,
-            "memory_gb": 27.6,
+            "memory_gb": 14.6,
             "generation_tokens_per_sec": 35.52,
             "quantized_analysis_only": false,
             "sts_ca": 0.7289,
