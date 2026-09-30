@@ -3,7 +3,7 @@
   "display_name": "gemma4-26b",
   "cloud": false,
   "params_b": 26.0,
-  "memory_gb": 27.6,
+  "memory_gb": 14.6,
   "evaluated_at": "2026-09-29T20:20:30+00:00",
   "benchmarks": {
     "sts_ca": {
