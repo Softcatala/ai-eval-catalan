@@ -288,6 +288,42 @@
       "generation_seconds": 11.7542,
       "generation_tokens_per_sec": 21.78,
       "timestamp": "2026-09-30T03:23:26.029836+00:00"
+    },
+    {
+      "model": "gemma4-26b-q8",
+      "model_spec": "unsloth/gemma-4-26B-A4B-it-GGUF:Q8_0",
+      "server_model": "unsloth/gemma-4-26B-A4B-it-GGUF:Q8_0",
+      "backend": "eval-http",
+      "device": "cuda",
+      "prompt_tokens": 5,
+      "generated_tokens": 256,
+      "generation_seconds": 7.7753,
+      "generation_tokens_per_sec": 32.92,
+      "timestamp": "2026-09-30T03:50:23.985124+00:00"
+    },
+    {
+      "model": "gemma4-e4b",
+      "model_spec": "unsloth/gemma-4-E4B-it-GGUF:Q4_K_M",
+      "server_model": "unsloth/gemma-4-E4B-it-GGUF:Q4_K_M",
+      "backend": "eval-http",
+      "device": "cuda",
+      "prompt_tokens": 5,
+      "generated_tokens": 256,
+      "generation_seconds": 6.059,
+      "generation_tokens_per_sec": 42.25,
+      "timestamp": "2026-09-30T03:50:39.037797+00:00"
+    },
+    {
+      "model": "gemma4-26b",
+      "model_spec": "unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q4_K_M",
+      "server_model": "gemma-4-26B-A4B-it-UD-Q4_K_M",
+      "backend": "eval-http",
+      "device": "cuda",
+      "prompt_tokens": 5,
+      "generated_tokens": 256,
+      "generation_seconds": 7.2075,
+      "generation_tokens_per_sec": 35.52,
+      "timestamp": "2026-09-30T03:51:20.711711+00:00"
     }
   ]
 }
