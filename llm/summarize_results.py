@@ -520,7 +520,7 @@ def main():
     print(f"Normalized JSON saved to {json_path}")
 
     quantized_json_rows = sorted(
-        [r for r in json_rows if r["model"].startswith("gemma3")],
+        [r for r in json_rows if r["model"].startswith("gemma4")],
         key=lambda r: (
             -(r["params_b"] or 0),
             re.sub(r"-q\d+$", "", r["model"].lower()),
