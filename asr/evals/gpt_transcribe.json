@@ -1,0 +1,22 @@
+{
+  "model": "gpt-transcribe",
+  "params_b": null,
+  "memory_gb": null,
+  "cloud": true,
+  "hardware": null,
+  "evaluated_at": "2026-09-30T03:50:37+00:00",
+  "benchmarks": {
+    "fleurs_ca": {
+      "wer": 0.0338,
+      "cer": 0.0161,
+      "rtf": null,
+      "n": 400
+    },
+    "openslr69_ca": {
+      "wer": 0.0506,
+      "cer": 0.0188,
+      "rtf": null,
+      "n": 400
+    }
+  }
+}
