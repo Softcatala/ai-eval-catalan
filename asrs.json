@@ -31,16 +31,16 @@
     },
     "data": [
         {
-            "model": "(*) gpt-4o-transcribe",
-            "repo_url": "https://platform.openai.com/docs/models/gpt-4o-transcribe",
+            "model": "(*) gpt-transcribe",
+            "repo_url": "https://platform.openai.com/docs/models/gpt-transcribe",
             "cloud": true,
             "params_b": null,
             "memory_gb": null,
-            "weighted_wer": 0.0352,
-            "wer": 0.0284,
-            "cer": 0.0134,
-            "openslr_wer": 0.0419,
-            "openslr_cer": 0.0193,
+            "weighted_wer": 0.0422,
+            "wer": 0.0338,
+            "cer": 0.0161,
+            "openslr_wer": 0.0506,
+            "openslr_cer": 0.0188,
             "rtf": null
         },
         {
