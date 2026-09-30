@@ -181,16 +181,6 @@ def main():
             display_cmd[display_cmd.index("--api-key") + 1] = "[redacted]"
         print(f"\n[RUN] {name}: {' '.join(display_cmd)}\n{'=' * 60}")
         run_env = os.environ.copy()
-        # Prefer Conda's current C++ runtime over an older system copy inherited
-        # through LD_LIBRARY_PATH.  Otherwise optional evaluation dependencies
-        # such as ICU can fail to import with a missing CXXABI symbol.
-        conda_lib = "/opt/conda/lib"
-        library_paths = [
-            path
-            for path in run_env.get("LD_LIBRARY_PATH", "").split(":")
-            if path and path != conda_lib
-        ]
-        run_env["LD_LIBRARY_PATH"] = ":".join([conda_lib, *library_paths])
         if model.get("needs_bedrock_token"):
             run_env["OPENAI_API_KEY"] = bedrock_token
         result = subprocess.run(
