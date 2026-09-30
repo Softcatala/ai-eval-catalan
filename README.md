@@ -319,7 +319,7 @@ uv run python hf-eval.py whisper-small --output evals/whisper_small.json
 
 ```bash
 uv run python cloud-eval.py --list-models
-OPENAI_API_KEY="LA_TEVA_CLAU" uv run python cloud-eval.py gpt-4o-transcribe --output evals/gpt4o_transcribe.json
+OPENAI_API_KEY="LA_TEVA_CLAU" uv run python cloud-eval.py gpt-transcribe --output evals/gpt_transcribe.json
 ```
 
 Els models de Gemini requereixen la variable `GEMINI_API_KEY`.

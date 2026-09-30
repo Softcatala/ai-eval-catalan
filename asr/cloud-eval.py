@@ -5,7 +5,7 @@ Evaluates Word Error Rate on FLEURS and OpenSLR-69 Catalan datasets.
 Writes results to a JSON file with the same structure as hf-eval.py.
 
 Usage:
-    python cloud-eval.py gpt-4o-transcribe --output evals/gpt4o_transcribe.json
+    python cloud-eval.py gpt-transcribe --output evals/gpt_transcribe.json
     python cloud-eval.py --list-models
 """
 
@@ -58,7 +58,7 @@ LANGUAGE_CONFIG = {
 }
 
 OPENAI_ASR_MODELS = [
-    "gpt-4o-transcribe",
+    "gpt-transcribe",
 ]
 
 GEMINI_ASR_MODELS = [
@@ -86,7 +86,7 @@ class OpenAIASRWrapper:
                 response = self.client.audio.transcriptions.create(
                     model=self.model_name,
                     file=f,
-                    language="ca",
+                    extra_body={"languages": ["ca"]},
                 )
             return response.text
         finally:

@@ -107,10 +107,10 @@ MODELS = [
         "output": "evals/gemma4_e2b.json",
     },
     {
-        "label": "gpt-4o-transcribe",
+        "label": "gpt-transcribe",
         "script": "cloud-eval.py",
-        "args": ["gpt-4o-transcribe"],
-        "output": "evals/gpt4o_transcribe.json",
+        "args": ["gpt-transcribe"],
+        "output": "evals/gpt_transcribe.json",
         "needs_openai_api_key": True,
     },
     {
