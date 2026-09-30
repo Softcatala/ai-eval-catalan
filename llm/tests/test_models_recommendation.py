@@ -168,8 +168,8 @@ def test_cli_runs_from_another_directory_and_emits_json(tmp_path):
 @pytest.mark.parametrize(
     "filename, flags",
     [
-        ("gemma3_12b_q2.json", {}),
-        ("gemma3_12b_q2.json", {"quantized_analysis_only": False}),
+        ("gemma4_12b_q2.json", {}),
+        ("gemma4_12b_q2.json", {"quantized_analysis_only": False}),
         ("custom_analysis.json", {"quantized_analysis_only": True}),
     ],
 )

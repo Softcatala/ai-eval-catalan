@@ -45,6 +45,7 @@ def _local_models() -> list[dict[str, Any]]:
                 "model_spec": model_spec,
                 "device": arg_value(entry.get("args", []), "--device") or "cuda",
                 "quantization": entry.get("quantization", ""),
+                "speed_benchmark_pending": entry.get("speed_benchmark_pending", False),
             }
         )
     return models
@@ -95,15 +96,21 @@ def _name_variants(model: dict[str, Any]) -> set[str]:
 def _match_server_model(
     model: dict[str, Any], server_model_ids: list[str]
 ) -> str | None:
+    if model["model_spec"] in server_model_ids:
+        return model["model_spec"]
+
     model_quant = _quant_key(model["model_spec"])
     model_names = _name_variants(model)
     for server_id in server_model_ids:
+        # A repo:quant ID must match exactly, including its provider.
+        if "/" in server_id and ":" in server_id:
+            continue
         server_quant = _quant_key(server_id)
-        if model_quant and server_quant and model_quant != server_quant:
+        if model_quant and model_quant != server_quant:
             continue
 
         server_name = _compact(_without_quant(server_id.rsplit("/", 1)[-1]))
-        if any(name in server_name or server_name in name for name in model_names):
+        if server_name in model_names:
             return server_id
     return None
 

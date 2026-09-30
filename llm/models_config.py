@@ -1,18 +1,79 @@
 import os
 
-# Local GGUF models use Q4_K_M by default. Gemma 3 additionally retains Q2 and
+# Local GGUF models use Q4_K_M by default. Gemma 4 additionally retains Q2 and
 # Q8 variants for quantization analysis.
 MODELS = [
     {
-        "display_name": "gemma3-4b-q2",
-        "output": "evals/gemma3_4b_q2.json",
+        "display_name": "gemma4-e4b-q2",
+        "output": "evals/gemma4_e4b_q2.json",
         "args": [
             "--model",
-            "unsloth/gemma-3-4b-it-GGUF:Q2_K",
+            "unsloth/gemma-4-E4B-it-GGUF:UD-Q2_K_XL",
         ],
         "params_b": 4.0,
         "quantization": "q2",
         "quantized_analysis_only": True,
+        "speed_benchmark_pending": True,
+    },
+    {
+        "display_name": "gemma4-e4b-q8",
+        "output": "evals/gemma4_e4b_q8.json",
+        "args": [
+            "--model",
+            "unsloth/gemma-4-E4B-it-GGUF:Q8_0",
+        ],
+        "params_b": 4.0,
+        "quantization": "q8",
+        "quantized_analysis_only": True,
+        "speed_benchmark_pending": True,
+    },
+    {
+        "display_name": "gemma4-12b-q2",
+        "output": "evals/gemma4_12b_q2.json",
+        "args": [
+            "--model",
+            "unsloth/gemma-4-12b-it-GGUF:UD-Q2_K_XL",
+        ],
+        "params_b": 12.0,
+        "quantization": "q2",
+        "quantized_analysis_only": True,
+        "speed_benchmark_pending": True,
+    },
+    {
+        "display_name": "gemma4-12b-q8",
+        "output": "evals/gemma4_12b_q8.json",
+        "args": [
+            "--model",
+            "unsloth/gemma-4-12b-it-GGUF:Q8_0",
+        ],
+        "params_b": 12.0,
+        "quantization": "q8",
+        "quantized_analysis_only": True,
+        "speed_benchmark_pending": True,
+    },
+    {
+        "display_name": "gemma4-26b-q2",
+        "output": "evals/gemma4_26b_q2.json",
+        "args": [
+            "--model",
+            "unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q2_K_XL",
+        ],
+        "params_b": 26.0,
+        "quantization": "q2",
+        "quantized_analysis_only": True,
+        "speed_benchmark_pending": True,
+    },
+    {
+        "display_name": "gemma4-26b-q8",
+        "output": "evals/gemma4_26b_q8.json",
+        "args": [
+            "--model",
+            "unsloth/gemma-4-26B-A4B-it-GGUF:Q8_0",
+        ],
+        "params_b": 26.0,
+        "quantization": "q8",
+        "quantized_analysis_only": True,
+        "speed_benchmark_pending": True,
     },
     {
         "display_name": "gemma3-4b",
@@ -25,28 +86,6 @@ MODELS = [
         "quantization": "q4",
     },
     {
-        "display_name": "gemma3-4b-q8",
-        "output": "evals/gemma3_4b_q8.json",
-        "args": [
-            "--model",
-            "unsloth/gemma-3-4b-it-GGUF:Q8_0",
-        ],
-        "params_b": 4.0,
-        "quantization": "q8",
-        "quantized_analysis_only": True,
-    },
-    {
-        "display_name": "gemma3-12b-q2",
-        "output": "evals/gemma3_12b_q2.json",
-        "args": [
-            "--model",
-            "unsloth/gemma-3-12b-it-GGUF:Q2_K",
-        ],
-        "params_b": 12.0,
-        "quantization": "q2",
-        "quantized_analysis_only": True,
-    },
-    {
         "display_name": "gemma3-12b",
         "output": "evals/gemma3_12b_q4.json",
         "args": [
@@ -57,28 +96,6 @@ MODELS = [
         "quantization": "q4",
     },
     {
-        "display_name": "gemma3-12b-q8",
-        "output": "evals/gemma3_12b.json",
-        "args": [
-            "--model",
-            "unsloth/gemma-3-12b-it-GGUF:Q8_0",
-        ],
-        "params_b": 12.0,
-        "quantization": "q8",
-        "quantized_analysis_only": True,
-    },
-    {
-        "display_name": "gemma3-27b-q2",
-        "output": "evals/gemma3_27b_q2.json",
-        "args": [
-            "--model",
-            "unsloth/gemma-3-27b-it-GGUF:Q2_K",
-        ],
-        "params_b": 27.0,
-        "quantization": "q2",
-        "quantized_analysis_only": True,
-    },
-    {
         "display_name": "gemma3-27b",
         "output": "evals/gemma3_27b_q4.json",
         "args": [
@@ -87,17 +104,6 @@ MODELS = [
         ],
         "params_b": 27.0,
         "quantization": "q4",
-    },
-    {
-        "display_name": "gemma3-27b-q8",
-        "output": "evals/gemma3_27b.json",
-        "args": [
-            "--model",
-            "unsloth/gemma-3-27b-it-GGUF:Q8_0",
-        ],
-        "params_b": 27.0,
-        "quantization": "q8",
-        "quantized_analysis_only": True,
     },
     {
         "display_name": "mistral-small-24b",
@@ -252,20 +258,22 @@ MODELS = [
         "output": "evals/gemma4_e4b_q4.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-4-E4B-it-GGUF:Q4_K_M",
+            "unsloth/gemma-4-E4B-it-GGUF:Q4_K_M",
         ],
         "params_b": 4.0,
         "quantization": "q4",
+        "speed_benchmark_pending": True,
     },
     {
         "display_name": "gemma4-26b",
         "output": "evals/gemma4_26b_q4.json",
         "args": [
             "--model",
-            "bartowski/google_gemma-4-26B-A4B-it-GGUF:Q4_K_M",
+            "unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q4_K_M",
         ],
         "params_b": 26.0,
         "quantization": "q4",
+        "speed_benchmark_pending": True,
     },
     {
         "display_name": "gemini-3-1-preview",
