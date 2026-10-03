@@ -21,9 +21,11 @@ MODEL_PARAMS_B = {
     "julia-1": 0.144192769,
     "laya": 0.421029889,
     "kev-4b": 4.207062528,
+    "kev-9b": 8.955900928,
     "lev": 4.205751296,
     "openjev": 26.895998464,
     "clef-flash": 9.075566084,
+    "clef": 27.024054788,
 }
 
 DATA_URL = "https://amazon-massive-nlu-dataset.s3.amazonaws.com/amazon-massive-dataset-1.1.tar.gz"
@@ -166,7 +168,7 @@ def discover_models(args):
     models = request_json(args, url)["data"]
     # Match decision-model families at name boundaries, including quantized variants.
     family = re.compile(
-        r"(?:^|[/_-])(?:julia|laya|kev|lev|openjev|jev|clef-flash)(?=$|[._:/-]|[0-9])",
+        r"(?:^|[/_-])(?:julia|laya|kev|lev|openjev|jev|clef)(?=$|[._:/-]|[0-9])",
         re.I,
     )
     return sorted({model["id"] for model in models if family.search(model["id"])})

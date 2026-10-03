@@ -51,9 +51,11 @@ def repo_url(model: str) -> str:
         "julia-1": "Julia-1-GGUF",
         "laya": "Laya-GGUF",
         "kev-4b": "Kev-4B-GGUF",
+        "kev-9b": "Kev-9B-GGUF",
         "lev": "lev-GGUF",
         "openjev": "OpenJev-GGUF",
         "clef-flash": "Clef-Flash-GGUF",
+        "clef": "Clef-GGUF",
     }
     if decision_repo := decision_repos.get(_normalized_model_key(model)):
         return f"https://huggingface.co/ggml-org/{decision_repo}"

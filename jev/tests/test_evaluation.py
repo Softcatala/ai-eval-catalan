@@ -100,8 +100,10 @@ def test_metrics_and_summary_aggregation(
         ("Julia-1-GGUF", "Julia 1 144M"),
         ("Laya-GGUF", "Laya 421M"),
         ("Kev-4B-GGUF", "Kev 4B"),
+        ("Kev-9B-GGUF", "Kev 9B"),
         ("lev-GGUF", "lev 4B"),
         ("OpenJev-GGUF", "OpenJev 27B"),
+        ("Clef-GGUF", "Clef 27B"),
     ],
 )
 def test_model_labels_include_parameter_count(model_id, expected):
@@ -132,8 +134,10 @@ def test_skip_requires_matching_completed_configuration(args, tmp_path):
 def test_discovery_excludes_unrelated_models():
     expected = [
         "Clef-Flash-GGUF",
+        "Clef-GGUF",
         "Julia-1",
         "ggml-org/Clef-Flash-GGUF:Q4_K_M",
+        "ggml-org/Kev-9B-GGUF:Q8_0",
         "ggml-org/OpenJev-GGUF:Q4_K_M",
     ]
     ids = list(reversed(expected)) + ["unrelated", "clever-model"]

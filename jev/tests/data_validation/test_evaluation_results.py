@@ -16,6 +16,7 @@ EXPECTED = {
     "requested_n_samples": 0,
     "seed": 42,
     "shuffled_options": False,
+    "quantization": "Q8_0",
 }
 
 
@@ -36,6 +37,10 @@ def test_evaluation_results():
             assert type(data.get(field)) is type(value) and data[field] == value, (
                 f"{path.name}: {field} must be {value!r}"
             )
+        model_file = data.get("model_file")
+        assert isinstance(model_file, str) and model_file.endswith("-Q8_0.gguf"), (
+            f"{path.name}: model_file must identify a Q8_0 GGUF"
+        )
         for field in ("model", "display_name", "requested_model", "evaluated_at"):
             assert isinstance(data.get(field), str) and data[field].strip(), (
                 f"{path.name}: missing or invalid {field}"
