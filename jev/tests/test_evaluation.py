@@ -77,8 +77,20 @@ def test_metrics_and_summary_aggregation(
             "massive_decisions_per_sec": 50.0,
         }
     ]
-    published = json.loads((model.SCRIPT_DIR / "jevs.json").read_text())
-    assert all(row.keys() == rows[0].keys() for row in published["data"])
+    output = tmp_path / "jevs.json"
+    with patch(
+        "sys.argv",
+        [
+            "summarize_results.py",
+            "--results-dir",
+            str(tmp_path),
+            "--json-out",
+            str(output),
+        ],
+    ):
+        summarize_results.main()
+    published = json.loads(output.read_text())
+    assert published["data"] == rows
 
 
 def test_skip_requires_matching_completed_configuration(args, tmp_path):
