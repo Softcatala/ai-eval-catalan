@@ -3,22 +3,11 @@
 import argparse
 import json
 from pathlib import Path
-import re
 
 from eval_common.model_urls import repo_url
-from jev.model import model_display_name
+from jev.model import MODEL_PARAMS_B, model_display_name
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-
-# Parameter counts from the GGUF tensor shapes, in billions.
-MODEL_PARAMS_B = {
-    "julia-1": 0.144192769,
-    "laya": 0.421029889,
-    "kev-4b": 4.207062528,
-    "lev": 4.205751296,
-    "openjev": 26.895998464,
-    "clef-flash": 9.075566084,
-}
 
 # GGUF sizes in decimal GB for the default quantizations.
 MODEL_MEMORY_GB = {
@@ -60,16 +49,6 @@ def model_repo_url(result):
         return None
 
 
-def model_label(result):
-    name = model_display_name(result["model"], result.get("display_name"))
-    params = model_params_b(result)
-    base, separator, quant = name.partition(" (")
-    if params is not None and not re.search(r"\b\d+(?:\.\d+)?[MB]$", base, re.I):
-        size = f"{params * 1000:.0f}M" if params < 1 else f"{params:.0f}B"
-        base = f"{base} {size}"
-    return base + separator + quant
-
-
 def load_rows(directory):
     rows = []
     for path in sorted(directory.glob("*.json")):
@@ -80,7 +59,9 @@ def load_rows(directory):
             continue
         rows.append(
             {
-                "model": model_label(result),
+                "model": model_display_name(
+                    result["model"], result.get("display_name"), model_params_b(result)
+                ),
                 "repo_url": model_repo_url(result),
                 "cloud": result.get("cloud", False),
                 "evaluated_at": result.get("evaluated_at"),

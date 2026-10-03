@@ -16,6 +16,16 @@ import urllib.parse
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 
+# Parameter counts from the GGUF tensor shapes, in billions.
+MODEL_PARAMS_B = {
+    "julia-1": 0.144192769,
+    "laya": 0.421029889,
+    "kev-4b": 4.207062528,
+    "lev": 4.205751296,
+    "openjev": 26.895998464,
+    "clef-flash": 9.075566084,
+}
+
 DATA_URL = "https://amazon-massive-nlu-dataset.s3.amazonaws.com/amazon-massive-dataset-1.1.tar.gz"
 # Dataset's original scenario order; descriptions deliberately distinguish nearby labels.
 LABELS = {
@@ -134,7 +144,7 @@ def request_json(args, url, payload=None):
         raise RuntimeError(f"HTTP {error.code}: {detail}") from error
 
 
-def model_display_name(model_id, display_name=None):
+def model_display_name(model_id, display_name=None, params_b=None):
     model = model_id.rsplit("/", 1)[-1].split(":")[0]
     model = re.sub(r"-gguf$", "", model, flags=re.I)
     name = (
@@ -143,15 +153,10 @@ def model_display_name(model_id, display_name=None):
         else model.replace("-", " ")
     )
     name = re.sub(r"\s+\((?:I?Q\d[^)]*|BF16|F16|F32)\)$", "", name, flags=re.I)
-    size = {
-        "julia-1": "144M",
-        "laya": "421M",
-        "kev-4b": "4B",
-        "lev": "4B",
-        "openjev": "27B",
-        "clef-flash": "9B",
-    }.get(model.lower())
-    if size and not re.search(r"\b\d+(?:\.\d+)?[MB]$", name, re.I):
+    if params_b is None:
+        params_b = MODEL_PARAMS_B.get(model.lower())
+    if params_b is not None and not re.search(r"\b\d+(?:\.\d+)?[MB]$", name, re.I):
+        size = f"{params_b * 1000:.0f}M" if params_b < 1 else f"{params_b:.0f}B"
         name = f"{name} {size}"
     return name
 
@@ -216,8 +221,8 @@ def print_summary(summary, output):
     for label, value in rows:
         print(f"| {label:<{widths[0]}} | {value:<{widths[1]}} |")
     print(border)
-    print(f"Predictions: {output}")
-    print(f"Summary:     {output.with_suffix('.summary.json')}")
+    print(f"Predictions: {output.with_suffix('.jsonl')}")
+    print(f"Results:     {output}")
 
 
 def evaluate_model(args, rows, model_id, output_path):
@@ -253,7 +258,7 @@ def evaluate_model(args, rows, model_id, output_path):
         fp = sum(r["gold"] != label and r["prediction"] == label for r in records)
         fn = sum(r["gold"] == label and r["prediction"] != label for r in records)
         f1s.append(2 * tp / (2 * tp + fp + fn) if tp + fp + fn else 0)
-    summary = {
+    return {
         "evaluated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "dataset": "MASSIVE 1.1",
         "locale": args.locale,
@@ -267,13 +272,9 @@ def evaluate_model(args, rows, model_id, output_path):
         "macro_f1_18_labels": sum(f1s) / len(f1s),
         "mean_latency_ms": sum(r["latency_ms"] for r in records) / len(records),
     }
-    output_path.with_suffix(".summary.json").write_text(
-        json.dumps(summary, indent=2) + "\n"
-    )
-    return summary
 
 
-def add_evaluation_arguments(parser, default_samples=0):
+def add_evaluation_arguments(parser):
     parser.add_argument(
         "--server-url",
         default=os.environ.get("LLAMA_SERVER_URL", "http://localhost:9090/v1"),
@@ -287,7 +288,7 @@ def add_evaluation_arguments(parser, default_samples=0):
         "--limit",
         dest="limit",
         type=int,
-        default=default_samples,
+        default=0,
         help="Number of examples; 0 = full test split (default)",
     )
     parser.add_argument("--seed", type=int, default=42)
@@ -337,7 +338,7 @@ def main():
         )
     except (RuntimeError, OSError, ValueError, KeyError) as error:
         parser.exit(1, f"Evaluation failed: {error}\n")
-    print_summary(summary, predictions)
+    print_summary(summary, args.output)
 
 
 if __name__ == "__main__":

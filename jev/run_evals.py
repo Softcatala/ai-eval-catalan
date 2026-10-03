@@ -91,27 +91,23 @@ def main():
             model,
             "--output",
             str(output),
-            "--server-url",
-            args.server_url,
-            "--n-samples",
-            str(args.limit),
-            "--locale",
-            args.locale,
-            "--labels",
-            args.labels,
-            "--seed",
-            str(args.seed),
-            "--cache",
-            str(args.cache),
-            "--timeout",
-            str(args.timeout),
         ]
-        if args.data:
-            command += ["--data", str(args.data)]
+        for option in (
+            "server_url",
+            "limit",
+            "locale",
+            "labels",
+            "seed",
+            "cache",
+            "timeout",
+            "data",
+            "server_model",
+        ):
+            value = getattr(args, option)
+            if value is not None:
+                command += ["--" + option.replace("_", "-"), str(value)]
         if args.shuffle_options:
             command.append("--shuffle-options")
-        if args.server_model:
-            command += ["--server-model", args.server_model]
         print(f"[RUN] {model}", flush=True)
         result = subprocess.run(command, stdin=subprocess.DEVNULL)
         if result.returncode:

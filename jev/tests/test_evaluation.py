@@ -105,7 +105,7 @@ def test_metrics_and_summary_aggregation(
     ],
 )
 def test_model_labels_include_parameter_count(model_id, expected):
-    assert summarize_results.model_label({"model": model_id}) == expected
+    assert model.model_display_name(model_id) == expected
 
 
 def test_skip_requires_matching_completed_configuration(args, tmp_path):
