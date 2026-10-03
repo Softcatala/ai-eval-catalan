@@ -56,6 +56,7 @@ def repo_url(model: str) -> str:
         "openjev": "OpenJev-GGUF",
         "clef-flash": "Clef-Flash-GGUF",
         "clef": "Clef-GGUF",
+        "bespoke-nimble-9b-v3": "Bespoke-Nimble-9B-v3-GGUF",
     }
     if decision_repo := decision_repos.get(_normalized_model_key(model)):
         return f"https://huggingface.co/ggml-org/{decision_repo}"

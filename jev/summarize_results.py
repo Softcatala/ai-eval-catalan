@@ -19,6 +19,7 @@ MODEL_MEMORY_GB = {
     "openjev": ("Q8_0", 28.595765408),
     "clef-flash": ("Q8_0", 9.657260096),
     "clef": ("Q8_0", 28.732215264),
+    "bespoke-nimble-9b-v3": ("Q8_0", 9.527503392),
 }
 
 

@@ -104,6 +104,7 @@ def test_metrics_and_summary_aggregation(
         ("lev-GGUF", "lev 4B"),
         ("OpenJev-GGUF", "OpenJev 27B"),
         ("Clef-GGUF", "Clef 27B"),
+        ("Bespoke-Nimble-9B-v3-GGUF", "Nimble 9B"),
     ],
 )
 def test_model_labels_include_parameter_count(model_id, expected):
@@ -133,6 +134,7 @@ def test_skip_requires_matching_completed_configuration(args, tmp_path):
 
 def test_discovery_excludes_unrelated_models():
     expected = [
+        "Bespoke-Nimble-9B-v3-GGUF",
         "Clef-Flash-GGUF",
         "Clef-GGUF",
         "Julia-1",

@@ -26,6 +26,7 @@ MODEL_PARAMS_B = {
     "openjev": 26.895998464,
     "clef-flash": 9.075566084,
     "clef": 27.024054788,
+    "bespoke-nimble-9b-v3": 8.953803264,
 }
 
 DATA_URL = "https://amazon-massive-nlu-dataset.s3.amazonaws.com/amazon-massive-dataset-1.1.tar.gz"
@@ -155,6 +156,8 @@ def model_display_name(model_id, display_name=None, params_b=None):
         else model.replace("-", " ")
     )
     name = re.sub(r"\s+\((?:I?Q\d[^)]*|BF16|F16|F32)\)$", "", name, flags=re.I)
+    if name == "Bespoke Nimble 9B v3":
+        name = "Nimble 9B"
     if params_b is None:
         params_b = MODEL_PARAMS_B.get(model.lower())
     if params_b is not None and not re.search(r"\b\d+(?:\.\d+)?[MB]$", name, re.I):
@@ -168,7 +171,7 @@ def discover_models(args):
     models = request_json(args, url)["data"]
     # Match decision-model families at name boundaries, including quantized variants.
     family = re.compile(
-        r"(?:^|[/_-])(?:julia|laya|kev|lev|openjev|jev|clef)(?=$|[._:/-]|[0-9])",
+        r"(?:^|[/_-])(?:julia|laya|kev|lev|openjev|jev|clef|nimble)(?=$|[._:/-]|[0-9])",
         re.I,
     )
     return sorted({model["id"] for model in models if family.search(model["id"])})

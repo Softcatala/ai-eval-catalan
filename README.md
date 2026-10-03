@@ -427,7 +427,7 @@ Si feu servir aquestes eines o els resultats en un treball, citeu-ho així (i ci
 ## JEV — Avaluació de models de decisió
 
 El pipeline de `jev/` avalua Julia, Laya, Kev (4B i 9B), lev, OpenJev,
-Clef Flash (9B) i Clef (27B) sobre les 18 categories del conjunt de test
+Clef Flash (9B), Clef (27B) i Nimble (9B) sobre les 18 categories del conjunt de test
 MASSIVE 1.1 en català. Segueix el patró dels
 LLM: `model.py` per a un model, `run_evals.py` per a múltiples models i
 `summarize_results.py` per agregar els JSON. Només requereix Python 3.10 o superior.
