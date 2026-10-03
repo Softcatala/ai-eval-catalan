@@ -43,6 +43,18 @@
       "massive_decisions_per_sec": 0.4
     },
     {
+      "model": "Nimble 9B",
+      "repo_url": "https://huggingface.co/ggml-org/Bespoke-Nimble-9B-v3-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-03T15:24:35+00:00",
+      "params_b": 8.953803264,
+      "memory_gb": 9.5,
+      "n": 2974,
+      "massive_accuracy": 0.7972,
+      "massive_macro_f1": 0.787,
+      "massive_decisions_per_sec": 0.8
+    },
+    {
       "model": "lev 4B",
       "repo_url": "https://huggingface.co/ggml-org/lev-GGUF",
       "cloud": false,
