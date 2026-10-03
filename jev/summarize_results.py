@@ -101,7 +101,7 @@ def main():
         "text": {
             "model": "Model",
             "memory_gb": "Memòria (GB)",
-            "massive_accuracy": "MASSIVE Accuracy",
+            "massive_accuracy": "MASSIVE Taxa d’encert",
             "massive_macro_f1": "MASSIVE Macro F1",
             "massive_decisions_per_sec": "Decisions/s",
         },
