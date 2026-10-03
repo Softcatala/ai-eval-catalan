@@ -1,5 +1,5 @@
 """
-Assemble index_local.html by inlining the rendered HTML table fragments.
+Assemble index_local.html by inlining the four rendered HTML table fragments.
 Produces a self-contained file that works when opened directly via file://.
 """
 
