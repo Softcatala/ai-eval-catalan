@@ -42,7 +42,7 @@ def test_test_split_sampling_and_parallel_ids(args):
 @pytest.mark.parametrize(
     "model_id, display_name, expected",
     [
-        ("ggml-org/Clef-Flash-GGUF:Q4_K_M", None, "Clef Flash 9B"),
+        ("ggml-org/Clef-Flash-GGUF:Q8_0", None, "Clef Flash 9B"),
         ("Clef-Flash-GGUF", "Clef-Flash-GGUF", "Clef Flash 9B"),
         ("Clef-Flash-GGUF", "Clef Flash 9B", "Clef Flash 9B"),
     ],
@@ -71,7 +71,7 @@ def test_metrics_and_summary_aggregation(
             "cloud": False,
             "evaluated_at": result["evaluated_at"],
             "params_b": 9.075566084,
-            "memory_gb": 6.5,
+            "memory_gb": 9.7,
             "n": 2,
             "massive_accuracy": 0.5,
             "massive_macro_f1": 0.037,

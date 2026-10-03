@@ -426,7 +426,7 @@ Si feu servir aquestes eines o els resultats en un treball, citeu-ho així (i ci
 
 ## JEV — Avaluació de models de decisió
 
-El pipeline de `jev/` avalua Julia, Laya, Kev, lev i OpenJev sobre les 18
+El pipeline de `jev/` avalua Julia, Laya, Kev, lev, OpenJev i Clef Flash sobre les 18
 categories del conjunt de test MASSIVE 1.1 en català. Segueix el patró dels
 LLM: `model.py` per a un model, `run_evals.py` per a múltiples models i
 `summarize_results.py` per agregar els JSON. Només requereix Python 3.10 o superior.
@@ -446,6 +446,7 @@ indica els identificadors exactes que exposa el servidor:
 
 ```bash
 python3 -m jev.run_evals --models ggml-org/Julia-1-GGUF:Q8_0 --n-samples 100
+python3 -m jev.run_evals --models ggml-org/Clef-Flash-GGUF:Q8_0
 python3 -m jev.run_evals --n-samples 0 --overwrite
 python3 -m jev.model --model ggml-org/Julia-1-GGUF:Q8_0 --output jev/evals/julia.json
 python3 -m jev.summarize_results
