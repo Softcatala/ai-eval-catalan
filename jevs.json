@@ -1,0 +1,77 @@
+{
+  "text": {
+    "model": "Model",
+    "memory_gb": "Memòria (GB)",
+    "massive_accuracy": "MASSIVE Accuracy",
+    "massive_macro_f1": "MASSIVE Macro F1",
+    "massive_decisions_per_sec": "Decisions/s"
+  },
+  "metrics": {
+    "massive_accuracy": {
+      "direction": "higher_is_better"
+    },
+    "massive_macro_f1": {
+      "direction": "higher_is_better"
+    },
+    "massive_decisions_per_sec": {
+      "direction": "higher_is_better"
+    }
+  },
+  "data": [
+    {
+      "model": "OpenJev-GGUF",
+      "repo_url": "https://huggingface.co/ggml-org/OpenJev-GGUF",
+      "cloud": false,
+      "evaluated_at": null,
+      "params_b": 26.895998464,
+      "memory_gb": 19.0,
+      "massive_accuracy": 0.83,
+      "massive_macro_f1": 0.8076,
+      "massive_decisions_per_sec": 0.6
+    },
+    {
+      "model": "lev-GGUF",
+      "repo_url": "https://huggingface.co/ggml-org/lev-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-03T06:37:09+00:00",
+      "params_b": 4.205751296,
+      "memory_gb": 3.0,
+      "massive_accuracy": 0.8,
+      "massive_macro_f1": 0.7807,
+      "massive_decisions_per_sec": 1.4
+    },
+    {
+      "model": "Kev-4B-GGUF",
+      "repo_url": "https://huggingface.co/ggml-org/Kev-4B-GGUF",
+      "cloud": false,
+      "evaluated_at": null,
+      "params_b": 4.207062528,
+      "memory_gb": 3.0,
+      "massive_accuracy": 0.77,
+      "massive_macro_f1": 0.7461,
+      "massive_decisions_per_sec": 3.3
+    },
+    {
+      "model": "Laya-GGUF",
+      "repo_url": "https://huggingface.co/ggml-org/Laya-GGUF",
+      "cloud": false,
+      "evaluated_at": null,
+      "params_b": 0.421029889,
+      "memory_gb": 0.4,
+      "massive_accuracy": 0.205,
+      "massive_macro_f1": 0.1531,
+      "massive_decisions_per_sec": 22.2
+    },
+    {
+      "model": "Julia-1-GGUF",
+      "repo_url": "https://huggingface.co/ggml-org/Julia-1-GGUF",
+      "cloud": false,
+      "evaluated_at": null,
+      "params_b": 0.144192769,
+      "memory_gb": 0.2,
+      "massive_accuracy": 0.2,
+      "massive_macro_f1": 0.2122,
+      "massive_decisions_per_sec": 34.5
+    }
+  ]
+}
