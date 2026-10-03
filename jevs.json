@@ -19,6 +19,18 @@
   },
   "data": [
     {
+      "model": "OpenJev 27B",
+      "repo_url": "https://huggingface.co/ggml-org/OpenJev-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-03T12:55:30+00:00",
+      "params_b": 26.895998464,
+      "memory_gb": 28.6,
+      "n": 2974,
+      "massive_accuracy": 0.8416,
+      "massive_macro_f1": 0.8263,
+      "massive_decisions_per_sec": 0.4
+    },
+    {
       "model": "lev 4B",
       "repo_url": "https://huggingface.co/ggml-org/lev-GGUF",
       "cloud": false,
