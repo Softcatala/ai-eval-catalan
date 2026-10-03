@@ -9,5 +9,6 @@ llms_recommendations.json
 
 jev/data/
 jev/evals/*.jsonl
+jev/evals/*.summary.json
 jev/jevs.json
 jev/**/__pycache__/
