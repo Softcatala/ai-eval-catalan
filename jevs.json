@@ -19,6 +19,18 @@
   },
   "data": [
     {
+      "model": "lev 4B",
+      "repo_url": "https://huggingface.co/ggml-org/lev-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-03T10:57:45+00:00",
+      "params_b": 4.205751296,
+      "memory_gb": 4.5,
+      "n": 2974,
+      "massive_accuracy": 0.7707,
+      "massive_macro_f1": 0.7585,
+      "massive_decisions_per_sec": 1.1
+    },
+    {
       "model": "Kev 4B",
       "repo_url": "https://huggingface.co/ggml-org/Kev-4B-GGUF",
       "cloud": false,
