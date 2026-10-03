@@ -19,6 +19,18 @@
   },
   "data": [
     {
+      "model": "Kev 4B",
+      "repo_url": "https://huggingface.co/ggml-org/Kev-4B-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-03T10:12:31+00:00",
+      "params_b": 4.207062528,
+      "memory_gb": 4.5,
+      "n": 2974,
+      "massive_accuracy": 0.7592,
+      "massive_macro_f1": 0.7492,
+      "massive_decisions_per_sec": 2.5
+    },
+    {
       "model": "Laya 421M",
       "repo_url": "https://huggingface.co/ggml-org/Laya-GGUF",
       "cloud": false,
