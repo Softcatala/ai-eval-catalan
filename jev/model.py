@@ -135,11 +135,25 @@ def request_json(args, url, payload=None):
 
 
 def model_display_name(model_id, display_name=None):
-    if display_name and display_name != model_id:
-        return display_name
-    name, _, quant = model_id.rsplit("/", 1)[-1].partition(":")
-    name = re.sub(r"-gguf$", "", name, flags=re.I).replace("-", " ")
-    return f"{name} ({quant})" if quant else name
+    model = model_id.rsplit("/", 1)[-1].split(":")[0]
+    model = re.sub(r"-gguf$", "", model, flags=re.I)
+    name = (
+        display_name
+        if display_name and display_name != model_id
+        else model.replace("-", " ")
+    )
+    name = re.sub(r"\s+\((?:I?Q\d[^)]*|BF16|F16|F32)\)$", "", name, flags=re.I)
+    size = {
+        "julia-1": "144M",
+        "laya": "421M",
+        "kev-4b": "4B",
+        "lev": "4B",
+        "openjev": "27B",
+        "clef-flash": "9B",
+    }.get(model.lower())
+    if size and not re.search(r"\b\d+(?:\.\d+)?[MB]$", name, re.I):
+        name = f"{name} {size}"
+    return name
 
 
 def discover_models(args):

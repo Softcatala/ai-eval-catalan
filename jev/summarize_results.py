@@ -24,9 +24,9 @@ MODEL_PARAMS_B = {
 MODEL_MEMORY_GB = {
     "julia-1": ("Q8_0", 0.168166496),
     "laya": ("Q8_0", 0.449397600),
-    "kev-4b": ("Q4_K_M", 3.033489824),
-    "lev": ("Q4_K_M", 3.011777440),
-    "openjev": ("Q4_K_M", 18.973872288),
+    "kev-4b": ("Q8_0", 4.483801504),
+    "lev": ("Q8_0", 4.482405280),
+    "openjev": ("Q8_0", 28.595765408),
     "clef-flash": ("Q4_K_M", 6.486448192),
 }
 
@@ -86,6 +86,7 @@ def load_rows(directory):
                 "evaluated_at": result.get("evaluated_at"),
                 "params_b": model_params_b(result),
                 "memory_gb": model_memory_gb(result),
+                "n": result["n"],
                 "massive_accuracy": round(result["accuracy"], 4),
                 "massive_macro_f1": round(result["macro_f1_18_labels"], 4),
                 "massive_decisions_per_sec": round(1000 / result["mean_latency_ms"], 1)
