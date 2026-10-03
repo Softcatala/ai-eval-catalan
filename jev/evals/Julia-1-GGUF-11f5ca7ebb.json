@@ -1,0 +1,20 @@
+{
+  "evaluated_at": "2026-10-03T06:38:41+00:00",
+  "dataset": "MASSIVE 1.1",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "Julia-1-GGUF",
+  "models": [
+    "Julia-1-GGUF"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 2974,
+  "accuracy": 0.23032952252858105,
+  "macro_f1_18_labels": 0.23282763717272165,
+  "mean_latency_ms": 21.239344752499353,
+  "requested_n_samples": 0,
+  "data_source": "MASSIVE 1.1",
+  "model": "Julia-1-GGUF",
+  "display_name": "Julia-1-GGUF"
+}

@@ -1,0 +1,20 @@
+{
+  "evaluated_at": "2026-10-03T09:09:40+00:00",
+  "dataset": "MASSIVE 1.1",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "lev-GGUF",
+  "models": [
+    "lev-GGUF"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 2974,
+  "accuracy": 0.7649630127774042,
+  "macro_f1_18_labels": 0.7519476612687606,
+  "mean_latency_ms": 779.16355756986,
+  "requested_n_samples": 0,
+  "data_source": "MASSIVE 1.1",
+  "model": "lev-GGUF",
+  "display_name": "lev"
+}
