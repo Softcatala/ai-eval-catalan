@@ -67,6 +67,18 @@
       "massive_decisions_per_sec": 2.5
     },
     {
+      "model": "Kev 9B",
+      "repo_url": "https://huggingface.co/ggml-org/Kev-9B-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-03T14:22:54+00:00",
+      "params_b": 8.955900928,
+      "memory_gb": 9.5,
+      "n": 2974,
+      "massive_accuracy": 0.7461,
+      "massive_macro_f1": 0.746,
+      "massive_decisions_per_sec": 1.5
+    },
+    {
       "model": "Laya 421M",
       "repo_url": "https://huggingface.co/ggml-org/Laya-GGUF",
       "cloud": false,
