@@ -74,7 +74,7 @@ def load_rows(directory):
                 "memory_gb": model_memory_gb(result),
                 "massive_accuracy": round(result["accuracy"], 4),
                 "massive_macro_f1": round(result["macro_f1_18_labels"], 4),
-                "massive_decisions_per_sec": round(1000 / result["mean_latency_ms"], 4)
+                "massive_decisions_per_sec": round(1000 / result["mean_latency_ms"], 1)
                 if result["mean_latency_ms"] > 0
                 else None,
             }
@@ -98,7 +98,7 @@ def main():
             "memory_gb": "Memòria (GB)",
             "massive_accuracy": "MASSIVE Accuracy",
             "massive_macro_f1": "MASSIVE Macro F1",
-            "massive_decisions_per_sec": "MASSIVE Decisions/s",
+            "massive_decisions_per_sec": "Decisions/s",
         },
         "metrics": {
             metric: {"direction": "higher_is_better"}
