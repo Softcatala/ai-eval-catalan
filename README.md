@@ -440,6 +440,9 @@ make jev-eval
 make render-local
 ```
 
+Per a Clef i Clef Flash, afegeix `--batch-size 2048 --ubatch-size 2048` al
+servidor: el prompt complet ha de cabre en un únic batch físic.
+
 L'orquestrador descobreix els models de decisió disponibles a `/v1/models`,
 inclosos els models del router, avalua tot el test per defecte i omet els
 resultats completats amb la mateixa configuració. Per seleccionar models,
