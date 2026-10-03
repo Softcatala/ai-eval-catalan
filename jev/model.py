@@ -139,7 +139,7 @@ def discover_models(args):
     models = request_json(args, url)["data"]
     # Match decision-model families at name boundaries, including quantized variants.
     family = re.compile(
-        r"(?:^|[/_-])(?:julia|laya|kev|lev|openjev|jev)(?=$|[._:/-]|[0-9])", re.I
+        r"(?:^|[/_-])(?:julia|laya|kev|lev|openjev|jev|clef-flash)(?=$|[._:/-]|[0-9])", re.I
     )
     return sorted({model["id"] for model in models if family.search(model["id"])})
 

@@ -114,6 +114,8 @@ def test_discovery_excludes_unrelated_models():
             "data": [
                 {"id": "ggml-org/OpenJev-GGUF:Q4_K_M"},
                 {"id": "Julia-1"},
+                {"id": "Clef-Flash-GGUF"},
+                {"id": "ggml-org/Clef-Flash-GGUF:Q4_K_M"},
                 {"id": "unrelated"},
                 {"id": "clever-model"},
             ]
@@ -122,7 +124,9 @@ def test_discovery_excludes_unrelated_models():
         assert model.discover_models(
             argparse.Namespace(url="http://localhost:9090/v1/systemone")
         ) == [
+            "Clef-Flash-GGUF",
             "Julia-1",
+            "ggml-org/Clef-Flash-GGUF:Q4_K_M",
             "ggml-org/OpenJev-GGUF:Q4_K_M",
         ]
 

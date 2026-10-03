@@ -15,15 +15,17 @@ MODEL_PARAMS_B = {
     "kev-4b": 4.207062528,
     "lev": 4.205751296,
     "openjev": 26.895998464,
+    "clef-flash": 9.075566084,
 }
 
-# Measured GGUF sizes in decimal GB for the evaluated quantizations.
+# GGUF sizes in decimal GB for the default quantizations.
 MODEL_MEMORY_GB = {
     "julia-1": ("Q8_0", 0.168166496),
     "laya": ("Q8_0", 0.449397600),
     "kev-4b": ("Q4_K_M", 3.033489824),
     "lev": ("Q4_K_M", 3.011777440),
     "openjev": ("Q4_K_M", 18.973872288),
+    "clef-flash": ("Q4_K_M", 6.486448192),
 }
 
 
