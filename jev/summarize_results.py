@@ -66,30 +66,20 @@ def load_rows(directory):
             continue
         rows.append(
             {
-                "params_b": model_params_b(result),
+                "model": result["model"],
                 "repo_url": model_repo_url(result),
+                "cloud": result.get("cloud", False),
+                "evaluated_at": result.get("evaluated_at"),
+                "params_b": model_params_b(result),
                 "memory_gb": model_memory_gb(result),
-                "decisions_per_sec": 1000 / result["mean_latency_ms"]
+                "massive_accuracy": round(result["accuracy"], 4),
+                "massive_macro_f1": round(result["macro_f1_18_labels"], 4),
+                "massive_decisions_per_sec": round(1000 / result["mean_latency_ms"], 4)
                 if result["mean_latency_ms"] > 0
                 else None,
-                **{
-                    key: result[key]
-                    for key in (
-                        "model",
-                        "dataset",
-                        "locale",
-                        "labels",
-                        "n",
-                        "accuracy",
-                        "macro_f1_18_labels",
-                        "mean_latency_ms",
-                        "seed",
-                        "shuffled_options",
-                    )
-                },
             }
         )
-    return sorted(rows, key=lambda row: row["accuracy"], reverse=True)
+    return sorted(rows, key=lambda row: row["massive_accuracy"], reverse=True)
 
 
 def main():
@@ -100,15 +90,23 @@ def main():
     rows = load_rows(args.results_dir)
     for row in rows:
         print(
-            f"{row['model']}: accuracy={row['accuracy']:.2%}, macro F1={row['macro_f1_18_labels']:.4f}, n={row['n']}"
+            f"{row['model']}: accuracy={row['massive_accuracy']:.2%}, macro F1={row['massive_macro_f1']:.4f}"
         )
     output = {
         "text": {
             "model": "Model",
             "memory_gb": "Memòria (GB)",
-            "accuracy": "MASSIVE Accuracy",
-            "macro_f1_18_labels": "MASSIVE Macro F1",
-            "decisions_per_sec": "Decisions/s",
+            "massive_accuracy": "MASSIVE Accuracy",
+            "massive_macro_f1": "MASSIVE Macro F1",
+            "massive_decisions_per_sec": "MASSIVE Decisions/s",
+        },
+        "metrics": {
+            metric: {"direction": "higher_is_better"}
+            for metric in (
+                "massive_accuracy",
+                "massive_macro_f1",
+                "massive_decisions_per_sec",
+            )
         },
         "data": rows,
     }

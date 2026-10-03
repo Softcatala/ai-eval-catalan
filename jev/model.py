@@ -2,6 +2,7 @@
 """Evaluate a System One server on MASSIVE 1.1 scenarios (Python stdlib only)."""
 
 import argparse
+from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
@@ -230,6 +231,7 @@ def evaluate_model(args, rows, model_id, output_path):
         fn = sum(r["gold"] == label and r["prediction"] != label for r in records)
         f1s.append(2 * tp / (2 * tp + fp + fn) if tp + fp + fn else 0)
     summary = {
+        "evaluated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "dataset": "MASSIVE 1.1",
         "locale": args.locale,
         "labels": args.labels,
@@ -248,7 +250,7 @@ def evaluate_model(args, rows, model_id, output_path):
     return summary
 
 
-def add_evaluation_arguments(parser, default_samples=100):
+def add_evaluation_arguments(parser, default_samples=0):
     parser.add_argument(
         "--server-url",
         default=os.environ.get("LLAMA_SERVER_URL", "http://localhost:9090/v1"),
@@ -263,7 +265,7 @@ def add_evaluation_arguments(parser, default_samples=100):
         dest="limit",
         type=int,
         default=default_samples,
-        help="Number of examples; 0 = full test split",
+        help="Number of examples; 0 = full test split (default)",
     )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--shuffle-options", action="store_true")

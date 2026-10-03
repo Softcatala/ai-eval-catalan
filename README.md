@@ -440,7 +440,7 @@ make render-local
 ```
 
 L'orquestrador descobreix els models de decisió disponibles a `/v1/models`,
-inclosos els models del router, avalua 400 mostres per defecte i omet els
+inclosos els models del router, avalua tot el test per defecte i omet els
 resultats completats amb la mateixa configuració. Per seleccionar models,
 indica els identificadors exactes que exposa el servidor:
 

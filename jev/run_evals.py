@@ -50,7 +50,7 @@ def completed(path, args, model):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    add_evaluation_arguments(parser, default_samples=400)
+    add_evaluation_arguments(parser)
     parser.add_argument(
         "--models",
         nargs="+",

@@ -1,4 +1,5 @@
 import argparse
+from datetime import datetime, timezone
 import json
 from unittest.mock import patch
 
@@ -17,6 +18,19 @@ def arguments(tmp_path):
         limit=2,
         shuffle_options=False,
     )
+
+
+def test_default_evaluates_full_test_split(tmp_path):
+    parser = argparse.ArgumentParser()
+    model.add_evaluation_arguments(parser)
+    args = parser.parse_args([])
+    assert args.limit == 0
+    args.data = tmp_path / "ca.jsonl"
+    rows = [{"id": i, "partition": "test", "locale": "ca-ES"} for i in range(5)]
+    args.data.write_text("\n".join(json.dumps(row) for row in rows))
+    assert len(model.load_rows(args)) == 5
+    args.limit = 2
+    assert len(model.load_rows(args)) == 2
 
 
 def test_only_selected_test_partition_and_parallel_ids(tmp_path):
@@ -57,9 +71,19 @@ def test_metrics_and_summary_aggregation(tmp_path):
     assert result["accuracy"] == 0.5
     assert result["macro_f1_18_labels"] == pytest.approx((2 / 3) / 18)
     assert result["mean_latency_ms"] == 20
+    assert datetime.fromisoformat(result["evaluated_at"]).tzinfo == timezone.utc
     result["model"] = "jev"
     (tmp_path / "jev.json").write_text(json.dumps(result))
-    assert len(summarize_results.load_rows(tmp_path)) == 1
+    rows = summarize_results.load_rows(tmp_path)
+    assert len(rows) == 1
+    assert rows[0]["massive_accuracy"] == 0.5
+    assert rows[0]["massive_macro_f1"] == round(result["macro_f1_18_labels"], 4)
+    assert rows[0]["massive_decisions_per_sec"] == 50
+    assert rows[0]["evaluated_at"] == result["evaluated_at"]
+    assert (
+        not {"dataset", "locale", "labels", "n", "seed", "shuffled_options"}
+        & rows[0].keys()
+    )
 
 
 def test_skip_requires_matching_completed_configuration(tmp_path):
