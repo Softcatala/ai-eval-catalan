@@ -39,7 +39,17 @@ def test_test_split_sampling_and_parallel_ids(args):
     ]
 
 
-def test_metrics_and_summary_aggregation(args, tmp_path):
+@pytest.mark.parametrize(
+    "model_id, display_name, expected",
+    [
+        ("ggml-org/Clef-Flash-GGUF:Q4_K_M", None, "Clef Flash (Q4_K_M)"),
+        ("Clef-Flash-GGUF", "Clef-Flash-GGUF", "Clef Flash"),
+        ("Clef-Flash-GGUF", "Clef Flash 9B", "Clef Flash 9B"),
+    ],
+)
+def test_metrics_and_summary_aggregation(
+    args, tmp_path, model_id, display_name, expected
+):
     rows = [
         {"id": 1, "utt": "hola", "scenario": "general"},
         {"id": 2, "utt": "plou?", "scenario": "weather"},
@@ -51,20 +61,22 @@ def test_metrics_and_summary_aggregation(args, tmp_path):
     assert result["macro_f1_18_labels"] == pytest.approx((2 / 3) / 18)
     assert result["mean_latency_ms"] == 20
     assert datetime.fromisoformat(result["evaluated_at"]).tzinfo == timezone.utc
-    result["model"] = "jev"
+    result.update(model=model_id, display_name=display_name)
     (tmp_path / "jev.json").write_text(json.dumps(result))
     rows = summarize_results.load_rows(tmp_path)
-    assert rows == [{
-        "model": "jev",
-        "repo_url": None,
-        "cloud": False,
-        "evaluated_at": result["evaluated_at"],
-        "params_b": None,
-        "memory_gb": None,
-        "massive_accuracy": 0.5,
-        "massive_macro_f1": 0.037,
-        "massive_decisions_per_sec": 50.0,
-    }]
+    assert rows == [
+        {
+            "model": expected,
+            "repo_url": "https://huggingface.co/ggml-org/Clef-Flash-GGUF",
+            "cloud": False,
+            "evaluated_at": result["evaluated_at"],
+            "params_b": 9.075566084,
+            "memory_gb": 6.5,
+            "massive_accuracy": 0.5,
+            "massive_macro_f1": 0.037,
+            "massive_decisions_per_sec": 50.0,
+        }
+    ]
     published = json.loads((model.SCRIPT_DIR / "jevs.json").read_text())
     assert all(row.keys() == rows[0].keys() for row in published["data"])
 
@@ -103,9 +115,12 @@ def test_discovery_excludes_unrelated_models():
         "request_json",
         return_value={"data": [{"id": name} for name in ids]},
     ):
-        assert model.discover_models(
-            argparse.Namespace(url="http://localhost:9090/v1/systemone")
-        ) == expected
+        assert (
+            model.discover_models(
+                argparse.Namespace(url="http://localhost:9090/v1/systemone")
+            )
+            == expected
+        )
 
 
 def test_failed_rerun_removes_completed_result(tmp_path):

@@ -134,12 +134,21 @@ def request_json(args, url, payload=None):
         raise RuntimeError(f"HTTP {error.code}: {detail}") from error
 
 
+def model_display_name(model_id, display_name=None):
+    if display_name and display_name != model_id:
+        return display_name
+    name, _, quant = model_id.rsplit("/", 1)[-1].partition(":")
+    name = re.sub(r"-gguf$", "", name, flags=re.I).replace("-", " ")
+    return f"{name} ({quant})" if quant else name
+
+
 def discover_models(args):
     url = urllib.parse.urljoin(args.url, "/v1/models")
     models = request_json(args, url)["data"]
     # Match decision-model families at name boundaries, including quantized variants.
     family = re.compile(
-        r"(?:^|[/_-])(?:julia|laya|kev|lev|openjev|jev|clef-flash)(?=$|[._:/-]|[0-9])", re.I
+        r"(?:^|[/_-])(?:julia|laya|kev|lev|openjev|jev|clef-flash)(?=$|[._:/-]|[0-9])",
+        re.I,
     )
     return sorted({model["id"] for model in models if family.search(model["id"])})
 
@@ -289,6 +298,7 @@ def main():
         "--model", required=True, help="Exact model ID exposed by /v1/models"
     )
     parser.add_argument("--server-model", help="Override the request model ID")
+    parser.add_argument("--display-name", help="User-facing model name")
     parser.add_argument(
         "--output", type=Path, default=SCRIPT_DIR / "evals/massive.json"
     )
@@ -307,7 +317,7 @@ def main():
             str(args.data.resolve()) if args.data else "MASSIVE 1.1"
         )
         summary["model"] = args.model
-        summary["display_name"] = args.model
+        summary["display_name"] = model_display_name(args.model, args.display_name)
         args.output.write_text(
             json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
         )

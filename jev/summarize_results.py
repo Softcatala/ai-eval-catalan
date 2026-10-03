@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from eval_common.model_urls import repo_url
+from jev.model import model_display_name
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 
@@ -68,7 +69,9 @@ def load_rows(directory):
             continue
         rows.append(
             {
-                "model": result["model"],
+                "model": model_display_name(
+                    result["model"], result.get("display_name")
+                ),
                 "repo_url": model_repo_url(result),
                 "cloud": result.get("cloud", False),
                 "evaluated_at": result.get("evaluated_at"),
