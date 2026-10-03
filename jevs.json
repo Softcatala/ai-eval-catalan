@@ -19,7 +19,7 @@
   },
   "data": [
     {
-      "model": "Laya (Q8_0)",
+      "model": "Laya 421M",
       "repo_url": "https://huggingface.co/ggml-org/Laya-GGUF",
       "cloud": false,
       "evaluated_at": "2026-10-03T06:57:45+00:00",
@@ -31,7 +31,7 @@
       "massive_decisions_per_sec": 21.9
     },
     {
-      "model": "Julia 1 (Q8_0)",
+      "model": "Julia 1 144M",
       "repo_url": "https://huggingface.co/ggml-org/Julia-1-GGUF",
       "cloud": false,
       "evaluated_at": "2026-10-03T06:38:41+00:00",
