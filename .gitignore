@@ -4,7 +4,6 @@ llm/llms.json
 llm/llms_quantized.json
 llm/summary.html
 llm/chat.py
-/julia-catalan.md
 report.html
 llms_recommendations.json
 
