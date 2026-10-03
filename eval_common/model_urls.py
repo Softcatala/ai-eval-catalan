@@ -47,6 +47,15 @@ def repo_url(model: str) -> str:
         return f"https://huggingface.co/{gemma4_repo}"
     if "/" in repo:
         return f"https://huggingface.co/{repo}"
+    decision_repos = {
+        "julia-1": "Julia-1-GGUF",
+        "laya": "Laya-GGUF",
+        "kev-4b": "Kev-4B-GGUF",
+        "lev": "lev-GGUF",
+        "openjev": "OpenJev-GGUF",
+    }
+    if decision_repo := decision_repos.get(_normalized_model_key(model)):
+        return f"https://huggingface.co/ggml-org/{decision_repo}"
     if model.startswith("whisper-"):
         return f"https://huggingface.co/openai/{model}"
     if model.startswith("omniASR_"):

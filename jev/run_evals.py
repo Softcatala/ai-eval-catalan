@@ -1,0 +1,127 @@
+"""Evaluate discovered decision models, skipping completed matching results."""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+try:
+    from .model import (
+        SCRIPT_DIR,
+        add_evaluation_arguments,
+        discover_models,
+        validate_arguments,
+    )
+except ImportError:
+    from model import (
+        SCRIPT_DIR,
+        add_evaluation_arguments,
+        discover_models,
+        validate_arguments,
+    )
+
+
+def output_path(directory, model):
+    slug = re.sub(r"[^A-Za-z0-9._-]", "_", model)
+    digest = hashlib.sha256(model.encode()).hexdigest()[:10]
+    return directory / f"{slug}-{digest}.json"
+
+
+def completed(path, args, model):
+    try:
+        result = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    return (
+        result.get("model") == model
+        and result.get("locale") == args.locale
+        and result.get("labels") == args.labels
+        and result.get("seed") == args.seed
+        and result.get("shuffled_options") == args.shuffle_options
+        and result.get("requested_n_samples") == args.limit
+        and result.get("data_source")
+        == (str(args.data.resolve()) if args.data else "MASSIVE 1.1")
+        and "accuracy" in result
+    )
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    add_evaluation_arguments(parser, default_samples=400)
+    parser.add_argument(
+        "--models",
+        nargs="+",
+        help="Exact server model IDs; default: discover all decision models",
+    )
+    parser.add_argument(
+        "--server-model", help="Override request ID for one selected model"
+    )
+    parser.add_argument("--output-dir", type=Path, default=SCRIPT_DIR / "evals")
+    parser.add_argument("--overwrite", action="store_true")
+    args = parser.parse_args()
+    validate_arguments(parser, args)
+    if args.server_model and (not args.models or len(args.models) != 1):
+        parser.error("--server-model requires exactly one model in --models")
+    try:
+        models = (
+            list(dict.fromkeys(args.models)) if args.models else discover_models(args)
+        )
+    except (OSError, ValueError, RuntimeError, KeyError) as error:
+        parser.exit(1, f"Cannot discover models: {error}\n")
+    if not models:
+        parser.exit(1, "No decision models found at /v1/models.\n")
+    failures = []
+    for model in models:
+        output = output_path(args.output_dir, model)
+        if (
+            not args.overwrite
+            and not args.server_model
+            and completed(output, args, model)
+        ):
+            print(f"[SKIP] {model}: {output}", flush=True)
+            continue
+        command = [
+            sys.executable,
+            "-u",
+            str(SCRIPT_DIR / "model.py"),
+            "--model",
+            model,
+            "--output",
+            str(output),
+            "--server-url",
+            args.server_url,
+            "--n-samples",
+            str(args.limit),
+            "--locale",
+            args.locale,
+            "--labels",
+            args.labels,
+            "--seed",
+            str(args.seed),
+            "--cache",
+            str(args.cache),
+            "--timeout",
+            str(args.timeout),
+        ]
+        if args.data:
+            command += ["--data", str(args.data)]
+        if args.shuffle_options:
+            command.append("--shuffle-options")
+        if args.server_model:
+            command += ["--server-model", args.server_model]
+        print(f"[RUN] {model}", flush=True)
+        result = subprocess.run(command, stdin=subprocess.DEVNULL)
+        if result.returncode:
+            failures.append(model)
+            print(f"[ERROR] {model}: exit code {result.returncode}", flush=True)
+        else:
+            print(f"[DONE] {model}: {output}", flush=True)
+    if failures:
+        parser.exit(1, f"Failed models: {', '.join(failures)}\n")
+
+
+if __name__ == "__main__":
+    main()

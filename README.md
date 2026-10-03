@@ -421,3 +421,48 @@ Si feu servir aquestes eines o els resultats en un treball, citeu-ho així (i ci
   howpublished = {\url{https://github.com/Softcatala/ai-eval-catalan}}
 }
 ```
+
+---
+
+## JEV — Avaluació de models de decisió
+
+El pipeline de `jev/` avalua Julia, Laya, Kev, lev i OpenJev sobre les 18
+categories del conjunt de test MASSIVE 1.1 en català. Segueix el patró dels
+LLM: `model.py` per a un model, `run_evals.py` per a múltiples models i
+`summarize_results.py` per agregar els JSON. Només requereix Python 3.10 o superior.
+
+Engega un `llama-server` compatible amb `/v1/systemone`, amb un model de decisió:
+
+```bash
+llama-server -hf ggml-org/Julia-1-GGUF:Q8_0 --port 9090
+make jev-eval
+make render-local
+```
+
+L'orquestrador descobreix els models de decisió disponibles a `/v1/models`,
+inclosos els models del router, avalua 400 mostres per defecte i omet els
+resultats completats amb la mateixa configuració. Per seleccionar models,
+indica els identificadors exactes que exposa el servidor:
+
+```bash
+python3 -m jev.run_evals --models ggml-org/Julia-1-GGUF:Q8_0 --n-samples 100
+python3 -m jev.run_evals --n-samples 0 --overwrite
+python3 -m jev.model --model ggml-org/Julia-1-GGUF:Q8_0 --output jev/evals/julia.json
+python3 -m jev.summarize_results
+```
+
+`--n-samples 0` avalua tot el test. `--labels en` permet usar instruccions i
+categories en anglès; `--locale en-US` o `--locale es-ES` permet comparar entrades
+paral·leles amb la mateixa selecció d'IDs. `--shuffle-options` comprova l'efecte
+de l'ordre de les categories. Per a dades locals, usa `--data /ruta/ca-ES.jsonl`.
+El conjunt oficial es descarrega i es desa a `jev/data/` en el primer ús.
+
+Els resultats completats es desen a `jev/evals/*.json`, amb accuracy, macro F1
+sobre les 18 categories i latència mitjana; les prediccions es desen en JSONL.
+`jev/jevs.json` agrega els resultats per a inspecció local. Les configuracions
+alternatives reemplacen el resultat del mateix model: usa `--output-dir` per
+conservar comparacions separades. Els errors no publiquen resultats parcials,
+i l'orquestrador continua amb els altres models i retorna un codi d'error.
+
+L'endpoint es configura amb `--server-url` o `LLAMA_SERVER_URL` (per defecte,
+`http://localhost:9090/v1`); `SYSTEMONE_API_KEY` proporciona l'autenticació.

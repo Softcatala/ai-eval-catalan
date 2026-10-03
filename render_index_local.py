@@ -1,5 +1,5 @@
 """
-Assemble index_local.html by inlining the four rendered HTML table fragments.
+Assemble index_local.html by inlining the rendered HTML table fragments.
 Produces a self-contained file that works when opened directly via file://.
 """
 
@@ -10,6 +10,7 @@ FRAGMENTS = [
     ("LLM — Taula Quantitzada", "llm/llms_quantized_table.html"),
     ("ASR — Taula", "asr/asrs_table.html"),
     ("Embeddings — Taula", "embeddings/embeddings_table.html"),
+    ("JEV — Taula", "jev/jevs_table.html"),
 ]
 
 STYLE = """

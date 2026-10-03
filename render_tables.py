@@ -1,5 +1,5 @@
 """
-Render HTML table snippets from llms.json and asrs.json.
+Render HTML table snippets from evaluation JSON files.
 
 Usage:
   python render_tables.py
@@ -108,6 +108,8 @@ def main():
     parser.add_argument("--asr-out", default="asr/asrs_table.html")
     parser.add_argument("--emb-json", default="embeddings/embeddings.json")
     parser.add_argument("--emb-out", default="embeddings/embeddings_table.html")
+    parser.add_argument("--jev-json", default="jev/jevs.json")
+    parser.add_argument("--jev-out", default="jev/jevs_table.html")
     args = parser.parse_args()
 
     render(
@@ -133,6 +135,13 @@ def main():
         Path("embeddings/table_template.jinja"),
         Path(args.emb_out),
         sort_key=lambda r: -(r.get("composite") or -1),
+        show_params=False,
+    )
+    render(
+        Path(args.jev_json),
+        Path("embeddings/table_template.jinja"),
+        Path(args.jev_out),
+        extra_cols={"memory_gb": "Memòria (GB)"},
         show_params=False,
     )
 
