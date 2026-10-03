@@ -12,13 +12,5 @@
   "n": 2974,
   "accuracy": 0.25655682582380634,
   "macro_f1_18_labels": 0.2244414078614512,
-  "mean_latency_ms": 45.60990867977048,
-  "requested_n_samples": 0,
-  "data_source": "MASSIVE 1.1",
-  "model": "Laya-GGUF",
-  "display_name": "Laya (Q8_0)",
-  "quantization": "Q8_0",
-  "model_file": "Laya-Q8_0.gguf",
-  "model_revision": "da4b4753d62197659d8c90103cd4c43bef9afea6",
-  "memory_gb": 0.4
+  "mean_latency_ms": 45.60990867977048
 }
