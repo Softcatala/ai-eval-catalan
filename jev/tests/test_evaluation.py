@@ -42,8 +42,8 @@ def test_test_split_sampling_and_parallel_ids(args):
 @pytest.mark.parametrize(
     "model_id, display_name, expected",
     [
-        ("ggml-org/Clef-Flash-GGUF:Q4_K_M", None, "Clef Flash (Q4_K_M)"),
-        ("Clef-Flash-GGUF", "Clef-Flash-GGUF", "Clef Flash"),
+        ("ggml-org/Clef-Flash-GGUF:Q4_K_M", None, "Clef Flash 9B (Q4_K_M)"),
+        ("Clef-Flash-GGUF", "Clef-Flash-GGUF", "Clef Flash 9B"),
         ("Clef-Flash-GGUF", "Clef Flash 9B", "Clef Flash 9B"),
     ],
 )
@@ -91,6 +91,20 @@ def test_metrics_and_summary_aggregation(
         summarize_results.main()
     published = json.loads(output.read_text())
     assert published["data"] == rows
+
+
+@pytest.mark.parametrize(
+    "model_id, expected",
+    [
+        ("Julia-1-GGUF", "Julia 1 144M"),
+        ("Laya-GGUF", "Laya 421M"),
+        ("Kev-4B-GGUF", "Kev 4B"),
+        ("lev-GGUF", "lev 4B"),
+        ("OpenJev-GGUF", "OpenJev 27B"),
+    ],
+)
+def test_model_labels_include_parameter_count(model_id, expected):
+    assert summarize_results.model_label({"model": model_id}) == expected
 
 
 def test_skip_requires_matching_completed_configuration(args, tmp_path):
