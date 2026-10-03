@@ -19,6 +19,18 @@
   },
   "data": [
     {
+      "model": "Clef Flash 9B",
+      "repo_url": "https://huggingface.co/ggml-org/Clef-Flash-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-03T13:49:49+00:00",
+      "params_b": 9.075566084,
+      "memory_gb": 9.7,
+      "n": 2974,
+      "massive_accuracy": 0.8924,
+      "massive_macro_f1": 0.886,
+      "massive_decisions_per_sec": 0.9
+    },
+    {
       "model": "OpenJev 27B",
       "repo_url": "https://huggingface.co/ggml-org/OpenJev-GGUF",
       "cloud": false,
