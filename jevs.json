@@ -22,56 +22,56 @@
       "model": "OpenJev",
       "repo_url": "https://huggingface.co/ggml-org/OpenJev-GGUF",
       "cloud": false,
-      "evaluated_at": null,
+      "evaluated_at": "2026-10-03T08:31:02+00:00",
       "params_b": 26.895998464,
       "memory_gb": 19.0,
-      "massive_accuracy": 0.83,
-      "massive_macro_f1": 0.8076,
-      "massive_decisions_per_sec": 0.6
+      "massive_accuracy": 0.842,
+      "massive_macro_f1": 0.8302,
+      "massive_decisions_per_sec": 0.5
     },
     {
       "model": "lev",
       "repo_url": "https://huggingface.co/ggml-org/lev-GGUF",
       "cloud": false,
-      "evaluated_at": "2026-10-03T06:37:09+00:00",
+      "evaluated_at": "2026-10-03T09:09:40+00:00",
       "params_b": 4.205751296,
       "memory_gb": 3.0,
-      "massive_accuracy": 0.8,
-      "massive_macro_f1": 0.7807,
-      "massive_decisions_per_sec": 1.4
+      "massive_accuracy": 0.765,
+      "massive_macro_f1": 0.7519,
+      "massive_decisions_per_sec": 1.3
     },
     {
       "model": "Kev 4B",
       "repo_url": "https://huggingface.co/ggml-org/Kev-4B-GGUF",
       "cloud": false,
-      "evaluated_at": null,
+      "evaluated_at": "2026-10-03T06:55:28+00:00",
       "params_b": 4.207062528,
       "memory_gb": 3.0,
-      "massive_accuracy": 0.77,
-      "massive_macro_f1": 0.7461,
-      "massive_decisions_per_sec": 3.3
+      "massive_accuracy": 0.7559,
+      "massive_macro_f1": 0.7479,
+      "massive_decisions_per_sec": 3.0
     },
     {
       "model": "Laya",
       "repo_url": "https://huggingface.co/ggml-org/Laya-GGUF",
       "cloud": false,
-      "evaluated_at": null,
+      "evaluated_at": "2026-10-03T06:57:45+00:00",
       "params_b": 0.421029889,
       "memory_gb": 0.4,
-      "massive_accuracy": 0.205,
-      "massive_macro_f1": 0.1531,
-      "massive_decisions_per_sec": 22.2
+      "massive_accuracy": 0.2566,
+      "massive_macro_f1": 0.2244,
+      "massive_decisions_per_sec": 21.9
     },
     {
       "model": "Julia 1",
       "repo_url": "https://huggingface.co/ggml-org/Julia-1-GGUF",
       "cloud": false,
-      "evaluated_at": null,
+      "evaluated_at": "2026-10-03T06:38:41+00:00",
       "params_b": 0.144192769,
       "memory_gb": 0.2,
-      "massive_accuracy": 0.2,
-      "massive_macro_f1": 0.2122,
-      "massive_decisions_per_sec": 34.5
+      "massive_accuracy": 0.2303,
+      "massive_macro_f1": 0.2328,
+      "massive_decisions_per_sec": 47.1
     }
   ]
 }
