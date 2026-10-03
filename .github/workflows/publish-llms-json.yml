@@ -34,6 +34,9 @@ jobs:
       - name: Generate embeddings.json
         run: python -m embeddings.summarize_results --json-out embeddings/embeddings.json
 
+      - name: Generate jevs.json
+        run: python -m jev.summarize_results --json-out jev/jevs.json
+
       - name: Generate llms_recommendations.json
         run: python models_recommendation.py --memory 8 16 32 --format json --output llms_recommendations.json
 
@@ -49,6 +52,7 @@ jobs:
           cp llm/llms_quantized.json prod_data_branch/llms_quantized.json
           cp asr/asrs.json prod_data_branch/asrs.json
           cp embeddings/embeddings.json prod_data_branch/embeddings.json
+          cp jev/jevs.json prod_data_branch/jevs.json
           cp llms_recommendations.json prod_data_branch/llms_recommendations.json
 
       - name: Commit and push to prod-data
@@ -56,6 +60,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add llms.json llms_quantized.json asrs.json embeddings.json llms_recommendations.json
+          git add llms.json llms_quantized.json asrs.json embeddings.json jevs.json llms_recommendations.json
           git diff --cached --quiet || git commit -m "Update evaluation JSON from ${{ github.ref_name }}@${{ github.sha }}"
           git push
