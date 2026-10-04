@@ -1,0 +1,24 @@
+{
+  "evaluated_at": "2026-10-03T10:12:31+00:00",
+  "dataset": "MASSIVE 1.1",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "Kev-4B-GGUF",
+  "models": [
+    "Kev-4B-GGUF"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 2974,
+  "accuracy": 0.7592468056489576,
+  "macro_f1_18_labels": 0.7492182596344777,
+  "mean_latency_ms": 402.0342399896919,
+  "requested_n_samples": 0,
+  "data_source": "MASSIVE 1.1",
+  "model": "Kev-4B-GGUF",
+  "display_name": "Kev 4B",
+  "quantization": "Q8_0",
+  "model_file": "Kev-4B-Q8_0.gguf",
+  "model_revision": "d924f2e2c3872da8b8aaf3eb4453b4126deceb79",
+  "memory_gb": 4.5
+}

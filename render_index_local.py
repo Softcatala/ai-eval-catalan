@@ -10,6 +10,7 @@ FRAGMENTS = [
     ("LLM — Taula Quantitzada", "llm/llms_quantized_table.html"),
     ("ASR — Taula", "asr/asrs_table.html"),
     ("Embeddings — Taula", "embeddings/embeddings_table.html"),
+    ("JEV — Taula", "jev/jevs_table.html"),
 ]
 
 STYLE = """

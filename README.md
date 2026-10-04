@@ -421,3 +421,35 @@ Si feu servir aquestes eines o els resultats en un treball, citeu-ho així (i ci
   howpublished = {\url{https://github.com/Softcatala/ai-eval-catalan}}
 }
 ```
+
+---
+
+## JEV — Avaluació de models de decisió
+
+`jev/` avalua Julia, Laya, Kev (4B i 9B), lev, OpenJev, Clef Flash (9B),
+Clef (27B) i Nimble (9B) sobre les 18 categories del test MASSIVE 1.1 en català.
+Mesura accuracy, macro F1 i latència mitjana. Requereix Python ≥ 3.10 i
+`llama-server` amb `/v1/systemone`:
+
+```bash
+llama-server -hf ggml-org/Julia-1-GGUF:Q8_0 --port 9090
+make jev-eval
+make render-local
+```
+
+Per a Clef i Clef Flash, afegeix `--batch-size 2048 --ubatch-size 2048` al servidor.
+`--server-url` o `LLAMA_SERVER_URL` configura l'endpoint (per defecte,
+`http://localhost:9090/v1`); `SYSTEMONE_API_KEY`, l'autenticació.
+
+L'orquestrador descobreix models a `/v1/models`, inclosos els del router, avalua
+tot el test i reutilitza resultats completats amb la mateixa configuració:
+
+```bash
+python3 -m jev.run_evals --models ggml-org/Julia-1-GGUF:Q8_0 --n-samples 100
+```
+
+MASSIVE es descarrega automàticament a `jev/data/`. Els resultats i les prediccions
+es desen a `jev/evals/` (JSON i JSONL); `jev/jevs.json` n'agrega el resum.
+Usa `--overwrite` per repetir avaluacions i `--output-dir` per conservar
+configuracions separades. Consulta `python3 -m jev.run_evals --help` per a les
+opcions de llengua, ordre de categories i dades locals.

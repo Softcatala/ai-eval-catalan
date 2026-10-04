@@ -1,0 +1,24 @@
+{
+  "evaluated_at": "2026-10-03T12:55:30+00:00",
+  "dataset": "MASSIVE 1.1",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "OpenJev-GGUF",
+  "models": [
+    "OpenJev-GGUF"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 2974,
+  "accuracy": 0.8416274377942166,
+  "macro_f1_18_labels": 0.8263188900865762,
+  "mean_latency_ms": 2375.4457216919764,
+  "requested_n_samples": 0,
+  "data_source": "MASSIVE 1.1",
+  "model": "OpenJev-GGUF",
+  "display_name": "OpenJev 27B",
+  "quantization": "Q8_0",
+  "model_file": "OpenJev-Q8_0.gguf",
+  "model_revision": "10840f375658dea7afc5ff4711127bca8218b560",
+  "memory_gb": 28.6
+}
