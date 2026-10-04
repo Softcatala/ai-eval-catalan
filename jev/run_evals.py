@@ -1,7 +1,6 @@
 """Evaluate discovered decision models, skipping completed matching results."""
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 import re
@@ -9,6 +8,7 @@ import subprocess
 import sys
 
 try:
+    from .models_config import MODELS
     from .model import (
         SCRIPT_DIR,
         add_evaluation_arguments,
@@ -16,6 +16,7 @@ try:
         validate_arguments,
     )
 except ImportError:
+    from models_config import MODELS
     from model import (
         SCRIPT_DIR,
         add_evaluation_arguments,
@@ -25,9 +26,11 @@ except ImportError:
 
 
 def output_path(directory, model):
+    for configured in MODELS:
+        if configured["model"] == model:
+            return directory / Path(configured["output"]).name
     slug = re.sub(r"[^A-Za-z0-9._-]", "_", model)
-    digest = hashlib.sha256(model.encode()).hexdigest()[:10]
-    return directory / f"{slug}-{digest}.json"
+    return directory / f"{slug}.json"
 
 
 def completed(path, args, model):
@@ -73,6 +76,9 @@ def main():
         parser.exit(1, f"Cannot discover models: {error}\n")
     if not models:
         parser.exit(1, "No decision models found at /v1/models.\n")
+    outputs = [output_path(args.output_dir, model) for model in models]
+    if len(set(outputs)) != len(outputs):
+        parser.error("Selected model IDs produce duplicate output filenames")
     failures = []
     for model in models:
         output = output_path(args.output_dir, model)

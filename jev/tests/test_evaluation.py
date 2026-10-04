@@ -129,7 +129,22 @@ def test_skip_requires_matching_completed_configuration(args, tmp_path):
     assert run_evals.completed(output, args, "org/jev:q4")
     args.limit = 0
     assert not run_evals.completed(output, args, "org/jev:q4")
-    assert output != run_evals.output_path(tmp_path, "org_jev:q4")
+
+
+def test_configured_output_filenames(tmp_path):
+    assert run_evals.output_path(tmp_path, "Julia-1-GGUF") == tmp_path / "julia_1.json"
+    assert run_evals.output_path(tmp_path, "org/jev:q4") == tmp_path / "org_jev_q4.json"
+
+
+def test_runner_rejects_colliding_output_filenames(tmp_path):
+    with (
+        patch("sys.argv", ["run_evals.py", "--models", "org/jev:q4", "org_jev:q4"]),
+        patch.object(run_evals.subprocess, "run") as execute,
+        pytest.raises(SystemExit) as error,
+    ):
+        run_evals.main()
+    assert error.value.code == 2
+    execute.assert_not_called()
 
 
 def test_discovery_excludes_unrelated_models():
