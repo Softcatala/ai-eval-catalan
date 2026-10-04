@@ -31,18 +31,6 @@
       "massive_decisions_per_sec": 0.9
     },
     {
-      "model": "Clef 27B",
-      "repo_url": "https://huggingface.co/ggml-org/Clef-GGUF",
-      "cloud": false,
-      "evaluated_at": "2026-10-03T20:13:49+00:00",
-      "params_b": 27.024054788,
-      "memory_gb": 28.7,
-      "n": 2974,
-      "massive_accuracy": 0.879,
-      "massive_macro_f1": 0.8756,
-      "massive_decisions_per_sec": 0.2
-    },
-    {
       "model": "OpenJev 27B",
       "repo_url": "https://huggingface.co/ggml-org/OpenJev-GGUF",
       "cloud": false,
