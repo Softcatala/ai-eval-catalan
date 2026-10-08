@@ -16,7 +16,7 @@
       "alternatives": "gemma3-12b · Q4_K_M"
     },
     {
-      "capacity_gb": "32 GB o més",
+      "capacity_gb": "32 GB",
       "recommended": "qwen3.8-27b · Q4_K_M",
       "alternatives": "muse-glimmer-30b · UD-Q4_K_XL"
     }
