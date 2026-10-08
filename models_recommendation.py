@@ -259,7 +259,8 @@ def recommendations_json(candidates, capacities=DEFAULT_CAPACITIES):
         alternative = ranked[1] if len(ranked) > 1 else None
         rows.append(
             {
-                "capacity_gb": f"{capacity:g} GB",
+                "capacity_gb": f"{capacity:g} GB"
+                + (" o més" if capacity == 32 else ""),
                 "recommended": model_label(model),
                 "alternatives": model_label(alternative),
             }

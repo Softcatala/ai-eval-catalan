@@ -162,7 +162,11 @@ def test_cli_runs_from_another_directory_and_emits_json(tmp_path):
     )
     report = json.loads(result.stdout)
     assert set(report) == {"text", "data"}
-    assert [row["capacity_gb"] for row in report["data"]] == ["8 GB", "16 GB", "32 GB"]
+    assert [row["capacity_gb"] for row in report["data"]] == [
+        "8 GB",
+        "16 GB",
+        "32 GB o més",
+    ]
 
 
 @pytest.mark.parametrize(
@@ -206,7 +210,11 @@ def test_json_output(tmp_path, capsys):
         ("recommended", "Model recomanat"),
         ("alternatives", "Alternativa"),
     ]
-    assert [row["capacity_gb"] for row in table["data"]] == ["8 GB", "16 GB", "32 GB"]
+    assert [row["capacity_gb"] for row in table["data"]] == [
+        "8 GB",
+        "16 GB",
+        "32 GB o més",
+    ]
     for row in table["data"]:
         assert set(row) == set(table["text"])
         assert all(isinstance(row[field], str) for field in table["text"])
@@ -246,7 +254,7 @@ def test_json_uses_sorted_disjoint_memory_bands():
         ("1 GB", None, None),
         ("8 GB", "small", None),
         ("16 GB", "medium", "medium_alt"),
-        ("32 GB", "large", "large_alt"),
+        ("32 GB o més", "large", "large_alt"),
         ("64 GB", None, None),
     ]
 
