@@ -1,0 +1,27 @@
+{
+  "evaluated_at": "2026-10-10T06:42:15+00:00",
+  "dataset": "MASSIVE 1.1",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "LiquidAI/d1-omni-600M-GGUF:Q8_0",
+  "models": [
+    "LiquidAI/d1-omni-600M-GGUF:Q8_0"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 2974,
+  "accuracy": 0.44821788836583726,
+  "macro_f1_18_labels": 0.4503527671906784,
+  "mean_latency_ms": 47.942555625825115,
+  "requested_n_samples": 0,
+  "data_source": "MASSIVE 1.1",
+  "model": "LiquidAI/d1-omni-600M-GGUF:Q8_0",
+  "provider": "systemone",
+  "cloud": false,
+  "display_name": "Liquid d1 Omni 600M",
+  "quantization": "Q8_0",
+  "model_file": "d1-omni-600M-Q8_0.gguf",
+  "params_b": 0.380732161,
+  "memory_gb": 0.4,
+  "model_revision": "04397145ed8381350403aa556db0ec6a49dd8c07"
+}
