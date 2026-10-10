@@ -155,10 +155,10 @@ def test_discovery_excludes_unrelated_models():
         "Julia-1",
         "LiquidAI/d1-3B-GGUF:Q8_0",
         "LiquidAI/d1-omni-600M-GGUF:Q8_0",
-        "ggml-org/Clef-Flash-GGUF:Q4_K_M",
+        "ggml-org/Clef-Flash-GGUF:Q8_0",
         "ggml-org/Kev-0.8B-GGUF:Q8_0",
         "ggml-org/Kev-9B-GGUF:Q8_0",
-        "ggml-org/OpenJev-GGUF:Q4_K_M",
+        "ggml-org/OpenJev-GGUF:Q8_0",
         "owao/surogate-rune-26b-a4b-GGUF:Q8_0",
     ]
     ids = list(reversed(expected)) + ["unrelated", "clever-model"]
