@@ -1,0 +1,27 @@
+{
+  "evaluated_at": "2026-10-10T06:30:27+00:00",
+  "dataset": "MASSIVE 1.1",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "owao/surogate-rune-26b-a4b-GGUF:Q8_0",
+  "models": [
+    "owao/surogate-rune-26b-a4b-GGUF:Q8_0"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 2974,
+  "accuracy": 0.8167451244115669,
+  "macro_f1_18_labels": 0.8057286140649185,
+  "mean_latency_ms": 511.32987930759066,
+  "requested_n_samples": 0,
+  "data_source": "MASSIVE 1.1",
+  "model": "owao/surogate-rune-26b-a4b-GGUF:Q8_0",
+  "provider": "systemone",
+  "cloud": false,
+  "display_name": "Rune v3 26B-A4B",
+  "quantization": "Q8_0",
+  "model_file": "Rune-26B-A4B-v3-Q8_0.gguf",
+  "params_b": 25.233142046,
+  "memory_gb": 26.9,
+  "model_revision": "f6cf5c19a05713cb9b2c59a57cd79e85ab8d2ffd"
+}
