@@ -427,7 +427,7 @@ Si feu servir aquestes eines o els resultats en un treball, citeu-ho així (i ci
 ## JEV — Avaluació de models de decisió
 
 `jev/` avalua Julia, Laya, Kev (4B i 9B), lev, OpenJev, Clef Flash (9B),
-Clef (27B) i Nimble (9B) sobre les 18 categories del test MASSIVE 1.1 en català.
+Clef (27B), Nimble (9B) i Rune v3 (26B-A4B) sobre les 18 categories del test MASSIVE 1.1 en català.
 Mesura accuracy, macro F1 i latència mitjana. Requereix Python ≥ 3.10 i
 `llama-server` amb `/v1/systemone`:
 
@@ -438,8 +438,26 @@ make render-local
 ```
 
 Per a Clef i Clef Flash, afegeix `--batch-size 2048 --ubatch-size 2048` al servidor.
+Per a Rune v3, usa la [conversió amb metadades de decisió](https://huggingface.co/owao/surogate-rune-26b-a4b-GGUF)
+(`Rune-26B-A4B-v3-Q8_0.gguf`), que requereix llama.cpp ≥ b11371:
+
+```bash
+llama-server -hf owao/surogate-rune-26b-a4b-GGUF:Q8_0 --jinja --ctx-size 32000 --port 9090
+python3 -m jev.run_evals --models owao/surogate-rune-26b-a4b-GGUF:Q8_0
+```
+
 `--server-url` o `LLAMA_SERVER_URL` configura l'endpoint (per defecte,
 `http://localhost:9090/v1`); `SYSTEMONE_API_KEY`, l'autenticació.
+
+Per a GPT-6 Luna Decisions, configura `OPENAI_API_KEY` i executa:
+
+```bash
+python3 -m jev.run_evals --provider openai --models gpt-6-luna
+```
+
+Usa l'[API de decisions d'OpenAI](https://developers.openai.com/api/docs/guides/decisions),
+amb les mateixes 18 categories i exemples. Els resultats s'identifiquen com a
+models al núvol, sense quantització ni memòria local; la latència inclou la xarxa.
 
 L'orquestrador descobreix models a `/v1/models`, inclosos els del router, avalua
 tot el test i reutilitza resultats completats amb la mateixa configuració:

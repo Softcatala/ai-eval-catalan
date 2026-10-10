@@ -34,13 +34,22 @@ def test_evaluation_results():
         data = json.loads(path.read_text(encoding="utf-8"))
         assert isinstance(data, dict), f"{path.name}: expected a JSON object"
         for field, value in EXPECTED.items():
+            if data.get("cloud") and field == "quantization":
+                continue
             assert type(data.get(field)) is type(value) and data[field] == value, (
                 f"{path.name}: {field} must be {value!r}"
             )
-        model_file = data.get("model_file")
-        assert isinstance(model_file, str) and model_file.endswith("-Q8_0.gguf"), (
-            f"{path.name}: model_file must identify a Q8_0 GGUF"
-        )
+        if data.get("cloud"):
+            assert data.get("provider") == "openai"
+            assert data.get("quantization") is None
+            assert data.get("model_file") is None
+            assert model_params_b(data) is None
+            assert model_memory_gb(data) is None
+        else:
+            model_file = data.get("model_file")
+            assert isinstance(model_file, str) and model_file.endswith("-Q8_0.gguf"), (
+                f"{path.name}: model_file must identify a Q8_0 GGUF"
+            )
         for field in ("model", "display_name", "requested_model", "evaluated_at"):
             assert isinstance(data.get(field), str) and data[field].strip(), (
                 f"{path.name}: missing or invalid {field}"
@@ -65,6 +74,8 @@ def test_evaluation_results():
             "params_b": model_params_b(data),
             "memory_gb": model_memory_gb(data),
         }.items():
+            if data.get("cloud") and field in ("params_b", "memory_gb"):
+                continue
             assert type(value) in (int, float) and math.isfinite(value), (
                 f"{path.name}: {field} must be a finite number"
             )
