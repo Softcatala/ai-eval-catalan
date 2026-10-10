@@ -130,7 +130,7 @@ def test_metrics_and_summary_aggregation(
             "teca_n": None,
             "teca_accuracy": None,
             "teca_macro_f1": None,
-            "average_accuracy": None,
+            "average_macro_f1": None,
             "massive_macro_f1": 0.037,
             "massive_decisions_per_sec": 50.0,
         }
@@ -171,7 +171,7 @@ def test_average_ranking_requires_both_full_datasets(tmp_path):
             "dataset": "MASSIVE 1.1",
             "n": 2974,
             "accuracy": massive_accuracy,
-            "macro_f1_18_labels": massive_accuracy,
+            "macro_f1_18_labels": 1 - massive_accuracy,
         }
         (tmp_path / f"{name}.json").write_text(json.dumps(massive))
         if teca_accuracy is not None:
@@ -182,13 +182,13 @@ def test_average_ranking_requires_both_full_datasets(tmp_path):
                 "data_source": "projecte-aina/teca:test",
                 "n": 2117,
                 "accuracy": teca_accuracy,
-                "macro_f1_3_labels": teca_accuracy,
+                "macro_f1_3_labels": 1 - teca_accuracy,
             }
             massive["benchmarks"] = {"teca": teca}
             (tmp_path / f"{name}.json").write_text(json.dumps(massive))
     rows = summarize_results.load_rows(tmp_path)
-    assert [r["model"] for r in rows] == ["Kev 9B", "Kev 4B", "lev 4B"]
-    assert [r["average_accuracy"] for r in rows] == [0.8, 0.7, None]
+    assert [r["model"] for r in rows] == ["Kev 4B", "Kev 9B", "lev 4B"]
+    assert [r["average_macro_f1"] for r in rows] == [0.3, 0.2, None]
     assert rows[0]["teca_n"] == 2117
     path = tmp_path / "Kev-4B-GGUF.json"
     result = json.loads(path.read_text())
@@ -507,7 +507,7 @@ def test_failed_teca_rerun_clears_score(tmp_path):
     row = summarize_results.load_rows(tmp_path)[0]
     assert row["massive_accuracy"] == 0.8
     assert row["teca_accuracy"] is None
-    assert row["average_accuracy"] is None
+    assert row["average_macro_f1"] is None
 
 
 @pytest.mark.parametrize("contents", ["", "{"])
