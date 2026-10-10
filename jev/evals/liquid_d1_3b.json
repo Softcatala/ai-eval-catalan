@@ -1,0 +1,27 @@
+{
+  "evaluated_at": "2026-10-10T06:39:49+00:00",
+  "dataset": "MASSIVE 1.1",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "LiquidAI/d1-3B-GGUF:Q8_0",
+  "models": [
+    "LiquidAI/d1-3B-GGUF:Q8_0"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 2974,
+  "accuracy": 0.7659717552118359,
+  "macro_f1_18_labels": 0.7496158273130179,
+  "mean_latency_ms": 187.19035394374836,
+  "requested_n_samples": 0,
+  "data_source": "MASSIVE 1.1",
+  "model": "LiquidAI/d1-3B-GGUF:Q8_0",
+  "provider": "systemone",
+  "cloud": false,
+  "display_name": "Liquid d1 3B",
+  "quantization": "Q8_0",
+  "model_file": "d1-3B-Q8_0.gguf",
+  "params_b": 2.697198592,
+  "memory_gb": 2.9,
+  "model_revision": "bb1e436ea78eb96a3f1acb6da865f70c2fbeb563"
+}
