@@ -273,9 +273,12 @@ def test_model_labels_include_parameter_count(model_id, expected):
 
 
 def test_model_label_preserves_moe_parameter_count():
-    assert model.model_display_name(
-        "owao/surogate-rune-26b-a4b-GGUF:Q8_0", "Rune v3 26B-A4B", 25.233142046
-    ) == "Rune v3 26B-A4B"
+    assert (
+        model.model_display_name(
+            "owao/surogate-rune-26b-a4b-GGUF:Q8_0", "Rune v3 26B-A4B", 25.233142046
+        )
+        == "Rune v3 26B-A4B"
+    )
 
 
 def test_skip_requires_matching_completed_configuration(args, tmp_path):
