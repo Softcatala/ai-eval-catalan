@@ -132,7 +132,7 @@ def main():
         "text": {
             "model": "Model",
             "memory_gb": "Memòria (GB)",
-            "average_accuracy": "Mitjana MASSIVE / TE-ca (50% / 50%)",
+            "average_accuracy": "Mitjana",
             "massive_accuracy": "MASSIVE Taxa d’encert",
             "teca_accuracy": "TE-ca Taxa d’encert",
             "massive_macro_f1": "MASSIVE Macro F1",
