@@ -151,10 +151,7 @@ def test_metrics_and_summary_aggregation(
     assert published["data"] == rows
 
 
-@pytest.mark.parametrize("embedded", [False, True])
-def test_average_ranking_requires_both_full_datasets(tmp_path, embedded):
-    teca_dir = tmp_path / "teca_full"
-    teca_dir.mkdir()
+def test_average_ranking_requires_both_full_datasets(tmp_path):
     common = {
         "locale": "ca-ES",
         "labels": "ca",
@@ -187,18 +184,15 @@ def test_average_ranking_requires_both_full_datasets(tmp_path, embedded):
                 "accuracy": teca_accuracy,
                 "macro_f1_3_labels": teca_accuracy,
             }
-            if embedded:
-                massive["benchmarks"] = {"teca": teca}
-                (tmp_path / f"{name}.json").write_text(json.dumps(massive))
-            else:
-                (teca_dir / f"{name}.json").write_text(json.dumps(teca))
+            massive["benchmarks"] = {"teca": teca}
+            (tmp_path / f"{name}.json").write_text(json.dumps(massive))
     rows = summarize_results.load_rows(tmp_path)
     assert [r["model"] for r in rows] == ["Kev 9B", "Kev 4B", "lev 4B"]
     assert [r["average_accuracy"] for r in rows] == [0.8, 0.7, None]
     assert rows[0]["teca_n"] == 2117
-    path = (tmp_path if embedded else teca_dir) / "Kev-4B-GGUF.json"
+    path = tmp_path / "Kev-4B-GGUF.json"
     result = json.loads(path.read_text())
-    (result["benchmarks"]["teca"] if embedded else result)["n"] = 200
+    result["benchmarks"]["teca"]["n"] = 200
     path.write_text(json.dumps(result))
     with pytest.raises(ValueError, match="n must be 2117"):
         summarize_results.load_rows(tmp_path)
@@ -461,7 +455,7 @@ def test_failed_rerun_removes_completed_result(tmp_path):
     assert not output.exists()
 
 
-def test_failed_teca_rerun_does_not_publish_archived_score(tmp_path):
+def test_failed_teca_rerun_clears_score(tmp_path):
     output = tmp_path / "jev.json"
     massive = {
         "model": "jev",
@@ -487,9 +481,6 @@ def test_failed_teca_rerun_does_not_publish_archived_score(tmp_path):
     output.write_text(
         json.dumps({"model": "jev", "benchmarks": {"massive": massive, "teca": teca}})
     )
-    archive = tmp_path / "teca_full"
-    archive.mkdir()
-    (archive / output.name).write_text(json.dumps(teca))
     with (
         patch(
             "sys.argv",

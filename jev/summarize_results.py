@@ -52,8 +52,7 @@ def model_repo_url(result):
         return None
 
 
-def load_rows(directory, teca_directory=None):
-    teca_directory = teca_directory or directory / "teca_full"
+def load_rows(directory):
     rows = []
     for path in sorted(directory.glob("*.json")):
         if path.name.endswith((".summary.json", ".comparison.json")):
@@ -63,10 +62,7 @@ def load_rows(directory, teca_directory=None):
         result = {"locale": "ca-ES", "labels": "ca", **result, **massive}
         if "macro_f1_18_labels" not in result or "model" not in result:
             continue
-        teca_path = teca_directory / path.name
         teca = result.get("benchmarks", {}).get("teca")
-        if teca is None and "benchmarks" not in result and teca_path.exists():
-            teca = json.loads(teca_path.read_text(encoding="utf-8"))
         if teca is not None:
             teca = {"locale": "ca-ES", "labels": "ca", "model": result["model"], **teca}
             if result["n"] != 2974 or result.get("requested_n_samples") != 0:
@@ -85,7 +81,7 @@ def load_rows(directory, teca_directory=None):
             }
             for key, value in expected.items():
                 if teca.get(key) != value:
-                    raise ValueError(f"{teca_path}: {key} must be {value!r}")
+                    raise ValueError(f"{path}: {key} must be {value!r}")
         rows.append(
             {
                 "model": model_display_name(
@@ -125,14 +121,9 @@ def load_rows(directory, teca_directory=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results-dir", type=Path, default=SCRIPT_DIR / "evals")
-    parser.add_argument(
-        "--teca-results-dir",
-        type=Path,
-        help="Full TE-ca results (default: RESULTS_DIR/teca_full)",
-    )
     parser.add_argument("--json-out", type=Path, default=SCRIPT_DIR / "jevs.json")
     args = parser.parse_args()
-    rows = load_rows(args.results_dir, args.teca_results_dir)
+    rows = load_rows(args.results_dir)
     for row in rows:
         print(
             f"{row['model']}: accuracy={row['massive_accuracy']:.2%}, macro F1={row['massive_macro_f1']:.4f}"

@@ -470,13 +470,6 @@ La data `evaluated_at` es desa només a cada benchmark. Els camps `requested_mod
 `models` només es desen al nivell superior si difereixen del model del fitxer.
 Les seccions dels benchmarks no contenen metadades del model.
 Els valors per defecte `locale=ca-ES` i `labels=ca` són implícits i no es desen al JSON.
-Per fer una primera passada de 200 mostres per model en un directori separat:
-
-```bash
-llm/.venv/bin/python -m jev.run_evals --dataset teca --n-samples 200 --output-dir jev/evals/teca_200
-llm/.venv/bin/python -m jev.run_evals --dataset teca --n-samples 200 --output-dir jev/evals/teca_200 --provider openai --models gpt-6-luna
-```
-
 La selecció és reproduïble amb `--seed` (42 per defecte).
 Per afegir tot el test (2.117 exemples) als fitxers existents, usa
 `--dataset teca --n-samples 0` sense `--output-dir`. Una nova passada conserva
@@ -488,5 +481,4 @@ separadament. Només es calcula la mitjana quan el model té les dues avaluacion
 els models pendents apareixen al final sense puntuació global. L'agregador
 `python3 -m jev.summarize_results` llegeix tots dos benchmarks de `jev/evals/`
 i exigeix els tests complets (2.974 exemples MASSIVE i 2.117 TE-ca) i la mateixa
-configuració de llengua, llavor i ordre d'opcions. També admet els resultats
-antics separats de TE-ca amb `--teca-results-dir`.
+configuració de llengua, llavor i ordre d'opcions.
