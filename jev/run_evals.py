@@ -40,6 +40,7 @@ def completed(path, args, model):
         return False
     return (
         result.get("model") == model
+        and result.get("provider", "systemone") == args.provider
         and result.get("locale") == args.locale
         and result.get("labels") == args.labels
         and result.get("seed") == args.seed
@@ -70,7 +71,11 @@ def main():
         parser.error("--server-model requires exactly one model in --models")
     try:
         models = (
-            list(dict.fromkeys(args.models)) if args.models else discover_models(args)
+            list(dict.fromkeys(args.models))
+            if args.models
+            else [m["model"] for m in MODELS if m.get("provider") == "openai"]
+            if args.provider == "openai"
+            else discover_models(args)
         )
     except (OSError, ValueError, RuntimeError, KeyError) as error:
         parser.exit(1, f"Cannot discover models: {error}\n")
@@ -100,6 +105,7 @@ def main():
         ]
         for option in (
             "server_url",
+            "provider",
             "limit",
             "locale",
             "labels",

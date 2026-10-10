@@ -153,9 +153,13 @@ def test_discovery_excludes_unrelated_models():
         "Clef-Flash-GGUF",
         "Clef-GGUF",
         "Julia-1",
-        "ggml-org/Clef-Flash-GGUF:Q4_K_M",
+        "LiquidAI/d1-3B-GGUF:Q8_0",
+        "LiquidAI/d1-omni-600M-GGUF:Q8_0",
+        "ggml-org/Clef-Flash-GGUF:Q8_0",
+        "ggml-org/Kev-0.8B-GGUF:Q8_0",
         "ggml-org/Kev-9B-GGUF:Q8_0",
-        "ggml-org/OpenJev-GGUF:Q4_K_M",
+        "ggml-org/OpenJev-GGUF:Q8_0",
+        "owao/surogate-rune-26b-a4b-GGUF:Q8_0",
     ]
     ids = list(reversed(expected)) + ["unrelated", "clever-model"]
     with patch.object(
@@ -169,6 +173,43 @@ def test_discovery_excludes_unrelated_models():
             )
             == expected
         )
+
+
+@pytest.mark.parametrize("refused", [False, True])
+def test_openai_decisions_translation(args, refused):
+    args.provider = "openai"
+    args.url = "https://api.openai.com/v1/decisions"
+    answer = (
+        {"name": "scenario", "type": "refusal"}
+        if refused
+        else {
+            "name": "scenario",
+            "type": "choice",
+            "choice": "general",
+            "probabilities": [{"value": "general", "probability": 1.0}],
+        }
+    )
+    with patch.object(
+        model,
+        "request_json",
+        return_value={
+            "model": "gpt-6-luna",
+            "answers": [answer],
+        },
+    ) as request:
+        result, model_id, elapsed = model.predict(
+            args, {"utt": "hola"}, 0, "gpt-6-luna"
+        )
+    payload = request.call_args.args[2]
+    assert payload["input"] == "hola"
+    assert payload["questions"][0]["name"] == "scenario"
+    assert payload["questions"][0]["choices"] == [
+        {"value": key, "description": desc[0]} for key, desc in model.LABELS.items()
+    ]
+    assert result["choice"] == (None if refused else "general")
+    assert result.get("probabilities") == (None if refused else {"general": 1.0})
+    assert model_id == "gpt-6-luna"
+    assert elapsed >= 0
 
 
 def test_failed_rerun_removes_completed_result(tmp_path):

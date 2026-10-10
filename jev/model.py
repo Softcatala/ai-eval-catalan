@@ -132,8 +132,9 @@ def load_rows(args):
 
 def request_json(args, url, payload=None):
     headers = {"Content-Type": "application/json"}
-    if os.environ.get("SYSTEMONE_API_KEY"):
-        headers["Authorization"] = "Bearer " + os.environ["SYSTEMONE_API_KEY"]
+    key_name = "OPENAI_API_KEY" if args.provider == "openai" else "SYSTEMONE_API_KEY"
+    if os.environ.get(key_name):
+        headers["Authorization"] = "Bearer " + os.environ[key_name]
     request = urllib.request.Request(
         url,
         data=json.dumps(payload).encode() if payload is not None else None,
@@ -158,6 +159,8 @@ def model_display_name(model_id, display_name=None, params_b=None):
     name = re.sub(r"\s+\((?:I?Q\d[^)]*|BF16|F16|F32)\)$", "", name, flags=re.I)
     if name == "Bespoke Nimble 9B v3":
         name = "Nimble 9B"
+    if model_id == "gpt-6-luna" and not display_name:
+        name = "GPT-6 Luna Decisions"
     if params_b is None:
         params_b = MODEL_PARAMS_B.get(model.lower())
     if params_b is not None and not re.search(r"\b\d+(?:\.\d+)?[MB]$", name, re.I):
@@ -171,7 +174,7 @@ def discover_models(args):
     models = request_json(args, url)["data"]
     # Match decision-model families at name boundaries, including quantized variants.
     family = re.compile(
-        r"(?:^|[/_-])(?:julia|laya|kev|lev|openjev|jev|clef|nimble)(?=$|[._:/-]|[0-9])",
+        r"(?:^|[/_-])(?:julia|laya|kev|lev|openjev|jev|clef|nimble|rune|d1)(?=$|[._:/-]|[0-9])",
         re.I,
     )
     return sorted({model["id"] for model in models if family.search(model["id"])})
@@ -197,10 +200,40 @@ def predict(args, row, index, model_id):
         },
     }
     payload["model"] = model_id
+    if args.provider == "openai":
+        question = payload["questions"]["scenario"]
+        payload = {
+            "model": model_id,
+            "input": row["utt"],
+            "questions": [
+                {
+                    "name": "scenario",
+                    "type": "choice",
+                    "instructions": question["instructions"],
+                    "choices": [
+                        {"value": key, "description": desc} for key, desc in criteria
+                    ],
+                }
+            ],
+        }
     started = time.perf_counter()
     result = request_json(args, args.url, payload)
-    answer = result["answers"]["scenario"]
-    if answer["choice"] not in LABELS:
+    if args.provider == "openai":
+        answer = next(a for a in result["answers"] if a["name"] == "scenario")
+        if answer["type"] == "refusal":
+            answer = {"type": "refusal", "choice": None}
+        elif answer["type"] == "choice":
+            answer = dict(
+                answer,
+                probabilities={
+                    p["value"]: p["probability"] for p in answer["probabilities"]
+                },
+            )
+        else:
+            raise ValueError(f"Unexpected answer type: {answer['type']}")
+    else:
+        answer = result["answers"]["scenario"]
+    if answer["choice"] not in LABELS and answer.get("type") != "refusal":
         raise ValueError(f"Unexpected choice: {answer['choice']}")
     return answer, result.get("model"), (time.perf_counter() - started) * 1000
 
@@ -281,6 +314,9 @@ def evaluate_model(args, rows, model_id, output_path):
 
 def add_evaluation_arguments(parser):
     parser.add_argument(
+        "--provider", choices=["systemone", "openai"], default="systemone"
+    )
+    parser.add_argument(
         "--server-url",
         default=os.environ.get("LLAMA_SERVER_URL", "http://localhost:9090/v1"),
     )
@@ -308,7 +344,12 @@ def validate_arguments(parser, args):
         parser.error("--n-samples must be nonnegative")
     if args.timeout <= 0:
         parser.error("--timeout must be positive")
-    args.url = args.server_url.rstrip("/") + "/systemone"
+    if args.provider == "openai":
+        if not os.environ.get("OPENAI_API_KEY"):
+            parser.error("--provider openai requires OPENAI_API_KEY")
+        args.url = "https://api.openai.com/v1/decisions"
+    else:
+        args.url = args.server_url.rstrip("/") + "/systemone"
 
 
 def main():
@@ -337,6 +378,8 @@ def main():
             str(args.data.resolve()) if args.data else "MASSIVE 1.1"
         )
         summary["model"] = args.model
+        summary["provider"] = args.provider
+        summary["cloud"] = args.provider == "openai"
         summary["display_name"] = model_display_name(args.model, args.display_name)
         args.output.write_text(
             json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
