@@ -65,7 +65,7 @@ def load_rows(directory, teca_directory=None):
             continue
         teca_path = teca_directory / path.name
         teca = result.get("benchmarks", {}).get("teca")
-        if teca is None and teca_path.exists():
+        if teca is None and "benchmarks" not in result and teca_path.exists():
             teca = json.loads(teca_path.read_text(encoding="utf-8"))
         if teca is not None:
             if result["n"] != 2974 or result.get("requested_n_samples") != 0:

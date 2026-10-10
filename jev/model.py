@@ -466,11 +466,14 @@ def main():
             / "evals"
             / ("teca/teca.json" if args.dataset == "teca" else "massive.json")
         )
-    previous = (
-        json.loads(args.output.read_text(encoding="utf-8"))
-        if args.output.exists()
-        else {}
-    )
+    try:
+        previous = (
+            json.loads(args.output.read_text(encoding="utf-8"))
+            if args.output.exists()
+            else {}
+        )
+    except json.JSONDecodeError:
+        previous = {}
     if previous.get("model", args.model) != args.model:
         parser.error("Output belongs to a different model")
     if args.dataset == "teca" and benchmark_result(previous, "massive") and args.limit:

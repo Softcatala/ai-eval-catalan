@@ -392,6 +392,78 @@ def test_failed_rerun_removes_completed_result(tmp_path):
     assert not output.exists()
 
 
+def test_failed_teca_rerun_does_not_publish_archived_score(tmp_path):
+    output = tmp_path / "jev.json"
+    massive = {
+        "model": "jev",
+        "dataset": "MASSIVE 1.1",
+        "accuracy": 0.8,
+        "macro_f1_18_labels": 0.8,
+        "n": 2974,
+        "requested_n_samples": 0,
+        "locale": "ca-ES",
+        "labels": "ca",
+        "seed": 42,
+        "shuffled_options": False,
+        "mean_latency_ms": 10,
+    }
+    teca = {
+        **massive,
+        "dataset": "Tornem a TE-ca",
+        "data_source": "projecte-aina/teca:test",
+        "n": 2117,
+        "accuracy": 0.7,
+        "macro_f1_3_labels": 0.7,
+    }
+    output.write_text(
+        json.dumps({"model": "jev", "benchmarks": {"massive": massive, "teca": teca}})
+    )
+    archive = tmp_path / "teca_full"
+    archive.mkdir()
+    (archive / output.name).write_text(json.dumps(teca))
+    with (
+        patch(
+            "sys.argv",
+            [
+                "model.py",
+                "--model",
+                "jev",
+                "--dataset",
+                "teca",
+                "--output",
+                str(output),
+            ],
+        ),
+        patch.object(model, "load_rows", side_effect=ValueError("dataset unavailable")),
+        pytest.raises(SystemExit) as error,
+    ):
+        model.main()
+    assert error.value.code == 1
+    assert json.loads(output.read_text())["benchmarks"] == {"massive": massive}
+    row = summarize_results.load_rows(tmp_path)[0]
+    assert row["massive_accuracy"] == 0.8
+    assert row["teca_accuracy"] is None
+    assert row["average_accuracy"] is None
+
+
+@pytest.mark.parametrize("contents", ["", "{"])
+def test_corrupt_result_can_be_rerun(tmp_path, contents):
+    output = tmp_path / "jev.json"
+    output.write_text(contents)
+    summary = {"dataset": "MASSIVE 1.1", "accuracy": 1.0, "n": 1}
+    with (
+        patch("sys.argv", ["model.py", "--model", "jev", "--output", str(output)]),
+        patch.object(model, "load_rows", return_value=[]) as load,
+        patch.object(model, "evaluate_model", return_value=summary),
+        patch.object(model, "print_summary"),
+    ):
+        model.main()
+    load.assert_called_once()
+    stored = json.loads(output.read_text())
+    assert stored["model"] == "jev"
+    assert stored["benchmarks"]["massive"]["accuracy"] == 1.0
+
+
 def test_runner_continues_after_failed_model(tmp_path):
     with (
         patch(
