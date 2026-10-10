@@ -95,7 +95,7 @@
       "massive_decisions_per_sec": 0.8
     },
     {
-      "model": "Rune v3 26B-A4B 25B",
+      "model": "Rune v3 26B-A4B",
       "repo_url": "https://huggingface.co/owao/surogate-rune-26b-a4b-GGUF",
       "cloud": false,
       "evaluated_at": "2026-10-10T06:30:27+00:00",
