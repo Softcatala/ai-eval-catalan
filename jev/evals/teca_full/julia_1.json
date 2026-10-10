@@ -1,8 +1,6 @@
 {
   "evaluated_at": "2026-10-10T07:28:03+00:00",
   "dataset": "Tornem a TE-ca",
-  "locale": "ca-ES",
-  "labels": "ca",
   "requested_model": "Julia-1-GGUF",
   "models": [
     "Julia-1-GGUF"

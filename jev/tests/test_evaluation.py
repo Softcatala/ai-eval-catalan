@@ -284,8 +284,6 @@ def test_skip_requires_matching_completed_configuration(args, tmp_path):
     # Per-run cache metadata; these fields are not published in jevs.json.
     result = {
         "model": "org/jev:q4",
-        "locale": "ca-ES",
-        "labels": "ca",
         "seed": 42,
         "shuffled_options": False,
         "requested_n_samples": 2,
@@ -294,8 +292,33 @@ def test_skip_requires_matching_completed_configuration(args, tmp_path):
     }
     output.write_text(json.dumps(result))
     assert run_evals.completed(output, args, "org/jev:q4")
+    args.labels = "en"
+    assert not run_evals.completed(output, args, "org/jev:q4")
+    args.labels = "ca"
+    args.locale = "en-US"
+    assert not run_evals.completed(output, args, "org/jev:q4")
+    args.locale = "ca-ES"
     args.limit = 0
     assert not run_evals.completed(output, args, "org/jev:q4")
+
+
+@pytest.mark.parametrize(
+    "locale, labels", [("ca-ES", "ca"), ("en-US", "ca"), ("ca-ES", "en")]
+)
+def test_result_omits_only_default_language_fields(locale, labels):
+    summary = {
+        "model": "jev",
+        "dataset": "MASSIVE 1.1",
+        "accuracy": 0.8,
+        "locale": locale,
+        "labels": labels,
+    }
+    stored = model.result_document({}, summary)["benchmarks"]["massive"]
+    assert ("locale" in stored) == (locale != "ca-ES")
+    assert ("labels" in stored) == (labels != "ca")
+    assert stored.get("locale", "ca-ES") == locale
+    assert stored.get("labels", "ca") == labels
+    assert summary["locale"] == locale and summary["labels"] == labels
 
 
 def test_configured_output_filenames(tmp_path):
@@ -439,7 +462,9 @@ def test_failed_teca_rerun_does_not_publish_archived_score(tmp_path):
     ):
         model.main()
     assert error.value.code == 1
-    assert json.loads(output.read_text())["benchmarks"] == {"massive": massive}
+    assert json.loads(output.read_text())["benchmarks"] == {
+        "massive": {k: v for k, v in massive.items() if k not in ("locale", "labels")}
+    }
     row = summarize_results.load_rows(tmp_path)[0]
     assert row["massive_accuracy"] == 0.8
     assert row["teca_accuracy"] is None

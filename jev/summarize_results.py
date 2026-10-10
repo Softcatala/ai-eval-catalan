@@ -60,7 +60,7 @@ def load_rows(directory, teca_directory=None):
             continue
         result = json.loads(path.read_text(encoding="utf-8"))
         massive = benchmark_result(result, "massive")
-        result = {**result, **massive}
+        result = {"locale": "ca-ES", "labels": "ca", **result, **massive}
         if "macro_f1_18_labels" not in result or "model" not in result:
             continue
         teca_path = teca_directory / path.name
@@ -68,6 +68,7 @@ def load_rows(directory, teca_directory=None):
         if teca is None and "benchmarks" not in result and teca_path.exists():
             teca = json.loads(teca_path.read_text(encoding="utf-8"))
         if teca is not None:
+            teca = {"locale": "ca-ES", "labels": "ca", **teca}
             if result["n"] != 2974 or result.get("requested_n_samples") != 0:
                 raise ValueError(
                     f"{path}: ranking requires the full MASSIVE test (2974)"

@@ -1,8 +1,6 @@
 {
   "evaluated_at": "2026-10-10T07:13:41+00:00",
   "dataset": "Tornem a TE-ca",
-  "locale": "ca-ES",
-  "labels": "ca",
   "requested_model": "Kev-9B-GGUF",
   "models": [
     "Kev-9B-GGUF"

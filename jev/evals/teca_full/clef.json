@@ -1,8 +1,6 @@
 {
   "evaluated_at": "2026-10-10T09:46:52+00:00",
   "dataset": "Tornem a TE-ca",
-  "locale": "ca-ES",
-  "labels": "ca",
   "requested_model": "Clef-GGUF",
   "models": [
     "Clef-GGUF"

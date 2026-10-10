@@ -13,8 +13,6 @@
     "massive": {
       "evaluated_at": "2026-10-10T06:39:49+00:00",
       "dataset": "MASSIVE 1.1",
-      "locale": "ca-ES",
-      "labels": "ca",
       "requested_model": "LiquidAI/d1-3B-GGUF:Q8_0",
       "models": [
         "LiquidAI/d1-3B-GGUF:Q8_0"
@@ -40,8 +38,6 @@
     "teca": {
       "evaluated_at": "2026-10-10T07:35:19+00:00",
       "dataset": "Tornem a TE-ca",
-      "locale": "ca-ES",
-      "labels": "ca",
       "requested_model": "LiquidAI/d1-3B-GGUF:Q8_0",
       "models": [
         "LiquidAI/d1-3B-GGUF:Q8_0"

@@ -44,8 +44,8 @@ def completed(path, args, model):
     return (
         result.get("model") == model
         and result.get("provider", "systemone") == args.provider
-        and result.get("locale") == args.locale
-        and result.get("labels") == args.labels
+        and result.get("locale", "ca-ES") == args.locale
+        and result.get("labels", "ca") == args.labels
         and result.get("seed") == args.seed
         and result.get("shuffled_options") == args.shuffle_options
         and result.get("requested_n_samples") == args.limit

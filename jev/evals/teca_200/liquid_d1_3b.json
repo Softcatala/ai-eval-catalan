@@ -1,8 +1,6 @@
 {
   "evaluated_at": "2026-10-10T07:19:41+00:00",
   "dataset": "Tornem a TE-ca",
-  "locale": "ca-ES",
-  "labels": "ca",
   "requested_model": "LiquidAI/d1-3B-GGUF:Q8_0",
   "models": [
     "LiquidAI/d1-3B-GGUF:Q8_0"

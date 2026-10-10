@@ -10,8 +10,6 @@ from jev.summarize_results import model_memory_gb, model_params_b, model_repo_ur
 EXPECTED = {
     "dataset": "MASSIVE 1.1",
     "data_source": "MASSIVE 1.1",
-    "locale": "ca-ES",
-    "labels": "ca",
     "n": 2974,
     "requested_n_samples": 0,
     "seed": 42,
@@ -33,6 +31,8 @@ def test_evaluation_results():
     for path in paths:
         document = json.loads(path.read_text(encoding="utf-8"))
         assert set(document.get("benchmarks", {})) == {"massive", "teca"}, path.name
+        for benchmark in document["benchmarks"].values():
+            assert "locale" not in benchmark and "labels" not in benchmark, path.name
         data = {**document, **document["benchmarks"]["massive"]}
         assert isinstance(data, dict), f"{path.name}: expected a JSON object"
         for field, value in EXPECTED.items():
@@ -97,10 +97,7 @@ def test_evaluation_results():
             "data_source": "projecte-aina/teca:test",
             "n": 2117,
             "requested_n_samples": 0,
-            **{
-                key: data[key]
-                for key in ("model", "locale", "labels", "seed", "shuffled_options")
-            },
+            **{key: data[key] for key in ("model", "seed", "shuffled_options")},
         }
         for field, value in expected_teca.items():
             assert type(teca.get(field)) is type(value) and teca[field] == value, (

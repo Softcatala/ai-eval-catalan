@@ -10,8 +10,6 @@
     "massive": {
       "evaluated_at": "2026-10-03T10:12:31+00:00",
       "dataset": "MASSIVE 1.1",
-      "locale": "ca-ES",
-      "labels": "ca",
       "requested_model": "Kev-4B-GGUF",
       "models": [
         "Kev-4B-GGUF"
@@ -34,8 +32,6 @@
     "teca": {
       "evaluated_at": "2026-10-10T07:41:34+00:00",
       "dataset": "Tornem a TE-ca",
-      "locale": "ca-ES",
-      "labels": "ca",
       "requested_model": "Kev-4B-GGUF",
       "models": [
         "Kev-4B-GGUF"
