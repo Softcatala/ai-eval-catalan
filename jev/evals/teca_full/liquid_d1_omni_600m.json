@@ -1,10 +1,6 @@
 {
   "evaluated_at": "2026-10-10T07:32:02+00:00",
   "dataset": "Tornem a TE-ca",
-  "requested_model": "LiquidAI/d1-omni-600M-GGUF:Q8_0",
-  "models": [
-    "LiquidAI/d1-omni-600M-GGUF:Q8_0"
-  ],
   "seed": 42,
   "shuffled_options": false,
   "n": 2117,

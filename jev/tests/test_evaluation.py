@@ -321,6 +321,27 @@ def test_result_omits_only_default_language_fields(locale, labels):
     assert summary["locale"] == locale and summary["labels"] == labels
 
 
+@pytest.mark.parametrize("actual_model", ["jev", "server-alias"])
+def test_result_keeps_benchmark_timestamp_and_distinct_model_ids(actual_model):
+    summary = {
+        "model": "jev",
+        "dataset": "MASSIVE 1.1",
+        "evaluated_at": "2026-10-03T10:57:45+00:00",
+        "requested_model": actual_model,
+        "models": [actual_model],
+        "accuracy": 0.8,
+    }
+    stored = model.result_document(summary)
+    assert "evaluated_at" not in stored
+    benchmark = stored["benchmarks"]["massive"]
+    assert benchmark["evaluated_at"] == summary["evaluated_at"]
+    assert ("requested_model" in benchmark) == (actual_model != "jev")
+    assert ("models" in benchmark) == (actual_model != "jev")
+    assert benchmark.get("requested_model", "jev") == actual_model
+    assert benchmark.get("models", ["jev"]) == [actual_model]
+    assert summary["models"] == [actual_model]
+
+
 def test_configured_output_filenames(tmp_path):
     assert run_evals.output_path(tmp_path, "Julia-1-GGUF") == tmp_path / "julia_1.json"
     assert run_evals.output_path(tmp_path, "org/jev:q4") == tmp_path / "org_jev_q4.json"

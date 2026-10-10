@@ -5,15 +5,10 @@
   "quantization": "Q8_0",
   "model_file": "OpenJev-Q8_0.gguf",
   "model_revision": "10840f375658dea7afc5ff4711127bca8218b560",
-  "evaluated_at": "2026-10-03T12:55:30+00:00",
   "benchmarks": {
     "massive": {
       "evaluated_at": "2026-10-03T12:55:30+00:00",
       "dataset": "MASSIVE 1.1",
-      "requested_model": "OpenJev-GGUF",
-      "models": [
-        "OpenJev-GGUF"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2974,
@@ -32,10 +27,6 @@
     "teca": {
       "evaluated_at": "2026-10-10T10:27:35+00:00",
       "dataset": "Tornem a TE-ca",
-      "requested_model": "OpenJev-GGUF",
-      "models": [
-        "OpenJev-GGUF"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2117,

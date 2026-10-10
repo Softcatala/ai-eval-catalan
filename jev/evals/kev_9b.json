@@ -5,15 +5,10 @@
   "quantization": "Q8_0",
   "model_file": "Kev-9B-Q8_0.gguf",
   "model_revision": "ec2bbfe6620218aee2e01cc93bb78dee2a96ed58",
-  "evaluated_at": "2026-10-03T14:22:54+00:00",
   "benchmarks": {
     "massive": {
       "evaluated_at": "2026-10-03T14:22:54+00:00",
       "dataset": "MASSIVE 1.1",
-      "requested_model": "Kev-9B-GGUF",
-      "models": [
-        "Kev-9B-GGUF"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2974,
@@ -32,10 +27,6 @@
     "teca": {
       "evaluated_at": "2026-10-10T08:06:11+00:00",
       "dataset": "Tornem a TE-ca",
-      "requested_model": "Kev-9B-GGUF",
-      "models": [
-        "Kev-9B-GGUF"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2117,

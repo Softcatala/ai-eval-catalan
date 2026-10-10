@@ -5,15 +5,10 @@
   "quantization": "Q8_0",
   "model_file": "Bespoke-Nimble-9B-v3-Q8_0.gguf",
   "model_revision": "a72bdbadb355ca3014f7f9d2585380917cc59971",
-  "evaluated_at": "2026-10-03T15:24:35+00:00",
   "benchmarks": {
     "massive": {
       "evaluated_at": "2026-10-03T15:24:35+00:00",
       "dataset": "MASSIVE 1.1",
-      "requested_model": "Bespoke-Nimble-9B-v3-GGUF",
-      "models": [
-        "Bespoke-Nimble-9B-v3-GGUF"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2974,
@@ -32,10 +27,6 @@
     "teca": {
       "evaluated_at": "2026-10-10T08:34:47+00:00",
       "dataset": "Tornem a TE-ca",
-      "requested_model": "Bespoke-Nimble-9B-v3-GGUF",
-      "models": [
-        "Bespoke-Nimble-9B-v3-GGUF"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2117,

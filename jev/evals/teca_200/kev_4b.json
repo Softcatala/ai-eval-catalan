@@ -1,10 +1,6 @@
 {
   "evaluated_at": "2026-10-10T07:12:37+00:00",
   "dataset": "Tornem a TE-ca",
-  "requested_model": "Kev-4B-GGUF",
-  "models": [
-    "Kev-4B-GGUF"
-  ],
   "seed": 42,
   "shuffled_options": false,
   "n": 200,

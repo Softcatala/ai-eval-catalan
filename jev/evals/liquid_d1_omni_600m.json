@@ -8,15 +8,10 @@
   "quantization": "Q8_0",
   "model_file": "d1-omni-600M-Q8_0.gguf",
   "model_revision": "04397145ed8381350403aa556db0ec6a49dd8c07",
-  "evaluated_at": "2026-10-10T06:42:15+00:00",
   "benchmarks": {
     "massive": {
       "evaluated_at": "2026-10-10T06:42:15+00:00",
       "dataset": "MASSIVE 1.1",
-      "requested_model": "LiquidAI/d1-omni-600M-GGUF:Q8_0",
-      "models": [
-        "LiquidAI/d1-omni-600M-GGUF:Q8_0"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2974,
@@ -38,10 +33,6 @@
     "teca": {
       "evaluated_at": "2026-10-10T07:32:02+00:00",
       "dataset": "Tornem a TE-ca",
-      "requested_model": "LiquidAI/d1-omni-600M-GGUF:Q8_0",
-      "models": [
-        "LiquidAI/d1-omni-600M-GGUF:Q8_0"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2117,

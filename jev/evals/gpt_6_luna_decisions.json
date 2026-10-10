@@ -3,15 +3,10 @@
   "display_name": "GPT-6 Luna Decisions",
   "provider": "openai",
   "cloud": true,
-  "evaluated_at": "2026-10-10T06:10:45+00:00",
   "benchmarks": {
     "massive": {
       "evaluated_at": "2026-10-10T06:10:45+00:00",
       "dataset": "MASSIVE 1.1",
-      "requested_model": "gpt-6-luna",
-      "models": [
-        "gpt-6-luna"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2974,
@@ -28,10 +23,6 @@
     "teca": {
       "evaluated_at": "2026-10-10T10:35:11+00:00",
       "dataset": "Tornem a TE-ca",
-      "requested_model": "gpt-6-luna",
-      "models": [
-        "gpt-6-luna"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2117,

@@ -31,7 +31,14 @@ def test_evaluation_results():
     for path in paths:
         document = json.loads(path.read_text(encoding="utf-8"))
         assert set(document.get("benchmarks", {})) == {"massive", "teca"}, path.name
+        assert "evaluated_at" not in document, path.name
         for benchmark in document["benchmarks"].values():
+            assert benchmark.get("requested_model") != document["model"], path.name
+            assert benchmark.get("models") != [document["model"]], path.name
+            assert (
+                datetime.fromisoformat(benchmark["evaluated_at"]).utcoffset()
+                is not None
+            )
             assert "locale" not in benchmark and "labels" not in benchmark, path.name
         data = {**document, **document["benchmarks"]["massive"]}
         assert isinstance(data, dict), f"{path.name}: expected a JSON object"
@@ -52,7 +59,7 @@ def test_evaluation_results():
             assert isinstance(model_file, str) and model_file.endswith("-Q8_0.gguf"), (
                 f"{path.name}: model_file must identify a Q8_0 GGUF"
             )
-        for field in ("model", "display_name", "requested_model", "evaluated_at"):
+        for field in ("model", "display_name", "evaluated_at"):
             assert isinstance(data.get(field), str) and data[field].strip(), (
                 f"{path.name}: missing or invalid {field}"
             )
@@ -63,7 +70,7 @@ def test_evaluation_results():
             f"{path.name}: duplicate model {data['model']}"
         )
         seen.add(data["model"])
-        models = data.get("models")
+        models = data.get("models", [data["model"]])
         assert (
             isinstance(models, list)
             and models

@@ -5,15 +5,10 @@
   "quantization": "Q8_0",
   "model_file": "Clef-Flash-Q8_0.gguf",
   "model_revision": "4a7a08c09bc63baf043b62b5ba89dd67a0357d95",
-  "evaluated_at": "2026-10-03T13:49:49+00:00",
   "benchmarks": {
     "massive": {
       "evaluated_at": "2026-10-03T13:49:49+00:00",
       "dataset": "MASSIVE 1.1",
-      "requested_model": "Clef-Flash-GGUF",
-      "models": [
-        "Clef-Flash-GGUF"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2974,
@@ -32,10 +27,6 @@
     "teca": {
       "evaluated_at": "2026-10-10T08:50:40+00:00",
       "dataset": "Tornem a TE-ca",
-      "requested_model": "Clef-Flash-GGUF",
-      "models": [
-        "Clef-Flash-GGUF"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2117,

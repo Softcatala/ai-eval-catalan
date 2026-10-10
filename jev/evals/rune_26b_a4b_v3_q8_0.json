@@ -8,15 +8,10 @@
   "quantization": "Q8_0",
   "model_file": "Rune-26B-A4B-v3-Q8_0.gguf",
   "model_revision": "f6cf5c19a05713cb9b2c59a57cd79e85ab8d2ffd",
-  "evaluated_at": "2026-10-10T06:30:27+00:00",
   "benchmarks": {
     "massive": {
       "evaluated_at": "2026-10-10T06:30:27+00:00",
       "dataset": "MASSIVE 1.1",
-      "requested_model": "owao/surogate-rune-26b-a4b-GGUF:Q8_0",
-      "models": [
-        "owao/surogate-rune-26b-a4b-GGUF:Q8_0"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2974,
@@ -38,10 +33,6 @@
     "teca": {
       "evaluated_at": "2026-10-10T08:16:28+00:00",
       "dataset": "Tornem a TE-ca",
-      "requested_model": "owao/surogate-rune-26b-a4b-GGUF:Q8_0",
-      "models": [
-        "owao/surogate-rune-26b-a4b-GGUF:Q8_0"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2117,

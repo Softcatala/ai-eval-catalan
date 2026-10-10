@@ -8,15 +8,10 @@
   "quantization": "Q8_0",
   "model_file": "d1-3B-Q8_0.gguf",
   "model_revision": "bb1e436ea78eb96a3f1acb6da865f70c2fbeb563",
-  "evaluated_at": "2026-10-10T06:39:49+00:00",
   "benchmarks": {
     "massive": {
       "evaluated_at": "2026-10-10T06:39:49+00:00",
       "dataset": "MASSIVE 1.1",
-      "requested_model": "LiquidAI/d1-3B-GGUF:Q8_0",
-      "models": [
-        "LiquidAI/d1-3B-GGUF:Q8_0"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2974,
@@ -38,10 +33,6 @@
     "teca": {
       "evaluated_at": "2026-10-10T07:35:19+00:00",
       "dataset": "Tornem a TE-ca",
-      "requested_model": "LiquidAI/d1-3B-GGUF:Q8_0",
-      "models": [
-        "LiquidAI/d1-3B-GGUF:Q8_0"
-      ],
       "seed": 42,
       "shuffled_options": false,
       "n": 2117,
