@@ -46,7 +46,6 @@ def main():
         choices=[
             "sts_ca",
             "catcola",
-            "teca",
             "club",
             "casum",
             "flores",

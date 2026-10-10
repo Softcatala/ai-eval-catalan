@@ -50,10 +50,6 @@ def extract_metrics(data: dict) -> dict:
     if catcola:
         metrics["catcola_mcc"] = catcola.get("mcc")
 
-    teca = benchmarks.get("teca", {})
-    if teca and "error" not in teca:
-        metrics["teca_accuracy"] = teca.get("accuracy")
-
     club_qa = benchmarks.get("club_qa", {})
     if club_qa:
         metrics["club_qa_f1"] = club_qa["token_f1"]
@@ -138,7 +134,6 @@ COMET_SOURCE_COPY_BASELINES = {
 RANDOM_BASELINES = {
     "sts_ca": 0.0,  # correlation, ranges -1..1
     "catcola_mcc": 0.0,  # MCC for binary classification: random baseline is 0
-    "teca_accuracy": 1 / 3,  # Three equally likely inference labels.
     "club_qa_f1": 0.0,  # bounded 0..1, no trivial guesser
     "casum_rougeL": 0.0,  # bounded 0..1
     **COMET_SOURCE_COPY_BASELINES,
@@ -146,7 +141,7 @@ RANDOM_BASELINES = {
     "catalan_drift_pass_rate": 0.0,  # bounded 0..1
 }
 
-CLAM_TASKS = [key for key in RANDOM_BASELINES if key != "teca_accuracy"]
+CLAM_TASKS = list(RANDOM_BASELINES.keys())
 
 COLUMN_LABELS = {
     "model": "Model",
@@ -156,7 +151,6 @@ COLUMN_LABELS = {
     "generation_tokens_per_sec": "tok/s",
     "sts_ca": "STS",
     "catcola_mcc": "CatCoLA MCC",
-    "teca_accuracy": "Tornem a TE-ca",
     "club_qa_f1": "CLUB QA",
     "casum_rougeL": "CaSum",
     "flores_en_ca": "EN↔CA",
@@ -402,7 +396,7 @@ def main():
     direction_keys = ("flores_en2ca", "flores_ca2en", "flores_es2ca", "flores_ca2es")
     # This is the public schema and table order. Keep it stable even when a
     # result set has no value for a newly introduced task yet.
-    display_metric_keys = [*CLAM_TASKS, "teca_accuracy"]
+    display_metric_keys = list(CLAM_TASKS)
     col_width = max(14, max(len(k) for k in display_metric_keys) + 2)
     params_col_w = 16
     label_width = max(12, max(len(label) for label, _, _cloud, *_ in rows) + 2)
@@ -427,7 +421,7 @@ def main():
     print(separator)
 
     # ── Normalized scores + CLAM composite table ──────────────────────────────
-    norm_keys = [*CLAM_TASKS, "teca_accuracy"]
+    norm_keys = list(CLAM_TASKS)
     norm_col_w = max(14, max(len(k) for k in norm_keys) + 2)
     clam_col_w = 10
     norm_label_w = label_width

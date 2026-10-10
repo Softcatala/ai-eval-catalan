@@ -7,7 +7,6 @@ Evaluates GGUF and API models on key Catalan benchmarks:
   4. CaSum     – summarization
   5. FLORES+   – machine translation quality
   6. IFEval-ca – instruction following
-  7. TE-ca     – textual entailment
 
 Requirements:
   pip install datasets scikit-learn sacrebleu lm_eval huggingface_hub
@@ -231,38 +230,6 @@ class OpenAIModel:
 # ──────────────────────────────────────────────────────────────────────────────
 # 1. STS-ca — Semantic Textual Similarity (Paraphrase proxy)
 # ──────────────────────────────────────────────────────────────────────────────
-
-
-def run_teca(model, n_samples: int = 100) -> dict:
-    """Evaluate Tornem a TE-ca textual entailment on projecte-aina/teca test."""
-    print("\nRunning Tornem a TE-ca …")
-    ds = load_dataset("projecte-aina/teca", split="test")
-    limit = min(n_samples, len(ds))
-    correct = invalid = 0
-    for i in range(limit):
-        item = ds[i]
-        prompt = (
-            "Classifica la relació entre la premissa i la hipòtesi. "
-            "Respon només amb un número: 0 si la premissa implica la hipòtesi, "
-            "1 si la relació és neutral (no es pot deduir ni refutar la hipòtesi), "
-            "o 2 si la premissa contradiu la hipòtesi.\n\n"
-            f"Premissa: {item['premise']}\nHipòtesi: {item['hypothesis']}\nResposta:"
-        )
-        answer = model.generate(prompt, max_new_tokens=16).strip()
-        if answer not in {"0", "1", "2"}:
-            invalid += 1
-        else:
-            correct += int(answer) == int(item["label"])
-
-    result = {
-        "accuracy": round(correct / limit, 4) if limit else 0.0,
-        "invalid_rate": round(invalid / limit, 4) if limit else 0.0,
-        "n": limit,
-        "n_valid": limit - invalid,
-        "n_invalid": invalid,
-    }
-    print(f"    ✓ Accuracy={result['accuracy']:.4f}  (n={limit})")
-    return result
 
 
 def run_sts_ca(model, n_samples: int = 100) -> dict:
@@ -1010,7 +977,6 @@ def main():
         choices=[
             "sts_ca",
             "catcola",
-            "teca",
             "club",
             "casum",
             "flores",
@@ -1108,16 +1074,7 @@ def main():
     to_run = (
         set(args.benchmarks)
         if not run_all
-        else {
-            "sts_ca",
-            "catcola",
-            "teca",
-            "club",
-            "casum",
-            "flores",
-            "ifeval",
-            "catalan_drift",
-        }
+        else {"sts_ca", "catcola", "club", "casum", "flores", "ifeval", "catalan_drift"}
     )
 
     # ── Validate model spec ───────────────────────────────────────────────────
@@ -1172,9 +1129,6 @@ def main():
 
         if "catcola" in to_run:
             results["benchmarks"]["catcola"] = run_catcola(model, args.n_samples)
-
-        if "teca" in to_run:
-            results["benchmarks"]["teca"] = run_teca(model, args.n_samples)
 
         if "club" in to_run:
             results["benchmarks"]["club_qa"] = run_club_qa(model, args.n_samples)

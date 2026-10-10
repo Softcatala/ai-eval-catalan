@@ -89,7 +89,6 @@ El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models d'AP
 |-----------|-------|---------|
 | **STS-ca** | Similitud semàntica de frases | Correlació de Pearson |
 | **CatCoLA** | Acceptabilitat gramatical | MCC |
-| **[Tornem a TE-ca](https://huggingface.co/datasets/projecte-aina/teca)** | Inferència textual (implicació, neutralitat o contradicció) | Accuracy |
 | **CLUB / VilaQuAD** | Comprensió lectora (QA) | F1 de solapament de tokens |
 | **CaSum** | Resum de notícies en català | ROUGE-1/2/L |
 | **FLORES+** | Traducció automàtica EN↔CA i ES↔CA | COMET |
@@ -134,11 +133,6 @@ traducció i aquest únic `translation_score`, multiplicada per 100.
 CLAM també inclou `Mantinc`: el `pass_rate` de prompts de manteniment del
 català de [Softcatalà/mantinc-catalan-drift](https://github.com/Softcatala/mantinc-catalan-drift),
 executat localment amb lm-evaluation-harness.
-
-Tornem a TE-ca usa el split `test` de `projecte-aina/teca`. Les respostes fora del
-format es compten com a incorrectes; les taules normalitzen l'accuracy amb un
-baseline aleatori d'1/3. Encara no forma part de CLAM. Per afegir-lo als resultats existents:
-`uv run python run_evals.py --rerun-benchmarks --benchmarks teca` (des de `llm/`).
 
 Les dades, la tasca lm-eval i l'avaluador s'instal·len com una única
 dependència Git de Mantinc fixada a un commit concret; no cal tenir-ne un
