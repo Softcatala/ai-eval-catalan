@@ -25,10 +25,8 @@
       "cloud": false,
       "display_name": "Kev 0.8B",
       "quantization": "Q8_0",
-      "model_file": "Kev-0.8B-Q8_0.gguf",
       "params_b": 0.752917824,
-      "memory_gb": 0.8,
-      "model_revision": "e551e319d483ff57e1ff208924b349d397cffc1c"
+      "memory_gb": 0.8
     },
     "teca": {
       "evaluated_at": "2026-10-10T07:31:02+00:00",

@@ -342,6 +342,28 @@ def test_result_keeps_benchmark_timestamp_and_distinct_model_ids(actual_model):
     assert summary["models"] == [actual_model]
 
 
+@pytest.mark.parametrize("revision", ["original", "different"])
+def test_result_omits_matching_model_file_and_revision(revision):
+    previous = {
+        "model": "jev",
+        "model_file": "jev-Q8_0.gguf",
+        "model_revision": "original",
+        "benchmarks": {
+            "massive": {
+                "accuracy": 0.8,
+                "model_file": "jev-Q8_0.gguf",
+                "model_revision": revision,
+            }
+        },
+    }
+    stored = model.result_document(previous)
+    benchmark = stored["benchmarks"]["massive"]
+    assert "model_file" not in benchmark
+    assert ("model_revision" in benchmark) == (revision != "original")
+    assert benchmark.get("model_revision", stored["model_revision"]) == revision
+    assert previous["benchmarks"]["massive"]["model_file"] == "jev-Q8_0.gguf"
+
+
 def test_configured_output_filenames(tmp_path):
     assert run_evals.output_path(tmp_path, "Julia-1-GGUF") == tmp_path / "julia_1.json"
     assert run_evals.output_path(tmp_path, "org/jev:q4") == tmp_path / "org_jev_q4.json"

@@ -20,8 +20,6 @@
       "model": "OpenJev-GGUF",
       "display_name": "OpenJev 27B",
       "quantization": "Q8_0",
-      "model_file": "OpenJev-Q8_0.gguf",
-      "model_revision": "10840f375658dea7afc5ff4711127bca8218b560",
       "memory_gb": 28.6
     },
     "teca": {

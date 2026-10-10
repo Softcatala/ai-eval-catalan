@@ -20,8 +20,6 @@
       "model": "Kev-9B-GGUF",
       "display_name": "Kev 9B",
       "quantization": "Q8_0",
-      "model_file": "Kev-9B-Q8_0.gguf",
-      "model_revision": "ec2bbfe6620218aee2e01cc93bb78dee2a96ed58",
       "memory_gb": 9.5
     },
     "teca": {

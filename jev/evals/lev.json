@@ -20,8 +20,6 @@
       "model": "lev-GGUF",
       "display_name": "lev 4B",
       "quantization": "Q8_0",
-      "model_file": "lev-Q8_0.gguf",
-      "model_revision": "3e9286a79ae857b4e1de051c92fab6dc574581ce",
       "memory_gb": 4.5
     },
     "teca": {

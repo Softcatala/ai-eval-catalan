@@ -33,6 +33,11 @@ def test_evaluation_results():
         assert set(document.get("benchmarks", {})) == {"massive", "teca"}, path.name
         assert "evaluated_at" not in document, path.name
         for benchmark in document["benchmarks"].values():
+            for key in ("model_file", "model_revision"):
+                if key in document:
+                    assert key not in benchmark or benchmark[key] != document[key], (
+                        path.name
+                    )
             assert benchmark.get("requested_model") != document["model"], path.name
             assert benchmark.get("models") != [document["model"]], path.name
             assert (

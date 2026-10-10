@@ -25,10 +25,8 @@
       "cloud": false,
       "display_name": "Liquid d1 Omni 600M",
       "quantization": "Q8_0",
-      "model_file": "d1-omni-600M-Q8_0.gguf",
       "params_b": 0.380732161,
-      "memory_gb": 0.4,
-      "model_revision": "04397145ed8381350403aa556db0ec6a49dd8c07"
+      "memory_gb": 0.4
     },
     "teca": {
       "evaluated_at": "2026-10-10T07:32:02+00:00",

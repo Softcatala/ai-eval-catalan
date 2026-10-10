@@ -25,10 +25,8 @@
       "cloud": false,
       "display_name": "Liquid d1 3B",
       "quantization": "Q8_0",
-      "model_file": "d1-3B-Q8_0.gguf",
       "params_b": 2.697198592,
-      "memory_gb": 2.9,
-      "model_revision": "bb1e436ea78eb96a3f1acb6da865f70c2fbeb563"
+      "memory_gb": 2.9
     },
     "teca": {
       "evaluated_at": "2026-10-10T07:35:19+00:00",

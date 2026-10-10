@@ -20,8 +20,6 @@
       "model": "Julia-1-GGUF",
       "display_name": "Julia 1 144M",
       "quantization": "Q8_0",
-      "model_file": "Julia-1-Q8_0.gguf",
-      "model_revision": "16fee17949206fbf58da9347daea44d792a81211",
       "memory_gb": 0.2
     },
     "teca": {

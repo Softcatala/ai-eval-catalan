@@ -20,8 +20,6 @@
       "model": "Bespoke-Nimble-9B-v3-GGUF",
       "display_name": "Nimble 9B",
       "quantization": "Q8_0",
-      "model_file": "Bespoke-Nimble-9B-v3-Q8_0.gguf",
-      "model_revision": "a72bdbadb355ca3014f7f9d2585380917cc59971",
       "memory_gb": 9.5
     },
     "teca": {

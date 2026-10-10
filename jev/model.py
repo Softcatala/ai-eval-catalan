@@ -160,6 +160,11 @@ def result_document(previous, summary=None):
         "labels": "ca",
         "requested_model": result.get("model"),
         "models": [result.get("model")],
+        **{
+            key: result[key]
+            for key in ("model_file", "model_revision")
+            if key in result
+        },
     }
     result["benchmarks"] = {
         name: {

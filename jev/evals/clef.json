@@ -20,8 +20,6 @@
       "model": "Clef-GGUF",
       "display_name": "Clef 27B",
       "quantization": "Q8_0",
-      "model_file": "Clef-Q8_0.gguf",
-      "model_revision": "5f70656b6670c65eb85ad07a11efe211b5f211bd",
       "memory_gb": 28.7
     },
     "teca": {

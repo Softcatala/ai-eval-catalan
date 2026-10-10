@@ -20,8 +20,6 @@
       "model": "Clef-Flash-GGUF",
       "display_name": "Clef Flash 9B",
       "quantization": "Q8_0",
-      "model_file": "Clef-Flash-Q8_0.gguf",
-      "model_revision": "4a7a08c09bc63baf043b62b5ba89dd67a0357d95",
       "memory_gb": 9.7
     },
     "teca": {

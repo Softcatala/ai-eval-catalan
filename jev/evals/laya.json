@@ -20,8 +20,6 @@
       "model": "Laya-GGUF",
       "display_name": "Laya 421M",
       "quantization": "Q8_0",
-      "model_file": "Laya-Q8_0.gguf",
-      "model_revision": "da4b4753d62197659d8c90103cd4c43bef9afea6",
       "memory_gb": 0.4
     },
     "teca": {

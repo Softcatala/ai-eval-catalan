@@ -25,10 +25,8 @@
       "cloud": false,
       "display_name": "Rune v3 26B-A4B",
       "quantization": "Q8_0",
-      "model_file": "Rune-26B-A4B-v3-Q8_0.gguf",
       "params_b": 25.233142046,
-      "memory_gb": 26.9,
-      "model_revision": "f6cf5c19a05713cb9b2c59a57cd79e85ab8d2ffd"
+      "memory_gb": 26.9
     },
     "teca": {
       "evaluated_at": "2026-10-10T08:16:28+00:00",
