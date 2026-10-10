@@ -74,7 +74,7 @@ def load_rows(directory):
                 "massive_accuracy": round(result["accuracy"], 4),
                 "massive_macro_f1": round(result["macro_f1_18_labels"], 4),
                 "massive_decisions_per_sec": round(1000 / result["mean_latency_ms"], 1)
-                if result["mean_latency_ms"] > 0
+                if not result.get("cloud", False) and result["mean_latency_ms"] > 0
                 else None,
             }
         )
