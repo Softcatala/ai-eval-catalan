@@ -55,6 +55,30 @@
       "massive_decisions_per_sec": 0.4
     },
     {
+      "model": "GPT-6 Luna Decisions",
+      "repo_url": "https://platform.openai.com/docs/models/gpt-6-luna",
+      "cloud": true,
+      "evaluated_at": "2026-10-10T06:10:45+00:00",
+      "params_b": null,
+      "memory_gb": null,
+      "n": 2974,
+      "massive_accuracy": 0.8174,
+      "massive_macro_f1": 0.8199,
+      "massive_decisions_per_sec": null
+    },
+    {
+      "model": "Rune v3 26B-A4B 25B",
+      "repo_url": "https://huggingface.co/owao/surogate-rune-26b-a4b-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-10T06:30:27+00:00",
+      "params_b": 25.233142046,
+      "memory_gb": 26.9,
+      "n": 2974,
+      "massive_accuracy": 0.8167,
+      "massive_macro_f1": 0.8057,
+      "massive_decisions_per_sec": 2.0
+    },
+    {
       "model": "Nimble 9B",
       "repo_url": "https://huggingface.co/ggml-org/Bespoke-Nimble-9B-v3-GGUF",
       "cloud": false,
@@ -79,6 +103,18 @@
       "massive_decisions_per_sec": 1.1
     },
     {
+      "model": "Liquid d1 3B",
+      "repo_url": "https://huggingface.co/LiquidAI/d1-3B-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-10T06:39:49+00:00",
+      "params_b": 2.697198592,
+      "memory_gb": 2.9,
+      "n": 2974,
+      "massive_accuracy": 0.766,
+      "massive_macro_f1": 0.7496,
+      "massive_decisions_per_sec": 5.3
+    },
+    {
       "model": "Kev 4B",
       "repo_url": "https://huggingface.co/ggml-org/Kev-4B-GGUF",
       "cloud": false,
@@ -101,6 +137,30 @@
       "massive_accuracy": 0.7461,
       "massive_macro_f1": 0.746,
       "massive_decisions_per_sec": 1.5
+    },
+    {
+      "model": "Kev 0.8B",
+      "repo_url": "https://huggingface.co/ggml-org/Kev-0.8B-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-10T06:46:55+00:00",
+      "params_b": 0.752917824,
+      "memory_gb": 0.8,
+      "n": 2974,
+      "massive_accuracy": 0.6406,
+      "massive_macro_f1": 0.6318,
+      "massive_decisions_per_sec": 10.8
+    },
+    {
+      "model": "Liquid d1 Omni 600M",
+      "repo_url": "https://huggingface.co/LiquidAI/d1-omni-600M-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-10T06:42:15+00:00",
+      "params_b": 0.380732161,
+      "memory_gb": 0.4,
+      "n": 2974,
+      "massive_accuracy": 0.4482,
+      "massive_macro_f1": 0.4504,
+      "massive_decisions_per_sec": 20.9
     },
     {
       "model": "Laya 421M",
