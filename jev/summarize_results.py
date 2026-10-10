@@ -1,4 +1,4 @@
-"""Rank decision models by the mean accuracy on MASSIVE and TE-ca."""
+"""Rank decision models by the mean macro F1 on MASSIVE and TE-ca."""
 
 import argparse
 import json
@@ -97,8 +97,8 @@ def load_rows(directory):
                 "teca_n": teca["n"] if teca else None,
                 "teca_accuracy": round(teca["accuracy"], 4) if teca else None,
                 "teca_macro_f1": round(teca["macro_f1_3_labels"], 4) if teca else None,
-                "average_accuracy": round(
-                    (result["accuracy"] + teca["accuracy"]) / 2, 4
+                "average_macro_f1": round(
+                    (result["macro_f1_18_labels"] + teca["macro_f1_3_labels"]) / 2, 4
                 )
                 if teca
                 else None,
@@ -111,8 +111,8 @@ def load_rows(directory):
     return sorted(
         rows,
         key=lambda row: (
-            row["average_accuracy"] if row["average_accuracy"] is not None else -1,
-            row["massive_accuracy"],
+            row["average_macro_f1"] if row["average_macro_f1"] is not None else -1,
+            row["massive_macro_f1"],
         ),
         reverse=True,
     )
@@ -132,10 +132,11 @@ def main():
         "text": {
             "model": "Model",
             "memory_gb": "Memòria (GB)",
-            "average_accuracy": "Mitjana MASSIVE / TE-ca (50% / 50%)",
+            "average_macro_f1": "Mitjana F1",
             "massive_accuracy": "MASSIVE Taxa d’encert",
             "teca_accuracy": "TE-ca Taxa d’encert",
             "massive_macro_f1": "MASSIVE Macro F1",
+            "teca_macro_f1": "TE-ca Macro F1",
             "massive_decisions_per_sec": "Decisions/s",
         },
         "metrics": {
@@ -143,8 +144,9 @@ def main():
             for metric in (
                 "massive_accuracy",
                 "teca_accuracy",
-                "average_accuracy",
+                "average_macro_f1",
                 "massive_macro_f1",
+                "teca_macro_f1",
                 "massive_decisions_per_sec",
             )
         },
