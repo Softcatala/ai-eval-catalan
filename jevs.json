@@ -2,20 +2,12 @@
   "text": {
     "model": "Model",
     "memory_gb": "Memòria (GB)",
-    "average_accuracy": "Mitjana MASSIVE / TE-ca (50% / 50%)",
     "massive_accuracy": "MASSIVE Taxa d’encert",
-    "teca_accuracy": "TE-ca Taxa d’encert",
     "massive_macro_f1": "MASSIVE Macro F1",
     "massive_decisions_per_sec": "Decisions/s"
   },
   "metrics": {
     "massive_accuracy": {
-      "direction": "higher_is_better"
-    },
-    "teca_accuracy": {
-      "direction": "higher_is_better"
-    },
-    "average_accuracy": {
       "direction": "higher_is_better"
     },
     "massive_macro_f1": {
@@ -35,28 +27,8 @@
       "memory_gb": 9.7,
       "n": 2974,
       "massive_accuracy": 0.8924,
-      "teca_n": 2117,
-      "teca_accuracy": 0.8011,
-      "teca_macro_f1": 0.8043,
-      "average_accuracy": 0.8468,
       "massive_macro_f1": 0.886,
       "massive_decisions_per_sec": 0.9
-    },
-    {
-      "model": "OpenJev 27B",
-      "repo_url": "https://huggingface.co/ggml-org/OpenJev-GGUF",
-      "cloud": false,
-      "evaluated_at": "2026-10-03T12:55:30+00:00",
-      "params_b": 26.895998464,
-      "memory_gb": 28.6,
-      "n": 2974,
-      "massive_accuracy": 0.8416,
-      "teca_n": 2117,
-      "teca_accuracy": 0.8351,
-      "teca_macro_f1": 0.8381,
-      "average_accuracy": 0.8384,
-      "massive_macro_f1": 0.8263,
-      "massive_decisions_per_sec": 0.4
     },
     {
       "model": "Clef 27B",
@@ -67,12 +39,20 @@
       "memory_gb": 28.7,
       "n": 2974,
       "massive_accuracy": 0.879,
-      "teca_n": 2117,
-      "teca_accuracy": 0.7922,
-      "teca_macro_f1": 0.796,
-      "average_accuracy": 0.8356,
       "massive_macro_f1": 0.8756,
       "massive_decisions_per_sec": 0.2
+    },
+    {
+      "model": "OpenJev 27B",
+      "repo_url": "https://huggingface.co/ggml-org/OpenJev-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-03T12:55:30+00:00",
+      "params_b": 26.895998464,
+      "memory_gb": 28.6,
+      "n": 2974,
+      "massive_accuracy": 0.8416,
+      "massive_macro_f1": 0.8263,
+      "massive_decisions_per_sec": 0.4
     },
     {
       "model": "Nimble 9B",
@@ -83,28 +63,8 @@
       "memory_gb": 9.5,
       "n": 2974,
       "massive_accuracy": 0.7972,
-      "teca_n": 2117,
-      "teca_accuracy": 0.8196,
-      "teca_macro_f1": 0.8219,
-      "average_accuracy": 0.8084,
       "massive_macro_f1": 0.787,
       "massive_decisions_per_sec": 0.8
-    },
-    {
-      "model": "Rune v3 26B-A4B 25B",
-      "repo_url": "https://huggingface.co/owao/surogate-rune-26b-a4b-GGUF",
-      "cloud": false,
-      "evaluated_at": "2026-10-10T06:30:27+00:00",
-      "params_b": 25.233142046,
-      "memory_gb": 26.9,
-      "n": 2974,
-      "massive_accuracy": 0.8167,
-      "teca_n": 2117,
-      "teca_accuracy": 0.7648,
-      "teca_macro_f1": 0.7675,
-      "average_accuracy": 0.7908,
-      "massive_macro_f1": 0.8057,
-      "massive_decisions_per_sec": 2.0
     },
     {
       "model": "lev 4B",
@@ -115,44 +75,8 @@
       "memory_gb": 4.5,
       "n": 2974,
       "massive_accuracy": 0.7707,
-      "teca_n": 2117,
-      "teca_accuracy": 0.7978,
-      "teca_macro_f1": 0.7988,
-      "average_accuracy": 0.7843,
       "massive_macro_f1": 0.7585,
       "massive_decisions_per_sec": 1.1
-    },
-    {
-      "model": "GPT-6 Luna Decisions",
-      "repo_url": "https://platform.openai.com/docs/models/gpt-6-luna",
-      "cloud": true,
-      "evaluated_at": "2026-10-10T06:10:45+00:00",
-      "params_b": null,
-      "memory_gb": null,
-      "n": 2974,
-      "massive_accuracy": 0.8174,
-      "teca_n": 2117,
-      "teca_accuracy": 0.726,
-      "teca_macro_f1": 0.7297,
-      "average_accuracy": 0.7717,
-      "massive_macro_f1": 0.8199,
-      "massive_decisions_per_sec": null
-    },
-    {
-      "model": "Kev 9B",
-      "repo_url": "https://huggingface.co/ggml-org/Kev-9B-GGUF",
-      "cloud": false,
-      "evaluated_at": "2026-10-03T14:22:54+00:00",
-      "params_b": 8.955900928,
-      "memory_gb": 9.5,
-      "n": 2974,
-      "massive_accuracy": 0.7461,
-      "teca_n": 2117,
-      "teca_accuracy": 0.7822,
-      "teca_macro_f1": 0.7857,
-      "average_accuracy": 0.7642,
-      "massive_macro_f1": 0.746,
-      "massive_decisions_per_sec": 1.5
     },
     {
       "model": "Kev 4B",
@@ -163,60 +87,20 @@
       "memory_gb": 4.5,
       "n": 2974,
       "massive_accuracy": 0.7592,
-      "teca_n": 2117,
-      "teca_accuracy": 0.753,
-      "teca_macro_f1": 0.7552,
-      "average_accuracy": 0.7561,
       "massive_macro_f1": 0.7492,
       "massive_decisions_per_sec": 2.5
     },
     {
-      "model": "Liquid d1 3B",
-      "repo_url": "https://huggingface.co/LiquidAI/d1-3B-GGUF",
+      "model": "Kev 9B",
+      "repo_url": "https://huggingface.co/ggml-org/Kev-9B-GGUF",
       "cloud": false,
-      "evaluated_at": "2026-10-10T06:39:49+00:00",
-      "params_b": 2.697198592,
-      "memory_gb": 2.9,
+      "evaluated_at": "2026-10-03T14:22:54+00:00",
+      "params_b": 8.955900928,
+      "memory_gb": 9.5,
       "n": 2974,
-      "massive_accuracy": 0.766,
-      "teca_n": 2117,
-      "teca_accuracy": 0.7062,
-      "teca_macro_f1": 0.706,
-      "average_accuracy": 0.7361,
-      "massive_macro_f1": 0.7496,
-      "massive_decisions_per_sec": 5.3
-    },
-    {
-      "model": "Kev 0.8B",
-      "repo_url": "https://huggingface.co/ggml-org/Kev-0.8B-GGUF",
-      "cloud": false,
-      "evaluated_at": "2026-10-10T06:46:55+00:00",
-      "params_b": 0.752917824,
-      "memory_gb": 0.8,
-      "n": 2974,
-      "massive_accuracy": 0.6406,
-      "teca_n": 2117,
-      "teca_accuracy": 0.5848,
-      "teca_macro_f1": 0.5799,
-      "average_accuracy": 0.6127,
-      "massive_macro_f1": 0.6318,
-      "massive_decisions_per_sec": 10.8
-    },
-    {
-      "model": "Liquid d1 Omni 600M",
-      "repo_url": "https://huggingface.co/LiquidAI/d1-omni-600M-GGUF",
-      "cloud": false,
-      "evaluated_at": "2026-10-10T06:42:15+00:00",
-      "params_b": 0.380732161,
-      "memory_gb": 0.4,
-      "n": 2974,
-      "massive_accuracy": 0.4482,
-      "teca_n": 2117,
-      "teca_accuracy": 0.4417,
-      "teca_macro_f1": 0.3981,
-      "average_accuracy": 0.4449,
-      "massive_macro_f1": 0.4504,
-      "massive_decisions_per_sec": 20.9
+      "massive_accuracy": 0.7461,
+      "massive_macro_f1": 0.746,
+      "massive_decisions_per_sec": 1.5
     },
     {
       "model": "Laya 421M",
@@ -227,10 +111,6 @@
       "memory_gb": 0.4,
       "n": 2974,
       "massive_accuracy": 0.2566,
-      "teca_n": 2117,
-      "teca_accuracy": 0.5177,
-      "teca_macro_f1": 0.5127,
-      "average_accuracy": 0.3871,
       "massive_macro_f1": 0.2244,
       "massive_decisions_per_sec": 21.9
     },
@@ -243,10 +123,6 @@
       "memory_gb": 0.2,
       "n": 2974,
       "massive_accuracy": 0.2303,
-      "teca_n": 2117,
-      "teca_accuracy": 0.3302,
-      "teca_macro_f1": 0.2389,
-      "average_accuracy": 0.2803,
       "massive_macro_f1": 0.2328,
       "massive_decisions_per_sec": 47.1
     }
