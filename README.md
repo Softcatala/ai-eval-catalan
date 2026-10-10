@@ -440,29 +440,12 @@ make render-local
 
 Per a Clef i Clef Flash, afegeix `--batch-size 2048 --ubatch-size 2048` al servidor.
 Per a Liquid d1 Omni 600M, usa `--batch-size 4096 --ubatch-size 4096`.
-Els models locals de JEV usen `Q8_0`, inclosos
-`ggml-org/Kev-0.8B-GGUF:Q8_0`, `LiquidAI/d1-3B-GGUF:Q8_0` i
-`LiquidAI/d1-omni-600M-GGUF:Q8_0`.
-Per a Rune v3, usa la [conversió amb metadades de decisió](https://huggingface.co/owao/surogate-rune-26b-a4b-GGUF)
-(`Rune-26B-A4B-v3-Q8_0.gguf`), que requereix llama.cpp ≥ b11371:
-
-```bash
-llama-server -hf owao/surogate-rune-26b-a4b-GGUF:Q8_0 --jinja --ctx-size 32000 --port 9090
-python3 -m jev.run_evals --models owao/surogate-rune-26b-a4b-GGUF:Q8_0
-```
-
+Per a Rune v3, usa `owao/surogate-rune-26b-a4b-GGUF:Q8_0` (amb metadades de decisió).
 `--server-url` o `LLAMA_SERVER_URL` configura l'endpoint (per defecte,
 `http://localhost:9090/v1`); `SYSTEMONE_API_KEY`, l'autenticació.
 
-Per a GPT-6 Luna Decisions, configura `OPENAI_API_KEY` i executa:
-
-```bash
-python3 -m jev.run_evals --provider openai --models gpt-6-luna
-```
-
-Usa l'[API de decisions d'OpenAI](https://developers.openai.com/api/docs/guides/decisions),
-amb les mateixes 18 categories i exemples. Els resultats s'identifiquen com a
-models al núvol, sense quantització ni memòria local; la latència inclou la xarxa.
+Per a GPT-6 Luna Decisions, configura `OPENAI_API_KEY` i executa
+`python3 -m jev.run_evals --provider openai --models gpt-6-luna` (API `/v1/decisions`).
 
 L'orquestrador descobreix models a `/v1/models`, inclosos els del router, avalua
 tot el test i reutilitza resultats completats amb la mateixa configuració:
