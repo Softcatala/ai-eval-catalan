@@ -261,7 +261,7 @@ def model_display_name(model_id, display_name=None, params_b=None):
         name = "GPT-6 Luna Decisions"
     if params_b is None:
         params_b = MODEL_PARAMS_B.get(model.lower())
-    if params_b is not None and not re.search(r"\b\d+(?:\.\d+)?[MB]$", name, re.I):
+    if params_b is not None and not re.search(r"\b\d+(?:\.\d+)?[MB]\b", name, re.I):
         size = f"{params_b * 1000:.0f}M" if params_b < 1 else f"{params_b:.0f}B"
         name = f"{name} {size}"
     return name
