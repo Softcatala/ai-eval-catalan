@@ -16,11 +16,7 @@
       "macro_f1_18_labels": 0.7870485710018276,
       "mean_latency_ms": 1244.0557972306563,
       "requested_n_samples": 0,
-      "data_source": "MASSIVE 1.1",
-      "model": "Bespoke-Nimble-9B-v3-GGUF",
-      "display_name": "Nimble 9B",
-      "quantization": "Q8_0",
-      "memory_gb": 9.5
+      "data_source": "MASSIVE 1.1"
     },
     "teca": {
       "evaluated_at": "2026-10-10T08:34:47+00:00",
@@ -32,11 +28,9 @@
       "macro_f1_3_labels": 0.8219422946713925,
       "mean_latency_ms": 517.7940816343439,
       "requested_n_samples": 0,
-      "data_source": "projecte-aina/teca:test",
-      "model": "Bespoke-Nimble-9B-v3-GGUF",
-      "provider": "systemone",
-      "cloud": false,
-      "display_name": "Nimble 9B"
+      "data_source": "projecte-aina/teca:test"
     }
-  }
+  },
+  "provider": "systemone",
+  "cloud": false
 }

@@ -68,7 +68,7 @@ def load_rows(directory, teca_directory=None):
         if teca is None and "benchmarks" not in result and teca_path.exists():
             teca = json.loads(teca_path.read_text(encoding="utf-8"))
         if teca is not None:
-            teca = {"locale": "ca-ES", "labels": "ca", **teca}
+            teca = {"locale": "ca-ES", "labels": "ca", "model": result["model"], **teca}
             if result["n"] != 2974 or result.get("requested_n_samples") != 0:
                 raise ValueError(
                     f"{path}: ranking requires the full MASSIVE test (2974)"

@@ -19,14 +19,7 @@
       "macro_f1_18_labels": 0.4503527671906784,
       "mean_latency_ms": 47.942555625825115,
       "requested_n_samples": 0,
-      "data_source": "MASSIVE 1.1",
-      "model": "LiquidAI/d1-omni-600M-GGUF:Q8_0",
-      "provider": "systemone",
-      "cloud": false,
-      "display_name": "Liquid d1 Omni 600M",
-      "quantization": "Q8_0",
-      "params_b": 0.380732161,
-      "memory_gb": 0.4
+      "data_source": "MASSIVE 1.1"
     },
     "teca": {
       "evaluated_at": "2026-10-10T07:32:02+00:00",
@@ -38,11 +31,7 @@
       "macro_f1_3_labels": 0.39813775344862407,
       "mean_latency_ms": 26.948781806367847,
       "requested_n_samples": 0,
-      "data_source": "projecte-aina/teca:test",
-      "model": "LiquidAI/d1-omni-600M-GGUF:Q8_0",
-      "provider": "systemone",
-      "cloud": false,
-      "display_name": "d1 omni 600M"
+      "data_source": "projecte-aina/teca:test"
     }
   }
 }

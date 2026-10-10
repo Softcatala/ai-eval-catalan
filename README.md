@@ -467,7 +467,8 @@ requereix `datasets` (disponible a l'entorn de `llm/`). Com a ASR, cada fitxer
 i `benchmarks.teca`, amb les mètriques, el nombre de mostres i la configuració
 de cada avaluació. Les metadades del model són al nivell superior.
 La data `evaluated_at` es desa només a cada benchmark. Els camps `requested_model` i
-`models` només es desen si difereixen del model del fitxer.
+`models` només es desen al nivell superior si difereixen del model del fitxer.
+Les seccions dels benchmarks no contenen metadades del model.
 Els valors per defecte `locale=ca-ES` i `labels=ca` són implícits i no es desen al JSON.
 Per fer una primera passada de 200 mostres per model en un directori separat:
 

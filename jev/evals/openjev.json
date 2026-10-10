@@ -16,11 +16,7 @@
       "macro_f1_18_labels": 0.8263188900865762,
       "mean_latency_ms": 2375.4457216919764,
       "requested_n_samples": 0,
-      "data_source": "MASSIVE 1.1",
-      "model": "OpenJev-GGUF",
-      "display_name": "OpenJev 27B",
-      "quantization": "Q8_0",
-      "memory_gb": 28.6
+      "data_source": "MASSIVE 1.1"
     },
     "teca": {
       "evaluated_at": "2026-10-10T10:27:35+00:00",
@@ -32,11 +28,9 @@
       "macro_f1_3_labels": 0.8380587278038997,
       "mean_latency_ms": 1152.7121700091589,
       "requested_n_samples": 0,
-      "data_source": "projecte-aina/teca:test",
-      "model": "OpenJev-GGUF",
-      "provider": "systemone",
-      "cloud": false,
-      "display_name": "OpenJev 27B"
+      "data_source": "projecte-aina/teca:test"
     }
-  }
+  },
+  "provider": "systemone",
+  "cloud": false
 }

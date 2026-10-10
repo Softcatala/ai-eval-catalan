@@ -249,7 +249,7 @@ def test_rerun_preserves_other_benchmark(tmp_path, dataset):
     stored = json.loads(output.read_text())
     if dataset == "teca":
         assert stored["benchmarks"]["massive"] == {
-            k: v for k, v in original.items() if k != "benchmarks"
+            k: v for k, v in original.items() if k not in ("benchmarks", "model")
         }
         assert stored["benchmarks"]["teca"]["accuracy"] == 0.9
         parser = argparse.ArgumentParser()
@@ -335,10 +335,12 @@ def test_result_keeps_benchmark_timestamp_and_distinct_model_ids(actual_model):
     assert "evaluated_at" not in stored
     benchmark = stored["benchmarks"]["massive"]
     assert benchmark["evaluated_at"] == summary["evaluated_at"]
-    assert ("requested_model" in benchmark) == (actual_model != "jev")
-    assert ("models" in benchmark) == (actual_model != "jev")
-    assert benchmark.get("requested_model", "jev") == actual_model
-    assert benchmark.get("models", ["jev"]) == [actual_model]
+    assert "requested_model" not in benchmark
+    assert ("requested_model" in stored) == (actual_model != "jev")
+    assert "models" not in benchmark
+    assert ("models" in stored) == (actual_model != "jev")
+    assert stored.get("requested_model", "jev") == actual_model
+    assert stored.get("models", ["jev"]) == [actual_model]
     assert summary["models"] == [actual_model]
 
 
@@ -359,8 +361,8 @@ def test_result_omits_matching_model_file_and_revision(revision):
     stored = model.result_document(previous)
     benchmark = stored["benchmarks"]["massive"]
     assert "model_file" not in benchmark
-    assert ("model_revision" in benchmark) == (revision != "original")
-    assert benchmark.get("model_revision", stored["model_revision"]) == revision
+    assert "model_revision" not in benchmark
+    assert stored["model_revision"] == "original"
     assert previous["benchmarks"]["massive"]["model_file"] == "jev-Q8_0.gguf"
 
 
@@ -506,7 +508,9 @@ def test_failed_teca_rerun_does_not_publish_archived_score(tmp_path):
         model.main()
     assert error.value.code == 1
     assert json.loads(output.read_text())["benchmarks"] == {
-        "massive": {k: v for k, v in massive.items() if k not in ("locale", "labels")}
+        "massive": {
+            k: v for k, v in massive.items() if k not in ("locale", "labels", "model")
+        }
     }
     row = summarize_results.load_rows(tmp_path)[0]
     assert row["massive_accuracy"] == 0.8

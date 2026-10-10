@@ -16,11 +16,7 @@
       "macro_f1_18_labels": 0.8756134845604229,
       "mean_latency_ms": 4000.9389880344393,
       "requested_n_samples": 0,
-      "data_source": "MASSIVE 1.1",
-      "model": "Clef-GGUF",
-      "display_name": "Clef 27B",
-      "quantization": "Q8_0",
-      "memory_gb": 28.7
+      "data_source": "MASSIVE 1.1"
     },
     "teca": {
       "evaluated_at": "2026-10-10T09:46:52+00:00",
@@ -32,11 +28,9 @@
       "macro_f1_3_labels": 0.7960166325747967,
       "mean_latency_ms": 1591.688363556497,
       "requested_n_samples": 0,
-      "data_source": "projecte-aina/teca:test",
-      "model": "Clef-GGUF",
-      "provider": "systemone",
-      "cloud": false,
-      "display_name": "Clef 27B"
+      "data_source": "projecte-aina/teca:test"
     }
-  }
+  },
+  "provider": "systemone",
+  "cloud": false
 }

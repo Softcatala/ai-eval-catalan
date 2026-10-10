@@ -16,11 +16,7 @@
       "macro_f1_18_labels": 0.7492182596344777,
       "mean_latency_ms": 402.0342399896919,
       "requested_n_samples": 0,
-      "data_source": "MASSIVE 1.1",
-      "model": "Kev-4B-GGUF",
-      "display_name": "Kev 4B",
-      "quantization": "Q8_0",
-      "memory_gb": 4.5
+      "data_source": "MASSIVE 1.1"
     },
     "teca": {
       "evaluated_at": "2026-10-10T07:41:34+00:00",
@@ -32,11 +28,9 @@
       "macro_f1_3_labels": 0.7551874613581822,
       "mean_latency_ms": 175.7913442040641,
       "requested_n_samples": 0,
-      "data_source": "projecte-aina/teca:test",
-      "model": "Kev-4B-GGUF",
-      "provider": "systemone",
-      "cloud": false,
-      "display_name": "Kev 4B"
+      "data_source": "projecte-aina/teca:test"
     }
-  }
+  },
+  "provider": "systemone",
+  "cloud": false
 }

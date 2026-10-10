@@ -40,7 +40,7 @@ def completed(path, args, model):
         result = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return False
-    result = benchmark_result(result, args.dataset)
+    result = {**result, **benchmark_result(result, args.dataset)}
     return (
         result.get("model") == model
         and result.get("provider", "systemone") == args.provider

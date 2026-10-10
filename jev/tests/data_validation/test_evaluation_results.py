@@ -33,13 +33,24 @@ def test_evaluation_results():
         assert set(document.get("benchmarks", {})) == {"massive", "teca"}, path.name
         assert "evaluated_at" not in document, path.name
         for benchmark in document["benchmarks"].values():
-            for key in ("model_file", "model_revision"):
-                if key in document:
-                    assert key not in benchmark or benchmark[key] != document[key], (
-                        path.name
+            assert (
+                not set(
+                    (
+                        "model",
+                        "display_name",
+                        "provider",
+                        "cloud",
+                        "params_b",
+                        "memory_gb",
+                        "quantization",
+                        "model_file",
+                        "model_revision",
+                        "requested_model",
+                        "models",
                     )
-            assert benchmark.get("requested_model") != document["model"], path.name
-            assert benchmark.get("models") != [document["model"]], path.name
+                )
+                & benchmark.keys()
+            ), path.name
             assert (
                 datetime.fromisoformat(benchmark["evaluated_at"]).utcoffset()
                 is not None
@@ -109,7 +120,7 @@ def test_evaluation_results():
             "data_source": "projecte-aina/teca:test",
             "n": 2117,
             "requested_n_samples": 0,
-            **{key: data[key] for key in ("model", "seed", "shuffled_options")},
+            **{key: data[key] for key in ("seed", "shuffled_options")},
         }
         for field, value in expected_teca.items():
             assert type(teca.get(field)) is type(value) and teca[field] == value, (

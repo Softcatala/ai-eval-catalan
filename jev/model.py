@@ -144,6 +144,8 @@ def result_document(previous, summary=None):
         "quantization",
         "model_file",
         "model_revision",
+        "requested_model",
+        "models",
     )
     result = {key: previous[key] for key in metadata if key in previous}
     result["benchmarks"] = {
@@ -155,22 +157,18 @@ def result_document(previous, summary=None):
         result.update({key: summary[key] for key in metadata if key in summary})
         key = "teca" if summary["dataset"] == "Tornem a TE-ca" else "massive"
         result["benchmarks"][key] = summary
-    defaults = {
-        "locale": "ca-ES",
-        "labels": "ca",
+    for key, value in {
         "requested_model": result.get("model"),
         "models": [result.get("model")],
-        **{
-            key: result[key]
-            for key in ("model_file", "model_revision")
-            if key in result
-        },
-    }
+    }.items():
+        if result.get(key) == value:
+            result.pop(key, None)
+    defaults = {"locale": "ca-ES", "labels": "ca"}
     result["benchmarks"] = {
         name: {
             key: value
             for key, value in benchmark.items()
-            if key not in defaults or value != defaults[key]
+            if key not in metadata and (key not in defaults or value != defaults[key])
         }
         for name, benchmark in result["benchmarks"].items()
     }
