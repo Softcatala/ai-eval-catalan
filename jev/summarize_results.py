@@ -136,6 +136,7 @@ def main():
             "massive_accuracy": "MASSIVE Taxa d’encert",
             "teca_accuracy": "TE-ca Taxa d’encert",
             "massive_macro_f1": "MASSIVE Macro F1",
+            "teca_macro_f1": "TE-ca Macro F1",
             "massive_decisions_per_sec": "Decisions/s",
         },
         "metrics": {
@@ -145,6 +146,7 @@ def main():
                 "teca_accuracy",
                 "average_accuracy",
                 "massive_macro_f1",
+                "teca_macro_f1",
                 "massive_decisions_per_sec",
             )
         },
