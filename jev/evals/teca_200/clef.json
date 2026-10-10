@@ -1,0 +1,22 @@
+{
+  "evaluated_at": "2026-10-10T07:11:49+00:00",
+  "dataset": "Tornem a TE-ca",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "Clef-GGUF",
+  "models": [
+    "Clef-GGUF"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 200,
+  "accuracy": 0.785,
+  "macro_f1_3_labels": 0.7869793079711768,
+  "mean_latency_ms": 1541.7929759071558,
+  "requested_n_samples": 200,
+  "data_source": "projecte-aina/teca:test",
+  "model": "Clef-GGUF",
+  "provider": "systemone",
+  "cloud": false,
+  "display_name": "Clef 27B"
+}

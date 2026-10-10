@@ -47,7 +47,15 @@ def completed(path, args, model):
         and result.get("shuffled_options") == args.shuffle_options
         and result.get("requested_n_samples") == args.limit
         and result.get("data_source")
-        == (str(args.data.resolve()) if args.data else "MASSIVE 1.1")
+        == (
+            str(args.data.resolve())
+            if args.data
+            else (
+                "projecte-aina/teca:test" if args.dataset == "teca" else "MASSIVE 1.1"
+            )
+        )
+        and result.get("dataset", "MASSIVE 1.1")
+        == ("Tornem a TE-ca" if args.dataset == "teca" else "MASSIVE 1.1")
         and "accuracy" in result
     )
 
@@ -63,19 +71,25 @@ def main():
     parser.add_argument(
         "--server-model", help="Override request ID for one selected model"
     )
-    parser.add_argument("--output-dir", type=Path, default=SCRIPT_DIR / "evals")
+    parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
     validate_arguments(parser, args)
+    if args.output_dir is None:
+        args.output_dir = SCRIPT_DIR / "evals"
+        if args.dataset == "teca":
+            args.output_dir /= "teca"
     if args.server_model and (not args.models or len(args.models) != 1):
         parser.error("--server-model requires exactly one model in --models")
     try:
         models = (
             list(dict.fromkeys(args.models))
             if args.models
-            else [m["model"] for m in MODELS if m.get("provider") == "openai"]
-            if args.provider == "openai"
-            else discover_models(args)
+            else (
+                [m["model"] for m in MODELS if m.get("provider") == "openai"]
+                if args.provider == "openai"
+                else discover_models(args)
+            )
         )
     except (OSError, ValueError, RuntimeError, KeyError) as error:
         parser.exit(1, f"Cannot discover models: {error}\n")
@@ -104,6 +118,7 @@ def main():
             str(output),
         ]
         for option in (
+            "dataset",
             "server_url",
             "provider",
             "limit",

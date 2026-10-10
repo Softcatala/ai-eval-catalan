@@ -39,6 +39,59 @@ def test_test_split_sampling_and_parallel_ids(args):
     ]
 
 
+def test_teca_labels_sampling_and_scores(args, tmp_path):
+    args.dataset = "teca"
+    examples = [
+        {"premise": "Premissa", "hypothesis": "Hipòtesi", "label": label}
+        for label in range(3)
+    ]
+    args.data.write_text("\n".join(json.dumps(row) for row in examples))
+    rows = model.load_rows(args)
+    assert {r["scenario"] for r in rows} == set(model.TECA_LABELS)
+    assert all("Premissa: Premissa\nHipòtesi: Hipòtesi" == r["utt"] for r in rows)
+    assert rows == model.load_rows(args)
+    answers = [({"choice": r["scenario"]}, "jev", 10) for r in rows]
+    with patch.object(model, "predict", side_effect=answers):
+        result = model.evaluate_model(args, rows, "jev", tmp_path / "teca.jsonl")
+    assert result["dataset"] == "Tornem a TE-ca"
+    assert result["accuracy"] == result["macro_f1_3_labels"] == 1.0
+    assert "macro_f1_18_labels" not in result
+    args.limit = 2
+    assert model.load_rows(args) == rows[:2]
+
+
+@pytest.mark.parametrize("provider", ["systemone", "openai"])
+def test_teca_request_uses_entailment_choices(args, provider):
+    args.dataset = "teca"
+    args.provider = provider
+    args.url = "https://example.test"
+    args.timeout = 1
+    answer = {"type": "choice", "choice": "neutral", "probabilities": []}
+    response = (
+        {"answers": [{"name": "scenario", **answer}]}
+        if provider == "openai"
+        else {"answers": {"scenario": answer}}
+    )
+    with patch.object(model, "request_json", return_value=response) as request:
+        prediction, _, _ = model.predict(
+            args, {"utt": "Premissa: P\nHipòtesi: H"}, 0, "jev"
+        )
+    assert prediction["choice"] == "neutral"
+    payload = request.call_args.args[2]
+    question = (
+        payload["questions"][0]
+        if provider == "openai"
+        else payload["questions"]["scenario"]
+    )
+    assert "premissa" in question["instructions"]
+    choices = (
+        {c["value"] for c in question["choices"]}
+        if provider == "openai"
+        else set(question["criteria"])
+    )
+    assert choices == set(model.TECA_LABELS)
+
+
 @pytest.mark.parametrize(
     "model_id, display_name, expected",
     [
@@ -74,6 +127,10 @@ def test_metrics_and_summary_aggregation(
             "memory_gb": 9.7,
             "n": 2,
             "massive_accuracy": 0.5,
+            "teca_n": None,
+            "teca_accuracy": None,
+            "teca_macro_f1": None,
+            "average_accuracy": None,
             "massive_macro_f1": 0.037,
             "massive_decisions_per_sec": 50.0,
         }
@@ -92,6 +149,54 @@ def test_metrics_and_summary_aggregation(
         summarize_results.main()
     published = json.loads(output.read_text())
     assert published["data"] == rows
+
+
+def test_average_ranking_requires_both_full_datasets(tmp_path):
+    teca_dir = tmp_path / "teca_full"
+    teca_dir.mkdir()
+    common = {
+        "locale": "ca-ES",
+        "labels": "ca",
+        "seed": 42,
+        "shuffled_options": False,
+        "requested_n_samples": 0,
+        "mean_latency_ms": 10,
+    }
+    for name, massive_accuracy, teca_accuracy in [
+        ("Kev-4B-GGUF", 0.9, 0.5),
+        ("Kev-9B-GGUF", 0.8, 0.8),
+        ("lev-GGUF", 0.99, None),
+    ]:
+        massive = {
+            **common,
+            "model": name,
+            "dataset": "MASSIVE 1.1",
+            "n": 2974,
+            "accuracy": massive_accuracy,
+            "macro_f1_18_labels": massive_accuracy,
+        }
+        (tmp_path / f"{name}.json").write_text(json.dumps(massive))
+        if teca_accuracy is not None:
+            teca = {
+                **common,
+                "model": name,
+                "dataset": "Tornem a TE-ca",
+                "data_source": "projecte-aina/teca:test",
+                "n": 2117,
+                "accuracy": teca_accuracy,
+                "macro_f1_3_labels": teca_accuracy,
+            }
+            (teca_dir / f"{name}.json").write_text(json.dumps(teca))
+    rows = summarize_results.load_rows(tmp_path)
+    assert [r["model"] for r in rows] == ["Kev 9B", "Kev 4B", "lev 4B"]
+    assert [r["average_accuracy"] for r in rows] == [0.8, 0.7, None]
+    assert rows[0]["teca_n"] == 2117
+    path = teca_dir / "Kev-4B-GGUF.json"
+    result = json.loads(path.read_text())
+    result["n"] = 200
+    path.write_text(json.dumps(result))
+    with pytest.raises(ValueError, match="n must be 2117"):
+        summarize_results.load_rows(tmp_path)
 
 
 @pytest.mark.parametrize(

@@ -1,0 +1,22 @@
+{
+  "evaluated_at": "2026-10-10T07:17:48+00:00",
+  "dataset": "Tornem a TE-ca",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "OpenJev-GGUF",
+  "models": [
+    "OpenJev-GGUF"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 200,
+  "accuracy": 0.835,
+  "macro_f1_3_labels": 0.8355303940069766,
+  "mean_latency_ms": 1170.5404867511243,
+  "requested_n_samples": 200,
+  "data_source": "projecte-aina/teca:test",
+  "model": "OpenJev-GGUF",
+  "provider": "systemone",
+  "cloud": false,
+  "display_name": "OpenJev 27B"
+}

@@ -1,4 +1,4 @@
-"""Aggregate completed MASSIVE evaluations into jevs.json."""
+"""Rank decision models by the mean accuracy on MASSIVE and TE-ca."""
 
 import argparse
 import json
@@ -52,7 +52,8 @@ def model_repo_url(result):
         return None
 
 
-def load_rows(directory):
+def load_rows(directory, teca_directory=None):
+    teca_directory = teca_directory or directory / "teca_full"
     rows = []
     for path in sorted(directory.glob("*.json")):
         if path.name.endswith((".summary.json", ".comparison.json")):
@@ -60,6 +61,30 @@ def load_rows(directory):
         result = json.loads(path.read_text(encoding="utf-8"))
         if "accuracy" not in result or "model" not in result:
             continue
+        teca_path = teca_directory / path.name
+        teca = (
+            json.loads(teca_path.read_text(encoding="utf-8"))
+            if teca_path.exists()
+            else None
+        )
+        if teca is not None:
+            if result["n"] != 2974 or result.get("requested_n_samples") != 0:
+                raise ValueError(
+                    f"{path}: ranking requires the full MASSIVE test (2974)"
+                )
+            expected = {
+                "dataset": "Tornem a TE-ca",
+                "data_source": "projecte-aina/teca:test",
+                "n": 2117,
+                "requested_n_samples": 0,
+                **{
+                    key: result[key]
+                    for key in ("model", "locale", "labels", "seed", "shuffled_options")
+                },
+            }
+            for key, value in expected.items():
+                if teca.get(key) != value:
+                    raise ValueError(f"{teca_path}: {key} must be {value!r}")
         rows.append(
             {
                 "model": model_display_name(
@@ -72,21 +97,41 @@ def load_rows(directory):
                 "memory_gb": model_memory_gb(result),
                 "n": result["n"],
                 "massive_accuracy": round(result["accuracy"], 4),
+                "teca_n": teca["n"] if teca else None,
+                "teca_accuracy": round(teca["accuracy"], 4) if teca else None,
+                "teca_macro_f1": round(teca["macro_f1_3_labels"], 4) if teca else None,
+                "average_accuracy": round(
+                    (result["accuracy"] + teca["accuracy"]) / 2, 4
+                )
+                if teca
+                else None,
                 "massive_macro_f1": round(result["macro_f1_18_labels"], 4),
                 "massive_decisions_per_sec": round(1000 / result["mean_latency_ms"], 1)
                 if not result.get("cloud", False) and result["mean_latency_ms"] > 0
                 else None,
             }
         )
-    return sorted(rows, key=lambda row: row["massive_accuracy"], reverse=True)
+    return sorted(
+        rows,
+        key=lambda row: (
+            row["average_accuracy"] if row["average_accuracy"] is not None else -1,
+            row["massive_accuracy"],
+        ),
+        reverse=True,
+    )
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results-dir", type=Path, default=SCRIPT_DIR / "evals")
+    parser.add_argument(
+        "--teca-results-dir",
+        type=Path,
+        help="Full TE-ca results (default: RESULTS_DIR/teca_full)",
+    )
     parser.add_argument("--json-out", type=Path, default=SCRIPT_DIR / "jevs.json")
     args = parser.parse_args()
-    rows = load_rows(args.results_dir)
+    rows = load_rows(args.results_dir, args.teca_results_dir)
     for row in rows:
         print(
             f"{row['model']}: accuracy={row['massive_accuracy']:.2%}, macro F1={row['massive_macro_f1']:.4f}"
@@ -95,7 +140,9 @@ def main():
         "text": {
             "model": "Model",
             "memory_gb": "Memòria (GB)",
+            "average_accuracy": "Mitjana MASSIVE / TE-ca (50% / 50%)",
             "massive_accuracy": "MASSIVE Taxa d’encert",
+            "teca_accuracy": "TE-ca Taxa d’encert",
             "massive_macro_f1": "MASSIVE Macro F1",
             "massive_decisions_per_sec": "Decisions/s",
         },
@@ -103,6 +150,8 @@ def main():
             metric: {"direction": "higher_is_better"}
             for metric in (
                 "massive_accuracy",
+                "teca_accuracy",
+                "average_accuracy",
                 "massive_macro_f1",
                 "massive_decisions_per_sec",
             )

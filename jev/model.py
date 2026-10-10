@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Evaluate a System One server on MASSIVE 1.1 scenarios (Python stdlib only)."""
+"""Evaluate decision models on MASSIVE 1.1 scenarios or TE-ca inference."""
 
 import argparse
 from datetime import datetime, timezone
@@ -100,8 +100,52 @@ LABELS = {
     ),
 }
 
+TECA_LABELS = {
+    "entailment": (
+        "La premissa implica la hipòtesi",
+        "The premise entails the hypothesis",
+    ),
+    "neutral": (
+        "La premissa no permet deduir ni refutar la hipòtesi",
+        "The premise neither entails nor contradicts the hypothesis",
+    ),
+    "contradiction": (
+        "La premissa contradiu la hipòtesi",
+        "The premise contradicts the hypothesis",
+    ),
+}
+
+
+def labels_for(args):
+    return TECA_LABELS if args.dataset == "teca" else LABELS
+
+
+def dataset_name(args):
+    return "Tornem a TE-ca" if args.dataset == "teca" else "MASSIVE 1.1"
+
 
 def load_rows(args):
+    if args.dataset == "teca":
+        if args.data:
+            examples = [
+                json.loads(line)
+                for line in args.data.read_text(encoding="utf-8").splitlines()
+                if line.strip()
+            ]
+        else:
+            from datasets import load_dataset
+
+            examples = load_dataset("projecte-aina/teca", split="test")
+        rows = [
+            {
+                "id": i,
+                "utt": f"Premissa: {item['premise']}\nHipòtesi: {item['hypothesis']}",
+                "scenario": list(TECA_LABELS)[int(item["label"])],
+            }
+            for i, item in enumerate(examples)
+        ]
+        random.Random(args.seed).shuffle(rows)
+        return rows[: args.limit] if args.limit else rows
     if args.data:
         lines = args.data.read_text(encoding="utf-8").splitlines()
     else:
@@ -182,7 +226,7 @@ def discover_models(args):
 
 def predict(args, row, index, model_id):
     language = 0 if args.labels == "ca" else 1
-    criteria = [(key, desc[language]) for key, desc in LABELS.items()]
+    criteria = [(key, desc[language]) for key, desc in labels_for(args).items()]
     if args.shuffle_options:
         random.Random(args.seed + index).shuffle(criteria)
     payload = {
@@ -191,9 +235,17 @@ def predict(args, row, index, model_id):
             "scenario": {
                 "type": "choice",
                 "instructions": (
-                    "A quina categoria pertany aquesta petició a un assistent?"
-                    if language == 0
-                    else "Which category does this request to an assistant belong to?"
+                    (
+                        "Classifica la relació entre la premissa i la hipòtesi."
+                        if language == 0
+                        else "Classify the relationship between the premise and the hypothesis."
+                    )
+                    if args.dataset == "teca"
+                    else (
+                        "A quina categoria pertany aquesta petició a un assistent?"
+                        if language == 0
+                        else "Which category does this request to an assistant belong to?"
+                    )
                 ),
                 "criteria": dict(criteria),
             }
@@ -233,7 +285,7 @@ def predict(args, row, index, model_id):
             raise ValueError(f"Unexpected answer type: {answer['type']}")
     else:
         answer = result["answers"]["scenario"]
-    if answer["choice"] not in LABELS and answer.get("type") != "refusal":
+    if answer["choice"] not in labels_for(args) and answer.get("type") != "refusal":
         raise ValueError(f"Unexpected choice: {answer['choice']}")
     return answer, result.get("model"), (time.perf_counter() - started) * 1000
 
@@ -249,7 +301,10 @@ def print_summary(summary, output):
         ("Label language", {"ca": "Catalan", "en": "English"}[summary["labels"]]),
         ("Examples", str(summary["n"])),
         ("Accuracy", f"{summary['accuracy']:.2%}"),
-        ("Macro F1 (18 labels)", f"{summary['macro_f1_18_labels']:.4f}"),
+        (
+            "Macro F1",
+            f"{next(value for key, value in summary.items() if key.startswith('macro_f1_')):.4f}",
+        ),
         ("Mean latency", f"{summary['mean_latency_ms']:.2f} ms"),
     ]
     widths = [max(len(row[i]) for row in rows) for i in range(2)]
@@ -264,14 +319,15 @@ def print_summary(summary, output):
 
 
 def evaluate_model(args, rows, model_id, output_path):
+    labels = labels_for(args)
     records = []
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as output:
         for index, row in enumerate(rows):
             gold = row["scenario"]
             if isinstance(gold, int):
-                gold = list(LABELS)[gold]
-            if gold not in LABELS:
+                gold = list(labels)[gold]
+            if gold not in labels:
                 raise ValueError(f"Unknown scenario: {gold}")
             answer, model, elapsed = predict(args, row, index, model_id)
             record = {
@@ -291,14 +347,14 @@ def evaluate_model(args, rows, model_id, output_path):
             if (index + 1) % 25 == 0:
                 print(f"{index + 1}/{len(rows)}", flush=True)
     f1s = []
-    for label in LABELS:
+    for label in labels:
         tp = sum(r["gold"] == label and r["prediction"] == label for r in records)
         fp = sum(r["gold"] != label and r["prediction"] == label for r in records)
         fn = sum(r["gold"] == label and r["prediction"] != label for r in records)
         f1s.append(2 * tp / (2 * tp + fp + fn) if tp + fp + fn else 0)
     return {
         "evaluated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "dataset": "MASSIVE 1.1",
+        "dataset": dataset_name(args),
         "locale": args.locale,
         "labels": args.labels,
         "requested_model": model_id,
@@ -307,12 +363,13 @@ def evaluate_model(args, rows, model_id, output_path):
         "shuffled_options": args.shuffle_options,
         "n": len(records),
         "accuracy": sum(r["gold"] == r["prediction"] for r in records) / len(records),
-        "macro_f1_18_labels": sum(f1s) / len(f1s),
+        f"macro_f1_{len(labels)}_labels": sum(f1s) / len(f1s),
         "mean_latency_ms": sum(r["latency_ms"] for r in records) / len(records),
     }
 
 
 def add_evaluation_arguments(parser):
+    parser.add_argument("--dataset", choices=["massive", "teca"], default="massive")
     parser.add_argument(
         "--provider", choices=["systemone", "openai"], default="systemone"
     )
@@ -334,12 +391,16 @@ def add_evaluation_arguments(parser):
     )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--shuffle-options", action="store_true")
-    parser.add_argument("--data", type=Path, help="Local original MASSIVE JSONL file")
+    parser.add_argument(
+        "--data", type=Path, help="Local JSONL file for the selected dataset"
+    )
     parser.add_argument("--cache", type=Path, default=SCRIPT_DIR / "data")
     parser.add_argument("--timeout", type=float, default=120)
 
 
 def validate_arguments(parser, args):
+    if args.dataset == "teca" and args.locale != "ca-ES":
+        parser.error("TE-ca requires --locale ca-ES")
     if args.limit < 0:
         parser.error("--n-samples must be nonnegative")
     if args.timeout <= 0:
@@ -360,11 +421,15 @@ def main():
     )
     parser.add_argument("--server-model", help="Override the request model ID")
     parser.add_argument("--display-name", help="User-facing model name")
-    parser.add_argument(
-        "--output", type=Path, default=SCRIPT_DIR / "evals/massive.json"
-    )
+    parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     validate_arguments(parser, args)
+    if args.output is None:
+        args.output = (
+            SCRIPT_DIR
+            / "evals"
+            / ("teca/teca.json" if args.dataset == "teca" else "massive.json")
+        )
     # Remove a previous completed result before starting a replacement run.
     args.output.unlink(missing_ok=True)
     predictions = args.output.with_suffix(".jsonl")
@@ -375,7 +440,11 @@ def main():
         )
         summary["requested_n_samples"] = args.limit
         summary["data_source"] = (
-            str(args.data.resolve()) if args.data else "MASSIVE 1.1"
+            str(args.data.resolve())
+            if args.data
+            else (
+                "projecte-aina/teca:test" if args.dataset == "teca" else "MASSIVE 1.1"
+            )
         )
         summary["model"] = args.model
         summary["provider"] = args.provider

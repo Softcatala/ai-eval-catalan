@@ -1,0 +1,22 @@
+{
+  "evaluated_at": "2026-10-10T07:21:44+00:00",
+  "dataset": "Tornem a TE-ca",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "gpt-6-luna",
+  "models": [
+    "gpt-6-luna"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 200,
+  "accuracy": 0.715,
+  "macro_f1_3_labels": 0.719872269894938,
+  "mean_latency_ms": 185.24436595384032,
+  "requested_n_samples": 200,
+  "data_source": "projecte-aina/teca:test",
+  "model": "gpt-6-luna",
+  "provider": "openai",
+  "cloud": true,
+  "display_name": "GPT-6 Luna Decisions"
+}

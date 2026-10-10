@@ -1,0 +1,22 @@
+{
+  "evaluated_at": "2026-10-10T08:34:47+00:00",
+  "dataset": "Tornem a TE-ca",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "Bespoke-Nimble-9B-v3-GGUF",
+  "models": [
+    "Bespoke-Nimble-9B-v3-GGUF"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 2117,
+  "accuracy": 0.819555975436939,
+  "macro_f1_3_labels": 0.8219422946713925,
+  "mean_latency_ms": 517.7940816343439,
+  "requested_n_samples": 0,
+  "data_source": "projecte-aina/teca:test",
+  "model": "Bespoke-Nimble-9B-v3-GGUF",
+  "provider": "systemone",
+  "cloud": false,
+  "display_name": "Nimble 9B"
+}

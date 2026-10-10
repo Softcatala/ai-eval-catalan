@@ -459,3 +459,25 @@ es desen a `jev/evals/` (JSON i JSONL); `jev/jevs.json` n'agrega el resum.
 Usa `--overwrite` per repetir avaluacions i `--output-dir` per conservar
 configuracions separades. Consulta `python3 -m jev.run_evals --help` per a les
 opcions de llengua, ordre de categories i dades locals.
+
+També es pot avaluar Tornem a TE-ca (`projecte-aina/teca`, split `test`),
+amb tres opcions: implicació, neutralitat i contradicció. Aquesta avaluació
+requereix `datasets` (disponible a l'entorn de `llm/`) i desa els resultats
+separats de MASSIVE. Per fer una primera passada de 200 mostres per model:
+
+```bash
+llm/.venv/bin/python -m jev.run_evals --dataset teca --n-samples 200 --output-dir jev/evals/teca_200
+llm/.venv/bin/python -m jev.run_evals --dataset teca --n-samples 200 --output-dir jev/evals/teca_200 --provider openai --models gpt-6-luna
+```
+
+La selecció és reproduïble amb `--seed` (42 per defecte).
+Per avaluar tot el test (2.117 exemples), usa `--n-samples 0` i
+`--output-dir jev/evals/teca_full`.
+
+El rànquing JEV s'ordena per la mitjana aritmètica de les accuracy de MASSIVE
+i TE-ca, amb un pes del 50% per a cada dataset. Les dues accuracy es mostren
+separadament. Només es calcula la mitjana quan el model té les dues avaluacions;
+els models pendents apareixen al final sense puntuació global. L'agregador
+`python3 -m jev.summarize_results` llegeix MASSIVE de `jev/evals/` i TE-ca de
+`jev/evals/teca_full/` (configurable amb `--teca-results-dir`), i exigeix tot
+el test de TE-ca i la mateixa configuració de llengua, llavor i ordre d'opcions.

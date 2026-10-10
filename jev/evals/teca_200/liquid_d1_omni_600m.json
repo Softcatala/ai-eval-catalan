@@ -1,0 +1,22 @@
+{
+  "evaluated_at": "2026-10-10T07:19:51+00:00",
+  "dataset": "Tornem a TE-ca",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "LiquidAI/d1-omni-600M-GGUF:Q8_0",
+  "models": [
+    "LiquidAI/d1-omni-600M-GGUF:Q8_0"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 200,
+  "accuracy": 0.495,
+  "macro_f1_3_labels": 0.4480298217987384,
+  "mean_latency_ms": 38.60467835009331,
+  "requested_n_samples": 200,
+  "data_source": "projecte-aina/teca:test",
+  "model": "LiquidAI/d1-omni-600M-GGUF:Q8_0",
+  "provider": "systemone",
+  "cloud": false,
+  "display_name": "d1 omni 600M"
+}

@@ -1,0 +1,22 @@
+{
+  "evaluated_at": "2026-10-10T07:19:17+00:00",
+  "dataset": "Tornem a TE-ca",
+  "locale": "ca-ES",
+  "labels": "ca",
+  "requested_model": "lev-GGUF",
+  "models": [
+    "lev-GGUF"
+  ],
+  "seed": 42,
+  "shuffled_options": false,
+  "n": 200,
+  "accuracy": 0.805,
+  "macro_f1_3_labels": 0.8027023481568936,
+  "mean_latency_ms": 436.253414201492,
+  "requested_n_samples": 200,
+  "data_source": "projecte-aina/teca:test",
+  "model": "lev-GGUF",
+  "provider": "systemone",
+  "cloud": false,
+  "display_name": "lev 4B"
+}
