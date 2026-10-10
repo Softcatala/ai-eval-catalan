@@ -1,27 +1,63 @@
 {
-  "evaluated_at": "2026-10-10T06:30:27+00:00",
-  "dataset": "MASSIVE 1.1",
-  "locale": "ca-ES",
-  "labels": "ca",
-  "requested_model": "owao/surogate-rune-26b-a4b-GGUF:Q8_0",
-  "models": [
-    "owao/surogate-rune-26b-a4b-GGUF:Q8_0"
-  ],
-  "seed": 42,
-  "shuffled_options": false,
-  "n": 2974,
-  "accuracy": 0.8167451244115669,
-  "macro_f1_18_labels": 0.8057286140649185,
-  "mean_latency_ms": 511.32987930759066,
-  "requested_n_samples": 0,
-  "data_source": "MASSIVE 1.1",
   "model": "owao/surogate-rune-26b-a4b-GGUF:Q8_0",
+  "display_name": "Rune v3 26B-A4B",
   "provider": "systemone",
   "cloud": false,
-  "display_name": "Rune v3 26B-A4B",
-  "quantization": "Q8_0",
-  "model_file": "Rune-26B-A4B-v3-Q8_0.gguf",
   "params_b": 25.233142046,
   "memory_gb": 26.9,
-  "model_revision": "f6cf5c19a05713cb9b2c59a57cd79e85ab8d2ffd"
+  "quantization": "Q8_0",
+  "model_file": "Rune-26B-A4B-v3-Q8_0.gguf",
+  "model_revision": "f6cf5c19a05713cb9b2c59a57cd79e85ab8d2ffd",
+  "evaluated_at": "2026-10-10T06:30:27+00:00",
+  "benchmarks": {
+    "massive": {
+      "evaluated_at": "2026-10-10T06:30:27+00:00",
+      "dataset": "MASSIVE 1.1",
+      "locale": "ca-ES",
+      "labels": "ca",
+      "requested_model": "owao/surogate-rune-26b-a4b-GGUF:Q8_0",
+      "models": [
+        "owao/surogate-rune-26b-a4b-GGUF:Q8_0"
+      ],
+      "seed": 42,
+      "shuffled_options": false,
+      "n": 2974,
+      "accuracy": 0.8167451244115669,
+      "macro_f1_18_labels": 0.8057286140649185,
+      "mean_latency_ms": 511.32987930759066,
+      "requested_n_samples": 0,
+      "data_source": "MASSIVE 1.1",
+      "model": "owao/surogate-rune-26b-a4b-GGUF:Q8_0",
+      "provider": "systemone",
+      "cloud": false,
+      "display_name": "Rune v3 26B-A4B",
+      "quantization": "Q8_0",
+      "model_file": "Rune-26B-A4B-v3-Q8_0.gguf",
+      "params_b": 25.233142046,
+      "memory_gb": 26.9,
+      "model_revision": "f6cf5c19a05713cb9b2c59a57cd79e85ab8d2ffd"
+    },
+    "teca": {
+      "evaluated_at": "2026-10-10T08:16:28+00:00",
+      "dataset": "Tornem a TE-ca",
+      "locale": "ca-ES",
+      "labels": "ca",
+      "requested_model": "owao/surogate-rune-26b-a4b-GGUF:Q8_0",
+      "models": [
+        "owao/surogate-rune-26b-a4b-GGUF:Q8_0"
+      ],
+      "seed": 42,
+      "shuffled_options": false,
+      "n": 2117,
+      "accuracy": 0.7647614548889938,
+      "macro_f1_3_labels": 0.7675358363856671,
+      "mean_latency_ms": 290.4076176203579,
+      "requested_n_samples": 0,
+      "data_source": "projecte-aina/teca:test",
+      "model": "owao/surogate-rune-26b-a4b-GGUF:Q8_0",
+      "provider": "systemone",
+      "cloud": false,
+      "display_name": "surogate rune 26b a4b"
+    }
+  }
 }

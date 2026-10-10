@@ -151,7 +151,8 @@ def test_metrics_and_summary_aggregation(
     assert published["data"] == rows
 
 
-def test_average_ranking_requires_both_full_datasets(tmp_path):
+@pytest.mark.parametrize("embedded", [False, True])
+def test_average_ranking_requires_both_full_datasets(tmp_path, embedded):
     teca_dir = tmp_path / "teca_full"
     teca_dir.mkdir()
     common = {
@@ -186,17 +187,78 @@ def test_average_ranking_requires_both_full_datasets(tmp_path):
                 "accuracy": teca_accuracy,
                 "macro_f1_3_labels": teca_accuracy,
             }
-            (teca_dir / f"{name}.json").write_text(json.dumps(teca))
+            if embedded:
+                massive["benchmarks"] = {"teca": teca}
+                (tmp_path / f"{name}.json").write_text(json.dumps(massive))
+            else:
+                (teca_dir / f"{name}.json").write_text(json.dumps(teca))
     rows = summarize_results.load_rows(tmp_path)
     assert [r["model"] for r in rows] == ["Kev 9B", "Kev 4B", "lev 4B"]
     assert [r["average_accuracy"] for r in rows] == [0.8, 0.7, None]
     assert rows[0]["teca_n"] == 2117
-    path = teca_dir / "Kev-4B-GGUF.json"
+    path = (tmp_path if embedded else teca_dir) / "Kev-4B-GGUF.json"
     result = json.loads(path.read_text())
-    result["n"] = 200
+    (result["benchmarks"]["teca"] if embedded else result)["n"] = 200
     path.write_text(json.dumps(result))
     with pytest.raises(ValueError, match="n must be 2117"):
         summarize_results.load_rows(tmp_path)
+
+
+@pytest.mark.parametrize("dataset", ["massive", "teca"])
+def test_rerun_preserves_other_benchmark(tmp_path, dataset):
+    output = tmp_path / "jev.json"
+    original = {
+        "dataset": "MASSIVE 1.1",
+        "model": "jev",
+        "accuracy": 0.8,
+        "n": 2974,
+        "benchmarks": {
+            "teca": {"dataset": "Tornem a TE-ca", "accuracy": 0.7, "n": 2117}
+        },
+    }
+    output.write_text(json.dumps(original))
+    summary = {
+        "dataset": "MASSIVE 1.1" if dataset == "massive" else "Tornem a TE-ca",
+        "models": ["jev"],
+        "accuracy": 0.9,
+        "n": 2974 if dataset == "massive" else 2117,
+        "macro_f1_18_labels" if dataset == "massive" else "macro_f1_3_labels": 0.9,
+        "mean_latency_ms": 10,
+        "locale": "ca-ES",
+        "labels": "ca",
+        "seed": 42,
+        "shuffled_options": False,
+    }
+    with (
+        patch(
+            "sys.argv",
+            [
+                "model.py",
+                "--model",
+                "jev",
+                "--dataset",
+                dataset,
+                "--output",
+                str(output),
+            ],
+        ),
+        patch.object(model, "load_rows", return_value=[]),
+        patch.object(model, "evaluate_model", return_value=summary),
+    ):
+        model.main()
+    stored = json.loads(output.read_text())
+    if dataset == "teca":
+        assert stored["benchmarks"]["massive"] == {
+            k: v for k, v in original.items() if k != "benchmarks"
+        }
+        assert stored["benchmarks"]["teca"]["accuracy"] == 0.9
+        parser = argparse.ArgumentParser()
+        model.add_evaluation_arguments(parser)
+        args = parser.parse_args(["--dataset", "teca"])
+        assert run_evals.completed(output, args, "jev")
+    else:
+        assert stored["benchmarks"]["teca"] == original["benchmarks"]["teca"]
+        assert stored["benchmarks"]["massive"]["accuracy"] == 0.9
 
 
 @pytest.mark.parametrize(

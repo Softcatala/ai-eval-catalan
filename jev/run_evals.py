@@ -12,6 +12,7 @@ try:
     from .model import (
         SCRIPT_DIR,
         add_evaluation_arguments,
+        benchmark_result,
         discover_models,
         validate_arguments,
     )
@@ -20,6 +21,7 @@ except ImportError:
     from model import (
         SCRIPT_DIR,
         add_evaluation_arguments,
+        benchmark_result,
         discover_models,
         validate_arguments,
     )
@@ -38,6 +40,7 @@ def completed(path, args, model):
         result = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return False
+    result = benchmark_result(result, args.dataset)
     return (
         result.get("model") == model
         and result.get("provider", "systemone") == args.provider
@@ -77,8 +80,6 @@ def main():
     validate_arguments(parser, args)
     if args.output_dir is None:
         args.output_dir = SCRIPT_DIR / "evals"
-        if args.dataset == "teca":
-            args.output_dir /= "teca"
     if args.server_model and (not args.models or len(args.models) != 1):
         parser.error("--server-model requires exactly one model in --models")
     try:

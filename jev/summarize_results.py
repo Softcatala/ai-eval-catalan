@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 from eval_common.model_urls import repo_url
-from jev.model import MODEL_PARAMS_B, model_display_name
+from jev.model import MODEL_PARAMS_B, benchmark_result, model_display_name
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 
@@ -59,14 +59,14 @@ def load_rows(directory, teca_directory=None):
         if path.name.endswith((".summary.json", ".comparison.json")):
             continue
         result = json.loads(path.read_text(encoding="utf-8"))
-        if "accuracy" not in result or "model" not in result:
+        massive = benchmark_result(result, "massive")
+        result = {**result, **massive}
+        if "macro_f1_18_labels" not in result or "model" not in result:
             continue
         teca_path = teca_directory / path.name
-        teca = (
-            json.loads(teca_path.read_text(encoding="utf-8"))
-            if teca_path.exists()
-            else None
-        )
+        teca = result.get("benchmarks", {}).get("teca")
+        if teca is None and teca_path.exists():
+            teca = json.loads(teca_path.read_text(encoding="utf-8"))
         if teca is not None:
             if result["n"] != 2974 or result.get("requested_n_samples") != 0:
                 raise ValueError(

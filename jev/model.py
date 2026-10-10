@@ -124,6 +124,41 @@ def dataset_name(args):
     return "Tornem a TE-ca" if args.dataset == "teca" else "MASSIVE 1.1"
 
 
+def benchmark_result(result, dataset):
+    if dataset in result.get("benchmarks", {}):
+        return result["benchmarks"][dataset]
+    expected = "Tornem a TE-ca" if dataset == "teca" else "MASSIVE 1.1"
+    if "accuracy" in result and result.get("dataset", "MASSIVE 1.1") == expected:
+        return {k: v for k, v in result.items() if k != "benchmarks"}
+    return {}
+
+
+def result_document(previous, summary=None):
+    metadata = (
+        "model",
+        "display_name",
+        "provider",
+        "cloud",
+        "params_b",
+        "memory_gb",
+        "quantization",
+        "model_file",
+        "model_revision",
+        "evaluated_at",
+    )
+    result = {key: previous[key] for key in metadata if key in previous}
+    result["benchmarks"] = {
+        key: value
+        for key in ("massive", "teca")
+        if (value := benchmark_result(previous, key))
+    }
+    if summary is not None:
+        result.update({key: summary[key] for key in metadata if key in summary})
+        key = "teca" if summary["dataset"] == "Tornem a TE-ca" else "massive"
+        result["benchmarks"][key] = summary
+    return result
+
+
 def load_rows(args):
     if args.dataset == "teca":
         if args.data:
@@ -314,7 +349,8 @@ def print_summary(summary, output):
     for label, value in rows:
         print(f"| {label:<{widths[0]}} | {value:<{widths[1]}} |")
     print(border)
-    print(f"Predictions: {output.with_suffix('.jsonl')}")
+    suffix = ".teca.jsonl" if summary["dataset"] == "Tornem a TE-ca" else ".jsonl"
+    print(f"Predictions: {output.with_suffix(suffix)}")
     print(f"Results:     {output}")
 
 
@@ -430,9 +466,27 @@ def main():
             / "evals"
             / ("teca/teca.json" if args.dataset == "teca" else "massive.json")
         )
-    # Remove a previous completed result before starting a replacement run.
-    args.output.unlink(missing_ok=True)
-    predictions = args.output.with_suffix(".jsonl")
+    previous = (
+        json.loads(args.output.read_text(encoding="utf-8"))
+        if args.output.exists()
+        else {}
+    )
+    if previous.get("model", args.model) != args.model:
+        parser.error("Output belongs to a different model")
+    if args.dataset == "teca" and benchmark_result(previous, "massive") and args.limit:
+        parser.error("Use a separate output directory for partial TE-ca evaluations")
+    previous = result_document(previous)
+    previous["benchmarks"].pop(args.dataset, None)
+    if previous["benchmarks"]:
+        args.output.write_text(
+            json.dumps(previous, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
+    else:
+        # Remove only the result being replaced; retain other benchmarks below.
+        args.output.unlink(missing_ok=True)
+    predictions = args.output.with_suffix(
+        ".teca.jsonl" if args.dataset == "teca" else ".jsonl"
+    )
     try:
         rows = load_rows(args)
         summary = evaluate_model(
@@ -450,8 +504,9 @@ def main():
         summary["provider"] = args.provider
         summary["cloud"] = args.provider == "openai"
         summary["display_name"] = model_display_name(args.model, args.display_name)
+        stored = result_document(previous, summary)
         args.output.write_text(
-            json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+            json.dumps(stored, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
         )
     except (RuntimeError, OSError, ValueError, KeyError) as error:
         parser.exit(1, f"Evaluation failed: {error}\n")

@@ -462,8 +462,11 @@ opcions de llengua, ordre de categories i dades locals.
 
 També es pot avaluar Tornem a TE-ca (`projecte-aina/teca`, split `test`),
 amb tres opcions: implicació, neutralitat i contradicció. Aquesta avaluació
-requereix `datasets` (disponible a l'entorn de `llm/`) i desa els resultats
-separats de MASSIVE. Per fer una primera passada de 200 mostres per model:
+requereix `datasets` (disponible a l'entorn de `llm/`). Com a ASR, cada fitxer
+`jev/evals/<model>.json` conté els dos conjunts dins de `benchmarks.massive`
+i `benchmarks.teca`, amb les mètriques, el nombre de mostres i la configuració
+de cada avaluació. Les metadades del model són al nivell superior.
+Per fer una primera passada de 200 mostres per model en un directori separat:
 
 ```bash
 llm/.venv/bin/python -m jev.run_evals --dataset teca --n-samples 200 --output-dir jev/evals/teca_200
@@ -471,13 +474,15 @@ llm/.venv/bin/python -m jev.run_evals --dataset teca --n-samples 200 --output-di
 ```
 
 La selecció és reproduïble amb `--seed` (42 per defecte).
-Per avaluar tot el test (2.117 exemples), usa `--n-samples 0` i
-`--output-dir jev/evals/teca_full`.
+Per afegir tot el test (2.117 exemples) als fitxers existents, usa
+`--dataset teca --n-samples 0` sense `--output-dir`. Una nova passada conserva
+els resultats de l'altre benchmark. Les prediccions TE-ca es desen en `.teca.jsonl`.
 
 El rànquing JEV s'ordena per la mitjana aritmètica de les accuracy de MASSIVE
 i TE-ca, amb un pes del 50% per a cada dataset. Les dues accuracy es mostren
 separadament. Només es calcula la mitjana quan el model té les dues avaluacions;
 els models pendents apareixen al final sense puntuació global. L'agregador
-`python3 -m jev.summarize_results` llegeix MASSIVE de `jev/evals/` i TE-ca de
-`jev/evals/teca_full/` (configurable amb `--teca-results-dir`), i exigeix tot
-el test de TE-ca i la mateixa configuració de llengua, llavor i ordre d'opcions.
+`python3 -m jev.summarize_results` llegeix tots dos benchmarks de `jev/evals/`
+i exigeix els tests complets (2.974 exemples MASSIVE i 2.117 TE-ca) i la mateixa
+configuració de llengua, llavor i ordre d'opcions. També admet els resultats
+antics separats de TE-ca amb `--teca-results-dir`.

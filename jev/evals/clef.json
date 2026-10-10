@@ -1,24 +1,57 @@
 {
-  "evaluated_at": "2026-10-03T20:13:49+00:00",
-  "dataset": "MASSIVE 1.1",
-  "locale": "ca-ES",
-  "labels": "ca",
-  "requested_model": "Clef-GGUF",
-  "models": [
-    "Clef-GGUF"
-  ],
-  "seed": 42,
-  "shuffled_options": false,
-  "n": 2974,
-  "accuracy": 0.878950907868191,
-  "macro_f1_18_labels": 0.8756134845604229,
-  "mean_latency_ms": 4000.9389880344393,
-  "requested_n_samples": 0,
-  "data_source": "MASSIVE 1.1",
   "model": "Clef-GGUF",
   "display_name": "Clef 27B",
+  "memory_gb": 28.7,
   "quantization": "Q8_0",
   "model_file": "Clef-Q8_0.gguf",
   "model_revision": "5f70656b6670c65eb85ad07a11efe211b5f211bd",
-  "memory_gb": 28.7
+  "evaluated_at": "2026-10-03T20:13:49+00:00",
+  "benchmarks": {
+    "massive": {
+      "evaluated_at": "2026-10-03T20:13:49+00:00",
+      "dataset": "MASSIVE 1.1",
+      "locale": "ca-ES",
+      "labels": "ca",
+      "requested_model": "Clef-GGUF",
+      "models": [
+        "Clef-GGUF"
+      ],
+      "seed": 42,
+      "shuffled_options": false,
+      "n": 2974,
+      "accuracy": 0.878950907868191,
+      "macro_f1_18_labels": 0.8756134845604229,
+      "mean_latency_ms": 4000.9389880344393,
+      "requested_n_samples": 0,
+      "data_source": "MASSIVE 1.1",
+      "model": "Clef-GGUF",
+      "display_name": "Clef 27B",
+      "quantization": "Q8_0",
+      "model_file": "Clef-Q8_0.gguf",
+      "model_revision": "5f70656b6670c65eb85ad07a11efe211b5f211bd",
+      "memory_gb": 28.7
+    },
+    "teca": {
+      "evaluated_at": "2026-10-10T09:46:52+00:00",
+      "dataset": "Tornem a TE-ca",
+      "locale": "ca-ES",
+      "labels": "ca",
+      "requested_model": "Clef-GGUF",
+      "models": [
+        "Clef-GGUF"
+      ],
+      "seed": 42,
+      "shuffled_options": false,
+      "n": 2117,
+      "accuracy": 0.7921587151629664,
+      "macro_f1_3_labels": 0.7960166325747967,
+      "mean_latency_ms": 1591.688363556497,
+      "requested_n_samples": 0,
+      "data_source": "projecte-aina/teca:test",
+      "model": "Clef-GGUF",
+      "provider": "systemone",
+      "cloud": false,
+      "display_name": "Clef 27B"
+    }
+  }
 }

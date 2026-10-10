@@ -1,24 +1,57 @@
 {
-  "evaluated_at": "2026-10-03T15:24:35+00:00",
-  "dataset": "MASSIVE 1.1",
-  "locale": "ca-ES",
-  "labels": "ca",
-  "requested_model": "Bespoke-Nimble-9B-v3-GGUF",
-  "models": [
-    "Bespoke-Nimble-9B-v3-GGUF"
-  ],
-  "seed": 42,
-  "shuffled_options": false,
-  "n": 2974,
-  "accuracy": 0.7972427706792199,
-  "macro_f1_18_labels": 0.7870485710018276,
-  "mean_latency_ms": 1244.0557972306563,
-  "requested_n_samples": 0,
-  "data_source": "MASSIVE 1.1",
   "model": "Bespoke-Nimble-9B-v3-GGUF",
   "display_name": "Nimble 9B",
+  "memory_gb": 9.5,
   "quantization": "Q8_0",
   "model_file": "Bespoke-Nimble-9B-v3-Q8_0.gguf",
   "model_revision": "a72bdbadb355ca3014f7f9d2585380917cc59971",
-  "memory_gb": 9.5
+  "evaluated_at": "2026-10-03T15:24:35+00:00",
+  "benchmarks": {
+    "massive": {
+      "evaluated_at": "2026-10-03T15:24:35+00:00",
+      "dataset": "MASSIVE 1.1",
+      "locale": "ca-ES",
+      "labels": "ca",
+      "requested_model": "Bespoke-Nimble-9B-v3-GGUF",
+      "models": [
+        "Bespoke-Nimble-9B-v3-GGUF"
+      ],
+      "seed": 42,
+      "shuffled_options": false,
+      "n": 2974,
+      "accuracy": 0.7972427706792199,
+      "macro_f1_18_labels": 0.7870485710018276,
+      "mean_latency_ms": 1244.0557972306563,
+      "requested_n_samples": 0,
+      "data_source": "MASSIVE 1.1",
+      "model": "Bespoke-Nimble-9B-v3-GGUF",
+      "display_name": "Nimble 9B",
+      "quantization": "Q8_0",
+      "model_file": "Bespoke-Nimble-9B-v3-Q8_0.gguf",
+      "model_revision": "a72bdbadb355ca3014f7f9d2585380917cc59971",
+      "memory_gb": 9.5
+    },
+    "teca": {
+      "evaluated_at": "2026-10-10T08:34:47+00:00",
+      "dataset": "Tornem a TE-ca",
+      "locale": "ca-ES",
+      "labels": "ca",
+      "requested_model": "Bespoke-Nimble-9B-v3-GGUF",
+      "models": [
+        "Bespoke-Nimble-9B-v3-GGUF"
+      ],
+      "seed": 42,
+      "shuffled_options": false,
+      "n": 2117,
+      "accuracy": 0.819555975436939,
+      "macro_f1_3_labels": 0.8219422946713925,
+      "mean_latency_ms": 517.7940816343439,
+      "requested_n_samples": 0,
+      "data_source": "projecte-aina/teca:test",
+      "model": "Bespoke-Nimble-9B-v3-GGUF",
+      "provider": "systemone",
+      "cloud": false,
+      "display_name": "Nimble 9B"
+    }
+  }
 }

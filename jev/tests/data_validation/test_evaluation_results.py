@@ -31,7 +31,9 @@ def test_evaluation_results():
     assert paths, "No JEV evaluation results found"
     seen = set()
     for path in paths:
-        data = json.loads(path.read_text(encoding="utf-8"))
+        document = json.loads(path.read_text(encoding="utf-8"))
+        assert set(document.get("benchmarks", {})) == {"massive", "teca"}, path.name
+        data = {**document, **document["benchmarks"]["massive"]}
         assert isinstance(data, dict), f"{path.name}: expected a JSON object"
         for field, value in EXPECTED.items():
             if data.get("cloud") and field == "quantization":
@@ -89,3 +91,22 @@ def test_evaluation_results():
         assert url.scheme == "https" and url.netloc and url.path.strip("/"), (
             f"{path.name}: model repository URL could not be resolved"
         )
+        teca = data.get("benchmarks", {}).get("teca", {})
+        expected_teca = {
+            "dataset": "Tornem a TE-ca",
+            "data_source": "projecte-aina/teca:test",
+            "n": 2117,
+            "requested_n_samples": 0,
+            **{
+                key: data[key]
+                for key in ("model", "locale", "labels", "seed", "shuffled_options")
+            },
+        }
+        for field, value in expected_teca.items():
+            assert type(teca.get(field)) is type(value) and teca[field] == value, (
+                f"{path.name}: benchmarks.teca.{field} must be {value!r}"
+            )
+        for field in ("accuracy", "macro_f1_3_labels", "mean_latency_ms"):
+            value = teca.get(field)
+            assert type(value) in (int, float) and math.isfinite(value)
+            assert 0 <= value <= 1 if field != "mean_latency_ms" else value > 0
