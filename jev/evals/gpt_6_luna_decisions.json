@@ -1,0 +1,32 @@
+{
+  "model": "gpt-6-luna",
+  "display_name": "GPT-6 Luna Decisions",
+  "provider": "openai",
+  "cloud": true,
+  "benchmarks": {
+    "massive": {
+      "evaluated_at": "2026-10-10T06:10:45+00:00",
+      "dataset": "MASSIVE 1.1",
+      "seed": 42,
+      "shuffled_options": false,
+      "n": 2974,
+      "accuracy": 0.8174176193678547,
+      "macro_f1_18_labels": 0.8198646087762292,
+      "mean_latency_ms": 177.58077682284343,
+      "requested_n_samples": 0,
+      "data_source": "MASSIVE 1.1"
+    },
+    "teca": {
+      "evaluated_at": "2026-10-10T10:35:11+00:00",
+      "dataset": "Tornem a TE-ca",
+      "seed": 42,
+      "shuffled_options": false,
+      "n": 2117,
+      "accuracy": 0.726027397260274,
+      "macro_f1_3_labels": 0.7296790070107101,
+      "mean_latency_ms": 214.48921379537563,
+      "requested_n_samples": 0,
+      "data_source": "projecte-aina/teca:test"
+    }
+  }
+}

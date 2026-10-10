@@ -1,0 +1,37 @@
+{
+  "model": "LiquidAI/d1-3B-GGUF:Q8_0",
+  "display_name": "Liquid d1 3B",
+  "provider": "systemone",
+  "cloud": false,
+  "params_b": 2.697198592,
+  "memory_gb": 2.9,
+  "quantization": "Q8_0",
+  "model_file": "d1-3B-Q8_0.gguf",
+  "model_revision": "bb1e436ea78eb96a3f1acb6da865f70c2fbeb563",
+  "benchmarks": {
+    "massive": {
+      "evaluated_at": "2026-10-10T06:39:49+00:00",
+      "dataset": "MASSIVE 1.1",
+      "seed": 42,
+      "shuffled_options": false,
+      "n": 2974,
+      "accuracy": 0.7659717552118359,
+      "macro_f1_18_labels": 0.7496158273130179,
+      "mean_latency_ms": 187.19035394374836,
+      "requested_n_samples": 0,
+      "data_source": "MASSIVE 1.1"
+    },
+    "teca": {
+      "evaluated_at": "2026-10-10T07:35:19+00:00",
+      "dataset": "Tornem a TE-ca",
+      "seed": 42,
+      "shuffled_options": false,
+      "n": 2117,
+      "accuracy": 0.7061880018894662,
+      "macro_f1_3_labels": 0.7060423787259605,
+      "mean_latency_ms": 92.16148097114923,
+      "requested_n_samples": 0,
+      "data_source": "projecte-aina/teca:test"
+    }
+  }
+}

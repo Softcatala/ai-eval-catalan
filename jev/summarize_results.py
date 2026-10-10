@@ -1,11 +1,11 @@
-"""Aggregate completed MASSIVE evaluations into jevs.json."""
+"""Rank decision models by the mean accuracy on MASSIVE and TE-ca."""
 
 import argparse
 import json
 from pathlib import Path
 
 from eval_common.model_urls import repo_url
-from jev.model import MODEL_PARAMS_B, model_display_name
+from jev.model import MODEL_PARAMS_B, benchmark_result, model_display_name
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 
@@ -58,8 +58,30 @@ def load_rows(directory):
         if path.name.endswith((".summary.json", ".comparison.json")):
             continue
         result = json.loads(path.read_text(encoding="utf-8"))
-        if "accuracy" not in result or "model" not in result:
+        massive = benchmark_result(result, "massive")
+        result = {"locale": "ca-ES", "labels": "ca", **result, **massive}
+        if "macro_f1_18_labels" not in result or "model" not in result:
             continue
+        teca = result.get("benchmarks", {}).get("teca")
+        if teca is not None:
+            teca = {"locale": "ca-ES", "labels": "ca", "model": result["model"], **teca}
+            if result["n"] != 2974 or result.get("requested_n_samples") != 0:
+                raise ValueError(
+                    f"{path}: ranking requires the full MASSIVE test (2974)"
+                )
+            expected = {
+                "dataset": "Tornem a TE-ca",
+                "data_source": "projecte-aina/teca:test",
+                "n": 2117,
+                "requested_n_samples": 0,
+                **{
+                    key: result[key]
+                    for key in ("model", "locale", "labels", "seed", "shuffled_options")
+                },
+            }
+            for key, value in expected.items():
+                if teca.get(key) != value:
+                    raise ValueError(f"{path}: {key} must be {value!r}")
         rows.append(
             {
                 "model": model_display_name(
@@ -72,13 +94,28 @@ def load_rows(directory):
                 "memory_gb": model_memory_gb(result),
                 "n": result["n"],
                 "massive_accuracy": round(result["accuracy"], 4),
+                "teca_n": teca["n"] if teca else None,
+                "teca_accuracy": round(teca["accuracy"], 4) if teca else None,
+                "teca_macro_f1": round(teca["macro_f1_3_labels"], 4) if teca else None,
+                "average_accuracy": round(
+                    (result["accuracy"] + teca["accuracy"]) / 2, 4
+                )
+                if teca
+                else None,
                 "massive_macro_f1": round(result["macro_f1_18_labels"], 4),
                 "massive_decisions_per_sec": round(1000 / result["mean_latency_ms"], 1)
-                if result["mean_latency_ms"] > 0
+                if not result.get("cloud", False) and result["mean_latency_ms"] > 0
                 else None,
             }
         )
-    return sorted(rows, key=lambda row: row["massive_accuracy"], reverse=True)
+    return sorted(
+        rows,
+        key=lambda row: (
+            row["average_accuracy"] if row["average_accuracy"] is not None else -1,
+            row["massive_accuracy"],
+        ),
+        reverse=True,
+    )
 
 
 def main():
@@ -95,7 +132,9 @@ def main():
         "text": {
             "model": "Model",
             "memory_gb": "Memòria (GB)",
+            "average_accuracy": "Mitjana MASSIVE / TE-ca (50% / 50%)",
             "massive_accuracy": "MASSIVE Taxa d’encert",
+            "teca_accuracy": "TE-ca Taxa d’encert",
             "massive_macro_f1": "MASSIVE Macro F1",
             "massive_decisions_per_sec": "Decisions/s",
         },
@@ -103,6 +142,8 @@ def main():
             metric: {"direction": "higher_is_better"}
             for metric in (
                 "massive_accuracy",
+                "teca_accuracy",
+                "average_accuracy",
                 "massive_macro_f1",
                 "massive_decisions_per_sec",
             )

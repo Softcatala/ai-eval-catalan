@@ -1,24 +1,36 @@
 {
-  "evaluated_at": "2026-10-03T10:57:45+00:00",
-  "dataset": "MASSIVE 1.1",
-  "locale": "ca-ES",
-  "labels": "ca",
-  "requested_model": "lev-GGUF",
-  "models": [
-    "lev-GGUF"
-  ],
-  "seed": 42,
-  "shuffled_options": false,
-  "n": 2974,
-  "accuracy": 0.7706792199058508,
-  "macro_f1_18_labels": 0.7585100314885811,
-  "mean_latency_ms": 912.5487985093903,
-  "requested_n_samples": 0,
-  "data_source": "MASSIVE 1.1",
   "model": "lev-GGUF",
   "display_name": "lev 4B",
+  "memory_gb": 4.5,
   "quantization": "Q8_0",
   "model_file": "lev-Q8_0.gguf",
   "model_revision": "3e9286a79ae857b4e1de051c92fab6dc574581ce",
-  "memory_gb": 4.5
+  "provider": "systemone",
+  "cloud": false,
+  "benchmarks": {
+    "massive": {
+      "evaluated_at": "2026-10-03T10:57:45+00:00",
+      "dataset": "MASSIVE 1.1",
+      "seed": 42,
+      "shuffled_options": false,
+      "n": 2974,
+      "accuracy": 0.7706792199058508,
+      "macro_f1_18_labels": 0.7585100314885811,
+      "mean_latency_ms": 912.5487985093903,
+      "requested_n_samples": 0,
+      "data_source": "MASSIVE 1.1"
+    },
+    "teca": {
+      "evaluated_at": "2026-10-10T07:56:31+00:00",
+      "dataset": "Tornem a TE-ca",
+      "seed": 42,
+      "shuffled_options": false,
+      "n": 2117,
+      "accuracy": 0.7978271138403401,
+      "macro_f1_3_labels": 0.798846844061945,
+      "mean_latency_ms": 422.6231591748628,
+      "requested_n_samples": 0,
+      "data_source": "projecte-aina/teca:test"
+    }
+  }
 }

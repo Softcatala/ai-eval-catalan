@@ -10,8 +10,6 @@ from jev.summarize_results import model_memory_gb, model_params_b, model_repo_ur
 EXPECTED = {
     "dataset": "MASSIVE 1.1",
     "data_source": "MASSIVE 1.1",
-    "locale": "ca-ES",
-    "labels": "ca",
     "n": 2974,
     "requested_n_samples": 0,
     "seed": 42,
@@ -31,17 +29,54 @@ def test_evaluation_results():
     assert paths, "No JEV evaluation results found"
     seen = set()
     for path in paths:
-        data = json.loads(path.read_text(encoding="utf-8"))
+        document = json.loads(path.read_text(encoding="utf-8"))
+        assert set(document.get("benchmarks", {})) == {"massive", "teca"}, path.name
+        assert "evaluated_at" not in document, path.name
+        assert list(document)[-1] == "benchmarks", path.name
+        for benchmark in document["benchmarks"].values():
+            assert (
+                not set(
+                    (
+                        "model",
+                        "display_name",
+                        "provider",
+                        "cloud",
+                        "params_b",
+                        "memory_gb",
+                        "quantization",
+                        "model_file",
+                        "model_revision",
+                        "requested_model",
+                        "models",
+                    )
+                )
+                & benchmark.keys()
+            ), path.name
+            assert (
+                datetime.fromisoformat(benchmark["evaluated_at"]).utcoffset()
+                is not None
+            )
+            assert "locale" not in benchmark and "labels" not in benchmark, path.name
+        data = {**document, **document["benchmarks"]["massive"]}
         assert isinstance(data, dict), f"{path.name}: expected a JSON object"
         for field, value in EXPECTED.items():
+            if data.get("cloud") and field == "quantization":
+                continue
             assert type(data.get(field)) is type(value) and data[field] == value, (
                 f"{path.name}: {field} must be {value!r}"
             )
-        model_file = data.get("model_file")
-        assert isinstance(model_file, str) and model_file.endswith("-Q8_0.gguf"), (
-            f"{path.name}: model_file must identify a Q8_0 GGUF"
-        )
-        for field in ("model", "display_name", "requested_model", "evaluated_at"):
+        if data.get("cloud"):
+            assert data.get("provider") == "openai"
+            assert data.get("quantization") is None
+            assert data.get("model_file") is None
+            assert model_params_b(data) is None
+            assert model_memory_gb(data) is None
+        else:
+            model_file = data.get("model_file")
+            assert isinstance(model_file, str) and model_file.endswith("-Q8_0.gguf"), (
+                f"{path.name}: model_file must identify a Q8_0 GGUF"
+            )
+        for field in ("model", "display_name", "evaluated_at"):
             assert isinstance(data.get(field), str) and data[field].strip(), (
                 f"{path.name}: missing or invalid {field}"
             )
@@ -52,7 +87,7 @@ def test_evaluation_results():
             f"{path.name}: duplicate model {data['model']}"
         )
         seen.add(data["model"])
-        models = data.get("models")
+        models = data.get("models", [data["model"]])
         assert (
             isinstance(models, list)
             and models
@@ -65,6 +100,8 @@ def test_evaluation_results():
             "params_b": model_params_b(data),
             "memory_gb": model_memory_gb(data),
         }.items():
+            if data.get("cloud") and field in ("params_b", "memory_gb"):
+                continue
             assert type(value) in (int, float) and math.isfinite(value), (
                 f"{path.name}: {field} must be a finite number"
             )
@@ -78,3 +115,19 @@ def test_evaluation_results():
         assert url.scheme == "https" and url.netloc and url.path.strip("/"), (
             f"{path.name}: model repository URL could not be resolved"
         )
+        teca = data.get("benchmarks", {}).get("teca", {})
+        expected_teca = {
+            "dataset": "Tornem a TE-ca",
+            "data_source": "projecte-aina/teca:test",
+            "n": 2117,
+            "requested_n_samples": 0,
+            **{key: data[key] for key in ("seed", "shuffled_options")},
+        }
+        for field, value in expected_teca.items():
+            assert type(teca.get(field)) is type(value) and teca[field] == value, (
+                f"{path.name}: benchmarks.teca.{field} must be {value!r}"
+            )
+        for field in ("accuracy", "macro_f1_3_labels", "mean_latency_ms"):
+            value = teca.get(field)
+            assert type(value) in (int, float) and math.isfinite(value)
+            assert 0 <= value <= 1 if field != "mean_latency_ms" else value > 0
