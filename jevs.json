@@ -2,10 +2,11 @@
   "text": {
     "model": "Model",
     "memory_gb": "Memòria (GB)",
-    "average_accuracy": "Mitjana MASSIVE / TE-ca (50% / 50%)",
+    "average_macro_f1": "Mitjana F1",
     "massive_accuracy": "MASSIVE Taxa d’encert",
     "teca_accuracy": "TE-ca Taxa d’encert",
     "massive_macro_f1": "MASSIVE Macro F1",
+    "teca_macro_f1": "TE-ca Macro F1",
     "massive_decisions_per_sec": "Decisions/s"
   },
   "metrics": {
@@ -15,10 +16,13 @@
     "teca_accuracy": {
       "direction": "higher_is_better"
     },
-    "average_accuracy": {
+    "average_macro_f1": {
       "direction": "higher_is_better"
     },
     "massive_macro_f1": {
+      "direction": "higher_is_better"
+    },
+    "teca_macro_f1": {
       "direction": "higher_is_better"
     },
     "massive_decisions_per_sec": {
@@ -38,25 +42,9 @@
       "teca_n": 2117,
       "teca_accuracy": 0.8011,
       "teca_macro_f1": 0.8043,
-      "average_accuracy": 0.8468,
+      "average_macro_f1": 0.8452,
       "massive_macro_f1": 0.886,
       "massive_decisions_per_sec": 0.9
-    },
-    {
-      "model": "OpenJev 27B",
-      "repo_url": "https://huggingface.co/ggml-org/OpenJev-GGUF",
-      "cloud": false,
-      "evaluated_at": "2026-10-03T12:55:30+00:00",
-      "params_b": 26.895998464,
-      "memory_gb": 28.6,
-      "n": 2974,
-      "massive_accuracy": 0.8416,
-      "teca_n": 2117,
-      "teca_accuracy": 0.8351,
-      "teca_macro_f1": 0.8381,
-      "average_accuracy": 0.8384,
-      "massive_macro_f1": 0.8263,
-      "massive_decisions_per_sec": 0.4
     },
     {
       "model": "Clef 27B",
@@ -70,9 +58,25 @@
       "teca_n": 2117,
       "teca_accuracy": 0.7922,
       "teca_macro_f1": 0.796,
-      "average_accuracy": 0.8356,
+      "average_macro_f1": 0.8358,
       "massive_macro_f1": 0.8756,
       "massive_decisions_per_sec": 0.2
+    },
+    {
+      "model": "OpenJev 27B",
+      "repo_url": "https://huggingface.co/ggml-org/OpenJev-GGUF",
+      "cloud": false,
+      "evaluated_at": "2026-10-03T12:55:30+00:00",
+      "params_b": 26.895998464,
+      "memory_gb": 28.6,
+      "n": 2974,
+      "massive_accuracy": 0.8416,
+      "teca_n": 2117,
+      "teca_accuracy": 0.8351,
+      "teca_macro_f1": 0.8381,
+      "average_macro_f1": 0.8322,
+      "massive_macro_f1": 0.8263,
+      "massive_decisions_per_sec": 0.4
     },
     {
       "model": "Nimble 9B",
@@ -86,7 +90,7 @@
       "teca_n": 2117,
       "teca_accuracy": 0.8196,
       "teca_macro_f1": 0.8219,
-      "average_accuracy": 0.8084,
+      "average_macro_f1": 0.8045,
       "massive_macro_f1": 0.787,
       "massive_decisions_per_sec": 0.8
     },
@@ -102,7 +106,7 @@
       "teca_n": 2117,
       "teca_accuracy": 0.7648,
       "teca_macro_f1": 0.7675,
-      "average_accuracy": 0.7908,
+      "average_macro_f1": 0.7866,
       "massive_macro_f1": 0.8057,
       "massive_decisions_per_sec": 2.0
     },
@@ -118,7 +122,7 @@
       "teca_n": 2117,
       "teca_accuracy": 0.7978,
       "teca_macro_f1": 0.7988,
-      "average_accuracy": 0.7843,
+      "average_macro_f1": 0.7787,
       "massive_macro_f1": 0.7585,
       "massive_decisions_per_sec": 1.1
     },
@@ -134,7 +138,7 @@
       "teca_n": 2117,
       "teca_accuracy": 0.726,
       "teca_macro_f1": 0.7297,
-      "average_accuracy": 0.7717,
+      "average_macro_f1": 0.7748,
       "massive_macro_f1": 0.8199,
       "massive_decisions_per_sec": null
     },
@@ -150,7 +154,7 @@
       "teca_n": 2117,
       "teca_accuracy": 0.7822,
       "teca_macro_f1": 0.7857,
-      "average_accuracy": 0.7642,
+      "average_macro_f1": 0.7659,
       "massive_macro_f1": 0.746,
       "massive_decisions_per_sec": 1.5
     },
@@ -166,7 +170,7 @@
       "teca_n": 2117,
       "teca_accuracy": 0.753,
       "teca_macro_f1": 0.7552,
-      "average_accuracy": 0.7561,
+      "average_macro_f1": 0.7522,
       "massive_macro_f1": 0.7492,
       "massive_decisions_per_sec": 2.5
     },
@@ -182,7 +186,7 @@
       "teca_n": 2117,
       "teca_accuracy": 0.7062,
       "teca_macro_f1": 0.706,
-      "average_accuracy": 0.7361,
+      "average_macro_f1": 0.7278,
       "massive_macro_f1": 0.7496,
       "massive_decisions_per_sec": 5.3
     },
@@ -198,7 +202,7 @@
       "teca_n": 2117,
       "teca_accuracy": 0.5848,
       "teca_macro_f1": 0.5799,
-      "average_accuracy": 0.6127,
+      "average_macro_f1": 0.6058,
       "massive_macro_f1": 0.6318,
       "massive_decisions_per_sec": 10.8
     },
@@ -214,7 +218,7 @@
       "teca_n": 2117,
       "teca_accuracy": 0.4417,
       "teca_macro_f1": 0.3981,
-      "average_accuracy": 0.4449,
+      "average_macro_f1": 0.4242,
       "massive_macro_f1": 0.4504,
       "massive_decisions_per_sec": 20.9
     },
@@ -230,7 +234,7 @@
       "teca_n": 2117,
       "teca_accuracy": 0.5177,
       "teca_macro_f1": 0.5127,
-      "average_accuracy": 0.3871,
+      "average_macro_f1": 0.3686,
       "massive_macro_f1": 0.2244,
       "massive_decisions_per_sec": 21.9
     },
@@ -246,7 +250,7 @@
       "teca_n": 2117,
       "teca_accuracy": 0.3302,
       "teca_macro_f1": 0.2389,
-      "average_accuracy": 0.2803,
+      "average_macro_f1": 0.2359,
       "massive_macro_f1": 0.2328,
       "massive_decisions_per_sec": 47.1
     }
