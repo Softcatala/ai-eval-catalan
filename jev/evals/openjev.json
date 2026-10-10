@@ -5,6 +5,8 @@
   "quantization": "Q8_0",
   "model_file": "OpenJev-Q8_0.gguf",
   "model_revision": "10840f375658dea7afc5ff4711127bca8218b560",
+  "provider": "systemone",
+  "cloud": false,
   "benchmarks": {
     "massive": {
       "evaluated_at": "2026-10-03T12:55:30+00:00",
@@ -30,7 +32,5 @@
       "requested_n_samples": 0,
       "data_source": "projecte-aina/teca:test"
     }
-  },
-  "provider": "systemone",
-  "cloud": false
+  }
 }

@@ -332,6 +332,7 @@ def test_result_keeps_benchmark_timestamp_and_distinct_model_ids(actual_model):
         "accuracy": 0.8,
     }
     stored = model.result_document(summary)
+    assert list(stored)[-1] == "benchmarks"
     assert "evaluated_at" not in stored
     benchmark = stored["benchmarks"]["massive"]
     assert benchmark["evaluated_at"] == summary["evaluated_at"]

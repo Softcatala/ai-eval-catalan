@@ -5,6 +5,8 @@
   "quantization": "Q8_0",
   "model_file": "Clef-Q8_0.gguf",
   "model_revision": "5f70656b6670c65eb85ad07a11efe211b5f211bd",
+  "provider": "systemone",
+  "cloud": false,
   "benchmarks": {
     "massive": {
       "evaluated_at": "2026-10-03T20:13:49+00:00",
@@ -30,7 +32,5 @@
       "requested_n_samples": 0,
       "data_source": "projecte-aina/teca:test"
     }
-  },
-  "provider": "systemone",
-  "cloud": false
+  }
 }

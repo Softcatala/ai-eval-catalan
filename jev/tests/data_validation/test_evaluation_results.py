@@ -32,6 +32,7 @@ def test_evaluation_results():
         document = json.loads(path.read_text(encoding="utf-8"))
         assert set(document.get("benchmarks", {})) == {"massive", "teca"}, path.name
         assert "evaluated_at" not in document, path.name
+        assert list(document)[-1] == "benchmarks", path.name
         for benchmark in document["benchmarks"].values():
             assert (
                 not set(

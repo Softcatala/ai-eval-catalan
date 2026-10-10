@@ -5,6 +5,8 @@
   "quantization": "Q8_0",
   "model_file": "Julia-1-Q8_0.gguf",
   "model_revision": "16fee17949206fbf58da9347daea44d792a81211",
+  "provider": "systemone",
+  "cloud": false,
   "benchmarks": {
     "massive": {
       "evaluated_at": "2026-10-03T06:38:41+00:00",
@@ -30,7 +32,5 @@
       "requested_n_samples": 0,
       "data_source": "projecte-aina/teca:test"
     }
-  },
-  "provider": "systemone",
-  "cloud": false
+  }
 }

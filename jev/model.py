@@ -172,7 +172,10 @@ def result_document(previous, summary=None):
         }
         for name, benchmark in result["benchmarks"].items()
     }
-    return result
+    return {
+        **{key: value for key, value in result.items() if key != "benchmarks"},
+        "benchmarks": result["benchmarks"],
+    }
 
 
 def load_rows(args):
