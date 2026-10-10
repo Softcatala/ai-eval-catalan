@@ -16,6 +16,7 @@ EXPECTED_SAMPLE_COUNTS = {
     "benchmarks.sts_ca": 400,
     "benchmarks.casum": 400,
     "benchmarks.catcola": 400,
+    "benchmarks.teca": 400,
     "benchmarks.club_qa": 400,
     "benchmarks.iberbench.catcola": 400,
     "benchmarks.iberbench.wnli_ca": 71,
