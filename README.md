@@ -426,8 +426,9 @@ Si feu servir aquestes eines o els resultats en un treball, citeu-ho així (i ci
 
 ## JEV — Avaluació de models de decisió
 
-`jev/` avalua Julia, Laya, Kev (4B i 9B), lev, OpenJev, Clef Flash (9B),
-Clef (27B), Nimble (9B) i Rune v3 (26B-A4B) sobre les 18 categories del test MASSIVE 1.1 en català.
+`jev/` avalua Julia, Laya, Kev (0.8B, 4B i 9B), lev, OpenJev, Clef Flash (9B),
+Clef (27B), Nimble (9B), Rune v3 (26B-A4B), Liquid d1 (3B i Omni 600M)
+i GPT-6 Luna Decisions sobre les 18 categories del test MASSIVE 1.1 en català.
 Mesura accuracy, macro F1 i latència mitjana. Requereix Python ≥ 3.10 i
 `llama-server` amb `/v1/systemone`:
 
@@ -438,6 +439,10 @@ make render-local
 ```
 
 Per a Clef i Clef Flash, afegeix `--batch-size 2048 --ubatch-size 2048` al servidor.
+Per a Liquid d1 Omni 600M, usa `--batch-size 4096 --ubatch-size 4096`.
+Els models locals de JEV usen `Q8_0`, inclosos
+`ggml-org/Kev-0.8B-GGUF:Q8_0`, `LiquidAI/d1-3B-GGUF:Q8_0` i
+`LiquidAI/d1-omni-600M-GGUF:Q8_0`.
 Per a Rune v3, usa la [conversió amb metadades de decisió](https://huggingface.co/owao/surogate-rune-26b-a4b-GGUF)
 (`Rune-26B-A4B-v3-Q8_0.gguf`), que requereix llama.cpp ≥ b11371:
 
