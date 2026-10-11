@@ -246,7 +246,7 @@ def print_table(report):
 def recommendations_json(
     candidates, capacities=DEFAULT_CAPACITIES, llm_uncertainty=2, category="llm"
 ):
-    """Export a recommendation and runner-up for each memory capacity."""
+    """Export LLM recommendations by memory or ASR recommendations by quality/speed."""
 
     def model_label(model):
         if model is None:
@@ -272,6 +272,15 @@ def recommendations_json(
                 ),
                 None,
             )
+        descriptions = (
+            f"Model amb la millor qualitat, {best['score']:.1%} WER" if best else None,
+            (
+                f"Model amb qualitat {balanced['score']:.1%} WER i "
+                f"{best['rtf'] / balanced['rtf'] - 1:.1%} més ràpid que el primer"
+            )
+            if balanced
+            else None,
+        )
         return {
             "text": {
                 "priority": "Prioritat",
@@ -280,25 +289,17 @@ def recommendations_json(
             },
             "data": [
                 {
-                    "priority": "Màxima precisió",
-                    "recommended": model_label(best),
-                    "description": (
-                        f"Model amb la millor qualitat, {best['score']:.1%} WER"
-                    ).replace(".", ",")
-                    if best
+                    "priority": priority,
+                    "recommended": model_label(model),
+                    "description": description.replace(".", ",")
+                    if description
                     else None,
-                },
-                {
-                    "priority": "Precisió i velocitat",
-                    "recommended": model_label(balanced),
-                    "description": (
-                        f"Model amb qualitat {balanced['score']:.1%} WER i "
-                        f"{best['rtf'] / balanced['rtf'] - 1:.1%} més ràpid "
-                        "que el primer"
-                    ).replace(".", ",")
-                    if balanced
-                    else None,
-                },
+                }
+                for model, priority, description in zip(
+                    (best, balanced),
+                    ("Màxima precisió", "Precisió i velocitat"),
+                    descriptions,
+                )
             ],
         }
 
@@ -314,8 +315,8 @@ def recommendations_json(
             [capacity],
             llm_uncertainty,
         )[0]
-        model = config["models"][category]
-        ranked = rank_candidates(candidates, category, budget)
+        model = config["models"]["llm"]
+        ranked = rank_candidates(candidates, "llm", budget)
         alternative = (
             next((m for m in ranked if m["model_id"] != model["model_id"]), None)
             if model

@@ -305,22 +305,19 @@ def test_asr_accuracy_and_speed_thresholds(rtf, score, expected):
         ]
     }
     report = recommendations_json(candidates, category="asr")
-    assert report["data"] == [
-        {
-            "priority": "Màxima precisió",
-            "recommended": "best",
-            "description": "Model amb la millor qualitat, 5,0% WER",
-        },
-        {
-            "priority": "Precisió i velocitat",
-            "recommended": expected,
-            "description": (
-                "Model amb qualitat 7,0% WER i 100,0% més ràpid que el primer"
-                if expected
-                else None
-            ),
-        },
-    ]
+    best, balanced = report["data"]
+    assert best == {
+        "priority": "Màxima precisió",
+        "recommended": "best",
+        "description": "Model amb la millor qualitat, 5,0% WER",
+    }
+    assert balanced["priority"] == "Precisió i velocitat"
+    assert balanced["recommended"] == expected
+    assert balanced["description"] == (
+        "Model amb qualitat 7,0% WER i 100,0% més ràpid que el primer"
+        if expected
+        else None
+    )
 
 
 def test_asr_cli_json_output(tmp_path):
@@ -330,3 +327,28 @@ def test_asr_cli_json_output(tmp_path):
     assert json.loads(output.read_text()) == recommendations_json(
         candidates, category="asr"
     )
+
+
+def test_export_strips_aina_prefix_and_preserves_repository_url(tmp_path, monkeypatch):
+    model = "projecte-aina/whisper-large-v3-ca-3catparla"
+    (tmp_path / "model.json").write_text(json.dumps({"model": model}))
+    output = tmp_path / "asrs.json"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "summarize_results",
+            "--results-dir",
+            str(tmp_path),
+            "--json-out",
+            str(output),
+        ],
+    )
+
+    from asr.summarize_results import main as summarize_asr
+
+    summarize_asr()
+
+    row = json.loads(output.read_text())["data"][0]
+    assert row["model"] == "whisper-large-v3-ca-3catparla"
+    assert row["repo_url"] == f"https://huggingface.co/{model}"
