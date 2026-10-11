@@ -7,16 +7,6 @@ Els resultats estan compartits a https://www.softcatala.org/ia-local/models-en-c
 
 [Obre un issue](https://github.com/Softcatala/ai-eval-catalan/issues/new) indicant l'URL de Hugging Face del model, el tipus (LLM, ASR, embeddings o JEV) i per què és rellevant per al català.
 
-## Documentació
-
-| Guia | Contingut |
-|------|-----------|
-| [LLM](docs/llm.md) | Benchmarks, puntuació CLAM, instal·lació i avaluació de models locals i d'API |
-| [ASR](docs/asr.md) | Preparació de FLEURS i OpenSLR-69 i avaluació de reconeixement de la parla |
-| [Embeddings](docs/embeddings.md) | Benchmarks i avaluació de models locals i d'API |
-| [JEV](docs/jev.md) | Avaluació de models de decisió sobre MASSIVE i TE-ca |
-| [Desenvolupament](docs/desenvolupament.md) | Comprovacions de desenvolupament i informes HTML de depuració |
-
 ## Estructura del projecte
 
 ```
@@ -36,6 +26,16 @@ ai-eval-catalan/
 Els fitxers `.jinja` contenen les plantilles per generar les taules HTML de
 resultats. Els directoris `evals/` contenen els fitxers JSON amb els resultats
 de les avaluacions de cada model.
+
+## Documentació
+
+| Guia | Contingut |
+|------|-----------|
+| [LLM](docs/llm.md) | Benchmarks, puntuació CLAM, instal·lació i avaluació de models locals i d'API |
+| [ASR](docs/asr.md) | Preparació de FLEURS i OpenSLR-69 i avaluació de reconeixement de la parla |
+| [Embeddings](docs/embeddings.md) | Benchmarks i avaluació de models locals i d'API |
+| [JEV](docs/jev.md) | Avaluació de models de decisió sobre MASSIVE i TE-ca |
+| [Desenvolupament](docs/desenvolupament.md) | Comprovacions de desenvolupament i informes HTML de depuració |
 
 ## Publicació automàtica de resultats (CI/CD)
 
