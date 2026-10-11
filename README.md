@@ -1,419 +1,71 @@
-# Eines d'avaluació de models LLM, ASR i Embeddings
+# Eines d'avaluació de models LLM, ASR, embeddings i de decisió
 
-Aquest repositori conté eines per avaluar les capacitats de models de llenguatge gran (LLM), de reconeixement automàtic de la parla (ASR) i d'embeddings, amb focus especial en la llengua catalana.
-Els resultats estan compartits a https://www.softcatala.org/ia-local/models-en-catala/
+Aquest repositori conté eines per avaluar les capacitats de models de llenguatge grans (LLM), de reconeixement automàtic de la parla (ASR), d'embeddings i de decisió (JEV), amb especial atenció a la llengua catalana.
+Els resultats es poden consultar al [web de Softcatalà](https://www.softcatala.org/ia-local/models-en-catala/).
 
 ## Vols que avaluem un model?
 
-[Obre un issue](https://github.com/Softcatala/ai-eval-catalan/issues/new) indicant l'URL de Hugging Face del model, el tipus (LLM, ASR o embeddings) i per què és rellevant per al català.
+[Obre un issue](https://github.com/Softcatala/ai-eval-catalan/issues/new) indicant l'URL de Hugging Face del model, el tipus (LLM, ASR, embeddings o JEV) i per què és rellevant per al català.
 
 ## Estructura del projecte
 
 ```
 ai-eval-catalan/
-├── render_tables.py          # Genera taules HTML per a depuració local
+├── docs/                     # Guies d’avaluació i desenvolupament
 ├── eval_common/              # Codi compartit pels generadors de JSON
 ├── llm/                      # Avaluació de models LLM
-│   ├── model.py              # Pipeline d'avaluació per a un model
-│   ├── run_evals.py          # Orquestrador per executar múltiples models
-│   ├── summarize_results.py  # Agrega els resultats en un JSON
-│   ├── table_template.jinja  # Plantilla per a la taula de resultats
-│   └── evals/                # Resultats JSON per model
 ├── asr/                      # Avaluació de models ASR
-│   ├── hf-eval.py            # Avaluació local de WER/CER sobre FLEURS i OpenSLR-69
-│   ├── cloud-eval.py         # Avaluació ASR amb APIs d'OpenAI i Gemini
-│   ├── dataset_preparation.py          # Prepara el benchmark local FLEURS
-│   ├── openslr69_dataset_preparation.py # Prepara el benchmark local OpenSLR-69
-│   ├── run_evals.py          # Orquestrador per executar múltiples models
-│   ├── summarize_results.py  # Agrega els resultats en un JSON
-│   ├── table_template.jinja  # Plantilla per a la taula de resultats
-│   └── evals/                # Resultats JSON per model
-└── embeddings/               # Avaluació de models d'embeddings
-    ├── model.py              # Pipeline d'avaluació per a un model
-    ├── run_evals.py          # Orquestrador per executar múltiples models
-    ├── summarize_results.py  # Agrega els resultats en un JSON
-    ├── table_template.jinja  # Plantilla per a la taula de resultats
-    └── evals/                # Resultats JSON per model
+├── embeddings/               # Avaluació de models d’embeddings
+└── jev/                      # Avaluació de models de decisió
 ```
 
----
+Els fitxers `.jinja` contenen les plantilles per generar les taules HTML de
+resultats.
+
+## Documentació
+
+| Guia | Contingut |
+|------|-----------|
+| [LLM](docs/llm.md) | Benchmarks, puntuació CLAM, instal·lació i avaluació de models locals i d'API |
+| [ASR](docs/asr.md) | Preparació de FLEURS i OpenSLR-69 i avaluació de reconeixement de la parla |
+| [Embeddings](docs/embeddings.md) | Benchmarks i avaluació de models locals i d'API |
+| [JEV](docs/jev.md) | Avaluació de models de decisió sobre MASSIVE i TE-ca |
+| [Desenvolupament](docs/desenvolupament.md) | Comprovacions de desenvolupament i informes HTML de depuració |
 
 ## Publicació automàtica de resultats (CI/CD)
 
-Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/workflows/publish-llms-json.yml` executa automàticament els passos següents:
-
-1. **Genera els fitxers de dades** a partir dels resultats JSON individuals de `llm/evals/`, `asr/evals/` i `embeddings/evals/`:
-   - `python -m llm.summarize_results` → `llm/llms.json` i `llm/llms_quantized.json`
-   - `python -m asr.summarize_results` → `asr/asrs.json`
-   - `python -m embeddings.summarize_results` → `embeddings/embeddings.json`
-   - `python models_recommendation.py --memory 8 16 32 --format json --output llms_recommendations.json` → `llms_recommendations.json`
-   - `python models_recommendation.py --category asr --memory 8 16 32 --format json --output asrs_recommendations.json` → `asrs_recommendations.json`
-
-2. **Puja només els JSON a la branca `prod-data`**, que actua com a repositori de dades en producció:
-   ```
-   prod-data/
-   ├── llms.json
-   ├── llms_quantized.json
-   ├── asrs.json
-   ├── embeddings.json
-   ├── llms_recommendations.json
-   └── asrs_recommendations.json
-   ```
-
-La web de [Softcatalà](https://www.softcatala.org) llegeix directament els fitxers de la branca `prod-data` per mostrar els resultats actualitzats.
-
-`llms_recommendations.json` mostra el LLM recomanat i una alternativa per capacitat de RAM, sense
-repeticions i amb un 25% de reserva. Conté `text` (etiquetes) i `data` (files amb
-`capacity_gb` (p. ex. `16 GB`), `recommended` i `alternatives`, amb nom i precisió).
-Per generar-lo localment:
-
-```bash
-make recommendation RECOMMENDATION_ARGS="--memory 8 16 32 --format json --output llms_recommendations.json"
-```
-
-`asrs_recommendations.json` conté dues files, sense franges de memòria:
-«Màxima precisió» (menys WER combinat de FLEURS i OpenSLR-69, ponderat pel
-nombre de mostres) i «Precisió i velocitat» (el model amb menys WER entre
-els que tenen com a màxim 2 punts percentuals més de WER i són almenys
-2 vegades més ràpids a FLEURS). Si cap model compleix el criteri de velocitat,
-la segona recomanació és nul·la. Exclou els models de núvol i les avaluacions
-incompletes. El llindar de 2 punts és una tolerància pràctica, no un marge
-estadístic d'error.
-
-```bash
-make recommendation RECOMMENDATION_ARGS="--category asr --memory 8 16 32 --format json --output asrs_recommendations.json"
-```
-
-### Informes HTML de depuració
-
-Els informes HTML no es publiquen ni formen part del contracte de dades de la web. Es poden generar localment per inspeccionar els resultats:
-
-```bash
-make render-local
-```
-
-Aquesta ordre genera les taules HTML i les agrupa a `index_local.html`.
-
----
-
-## LLM — Avaluació de models de llenguatge
-
-El pipeline `llm/model.py` avalua models GGUF (via `llama-server`) i models d'API de Google AI (Gemini/Gemma), OpenAI i serveis compatibles, inclòs OpenRouter, sobre benchmarks de català:
-
-| Benchmark | Tasca | Mètrica |
-|-----------|-------|---------|
-| **STS-ca** | Similitud semàntica de frases | Correlació de Pearson |
-| **CatCoLA** | Acceptabilitat gramatical | MCC |
-| **CLUB / VilaQuAD** | Comprensió lectora (QA) | F1 de solapament de tokens |
-| **CaSum** | Resum de notícies en català | ROUGE-1/2/L |
-| **FLORES+** | Traducció automàtica EN↔CA i ES↔CA | COMET |
-| **IFEval-ca** | Seguiment d'instruccions | Accuracy |
-| **Mantinc** | Manteniment del català en prompts adversaris | Pass rate |
-
-FLORES+ executa quatre tasques: `catalan_bench_flores_en-ca`,
-`catalan_bench_flores_ca-en`, `catalan_bench_flores_es-ca` i
-`catalan_bench_flores_ca-es`. Les taules mostren dues columnes bidireccionals:
-`EN↔CA` i `ES↔CA`, cadascuna calculada com la mitjana del COMET de
-les dues direccions.
-
-El contracte de `llm/llms.json` publica aquestes mitjanes com `flores_en_ca` i
-`flores_es_ca`. També conserva `flores_en2ca`, `flores_ca2en`, `flores_es2ca` i
-`flores_ca2es` per a diagnòstic, però aquestes quatre columnes direccionals no es
-mostren a les taules ni als gràfics per defecte.
-
-Per calcular un baseline de COMET sense executar un traductor, el script usa la
-còpia de la font com a hipòtesi (`mt = src`) sobre FLORES devtest. Avalua les
-quatre direccions i, per defecte, usa 400 exemples per direcció:
-
-```bash
-cd llm
-uv run python comet_baseline.py \
-  --output evals/comet_source_copy_baseline.json
-```
-
-Podeu canviar-ne la mida amb `--n-samples`.
-
-Amb el checkpoint `Unbabel/wmt22-comet-da` i 400 exemples de FLORES devtest per
-direcció, el baseline de còpia de font és: EN→CA 0.6809, CA→EN 0.7549, ES→CA
-0.8222 i CA→ES 0.8228.
-
-Cada fila dels JSON publicats inclou `repo_url`, calculat amb el helper compartit
-`eval_common.model_urls`.
-
-Per evitar donar doble pes a la traducció, CLAM calcula primer
-`translation_score` com la mitjana dels valors normalitzats disponibles de `flores_en_ca` i
-`flores_es_ca`. El resultat final és la mitjana dels benchmarks normalitzats que no són de
-traducció i aquest únic `translation_score`, multiplicada per 100.
-
-CLAM també inclou `Mantinc`: el `pass_rate` de prompts de manteniment del
-català de [Softcatalà/mantinc-catalan-drift](https://github.com/Softcatala/mantinc-catalan-drift),
-executat localment amb lm-evaluation-harness.
-
-Les dades, la tasca lm-eval i l'avaluador s'instal·len com una única
-dependència Git de Mantinc fixada a un commit concret; no cal tenir-ne un
-checkout local ni descarregar el dataset per separat:
-`uv run python model.py --benchmarks catalan_drift`.
-
-### Mida de model recomanada segons la memòria
-
-L'eina [`models_recommendation.py`](models_recommendation.py), situada a l'arrel, recomana
-models locals de LLM, embeddings i ASR segons les avaluacions i la memòria
-disponible. Executeu `make recommendation` des de l'arrel o
-`uv run --project llm python models_recommendation.py --help` per consultar les opcions.
-Reserva un 25% fix de la memòria i assumeix que cada model s'executa
-individualment. `--format table` (per defecte) mostra l'informe de consola amb
-alternatives a menys de 2 punts CLAM. Dins d’aquest marge respecte de la millor
-puntuació, es recomana el model que ocupa menys memòria. `--format json` aplica
-el mateix criteri i mostra una alternativa, considerant tots els LLM que caben.
-`--category asr --format json` exporta les recomanacions d'ASR segons el WER combinat.
-Tots els formats exclouen els models marcats com a `quantized_analysis_only`
-a `llm/models_config.py` o al JSON d'avaluació.
-
-Per a models GGUF quantitzats amb **Q4_K_M**, aquestes són les mides orientatives
-segons la memòria disponible del sistema:
-
-| Memòria RAM | Mida recomanada | Límit aproximat |
-|-------------|-----------------|-----------------|
-| 8 GB | 7–8B | 9B, amb poc context |
-| 16 GB | 12–14B | 14B |
-| 32 GB | 24–27B | 30–32B, amb menys marge |
-
-La mida que cap a la memòria no implica que sigui la millor recomanació: si
-les puntuacions CLAM són dins del marge, l’eina prioritza menys consum de memòria
-i més marge per al context.
-
-Cal reservar aproximadament un 20–25% de la memòria per al sistema operatiu, el
-motor d'inferència i la memòria cau KV. Un context llarg consumeix més memòria;
-en aquest cas, convé triar un model de la franja inferior. Les xifres són
-orientatives i poden variar segons l'arquitectura del model i la configuració de
-`llama.cpp`.
-
-### Criteri per als repositoris GGUF
-
-Per simplificar el manteniment, es prioritzen els repositoris d'`unsloth` per a
-models GGUF quantitzats. S'accepten excepcions quan no ofereixin el model o la
-variant exacta necessària (especialment `Q4_K_M`), o quan calgui conservar una
-avaluació reproduïble ja associada a un altre repositori. En cada cas s'ha de
-registrar el repositori, el fitxer GGUF i la quantització emprada.
-
-### Instal·lació (LLM)
-
-Requereix [uv](https://docs.astral.sh/uv/) i [llama.cpp](https://github.com/ggml-org/llama.cpp). Per als models GGUF locals, engega un `llama-server` extern; per defecte les eines esperen l'endpoint OpenAI-compatible a `http://localhost:9090/v1`.
-
-#### Instal·lació de llama.cpp
-
-Instal·la una versió precompilada amb Homebrew (macOS/Linux) o Conda (Windows/macOS/Linux):
-
-```bash
-brew install llama.cpp
-conda install -c conda-forge llama.cpp
-```
-
-O [compila'l](https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md) amb Git, CMake i un compilador de C/C++:
-
-```bash
-git clone https://github.com/ggml-org/llama.cpp
-cd llama.cpp
-# CPU; a macOS, Metal s'activa per defecte
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-# Per a NVIDIA amb el CUDA Toolkit, usa en canvi:
-# cmake -B build -DGGML_CUDA=ON -DCMAKE_BUILD_TYPE=Release
-cmake --build build --config Release -j
-export PATH="$PWD/build/bin:$PATH"
-llama-server --version
-```
-
-Des de l'arrel del repositori, instal·la les dependències Python:
-
-```bash
-cd llm
-uv sync
-```
-
-#### Configuració d'inferència
-
-Els paràmetres comuns es defineixen a `llm/inference.yaml` amb noms OpenAI-compatible:
-
-```yaml
-temperature: 0
-max_tokens: 256
-reasoning_effort: none
-```
-
-Cada benchmark pot sobreescriure `max_tokens`. Els adaptadors tradueixen aquesta configuració als camps i valors compatibles amb llama.cpp, OpenAI, OpenRouter o Gemini.
-
-### Execució (LLM)
-
-Executa els passos 1 i 2 des de l'arrel del repositori. Les ordres Python del pas 3 i dels exemples posteriors s'executen des de `llm/`.
-
-**1. Descarregar els GGUF necessaris:**
-
-```bash
-make llm-download-ggufs GGUF_DIR=models/gguf
-make llm-download-ggufs GGUF_DIR=models/gguf GGUF_MODELS="gemma3-12b salamandra-7b"
-```
-
-El target llegeix `MODELS` de `llm/models_config.py`, filtra els models locals GGUF i descarrega els fitxers al subdirectori indicat per `GGUF_DIR` (relatiu a l'arrel del repositori).
-També escriu `presets.ini` al mateix directori, amb els ids de model que usa l'avaluador.
-
-**2. Engegar `llama-server`:**
-
-```bash
-llama-server --models-preset models/gguf/presets.ini --models-max 1 --port 9090 --reasoning off
-```
-
-Per defecte les eines fan servir `http://localhost:9090/v1`. Es pot canviar amb `--server-url` o amb `LLAMA_SERVER_URL`.
-
-**3. Executar l'avaluació local:**
-
-```bash
-cd llm
-uv run python run_evals.py --models salamandra-7b
-uv run python run_evals.py --models gemma3-12b --n-samples 200
-uv run python run_evals.py --models gemma3-12b --benchmarks catcola flores
-```
-
-Amb `presets.ini`, l'orquestrador permet avaluar diversos models per execució amb `--models`. Només `--server-model` requereix seleccionar exactament un model local.
-
-L'orquestrador usa 400 mostres per benchmark per defecte i omet els models que ja tenen un fitxer de resultats. Per repetir benchmarks concrets i fusionar-los amb els resultats existents, usa `--rerun-benchmarks --benchmarks <benchmark>`. En canvi, `model.py` usa 100 mostres per defecte; en tots dos casos es pot indicar `--n-samples`.
-
-Si el servidor requereix un identificador de model concret:
-
-```bash
-uv run python model.py --model "unsloth/gemma-3-12b-it-GGUF:Q4_K_M" --server-url http://localhost:9090/v1 --server-model unsloth/gemma-3-12b-it-GGUF:Q4_K_M
-uv run python run_evals.py --models gemma3-12b --server-model gemma-3-12b-it-Q4_K_M
-```
-
-**Avaluar amb l'API de Google AI o OpenAI:**
-
-```bash
-uv run python model.py --model gemini --api-key "LA_TEVA_CLAU" --gemini-model gemini-3.6-flash
-OPENAI_API_KEY="LA_TEVA_CLAU" uv run python model.py --model openai --openai-model gpt-4o
-```
-
-Els resultats es desen com a JSON a `llm/evals/`. L'orquestrador assigna un fitxer a cada model; si executes `model.py` directament, indica `--output evals/<nom_model>.json` per evitar reutilitzar el fitxer per defecte `evals/catalan_eval_results.json`.
-
----
-
-## ASR — Avaluació de models de reconeixement de la parla
-
-L'script `asr/hf-eval.py` mesura la taxa d'error de paraules (WER) i de caràcters (CER) sobre FLEURS i OpenSLR-69 en català. Suporta models Omnilingual ASR, Whisper i Gemma 4 amb entrada d'àudio. El script `asr/cloud-eval.py` avalua models d'API d'OpenAI i Gemini sobre els mateixos benchmarks.
-
-### Instal·lació (ASR)
-
-Requereix [uv](https://docs.astral.sh/uv/).
-
-```bash
-cd asr
-uv sync
-```
-
-Per avaluar models Omnilingual ASR, cal instal·lar també el paquet `omnilingual_asr` a l'entorn d'ASR.
-
-### Execució (ASR)
-
-Executa les ordres següents des de `asr/`.
-
-**Preparar els benchmarks locals una vegada:**
-
-```bash
-uv run python dataset_preparation.py
-uv run python openslr69_dataset_preparation.py
-```
-
-Cada script descarrega 400 mostres de fins a 30 segons i genera els àudios i un `manifest.json` a `benchmarks/fleurs_ca_test_400/` o `benchmarks/openslr69_ca_eval_400/`. Els avaluadors executen tots dos benchmarks per defecte; usa `--benchmark fleurs` o `--benchmark openslr69` per seleccionar-ne un. Per a un conjunt propi, usa `--manifest <ruta/manifest.json>`.
-
-**Llistar els models disponibles:**
-
-```bash
-uv run python hf-eval.py --list-models
-```
-
-**Avaluar un model local:**
-
-```bash
-uv run python hf-eval.py whisper-large-v3 --device cuda --output evals/whisper_large_v3.json
-uv run python hf-eval.py whisper-small --output evals/whisper_small.json
-```
-
-**Avaluar un model d'API:**
-
-```bash
-uv run python cloud-eval.py --list-models
-OPENAI_API_KEY="LA_TEVA_CLAU" uv run python cloud-eval.py gpt-transcribe --output evals/gpt_transcribe.json
-```
-
-Els models de Gemini requereixen la variable `GEMINI_API_KEY`.
-
-**Executar l'orquestrador per a múltiples models:**
-
-```bash
-uv run python run_evals.py --device cuda --jobs 2
-```
-
-L'orquestrador omet els models que ja tenen els benchmarks sol·licitats i els models d'API sense la clau corresponent. Usa `--overwrite` per repetir les avaluacions. Els resultats es desen a `asr/evals/`; en executar els avaluadors directament, cal indicar `--output` per desar el JSON.
-
-
-## Embeddings — Avaluació de models d'embeddings
-
-El pipeline `embeddings/model.py` avalua models de representació vectorial (Sentence Transformers o APIs de núvol) sobre benchmarks de català:
-
-| Benchmark | Tasca | Mètrica |
-|-----------|-------|---------|
-| **STS-ca** | Similitud semàntica de frases | Correlació de Spearman |
-| **XQuAD-ca** | Recuperació de context (Retrieval) | nDCG@10 |
-| **TeCla** | Classificació temàtica (Linear probe) | Macro F1 |
-
-### Instal·lació (Embeddings)
-
-Requereix [uv](https://docs.astral.sh/uv/).
-
-```bash
-cd embeddings
-uv sync
-```
-
-### Execució (Embeddings)
-
-Executa les ordres següents des de `embeddings/`.
-
-**Avaluar un model de Hugging Face / Sentence Transformers:**
-
-```bash
-uv run python model.py --model "<nom_model>" --output evals/<nom_model>.json
-```
-
-**Avaluar amb l'API d'OpenAI o Google:**
-
-Defineix `OPENAI_API_KEY` per a OpenAI, o `GOOGLE_API_KEY` (també s'accepta `GEMINI_API_KEY`) per a Google.
-
-```bash
-uv run python model.py --cloud-provider openai --model text-embedding-3-large --output evals/openai_text_embedding_3_large.json
-uv run python model.py --cloud-provider google --model gemini-embedding-001 --output evals/google_gemini_embedding_001.json
-```
-
-**Executar l'orquestrador per a múltiples models:**
-
-```bash
-uv run python run_evals.py
-```
-
-Els resultats es desen com a JSON a `embeddings/evals/`.
-
----
-
-## Comprovacions de desenvolupament
-
-Des de l'arrel del repositori, pots executar les mateixes comprovacions que el workflow `.github/workflows/tests.yml`:
-
-```bash
-make format-check
-make publish-check
-make unit-test
-make data-validation
-```
-
-Aquestes ordres comproven el format del codi, la generació dels fitxers de publicació, les proves unitàries i la coherència de les dades d'avaluació. Per aplicar el format automàticament, usa `make format`.
+Quan s’actualitza `main`, GitHub Actions agrega les avaluacions de LLM, ASR,
+embeddings i JEV i genera els JSON de resultats i recomanacions. Aquests fitxers
+es publiquen automàticament a la branca `prod-data`, que la web de
+[Softcatalà](https://www.softcatala.org/ia-local/models-en-catala/) llegeix per
+mostrar els resultats actualitzats. Els informes HTML són només per a consulta local.
+
+### Recomanacions de models automatitzades
+
+Les recomanacions es calculen a partir de les avaluacions completes dels models
+que es poden executar localment. S’exclouen els serveis de núvol i les proves
+que comparen quantitzacions fora del benchmark principal.
+
+**LLM:**
+
+- Per a ordinadors amb 8, 16 i 32 GB de RAM, es consideren els models que caben
+  deixant un 25% de memòria lliure per al sistema i l’execució.
+- La qualitat es mesura amb CLAM, la puntuació que combina els benchmarks de català.
+- Entre els models que queden a menys de 2 punts del millor, es recomana el que
+  consumeix menys memòria.
+- També es mostra una alternativa amb la millor puntuació entre la resta de models que caben.
+
+**ASR:** s’ofereixen dues recomanacions, sense separar-les per memòria disponible:
+
+- **Màxima precisió:** el model amb menys errors de transcripció en el conjunt
+  de FLEURS i OpenSLR-69, donant més pes al benchmark amb més mostres.
+- **Precisió i velocitat:** el model amb menys errors entre els que són almenys
+  el doble de ràpids a FLEURS que el de màxima precisió i tenen com a màxim
+  2 punts percentuals més d’error. Per exemple, si el millor té un 5% d’error,
+  aquesta opció ha de tenir com a màxim un 7%. Si cap model compleix totes dues
+  condicions, no s’ofereix aquesta segona recomanació.
+
+  El marge de 2 punts percentuals és un criteri pràctic de selecció, no un marge estadístic d’error.
 
 ---
 
@@ -421,12 +73,12 @@ Aquestes ordres comproven el format del codi, la generació dels fitxers de publ
 
 Volem expressar el nostre agraïment als proveïdors dels datasets usats en l'avaluació:
 
-- **[Projecte AINA](https://www.projecteaina.cat/)** (Barcelona Supercomputing Center) pels datasets [STS-ca](https://huggingface.co/datasets/projecte-aina/sts-ca), [VilaQuAD](https://huggingface.co/datasets/projecte-aina/vilaquad) i [CaSum](https://huggingface.co/datasets/projecte-aina/casum), que han fet possible l'avaluació de models en català.
+- **[Projecte AINA](https://projecteaina.cat/)** (Barcelona Supercomputing Center) pels datasets [STS-ca](https://huggingface.co/datasets/projecte-aina/sts-ca), [VilaQuAD](https://huggingface.co/datasets/projecte-aina/vilaquad) i [CaSum](https://huggingface.co/datasets/projecte-aina/casum), que han fet possible l'avaluació de models en català.
 - **[nbel](https://huggingface.co/nbel)** pel dataset [CatCoLA](https://huggingface.co/datasets/nbel/CatCoLA), corpus d'acceptabilitat lingüística en català.
 - **[Google](https://ai.google/research/)** pel dataset [FLEURS](https://huggingface.co/datasets/google/fleurs) (Few-shot Learning Evaluation of Universal Representations of Speech), usat per avaluar models ASR en català.
 - **[Softcatalà — Mantinc](https://github.com/Softcatala/mantinc-catalan-drift)** pel dataset que avalua si els models mantenen les respostes en català davant de prompts que poden induir un canvi de llengua.
 - L'equip de **[lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)** pel motor d'avaluació usat en benchmarks generatius.
-- **[Meta AI](https://ai.meta.com/)** pel benchmark [FLORES+](https://huggingface.co/datasets/facebook/flores) de traducció automàtica.
+- **[Meta AI](https://ai.meta.com/)** pel benchmark [FLORES-200](https://huggingface.co/datasets/facebook/flores) de traducció automàtica.
 
 ---
 
@@ -442,64 +94,3 @@ Si feu servir aquestes eines o els resultats en un treball, citeu-ho així (i ci
   howpublished = {\url{https://github.com/Softcatala/ai-eval-catalan}}
 }
 ```
-
----
-
-## JEV — Avaluació de models de decisió
-
-`jev/` avalua Julia, Laya, Kev (0.8B, 4B i 9B), lev, OpenJev, Clef Flash (9B),
-Clef (27B), Nimble (9B), Rune v3 (26B-A4B), Liquid d1 (3B i Omni 600M)
-i GPT-6 Luna Decisions sobre les 18 categories del test MASSIVE 1.1 en català.
-Mesura accuracy, macro F1 i latència mitjana. Requereix Python ≥ 3.10 i
-`llama-server` amb `/v1/systemone`:
-
-```bash
-llama-server -hf ggml-org/Julia-1-GGUF:Q8_0 --port 9090
-make jev-eval
-make render-local
-```
-
-Per a Clef i Clef Flash, afegeix `--batch-size 2048 --ubatch-size 2048` al servidor.
-Per a Liquid d1 Omni 600M, usa `--batch-size 4096 --ubatch-size 4096`.
-Per a Rune v3, usa `owao/surogate-rune-26b-a4b-GGUF:Q8_0` (amb metadades de decisió).
-`--server-url` o `LLAMA_SERVER_URL` configura l'endpoint (per defecte,
-`http://localhost:9090/v1`); `SYSTEMONE_API_KEY`, l'autenticació.
-
-Per a GPT-6 Luna Decisions, configura `OPENAI_API_KEY` i executa
-`python3 -m jev.run_evals --provider openai --models gpt-6-luna` (API `/v1/decisions`).
-
-L'orquestrador descobreix models a `/v1/models`, inclosos els del router, avalua
-tot el test i reutilitza resultats completats amb la mateixa configuració:
-
-```bash
-python3 -m jev.run_evals --models ggml-org/Julia-1-GGUF:Q8_0 --n-samples 100
-```
-
-MASSIVE es descarrega automàticament a `jev/data/`. Els resultats i les prediccions
-es desen a `jev/evals/` (JSON i JSONL); `jev/jevs.json` n'agrega el resum.
-Usa `--overwrite` per repetir avaluacions i `--output-dir` per conservar
-configuracions separades. Consulta `python3 -m jev.run_evals --help` per a les
-opcions de llengua, ordre de categories i dades locals.
-
-També es pot avaluar Tornem a TE-ca (`projecte-aina/teca`, split `test`),
-amb tres opcions: implicació, neutralitat i contradicció. Aquesta avaluació
-requereix `datasets` (disponible a l'entorn de `llm/`). Com a ASR, cada fitxer
-`jev/evals/<model>.json` conté els dos conjunts dins de `benchmarks.massive`
-i `benchmarks.teca`, amb les mètriques, el nombre de mostres i la configuració
-de cada avaluació. Les metadades del model són al nivell superior.
-La data `evaluated_at` es desa només a cada benchmark. Els camps `requested_model` i
-`models` només es desen al nivell superior si difereixen del model del fitxer.
-Les seccions dels benchmarks no contenen metadades del model.
-Els valors per defecte `locale=ca-ES` i `labels=ca` són implícits i no es desen al JSON.
-La selecció és reproduïble amb `--seed` (42 per defecte).
-Per afegir tot el test (2.117 exemples) als fitxers existents, usa
-`--dataset teca --n-samples 0` sense `--output-dir`. Una nova passada conserva
-els resultats de l'altre benchmark. Les prediccions TE-ca es desen en `.teca.jsonl`.
-
-El rànquing JEV s'ordena per la mitjana aritmètica de les accuracy de MASSIVE
-i TE-ca, amb un pes del 50% per a cada dataset. Les dues accuracy es mostren
-separadament. Només es calcula la mitjana quan el model té les dues avaluacions;
-els models pendents apareixen al final sense puntuació global. L'agregador
-`python3 -m jev.summarize_results` llegeix tots dos benchmarks de `jev/evals/`
-i exigeix els tests complets (2.974 exemples MASSIVE i 2.117 TE-ca) i la mateixa
-configuració de llengua, llavor i ordre d'opcions.
