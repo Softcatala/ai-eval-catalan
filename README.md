@@ -65,7 +65,7 @@ que comparen quantitzacions fora del benchmark principal.
   aquesta opció ha de tenir com a màxim un 7%. Si cap model compleix totes dues
   condicions, no s’ofereix aquesta segona recomanació.
 
-Els marges de 2 punts són criteris pràctics de selecció, no marges estadístics d’error.
+  El marge de 2 punts percentuals és un criteri pràctic de selecció, no un marge estadístic d’error.
 
 ---
 
