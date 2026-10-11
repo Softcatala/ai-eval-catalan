@@ -8,12 +8,12 @@
     {
       "priority": "Màxima qualitat",
       "recommended": "multilingual-e5-large · FP32",
-      "description": "Model amb la millor qualitat, vector de 1024 dimensions i puntuació composta 0,8640"
+      "description": "Model amb la millor qualitat, vector de 1024 dimensions i puntuació composta 0,9"
     },
     {
       "priority": "Qualitat i vector més petit",
       "recommended": "nomic-embed-text-v2-moe · FP32",
-      "description": "Model amb qualitat similar i vector més petit, de 768 dimensions, puntuació composta 0,8621"
+      "description": "Model amb qualitat similar i vector més petit, de 768 dimensions, puntuació composta 0,9"
     }
   ]
 }
