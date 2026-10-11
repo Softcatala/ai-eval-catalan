@@ -242,8 +242,10 @@ def print_table(report):
             print(f"- {item['model']}: {item['reason']} ({item['source']})")
 
 
-def recommendations_json(candidates, capacities=DEFAULT_CAPACITIES, llm_uncertainty=2):
-    """Prefer the smallest LLM within the CLAM uncertainty margin."""
+def recommendations_json(
+    candidates, capacities=DEFAULT_CAPACITIES, llm_uncertainty=2, category="llm"
+):
+    """Export a recommendation and runner-up for each memory capacity."""
 
     def model_label(model):
         if model is None:
@@ -263,8 +265,8 @@ def recommendations_json(candidates, capacities=DEFAULT_CAPACITIES, llm_uncertai
             [capacity],
             llm_uncertainty,
         )[0]
-        model = config["models"]["llm"]
-        ranked = rank_candidates(candidates, "llm", budget)
+        model = config["models"][category]
+        ranked = rank_candidates(candidates, category, budget)
         alternative = (
             next((m for m in ranked if m["model_id"] != model["model_id"]), None)
             if model
@@ -300,6 +302,9 @@ def main(argv=None):
         help="Llindar CLAM per preferir el model més petit; 0: només empats",
     )
     parser.add_argument("--format", choices=("table", "json"), default="table")
+    parser.add_argument(
+        "--category", choices=("llm", "asr"), default="llm", help="Categoria del JSON"
+    )
     parser.add_argument("--output", type=Path, help="Fitxer de sortida JSON")
     args = parser.parse_args(argv)
     if args.output and args.format == "table":
@@ -307,7 +312,9 @@ def main(argv=None):
     try:
         candidates, skipped = load_candidates(args.repo_root)
         if args.format == "json":
-            report = recommendations_json(candidates, args.memory, args.llm_uncertainty)
+            report = recommendations_json(
+                candidates, args.memory, args.llm_uncertainty, args.category
+            )
         else:
             report = {
                 "llm_uncertainty_points": args.llm_uncertainty,

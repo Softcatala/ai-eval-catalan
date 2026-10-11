@@ -136,7 +136,8 @@ def main():
     }
     json_rows = [
         {
-            "model": f"(*) {r['model']}" if r.get("cloud", False) else r["model"],
+            "model": ("(*) " if r.get("cloud", False) else "")
+            + r["model"].rsplit("/", 1)[-1],
             "repo_url": r["repo_url"],
             "cloud": r.get("cloud", False),
             "params_b": (

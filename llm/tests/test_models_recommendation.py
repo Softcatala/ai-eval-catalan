@@ -284,3 +284,33 @@ def test_qwen_recommendation_prefers_9b_for_8_and_16_gb():
     rows = recommendations_json(candidates, [8, 16])["data"]
     assert all(row["recommended"] == "qwen3.5-9b · Q4_K_M" for row in rows)
     assert rows[1]["alternatives"] == "qwen3-14b · Q4_K_M"
+
+
+def test_asr_json_ranks_lower_wer_with_memory_reserve_and_ties():
+    candidates = {
+        "asr": [
+            candidate("over_budget", 6.01, 0.01),
+            candidate("larger", 4, 0.05),
+            candidate("best", 3, 0.05),
+            candidate("worse", 1, 0.2),
+        ]
+    }
+    rows = recommendations_json(candidates, [1, 8, 16], category="asr")["data"]
+    assert rows == [
+        {"capacity_gb": "1 GB", "recommended": None, "alternatives": None},
+        {"capacity_gb": "8 GB", "recommended": "best", "alternatives": "larger"},
+        {
+            "capacity_gb": "16 GB",
+            "recommended": "over_budget",
+            "alternatives": "best",
+        },
+    ]
+
+
+def test_asr_cli_json_output(tmp_path):
+    output = tmp_path / "asrs_recommendations.json"
+    main(["--category", "asr", "--format", "json", "--output", str(output)])
+    candidates, _ = load_candidates(ROOT)
+    assert json.loads(output.read_text()) == recommendations_json(
+        candidates, category="asr"
+    )

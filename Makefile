@@ -27,9 +27,10 @@ publish-check:
 	PYTHONPATH=$(CURDIR) uv run --with jinja2 python -m embeddings.summarize_results --json-out /tmp/embeddings.json
 	PYTHONPATH=$(CURDIR) python3 -m jev.summarize_results --json-out /tmp/jevs.json
 	PYTHONPATH=$(CURDIR) uv run --with jinja2 python models_recommendation.py --memory 8 16 32 --format json --output /tmp/llms_recommendations.json
+	PYTHONPATH=$(CURDIR) uv run --with jinja2 python models_recommendation.py --category asr --memory 8 16 32 --format json --output /tmp/asrs_recommendations.json
 
 unit-test:
-	cd llm && PYTHONPATH=.. uv run --with pytest python -m pytest tests ../jev/tests --ignore=tests/data_validation --ignore=../jev/tests/data_validation
+	cd llm && PYTHONPATH=.. uv run --with pytest python -m pytest tests ../jev/tests ../asr/tests --ignore=tests/data_validation --ignore=../jev/tests/data_validation --ignore=../asr/tests/data_validation
 
 data-validation:
 	cd llm && PYTHONPATH=.. uv run --with pytest python -m pytest --import-mode=importlib tests/data_validation ../asr/tests/data_validation ../jev/tests/data_validation

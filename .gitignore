@@ -6,6 +6,7 @@ llm/summary.html
 llm/chat.py
 report.html
 llms_recommendations.json
+asrs_recommendations.json
 
 jev/data/
 jev/evals/**/*.jsonl
