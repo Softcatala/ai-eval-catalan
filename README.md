@@ -54,8 +54,6 @@ que comparen quantitzacions fora del benchmark principal.
 - Entre els models que queden a menys de 2 punts del millor, es recomana el que
   consumeix menys memòria.
 - També es mostra una alternativa amb la millor puntuació entre la resta de models que caben.
-- S’assumeix que s’executa un sol model alhora; el consum real pot variar segons
-  la llargada del context.
 
 **ASR:** s’ofereixen dues recomanacions, sense separar-les per memòria disponible:
 
