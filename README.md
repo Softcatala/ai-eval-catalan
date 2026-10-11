@@ -45,7 +45,7 @@ es publiquen automàticament a la branca `prod-data`, que la web de
 [Softcatalà](https://www.softcatala.org/ia-local/models-en-catala/) llegeix per
 mostrar els resultats actualitzats. Els informes HTML són només per a consulta local.
 
-### Recomanacions de models
+### Recomanacions de models automatitzada
 
 L'eina [`models_recommendation.py`](models_recommendation.py), situada a l'arrel, recomana
 models locals de LLM, embeddings i ASR segons les avaluacions i la memòria
