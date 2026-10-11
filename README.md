@@ -46,13 +46,16 @@ Les recomanacions es calculen a partir de les avaluacions completes dels models
 que es poden executar localment. S’exclouen els serveis de núvol i les proves
 que comparen quantitzacions fora del benchmark principal.
 
-**LLM:** per a ordinadors amb 8, 16 i 32 GB de RAM, es consideren els models que
-caben deixant un 25% de memòria lliure per al sistema i l’execució. La qualitat
-es mesura amb CLAM, la puntuació que combina els benchmarks de català.
-Entre els models que queden a menys de 2 punts del millor, es recomana el que
-consumeix menys memòria. També es mostra una alternativa amb la millor puntuació
-entre la resta de models que caben. S’assumeix que s’executa un sol model alhora;
-el consum real pot variar segons la llargada del context.
+**LLM:**
+
+- Per a ordinadors amb 8, 16 i 32 GB de RAM, es consideren els models que caben
+  deixant un 25% de memòria lliure per al sistema i l’execució.
+- La qualitat es mesura amb CLAM, la puntuació que combina els benchmarks de català.
+- Entre els models que queden a menys de 2 punts del millor, es recomana el que
+  consumeix menys memòria.
+- També es mostra una alternativa amb la millor puntuació entre la resta de models que caben.
+- S’assumeix que s’executa un sol model alhora; el consum real pot variar segons
+  la llargada del context.
 
 **ASR:** s’ofereixen dues recomanacions, sense separar-les per memòria disponible:
 
