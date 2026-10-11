@@ -115,6 +115,15 @@ def load_candidates(root, memory_file=MEMORY_FILE):
             if category == "asr":
                 rtf = data.get("benchmarks", {}).get("fleurs_ca", {}).get("rtf")
                 candidate["rtf"] = rtf if finite_number(rtf) and rtf >= 0 else None
+            elif category == "embeddings":
+                dimension = data.get("embedding_dim")
+                candidate["embedding_dim"] = (
+                    dimension
+                    if isinstance(dimension, int)
+                    and finite_number(dimension)
+                    and dimension > 0
+                    else None
+                )
             candidates[category].append(candidate)
     return candidates, skipped
 
@@ -246,7 +255,7 @@ def print_table(report):
 def recommendations_json(
     candidates, capacities=DEFAULT_CAPACITIES, llm_uncertainty=2, category="llm"
 ):
-    """Export LLM recommendations by memory or ASR recommendations by quality/speed."""
+    """Export recommendations by LLM memory, ASR speed or embedding dimension."""
 
     def model_label(model):
         if model is None:
@@ -257,26 +266,50 @@ def recommendations_json(
         )
         return name + (f" · {precision}" if precision else "")
 
-    if category == "asr":
-        ranked = sorted(candidates["asr"], key=lambda m: (m["score"], m["model_id"]))
+    if category in ("asr", "embeddings"):
+        asr = category == "asr"
+        metric = "rtf" if asr else "embedding_dim"
+        ranked = sorted(
+            candidates[category],
+            key=lambda m: (m["score"] if asr else -m["score"], m["model_id"]),
+        )
         best = ranked[0] if ranked else None
         balanced = None
-        if best and finite_number(best.get("rtf")) and best["rtf"] > 0:
+        if best and finite_number(best.get(metric)) and best[metric] > 0:
             balanced = next(
                 (
                     model
                     for model in ranked[1:]
-                    if model["score"] <= best["score"] + 0.02
-                    and finite_number(model.get("rtf"))
-                    and 0 < model["rtf"] <= best["rtf"] / 2
+                    if (
+                        model["score"] <= best["score"] + 0.02
+                        if asr
+                        else model["score"] >= best["score"] - 0.02
+                    )
+                    and finite_number(model.get(metric))
+                    and model[metric] > 0
+                    and (
+                        model[metric] <= best[metric] / 2
+                        if asr
+                        else model[metric] < best[metric]
+                    )
                 ),
                 None,
             )
         descriptions = (
-            f"Model amb la millor qualitat, {best['score']:.1%} WER" if best else None,
+            (
+                f"Model amb la millor qualitat, {best['score']:.1%} WER"
+                if asr
+                else f"Model amb la millor qualitat, vector de {best.get('embedding_dim') or '—'} dimensions "
+                f"i puntuació composta {best['score']:.4f}"
+            )
+            if best
+            else None,
             (
                 f"Model amb qualitat {balanced['score']:.1%} WER i "
                 f"{best['rtf'] / balanced['rtf'] - 1:.1%} més ràpid que el primer"
+                if asr
+                else f"Model amb qualitat similar i vector més petit, de {balanced['embedding_dim']} dimensions, "
+                f"puntuació composta {balanced['score']:.4f}"
             )
             if balanced
             else None,
@@ -297,7 +330,9 @@ def recommendations_json(
                 }
                 for model, priority, description in zip(
                     (best, balanced),
-                    ("Màxima precisió", "Precisió i velocitat"),
+                    ("Màxima precisió", "Precisió i velocitat")
+                    if asr
+                    else ("Màxima qualitat", "Qualitat i vector més petit"),
                     descriptions,
                 )
             ],
@@ -353,7 +388,10 @@ def main(argv=None):
     )
     parser.add_argument("--format", choices=("table", "json"), default="table")
     parser.add_argument(
-        "--category", choices=("llm", "asr"), default="llm", help="Categoria del JSON"
+        "--category",
+        choices=tuple(CATEGORIES),
+        default="llm",
+        help="Categoria del JSON",
     )
     parser.add_argument("--output", type=Path, help="Fitxer de sortida JSON")
     args = parser.parse_args(argv)

@@ -48,4 +48,12 @@ usa `EMBEDDINGS_ARGS="--force"` per repetir-les. Pots combinar totes dues opcion
 
 Els resultats es desen com a JSON a `embeddings/evals/`.
 
+### Recomanacions automàtiques
+
+```bash
+make recommendation RECOMMENDATION_ARGS="--category embeddings --memory 8 16 32 --format json --output embeddings_recommendations.json"
+```
+
+Consulta els [criteris de recomanació al README](../README.md#recomanacions-de-models-automatitzades).
+
 [Torna al README](../README.md)

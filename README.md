@@ -67,6 +67,14 @@ que comparen quantitzacions fora del benchmark principal.
 
   El marge de 2 punts percentuals és un criteri pràctic de selecció, no un marge estadístic d’error.
 
+**Embeddings:**
+
+- **Màxima qualitat:** el model local amb la millor mitjana dels tres benchmarks.
+- **Qualitat i vector més petit:** el millor model amb un vector més petit i una
+  pèrdua de puntuació de com a màxim 0,02. Un vector més petit redueix
+  l'emmagatzematge i el cost de comparació; no implica que el model generi
+  embeddings més ràpid.
+
 ---
 
 ## Agraïments
