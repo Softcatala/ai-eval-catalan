@@ -38,29 +38,11 @@ de les avaluacions de cada model.
 
 ## Publicació automàtica de resultats (CI/CD)
 
-Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/workflows/publish-llms-json.yml` executa automàticament els passos següents:
-
-1. **Genera els fitxers de dades** a partir dels resultats JSON individuals de `llm/evals/`, `asr/evals/`, `embeddings/evals/` i `jev/evals/`:
-   - `python -m llm.summarize_results` → `llm/llms.json` i `llm/llms_quantized.json`
-   - `python -m asr.summarize_results` → `asr/asrs.json`
-   - `python -m embeddings.summarize_results` → `embeddings/embeddings.json`
-   - `python -m jev.summarize_results` → `jev/jevs.json`
-   - `python models_recommendation.py --memory 8 16 32 --format json --output llms_recommendations.json` → `llms_recommendations.json`
-   - `python models_recommendation.py --category asr --memory 8 16 32 --format json --output asrs_recommendations.json` → `asrs_recommendations.json`
-
-2. **Puja només els JSON a la branca `prod-data`**, que actua com a repositori de dades en producció:
-   ```
-   prod-data/
-   ├── llms.json
-   ├── llms_quantized.json
-   ├── asrs.json
-   ├── embeddings.json
-   ├── jevs.json
-   ├── llms_recommendations.json
-   └── asrs_recommendations.json
-   ```
-
-La web de [Softcatalà](https://www.softcatala.org) llegeix directament els fitxers de la branca `prod-data` per mostrar els resultats actualitzats.
+Quan s’actualitza `main`, GitHub Actions agrega les avaluacions de LLM, ASR,
+embeddings i JEV i genera els JSON de resultats i recomanacions. Aquests fitxers
+es publiquen automàticament a la branca `prod-data`, que la web de
+[Softcatalà](https://www.softcatala.org/ia-local/models-en-catala/) llegeix per
+mostrar els resultats actualitzats. Els informes HTML són només per a consulta local.
 
 ### Recomanacions de models
 
