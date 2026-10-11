@@ -15,7 +15,53 @@ Els resultats estan compartits a https://www.softcatala.org/ia-local/models-en-c
 | [ASR](docs/asr.md) | Preparació de FLEURS i OpenSLR-69 i avaluació de reconeixement de la parla |
 | [Embeddings](docs/embeddings.md) | Benchmarks i avaluació de models locals i d'API |
 | [JEV](docs/jev.md) | Avaluació de models de decisió sobre MASSIVE i TE-ca |
-| [Publicació de resultats](docs/publicacio.md) | Estructura del projecte, JSON de producció, recomanacions i informes HTML locals |
+| [Publicació de resultats](docs/publicacio.md) | JSON de producció, recomanacions i informes HTML locals |
+
+## Estructura del projecte
+
+```
+ai-eval-catalan/
+├── render_tables.py          # Genera taules HTML per a depuració local
+├── eval_common/              # Codi compartit pels generadors de JSON
+├── llm/                      # Avaluació de models LLM
+│   ├── model.py              # Pipeline d'avaluació per a un model
+│   ├── run_evals.py          # Orquestrador per executar múltiples models
+│   ├── summarize_results.py  # Agrega els resultats en un JSON
+│   ├── table_template.jinja
+│   └── evals/
+├── asr/                      # Avaluació de models ASR
+│   ├── hf-eval.py            # Avaluació local de WER/CER sobre FLEURS i OpenSLR-69
+│   ├── cloud-eval.py         # Avaluació ASR amb APIs d'OpenAI i Gemini
+│   ├── dataset_preparation.py          # Prepara el benchmark local FLEURS
+│   ├── openslr69_dataset_preparation.py # Prepara el benchmark local OpenSLR-69
+│   ├── run_evals.py          # Orquestrador per executar múltiples models
+│   ├── summarize_results.py  # Agrega els resultats en un JSON
+│   ├── table_template.jinja
+│   └── evals/
+├── embeddings/               # Avaluació de models d'embeddings
+│   ├── model.py              # Pipeline d'avaluació per a un model
+│   ├── run_evals.py          # Orquestrador per executar múltiples models
+│   ├── summarize_results.py  # Agrega els resultats en un JSON
+│   ├── table_template.jinja
+│   └── evals/
+└── jev/                      # Avaluació de models de decisió
+    ├── model.py              # Avaluador MASSIVE i TE-ca
+    ├── run_evals.py          # Orquestrador de models locals i d’API
+    ├── summarize_results.py  # Agrega els resultats en un JSON
+    ├── table_template.jinja
+    └── evals/
+```
+
+Els fitxers `.jinja` contenen les plantilles per generar les taules HTML de
+resultats. Els directoris `evals/` contenen els fitxers JSON amb els resultats
+de les avaluacions de cada model.
+
+## Publicació de resultats
+
+Quan s’actualitza `main`, GitHub Actions genera els JSON de resultats i els
+publica a la branca `prod-data`. La web de Softcatalà llegeix aquests fitxers
+per mostrar les avaluacions actualitzades. Consulta la [guia de publicació](docs/publicacio.md)
+per als detalls.
 
 ## Comprovacions de desenvolupament
 

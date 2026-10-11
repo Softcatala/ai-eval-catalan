@@ -1,45 +1,4 @@
-# Estructura del projecte
-
-```
-ai-eval-catalan/
-├── render_tables.py          # Genera taules HTML per a depuració local
-├── eval_common/              # Codi compartit pels generadors de JSON
-├── llm/                      # Avaluació de models LLM
-│   ├── model.py              # Pipeline d'avaluació per a un model
-│   ├── run_evals.py          # Orquestrador per executar múltiples models
-│   ├── summarize_results.py  # Agrega els resultats en un JSON
-│   ├── table_template.jinja
-│   └── evals/
-├── asr/                      # Avaluació de models ASR
-│   ├── hf-eval.py            # Avaluació local de WER/CER sobre FLEURS i OpenSLR-69
-│   ├── cloud-eval.py         # Avaluació ASR amb APIs d'OpenAI i Gemini
-│   ├── dataset_preparation.py          # Prepara el benchmark local FLEURS
-│   ├── openslr69_dataset_preparation.py # Prepara el benchmark local OpenSLR-69
-│   ├── run_evals.py          # Orquestrador per executar múltiples models
-│   ├── summarize_results.py  # Agrega els resultats en un JSON
-│   ├── table_template.jinja
-│   └── evals/
-├── embeddings/               # Avaluació de models d'embeddings
-│   ├── model.py              # Pipeline d'avaluació per a un model
-│   ├── run_evals.py          # Orquestrador per executar múltiples models
-│   ├── summarize_results.py  # Agrega els resultats en un JSON
-│   ├── table_template.jinja
-│   └── evals/
-└── jev/                      # Avaluació de models de decisió
-    ├── model.py              # Avaluador MASSIVE i TE-ca
-    ├── run_evals.py          # Orquestrador de models locals i d’API
-    ├── summarize_results.py  # Agrega els resultats en un JSON
-    ├── table_template.jinja
-    └── evals/
-```
-
-Els fitxers `.jinja` contenen les plantilles per generar les taules HTML de
-resultats. Els directoris `evals/` contenen els fitxers JSON amb els resultats
-de les avaluacions de cada model.
-
----
-
-## Publicació automàtica de resultats (CI/CD)
+# Publicació automàtica de resultats (CI/CD)
 
 Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/workflows/publish-llms-json.yml` executa automàticament els passos següents:
 
@@ -65,7 +24,7 @@ Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/wo
 
 La web de [Softcatalà](https://www.softcatala.org) llegeix directament els fitxers de la branca `prod-data` per mostrar els resultats actualitzats.
 
-### Recomanacions de models
+## Recomanacions de models
 
 L'eina [`models_recommendation.py`](../models_recommendation.py), situada a l'arrel, recomana
 models locals de LLM, embeddings i ASR segons les avaluacions i la memòria
@@ -101,7 +60,7 @@ estadístic d'error.
 make recommendation RECOMMENDATION_ARGS="--category asr --memory 8 16 32 --format json --output asrs_recommendations.json"
 ```
 
-### Informes HTML de depuració
+## Informes HTML de depuració
 
 Els informes HTML no es publiquen ni formen part del contracte de dades de la web. Es poden generar localment per inspeccionar els resultats:
 
