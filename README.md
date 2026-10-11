@@ -47,39 +47,29 @@ mostrar els resultats actualitzats. Els informes HTML són només per a consulta
 
 ### Recomanacions de models automatitzada
 
-L'eina [`models_recommendation.py`](models_recommendation.py), situada a l'arrel, recomana
-models locals de LLM, embeddings i ASR segons les avaluacions i la memòria
-disponible. Executeu `make recommendation` des de l'arrel o
-`make recommendation RECOMMENDATION_ARGS="--help"` per consultar les opcions.
-Reserva un 25% fix de la memòria i assumeix que cada model s'executa
-individualment. `--format table` (per defecte) mostra l'informe de consola amb
-alternatives a menys de 2 punts CLAM. Dins d’aquest marge respecte de la millor
-puntuació, es recomana el model que ocupa menys memòria. `--format json` aplica
-el mateix criteri i mostra una alternativa, considerant tots els LLM que caben.
-Tots els formats exclouen els models marcats com a `quantized_analysis_only`
-a `llm/models_config.py` o al JSON d'avaluació.
+Les recomanacions es calculen a partir de les avaluacions completes dels models
+que es poden executar localment. S’exclouen els serveis de núvol i les proves
+que comparen quantitzacions fora del benchmark principal.
 
-`llms_recommendations.json` mostra el LLM recomanat i una alternativa per capacitat de RAM, sense
-repeticions. Conté `text` (etiquetes) i `data` (files amb
-`capacity_gb` (p. ex. `16 GB`), `recommended` i `alternatives`, amb nom i precisió).
-Per generar-lo localment:
+**LLM:** per a ordinadors amb 8, 16 i 32 GB de RAM, es consideren els models que
+caben deixant un 25% de memòria lliure per al sistema i l’execució. La qualitat
+es mesura amb CLAM, la puntuació que combina els benchmarks de català.
+Entre els models que queden a menys de 2 punts del millor, es recomana el que
+consumeix menys memòria. També es mostra una alternativa amb la millor puntuació
+entre la resta de models que caben. S’assumeix que s’executa un sol model alhora;
+el consum real pot variar segons la llargada del context.
 
-```bash
-make recommendation RECOMMENDATION_ARGS="--memory 8 16 32 --format json --output llms_recommendations.json"
-```
+**ASR:** s’ofereixen dues recomanacions, sense separar-les per memòria disponible:
 
-`asrs_recommendations.json` conté dues files, sense franges de memòria:
-«Màxima precisió» (menys WER combinat de FLEURS i OpenSLR-69, ponderat pel
-nombre de mostres) i «Precisió i velocitat» (el model amb menys WER entre
-els que tenen com a màxim 2 punts percentuals més de WER i són almenys
-2 vegades més ràpids a FLEURS). Si cap model compleix el criteri de velocitat,
-la segona recomanació és nul·la. Exclou els models de núvol i les avaluacions
-incompletes. El llindar de 2 punts és una tolerància pràctica, no un marge
-estadístic d'error.
+- **Màxima precisió:** el model amb menys errors de transcripció en el conjunt
+  de FLEURS i OpenSLR-69, donant més pes al benchmark amb més mostres.
+- **Precisió i velocitat:** el model amb menys errors entre els que són almenys
+  el doble de ràpids a FLEURS que el de màxima precisió i tenen com a màxim
+  2 punts percentuals més d’error. Per exemple, si el millor té un 5% d’error,
+  aquesta opció ha de tenir com a màxim un 7%. Si cap model compleix totes dues
+  condicions, no s’ofereix aquesta segona recomanació.
 
-```bash
-make recommendation RECOMMENDATION_ARGS="--category asr --memory 8 16 32 --format json --output asrs_recommendations.json"
-```
+Els marges de 2 punts són criteris pràctics de selecció, no marges estadístics d’error.
 
 ---
 
