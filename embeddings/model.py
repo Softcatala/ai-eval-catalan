@@ -157,6 +157,7 @@ def main():
     p.add_argument("--query-prefix", default="")
     p.add_argument("--doc-prefix", default="")
     p.add_argument("--sts-prefix", default=None)
+    p.add_argument("--classification-prefix", default=None)
     p.add_argument("--trust-remote-code", action="store_true")
     p.add_argument("--device", default=None)
     p.add_argument("--batch-size", type=int, default=32)
@@ -187,6 +188,9 @@ def main():
         model.max_seq_length = a.max_seq_length
 
     sts_prefix = a.sts_prefix if a.sts_prefix is not None else a.query_prefix
+    classification_prefix = (
+        a.classification_prefix if a.classification_prefix is not None else a.doc_prefix
+    )
     tasks = [
         (
             "xquad_ca_retrieval",
@@ -197,7 +201,9 @@ def main():
         (
             "tecla_classification",
             "tecla",
-            lambda: eval_tecla(model, a.doc_prefix, a.batch_size, a.n_tecla_train),
+            lambda: eval_tecla(
+                model, classification_prefix, a.batch_size, a.n_tecla_train
+            ),
         ),
     ]
 
