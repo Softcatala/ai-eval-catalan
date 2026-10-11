@@ -286,23 +286,39 @@ def test_qwen_recommendation_prefers_9b_for_8_and_16_gb():
     assert rows[1]["alternatives"] == "qwen3-14b · Q4_K_M"
 
 
-def test_asr_json_ranks_lower_wer_with_memory_reserve_and_ties():
+@pytest.mark.parametrize(
+    "rtf, score, expected",
+    [
+        (0.2, 0.07, "balanced"),
+        (0.2001, 0.07, None),
+        (0.2, 0.0701, None),
+        (None, 0.06, None),
+        (0, 0.06, None),
+    ],
+)
+def test_asr_accuracy_and_speed_thresholds(rtf, score, expected):
     candidates = {
         "asr": [
-            candidate("over_budget", 6.01, 0.01),
-            candidate("larger", 4, 0.05),
-            candidate("best", 3, 0.05),
-            candidate("worse", 1, 0.2),
+            {**candidate("best", 100, 0.05), "rtf": 0.4},
+            {**candidate("balanced", 100, score), "rtf": rtf},
+            {**candidate("faster_but_worse", 1, 0.071), "rtf": 0.01},
         ]
     }
-    rows = recommendations_json(candidates, [1, 8, 16], category="asr")["data"]
-    assert rows == [
-        {"capacity_gb": "1 GB", "recommended": None, "alternatives": None},
-        {"capacity_gb": "8 GB", "recommended": "best", "alternatives": "larger"},
+    report = recommendations_json(candidates, category="asr")
+    assert report["data"] == [
         {
-            "capacity_gb": "16 GB",
-            "recommended": "over_budget",
-            "alternatives": "best",
+            "priority": "Màxima precisió",
+            "recommended": "best",
+            "description": "Model amb la millor qualitat, 5,0% WER",
+        },
+        {
+            "priority": "Precisió i velocitat",
+            "recommended": expected,
+            "description": (
+                "Model amb qualitat 7,0% WER i 100,0% més ràpid que el primer"
+                if expected
+                else None
+            ),
         },
     ]
 

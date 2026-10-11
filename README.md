@@ -71,10 +71,14 @@ Per generar-lo localment:
 make recommendation RECOMMENDATION_ARGS="--memory 8 16 32 --format json --output llms_recommendations.json"
 ```
 
-`asrs_recommendations.json` té el mateix format i reserva de memòria. Recomana
-l'ASR local amb menys WER combinat de FLEURS i OpenSLR-69, ponderat pel nombre
-de mostres, i una alternativa entre els models que caben. Exclou els models
-de núvol i les avaluacions incompletes o sense memòria coneguda.
+`asrs_recommendations.json` conté dues files, sense franges de memòria:
+«Màxima precisió» (menys WER combinat de FLEURS i OpenSLR-69, ponderat pel
+nombre de mostres) i «Precisió i velocitat» (el model amb menys WER entre
+els que tenen com a màxim 2 punts percentuals més de WER i són almenys
+2 vegades més ràpids a FLEURS). Si cap model compleix el criteri de velocitat,
+la segona recomanació és nul·la. Exclou els models de núvol i les avaluacions
+incompletes. El llindar de 2 punts és una tolerància pràctica, no un marge
+estadístic d'error.
 
 ```bash
 make recommendation RECOMMENDATION_ARGS="--category asr --memory 8 16 32 --format json --output asrs_recommendations.json"

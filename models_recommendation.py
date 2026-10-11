@@ -100,7 +100,7 @@ def load_candidates(root, memory_file=MEMORY_FILE):
             reason = None
             if score is None:
                 reason = "avaluació incompleta"
-            elif not finite_number(memory) or memory <= 0:
+            elif category != "asr" and (not finite_number(memory) or memory <= 0):
                 reason = "memòria desconeguda o invàlida"
             if reason:
                 skipped.append({"source": source, "model": model, "reason": reason})
@@ -124,7 +124,8 @@ def rank_candidates(candidates, category, budget, min_memory_gb=0):
         (
             model
             for model in candidates[category]
-            if min_memory_gb < model["memory_gb"] <= budget
+            if finite_number(model["memory_gb"])
+            and min_memory_gb < model["memory_gb"] <= budget
         ),
         key=lambda m: (
             m["score"] if category == "asr" else -m["score"],
@@ -251,7 +252,55 @@ def recommendations_json(
         if model is None:
             return None
         precision = model.get("precision")
-        return model["model"] + (f" · {precision}" if precision else "")
+        name = (
+            model["model"].rsplit("/", 1)[-1] if category == "asr" else model["model"]
+        )
+        return name + (f" · {precision}" if precision else "")
+
+    if category == "asr":
+        ranked = sorted(candidates["asr"], key=lambda m: (m["score"], m["model_id"]))
+        best = ranked[0] if ranked else None
+        balanced = None
+        if best and finite_number(best.get("rtf")) and best["rtf"] > 0:
+            balanced = next(
+                (
+                    model
+                    for model in ranked[1:]
+                    if model["score"] <= best["score"] + 0.02
+                    and finite_number(model.get("rtf"))
+                    and 0 < model["rtf"] <= best["rtf"] / 2
+                ),
+                None,
+            )
+        return {
+            "text": {
+                "priority": "Prioritat",
+                "recommended": "Model recomanat",
+                "description": "Descripció",
+            },
+            "data": [
+                {
+                    "priority": "Màxima precisió",
+                    "recommended": model_label(best),
+                    "description": (
+                        f"Model amb la millor qualitat, {best['score']:.1%} WER"
+                    ).replace(".", ",")
+                    if best
+                    else None,
+                },
+                {
+                    "priority": "Precisió i velocitat",
+                    "recommended": model_label(balanced),
+                    "description": (
+                        f"Model amb qualitat {balanced['score']:.1%} WER i "
+                        f"{best['rtf'] / balanced['rtf'] - 1:.1%} més ràpid "
+                        "que el primer"
+                    ).replace(".", ",")
+                    if balanced
+                    else None,
+                },
+            ],
+        }
 
     columns = {
         "capacity_gb": "Memòria de l’ordinador",
