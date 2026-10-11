@@ -3,7 +3,8 @@ name = "embedding-eval"
 version = "0.1.0"
 requires-python = ">=3.10"
 dependencies = [
-    "sentence-transformers>=3.0.0",
+    "sentence-transformers>=6.1.0",
+    "transformers>=5.19.0",
     "datasets>=2.16.0,<3.0.0",
     "numpy",
     "scipy",
