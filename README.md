@@ -14,18 +14,13 @@ ai-eval-catalan/
 ├── docs/                     # Guies d’avaluació i desenvolupament
 ├── eval_common/              # Codi compartit pels generadors de JSON
 ├── llm/                      # Avaluació de models LLM
-│   └── evals/
 ├── asr/                      # Avaluació de models ASR
-│   └── evals/
 ├── embeddings/              # Avaluació de models d’embeddings
-│   └── evals/
 └── jev/                      # Avaluació de models de decisió
-    └── evals/
 ```
 
 Els fitxers `.jinja` contenen les plantilles per generar les taules HTML de
-resultats. Els directoris `evals/` contenen els fitxers JSON amb els resultats
-de les avaluacions de cada model.
+resultats.
 
 ## Documentació
 
