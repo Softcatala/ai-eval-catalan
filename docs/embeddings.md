@@ -19,7 +19,7 @@ uv sync
 
 ### Execució (Embeddings)
 
-Executa les ordres següents des de `embeddings/`.
+Executa les ordres `make` des de l'arrel del repositori i les ordres Python des de `embeddings/`. Pots passar opcions a `make embeddings-eval` amb `EMBEDDINGS_ARGS`.
 
 **Avaluar un model de Hugging Face / Sentence Transformers:**
 
@@ -39,7 +39,7 @@ uv run python model.py --cloud-provider google --model gemini-embedding-001 --ou
 **Executar l'orquestrador per a múltiples models:**
 
 ```bash
-uv run python run_evals.py
+make embeddings-eval
 ```
 
 Els resultats es desen com a JSON a `embeddings/evals/`.

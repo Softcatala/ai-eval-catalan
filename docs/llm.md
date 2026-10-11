@@ -61,7 +61,7 @@ checkout local ni descarregar el dataset per separat:
 L'eina [`models_recommendation.py`](../models_recommendation.py), situada a l'arrel, recomana
 models locals de LLM, embeddings i ASR segons les avaluacions i la memòria
 disponible. Executeu `make recommendation` des de l'arrel o
-`uv run --project llm python models_recommendation.py --help` per consultar les opcions.
+`make recommendation RECOMMENDATION_ARGS="--help"` per consultar les opcions.
 Reserva un 25% fix de la memòria i assumeix que cada model s'executa
 individualment. `--format table` (per defecte) mostra l'informe de consola amb
 alternatives a menys de 2 punts CLAM. Dins d’aquest marge respecte de la millor
@@ -146,7 +146,7 @@ Cada benchmark pot sobreescriure `max_tokens`. Els adaptadors tradueixen aquesta
 
 ### Execució (LLM)
 
-Executa els passos 1 i 2 des de l'arrel del repositori. Les ordres Python del pas 3 i dels exemples posteriors s'executen des de `llm/`.
+Executa les ordres `make` i `llama-server` des de l'arrel del repositori; les ordres Python, des de `llm/`. Pots passar opcions a `make llm-eval` amb `LLM_ARGS`.
 
 **1. Descarregar els GGUF necessaris:**
 
@@ -169,10 +169,9 @@ Per defecte les eines fan servir `http://localhost:9090/v1`. Es pot canviar amb 
 **3. Executar l'avaluació local:**
 
 ```bash
-cd llm
-uv run python run_evals.py --models salamandra-7b
-uv run python run_evals.py --models gemma3-12b --n-samples 200
-uv run python run_evals.py --models gemma3-12b --benchmarks catcola flores
+make llm-eval LLM_ARGS="--models salamandra-7b"
+make llm-eval LLM_ARGS="--models gemma3-12b --n-samples 200"
+make llm-eval LLM_ARGS="--models gemma3-12b --benchmarks catcola flores"
 ```
 
 Amb `presets.ini`, l'orquestrador permet avaluar diversos models per execució amb `--models`. Només `--server-model` requereix seleccionar exactament un model local.
@@ -183,7 +182,7 @@ Si el servidor requereix un identificador de model concret:
 
 ```bash
 uv run python model.py --model "unsloth/gemma-3-12b-it-GGUF:Q4_K_M" --server-url http://localhost:9090/v1 --server-model unsloth/gemma-3-12b-it-GGUF:Q4_K_M
-uv run python run_evals.py --models gemma3-12b --server-model gemma-3-12b-it-Q4_K_M
+make llm-eval LLM_ARGS="--models gemma3-12b --server-model gemma-3-12b-it-Q4_K_M"
 ```
 
 **Avaluar amb l'API de Google AI o OpenAI:**

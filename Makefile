@@ -38,7 +38,20 @@ data-validation:
 llm-download-ggufs:
 	cd llm && uv run python download_ggufs.py --output-dir "$(abspath $(GGUF_DIR))" --presets-file "$(abspath $(GGUF_DIR))/presets.ini" $(if $(GGUF_MODELS),--models $(GGUF_MODELS),) $(if $(GGUF_INCLUDE_QUANTIZED_ANALYSIS),--include-quantized-analysis,)
 
-.PHONY: jev-eval
+.PHONY: llm-eval asr-eval embeddings-eval asr-prepare jev-eval
+
+llm-eval:
+	cd llm && uv run python run_evals.py $(LLM_ARGS)
+
+asr-eval:
+	cd asr && uv run python run_evals.py $(ASR_ARGS)
+
+embeddings-eval:
+	cd embeddings && uv run python run_evals.py $(EMBEDDINGS_ARGS)
+
+asr-prepare:
+	cd asr && uv run python dataset_preparation.py
+	cd asr && uv run python openslr69_dataset_preparation.py
 
 jev-eval:
 	python3 -m jev.run_evals $(JEV_ARGS)

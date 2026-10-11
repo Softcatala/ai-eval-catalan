@@ -15,13 +15,12 @@ Per avaluar models Omnilingual ASR, cal instal·lar també el paquet `omnilingua
 
 ### Execució (ASR)
 
-Executa les ordres següents des de `asr/`.
+Executa les ordres `make` des de l'arrel del repositori i les ordres Python des de `asr/`. Pots passar opcions a `make asr-eval` amb `ASR_ARGS`.
 
 **Preparar els benchmarks locals una vegada:**
 
 ```bash
-uv run python dataset_preparation.py
-uv run python openslr69_dataset_preparation.py
+make asr-prepare
 ```
 
 Cada script descarrega 400 mostres de fins a 30 segons i genera els àudios i un `manifest.json` a `benchmarks/fleurs_ca_test_400/` o `benchmarks/openslr69_ca_eval_400/`. Els avaluadors executen tots dos benchmarks per defecte; usa `--benchmark fleurs` o `--benchmark openslr69` per seleccionar-ne un. Per a un conjunt propi, usa `--manifest <ruta/manifest.json>`.
@@ -51,7 +50,7 @@ Els models de Gemini requereixen la variable `GEMINI_API_KEY`.
 **Executar l'orquestrador per a múltiples models:**
 
 ```bash
-uv run python run_evals.py --device cuda --jobs 2
+make asr-eval ASR_ARGS="--device cuda --jobs 2"
 ```
 
 L'orquestrador omet els models que ja tenen els benchmarks sol·licitats i els models d'API sense la clau corresponent. Usa `--overwrite` per repetir les avaluacions. Els resultats es desen a `asr/evals/`; en executar els avaluadors directament, cal indicar `--output` per desar el JSON.
