@@ -300,7 +300,7 @@ def recommendations_json(
                 f"Model amb la millor qualitat, {best['score']:.1%} WER"
                 if asr
                 else f"Model amb la millor qualitat, vector de {best.get('embedding_dim') or '—'} dimensions "
-                f"i puntuació composta {best['score']:.4f}"
+                f"i puntuació composta {best['score']:.1f}"
             )
             if best
             else None,
@@ -309,7 +309,7 @@ def recommendations_json(
                 f"{best['rtf'] / balanced['rtf'] - 1:.1%} més ràpid que el primer"
                 if asr
                 else f"Model amb qualitat similar i vector més petit, de {balanced['embedding_dim']} dimensions, "
-                f"puntuació composta {balanced['score']:.4f}"
+                f"puntuació composta {balanced['score']:.1f}"
             )
             if balanced
             else None,
