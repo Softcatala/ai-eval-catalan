@@ -161,6 +161,11 @@ def recommend(candidates, capacities=DEFAULT_CAPACITIES, llm_uncertainty=2):
                     if model["score"] == best_score
                     or best_score - model["score"] < llm_uncertainty
                 ]
+                preferred = min(
+                    ranked,
+                    key=lambda m: (m["memory_gb"], -m["score"], m["model_id"]),
+                )
+                ranked = [preferred] + [m for m in ranked if m is not preferred]
                 llm_alternatives = ranked[1:]
             models[category] = ranked[0] if ranked else None
         configurations.append(
@@ -237,8 +242,8 @@ def print_table(report):
             print(f"- {item['model']}: {item['reason']} ({item['source']})")
 
 
-def recommendations_json(candidates, capacities=DEFAULT_CAPACITIES):
-    """Export the two best LLMs in each non-overlapping RAM budget band."""
+def recommendations_json(candidates, capacities=DEFAULT_CAPACITIES, llm_uncertainty=2):
+    """Prefer the smallest LLM within the CLAM uncertainty margin."""
 
     def model_label(model):
         if model is None:
@@ -252,11 +257,18 @@ def recommendations_json(candidates, capacities=DEFAULT_CAPACITIES):
         "alternatives": "Alternativa",
     }
     rows = []
-    previous_budget = 0
     for capacity, budget in sorted(set(memory_budgets(capacities))):
-        ranked = rank_candidates(candidates, "llm", budget, previous_budget)
-        model = ranked[0] if ranked else None
-        alternative = ranked[1] if len(ranked) > 1 else None
+        config = recommend(
+            {**{category: [] for category in CATEGORIES}, **candidates},
+            [capacity],
+            llm_uncertainty,
+        )[0]
+        model = config["models"]["llm"]
+        ranked = rank_candidates(candidates, "llm", budget)
+        alternative = (
+            next((m for m in ranked if m["model_id"] != model["model_id"]), None)
+            if model else None
+        )
         rows.append(
             {
                 "capacity_gb": f"{capacity:g} GB"
@@ -265,7 +277,6 @@ def recommendations_json(candidates, capacities=DEFAULT_CAPACITIES):
                 "alternatives": model_label(alternative),
             }
         )
-        previous_budget = budget
     return {"text": columns, "data": rows}
 
 
@@ -285,7 +296,7 @@ def main(argv=None):
         "--llm-uncertainty",
         type=float,
         default=2,
-        help="Llindar CLAM exclusiu per a table; 0: només empats",
+        help="Llindar CLAM per preferir el model més petit; 0: només empats",
     )
     parser.add_argument("--format", choices=("table", "json"), default="table")
     parser.add_argument("--output", type=Path, help="Fitxer de sortida JSON")
@@ -295,7 +306,7 @@ def main(argv=None):
     try:
         candidates, skipped = load_candidates(args.repo_root)
         if args.format == "json":
-            report = recommendations_json(candidates, args.memory)
+            report = recommendations_json(candidates, args.memory, args.llm_uncertainty)
         else:
             report = {
                 "llm_uncertainty_points": args.llm_uncertainty,

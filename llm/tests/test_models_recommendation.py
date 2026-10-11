@@ -61,10 +61,10 @@ def test_llm_alternatives_use_strict_gap_from_best_and_fit_memory():
         candidate("chained_overlap", 2, 57),
     ]
     config = recommend(candidates, [8])[0]
-    assert config["models"]["llm"]["model"] == "best"
+    assert config["models"]["llm"]["model"] == "close"
     alternatives = config["llm_alternatives"]
-    assert [model["model"] for model in alternatives] == ["close"]
-    assert [model["score_gap"] for model in alternatives] == pytest.approx([1.99])
+    assert [model["model"] for model in alternatives] == ["best"]
+    assert [model["score_gap"] for model in alternatives] == pytest.approx([0])
     assert "score_gap" not in candidates["llm"][0]
 
 
@@ -78,7 +78,7 @@ def test_llm_uncertainty_is_configurable_and_zero_preserves_exact_ties():
     strict = recommend(candidates, [8], llm_uncertainty=0)[0]
     assert [m["model"] for m in strict["llm_alternatives"]] == ["tied"]
     relaxed = recommend(candidates, [8], llm_uncertainty=3)[0]
-    assert [m["model"] for m in relaxed["llm_alternatives"]] == ["tied", "near"]
+    assert [m["model"] for m in relaxed["llm_alternatives"]] == ["best", "tied"]
 
 
 @pytest.mark.parametrize("margin", [-1, float("nan"), float("inf")])
@@ -240,7 +240,7 @@ def test_json_alternative_is_second_best_eligible_llm_regardless_of_gap():
     ]
 
 
-def test_json_uses_sorted_disjoint_memory_bands():
+def test_json_uses_all_models_that_fit_each_sorted_memory_budget():
     models = [
         candidate("small", 6, 100),
         candidate("medium", 12, 60),
@@ -253,9 +253,9 @@ def test_json_uses_sorted_disjoint_memory_bands():
     assert [(r["capacity_gb"], r["recommended"], r["alternatives"]) for r in rows] == [
         ("1 GB", None, None),
         ("8 GB", "small", None),
-        ("16 GB", "medium", "medium_alt"),
-        ("32 GB o més", "large", "large_alt"),
-        ("64 GB", None, None),
+        ("16 GB", "small", "medium"),
+        ("32 GB o més", "small", "medium"),
+        ("64 GB", "small", "medium"),
     ]
 
 
@@ -272,3 +272,13 @@ def test_json_alternative_breaks_score_ties_by_memory_then_model_id():
             "alternatives": "b",
         }
     ]
+
+
+def test_qwen_recommendation_prefers_9b_for_8_and_16_gb():
+    candidates = {"llm": [
+        {**candidate("qwen3.5-9b", 5.1, 58.4), "precision": "Q4_K_M"},
+        {**candidate("qwen3-14b", 7.9, 59.0), "precision": "Q4_K_M"},
+    ]}
+    rows = recommendations_json(candidates, [8, 16])["data"]
+    assert all(row["recommended"] == "qwen3.5-9b · Q4_K_M" for row in rows)
+    assert rows[1]["alternatives"] == "qwen3-14b · Q4_K_M"
