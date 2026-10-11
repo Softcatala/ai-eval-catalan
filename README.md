@@ -70,10 +70,7 @@ que comparen quantitzacions fora del benchmark principal.
 **Embeddings:** selecciona el model local amb la millor mitjana dels tres
 benchmarks i el millor model amb un vector més petit i una pèrdua de puntuació
 de com a màxim 0,02. Un vector més petit redueix l'emmagatzematge i el cost de
-comparació; no implica que el model generi embeddings més ràpid. Exclou models
-de núvol, avaluacions incompletes i models sense memòria coneguda. Com les
-recomanacions ASR, aquestes recomanacions no depenen de les capacitats de
-`--memory`. El workflow de publicació genera aquest JSON a `prod-data`.
+comparació; no implica que el model generi embeddings més ràpid.
 
 ---
 
