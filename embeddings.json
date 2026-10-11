@@ -83,6 +83,24 @@
       "composite": 0.8621
     },
     {
+      "model": "embeddinggemma-2",
+      "repo_url": "https://huggingface.co/google/embeddinggemma-2",
+      "cloud": false,
+      "dim": 768,
+      "xquad_ndcg_at_10": 0.9469,
+      "xquad_ndcg_at_10_ci": [
+        0.9372,
+        0.9564
+      ],
+      "sts_ca_spearman": 0.7103,
+      "sts_ca_spearman_ci": [
+        0.6611,
+        0.756
+      ],
+      "tecla_macro_f1": 0.9244,
+      "composite": 0.8605
+    },
+    {
       "model": "bge-m3",
       "repo_url": "https://huggingface.co/BAAI/bge-m3",
       "cloud": false,
