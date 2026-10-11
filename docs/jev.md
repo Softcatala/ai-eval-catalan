@@ -57,6 +57,6 @@ els models pendents apareixen al final sense puntuació global. L'agregador
 i exigeix els tests complets (2.974 exemples MASSIVE i 2.117 TE-ca) i la mateixa
 configuració de llengua, llavor i ordre d'opcions.
 
-Per consultar els resultats en HTML, segueix la [guia d’informes locals](publicacio.md#informes-html-de-depuració).
+Per consultar els resultats en HTML, segueix la [guia d’informes locals](../README.md#informes-html-de-depuració).
 
 [Torna al README](../README.md)

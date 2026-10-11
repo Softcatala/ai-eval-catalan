@@ -58,7 +58,7 @@ checkout local ni descarregar el dataset per separat:
 
 ### Mida de model recomanada segons la memòria
 
-Consulta la [guia de recomanacions](publicacio.md#recomanacions-de-models) per als criteris de selecció i les opcions de `make recommendation`.
+Consulta la [guia de recomanacions](../README.md#recomanacions-de-models) per als criteris de selecció i les opcions de `make recommendation`.
 
 Per a models GGUF quantitzats amb **Q4_K_M**, aquestes són les mides orientatives
 segons la memòria disponible del sistema:
