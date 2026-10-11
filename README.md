@@ -1,7 +1,7 @@
 # Eines d'avaluació de models LLM, ASR, embeddings i de decisió
 
-Aquest repositori conté eines per avaluar les capacitats de models de llenguatge gran (LLM), de reconeixement automàtic de la parla (ASR), d'embeddings i de decisió (JEV), amb focus especial en la llengua catalana.
-Els resultats estan compartits a https://www.softcatala.org/ia-local/models-en-catala/
+Aquest repositori conté eines per avaluar les capacitats de models de llenguatge grans (LLM), de reconeixement automàtic de la parla (ASR), d'embeddings i de decisió (JEV), amb especial atenció a la llengua catalana.
+Els resultats es poden consultar al [web de Softcatalà](https://www.softcatala.org/ia-local/models-en-catala/).
 
 ## Vols que avaluem un model?
 
@@ -15,7 +15,7 @@ ai-eval-catalan/
 ├── eval_common/              # Codi compartit pels generadors de JSON
 ├── llm/                      # Avaluació de models LLM
 ├── asr/                      # Avaluació de models ASR
-├── embeddings/              # Avaluació de models d’embeddings
+├── embeddings/               # Avaluació de models d’embeddings
 └── jev/                      # Avaluació de models de decisió
 ```
 
@@ -40,7 +40,7 @@ es publiquen automàticament a la branca `prod-data`, que la web de
 [Softcatalà](https://www.softcatala.org/ia-local/models-en-catala/) llegeix per
 mostrar els resultats actualitzats. Els informes HTML són només per a consulta local.
 
-### Recomanacions de models automatitzada
+### Recomanacions de models automatitzades
 
 Les recomanacions es calculen a partir de les avaluacions completes dels models
 que es poden executar localment. S’exclouen els serveis de núvol i les proves
@@ -73,12 +73,12 @@ que comparen quantitzacions fora del benchmark principal.
 
 Volem expressar el nostre agraïment als proveïdors dels datasets usats en l'avaluació:
 
-- **[Projecte AINA](https://www.projecteaina.cat/)** (Barcelona Supercomputing Center) pels datasets [STS-ca](https://huggingface.co/datasets/projecte-aina/sts-ca), [VilaQuAD](https://huggingface.co/datasets/projecte-aina/vilaquad) i [CaSum](https://huggingface.co/datasets/projecte-aina/casum), que han fet possible l'avaluació de models en català.
+- **[Projecte AINA](https://projecteaina.cat/)** (Barcelona Supercomputing Center) pels datasets [STS-ca](https://huggingface.co/datasets/projecte-aina/sts-ca), [VilaQuAD](https://huggingface.co/datasets/projecte-aina/vilaquad) i [CaSum](https://huggingface.co/datasets/projecte-aina/casum), que han fet possible l'avaluació de models en català.
 - **[nbel](https://huggingface.co/nbel)** pel dataset [CatCoLA](https://huggingface.co/datasets/nbel/CatCoLA), corpus d'acceptabilitat lingüística en català.
 - **[Google](https://ai.google/research/)** pel dataset [FLEURS](https://huggingface.co/datasets/google/fleurs) (Few-shot Learning Evaluation of Universal Representations of Speech), usat per avaluar models ASR en català.
 - **[Softcatalà — Mantinc](https://github.com/Softcatala/mantinc-catalan-drift)** pel dataset que avalua si els models mantenen les respostes en català davant de prompts que poden induir un canvi de llengua.
 - L'equip de **[lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)** pel motor d'avaluació usat en benchmarks generatius.
-- **[Meta AI](https://ai.meta.com/)** pel benchmark [FLORES+](https://huggingface.co/datasets/facebook/flores) de traducció automàtica.
+- **[Meta AI](https://ai.meta.com/)** pel benchmark [FLORES-200](https://huggingface.co/datasets/facebook/flores) de traducció automàtica.
 
 ---
 
