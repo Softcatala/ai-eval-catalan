@@ -223,6 +223,79 @@ def test_json_output(tmp_path, capsys):
             assert "CLAM" not in row[field]
 
 
+@pytest.mark.parametrize(
+    "dimension, score, expected",
+    [
+        (1023, 0.88, "balanced"),
+        (384, 0.8799, None),
+        (1024, 0.89, None),
+        (2048, 0.89, None),
+        (None, 0.89, None),
+        (0, 0.89, None),
+        (True, 0.89, None),
+    ],
+)
+def test_embeddings_quality_and_dimension_thresholds(dimension, score, expected):
+    candidates = {
+        "llm": [candidate("unrelated", 1, 100)],
+        "embeddings": [
+            {**candidate("best", 100, 0.9), "embedding_dim": 1024},
+            {**candidate("balanced", 1, score), "embedding_dim": dimension},
+        ],
+    }
+    rows = recommendations_json(candidates, [1], category="embeddings")["data"]
+    assert rows[0]["recommended"] == "best"
+    assert rows[1]["recommended"] == expected
+    assert [row["priority"] for row in rows] == [
+        "Màxima qualitat",
+        "Qualitat i vector més petit",
+    ]
+    if expected:
+        assert "vector més petit" in rows[1]["description"]
+        assert "ràpid" not in rows[1]["description"]
+    else:
+        assert rows[1]["description"] is None
+
+
+def test_embeddings_balanced_prefers_quality_over_smallest_dimension():
+    models = [
+        {**candidate("best", 2, 0.9), "embedding_dim": 1024},
+        {**candidate("compact", 1, 0.899), "embedding_dim": 768},
+        {**candidate("smallest", 0.5, 0.88), "embedding_dim": 384},
+    ]
+    rows = recommendations_json({"embeddings": models}, category="embeddings")["data"]
+    assert rows[1]["recommended"] == "compact"
+
+
+def test_embeddings_missing_best_dimension_or_candidates():
+    for candidates in (
+        [],
+        [candidate("best", 2, 0.9)],
+    ):
+        rows = recommendations_json({"embeddings": candidates}, category="embeddings")[
+            "data"
+        ]
+        assert rows[1]["recommended"] is None
+        if not candidates:
+            assert rows[0]["recommended"] is None
+
+
+def test_embeddings_cli_json_output(tmp_path):
+    output = tmp_path / "embeddings_recommendations.json"
+    main(["--category", "embeddings", "--format", "json", "--output", str(output)])
+    candidates, skipped = load_candidates(ROOT)
+    assert json.loads(output.read_text()) == recommendations_json(
+        candidates, category="embeddings"
+    )
+    assert any(
+        model["model_id"] == "google/embeddinggemma-2"
+        and model["memory_gb"] == 1.49
+        and model["precision"] == "BF16"
+        for model in candidates["embeddings"]
+    )
+    assert not any(row["model"] == "embeddinggemma-2" for row in skipped)
+
+
 def test_json_alternative_is_second_best_eligible_llm_regardless_of_gap():
     models = [
         candidate("over_budget", 6.01, 100),

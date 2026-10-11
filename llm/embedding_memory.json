@@ -1,7 +1,14 @@
 {
-  "description": "Estimated weight memory in decimal GB, FP32 (4 bytes per parameter), rounded up. Runtime overhead is covered separately by --reserve-percent. These are not measured peak memory values.",
+  "description": "Estimated weight memory in decimal GB at each model's listed precision, rounded up. Runtime overhead is covered separately by the 25% reserve. These are not measured peak memory values.",
   "retrieved_at": "2026-09-26",
   "models": {
+    "google/embeddinggemma-2": {
+      "memory_gb": 1.49,
+      "precision": "BF16",
+      "parameters": 744371488,
+      "source": "https://huggingface.co/google/embeddinggemma-2/tree/914f7f89142e33e77833254d9c9b90c3cef7303b",
+      "note": "All parameters loaded by SentenceTransformer, including multimodal components: 1488742976 weight bytes."
+    },
     "BAAI/bge-m3": {
       "memory_gb": 2.28,
       "precision": "FP32",
