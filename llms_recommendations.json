@@ -7,13 +7,13 @@
   "data": [
     {
       "capacity_gb": "8 GB",
-      "recommended": "qwen3.5-9b · Q4_K_M",
-      "alternatives": "qwen3.5-4b · Q4_K_M"
+      "recommended": "qwen3.5-4b · Q4_K_M",
+      "alternatives": "qwen3.5-9b · Q4_K_M"
     },
     {
       "capacity_gb": "16 GB",
-      "recommended": "qwen3-14b · Q4_K_M",
-      "alternatives": "gemma3-12b · Q4_K_M"
+      "recommended": "qwen3.5-4b · Q4_K_M",
+      "alternatives": "qwen3-14b · Q4_K_M"
     },
     {
       "capacity_gb": "32 GB o més",
