@@ -252,6 +252,7 @@ def test_embeddings_quality_and_dimension_thresholds(dimension, score, expected)
     ]
     if expected:
         assert "vector més petit" in rows[1]["description"]
+        assert f"{dimension} dimensions" in rows[1]["description"]
         assert "ràpid" not in rows[1]["description"]
     else:
         assert rows[1]["description"] is None
