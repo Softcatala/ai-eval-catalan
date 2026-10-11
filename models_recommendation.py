@@ -260,7 +260,7 @@ def recommendations_json(
     def model_label(model):
         if model is None:
             return None
-        precision = model.get("precision")
+        precision = model.get("precision") if category != "embeddings" else None
         name = (
             model["model"].rsplit("/", 1)[-1] if category == "asr" else model["model"]
         )

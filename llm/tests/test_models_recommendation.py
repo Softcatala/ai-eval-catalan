@@ -288,6 +288,11 @@ def test_embeddings_cli_json_output(tmp_path):
     assert json.loads(output.read_text()) == recommendations_json(
         candidates, category="embeddings"
     )
+    assert all(
+        " · " not in row["recommended"]
+        for row in json.loads(output.read_text())["data"]
+        if row["recommended"]
+    )
     assert any(
         model["model_id"] == "google/embeddinggemma-2"
         and model["memory_gb"] == 1.49
