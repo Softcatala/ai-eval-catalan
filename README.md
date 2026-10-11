@@ -15,12 +15,13 @@ Els resultats estan compartits a https://www.softcatala.org/ia-local/models-en-c
 | [ASR](docs/asr.md) | Preparació de FLEURS i OpenSLR-69 i avaluació de reconeixement de la parla |
 | [Embeddings](docs/embeddings.md) | Benchmarks i avaluació de models locals i d'API |
 | [JEV](docs/jev.md) | Avaluació de models de decisió sobre MASSIVE i TE-ca |
+| [Desenvolupament](docs/desenvolupament.md) | Comprovacions de desenvolupament i informes HTML de depuració |
 
 ## Estructura del projecte
 
 ```
 ai-eval-catalan/
-├── docs/                     # Guies d’avaluació
+├── docs/                     # Guies d’avaluació i desenvolupament
 ├── eval_common/              # Codi compartit pels generadors de JSON
 ├── llm/                      # Avaluació de models LLM
 │   └── evals/
@@ -79,29 +80,6 @@ estadístic d'error.
 ```bash
 make recommendation RECOMMENDATION_ARGS="--category asr --memory 8 16 32 --format json --output asrs_recommendations.json"
 ```
-
-### Informes HTML de depuració
-
-Els informes HTML no es publiquen ni formen part del contracte de dades de la web. Es poden generar localment per inspeccionar els resultats:
-
-```bash
-make render-local
-```
-
-Aquesta ordre genera les taules HTML i les agrupa a `index_local.html`.
-
-## Comprovacions de desenvolupament
-
-Des de l'arrel del repositori, pots executar les mateixes comprovacions que el workflow `.github/workflows/tests.yml`:
-
-```bash
-make format-check
-make publish-check
-make unit-test
-make data-validation
-```
-
-Aquestes ordres comproven el format del codi, la generació dels fitxers de publicació, les proves unitàries i la coherència de les dades d'avaluació. Per aplicar el format automàticament, usa `make format`.
 
 ---
 
