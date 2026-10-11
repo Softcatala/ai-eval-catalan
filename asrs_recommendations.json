@@ -1,0 +1,19 @@
+{
+  "text": {
+    "priority": "Prioritat",
+    "recommended": "Model recomanat",
+    "description": "Descripció"
+  },
+  "data": [
+    {
+      "priority": "Màxima precisió",
+      "recommended": "whisper-large-v3-ca-3catparla",
+      "description": "Model amb la millor qualitat, 5,9% WER"
+    },
+    {
+      "priority": "Precisió i velocitat",
+      "recommended": "whisper-large-v3-turbo",
+      "description": "Model amb qualitat 6,3% WER i 572,4% més ràpid que el primer"
+    }
+  ]
+}

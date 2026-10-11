@@ -70,7 +70,7 @@
             "rtf": null
         },
         {
-            "model": "projecte-aina/whisper-large-v3-ca-3catparla",
+            "model": "whisper-large-v3-ca-3catparla",
             "repo_url": "https://huggingface.co/projecte-aina/whisper-large-v3-ca-3catparla",
             "cloud": false,
             "params_b": 1.6,
