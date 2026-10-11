@@ -8,8 +8,8 @@ ai-eval-catalan/
 │   ├── model.py              # Pipeline d'avaluació per a un model
 │   ├── run_evals.py          # Orquestrador per executar múltiples models
 │   ├── summarize_results.py  # Agrega els resultats en un JSON
-│   ├── table_template.jinja  # Plantilla per a la taula de resultats
-│   └── evals/                # Resultats JSON per model
+│   ├── table_template.jinja
+│   └── evals/
 ├── asr/                      # Avaluació de models ASR
 │   ├── hf-eval.py            # Avaluació local de WER/CER sobre FLEURS i OpenSLR-69
 │   ├── cloud-eval.py         # Avaluació ASR amb APIs d'OpenAI i Gemini
@@ -17,15 +17,19 @@ ai-eval-catalan/
 │   ├── openslr69_dataset_preparation.py # Prepara el benchmark local OpenSLR-69
 │   ├── run_evals.py          # Orquestrador per executar múltiples models
 │   ├── summarize_results.py  # Agrega els resultats en un JSON
-│   ├── table_template.jinja  # Plantilla per a la taula de resultats
-│   └── evals/                # Resultats JSON per model
+│   ├── table_template.jinja
+│   └── evals/
 └── embeddings/               # Avaluació de models d'embeddings
     ├── model.py              # Pipeline d'avaluació per a un model
     ├── run_evals.py          # Orquestrador per executar múltiples models
     ├── summarize_results.py  # Agrega els resultats en un JSON
-    ├── table_template.jinja  # Plantilla per a la taula de resultats
-    └── evals/                # Resultats JSON per model
+    ├── table_template.jinja
+    └── evals/
 ```
+
+Els fitxers `.jinja` contenen les plantilles per generar les taules HTML de
+resultats. Els directoris `evals/` contenen els fitxers JSON amb els resultats
+de les avaluacions de cada model.
 
 ---
 
