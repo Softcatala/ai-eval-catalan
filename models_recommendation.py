@@ -267,7 +267,8 @@ def recommendations_json(candidates, capacities=DEFAULT_CAPACITIES, llm_uncertai
         ranked = rank_candidates(candidates, "llm", budget)
         alternative = (
             next((m for m in ranked if m["model_id"] != model["model_id"]), None)
-            if model else None
+            if model
+            else None
         )
         rows.append(
             {

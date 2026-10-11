@@ -275,10 +275,12 @@ def test_json_alternative_breaks_score_ties_by_memory_then_model_id():
 
 
 def test_qwen_recommendation_prefers_9b_for_8_and_16_gb():
-    candidates = {"llm": [
-        {**candidate("qwen3.5-9b", 5.1, 58.4), "precision": "Q4_K_M"},
-        {**candidate("qwen3-14b", 7.9, 59.0), "precision": "Q4_K_M"},
-    ]}
+    candidates = {
+        "llm": [
+            {**candidate("qwen3.5-9b", 5.1, 58.4), "precision": "Q4_K_M"},
+            {**candidate("qwen3-14b", 7.9, 59.0), "precision": "Q4_K_M"},
+        ]
+    }
     rows = recommendations_json(candidates, [8, 16])["data"]
     assert all(row["recommended"] == "qwen3.5-9b · Q4_K_M" for row in rows)
     assert rows[1]["alternatives"] == "qwen3-14b · Q4_K_M"
