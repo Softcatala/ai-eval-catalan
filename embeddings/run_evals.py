@@ -13,6 +13,28 @@ from pathlib import Path
 
 MODELS = [
     {
+        "name": "embeddinggemma-2",
+        "id": "google/embeddinggemma-2",
+        "extra": [
+            "--server-url",
+            "http://localhost:9090/v1",
+            "--server-model",
+            "unsloth/embeddinggemma-2-GGUF:BF16",
+            "--max-seq-length",
+            "8192",
+            "--query-prefix",
+            "task: question answering | query: ",
+            "--doc-prefix",
+            "title: none | text: ",
+            "--sts-prefix",
+            "task: sentence similarity | query: ",
+            "--classification-prefix",
+            "task: classification | query: ",
+            "--batch-size",
+            "8",
+        ],
+    },
+    {
         "name": "paraphrase-multilingual-MiniLM-L12-v2",
         "id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
         "extra": [],

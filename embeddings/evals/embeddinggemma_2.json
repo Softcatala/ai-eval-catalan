@@ -1,0 +1,33 @@
+{
+  "model": "google/embeddinggemma-2",
+  "display_name": "embeddinggemma-2",
+  "cloud": false,
+  "embedding_dim": 768,
+  "benchmarks": {
+    "xquad_ca_retrieval": {
+      "ndcg_at_10": 0.9465,
+      "ndcg_at_10_ci": [
+        0.9367,
+        0.9559
+      ],
+      "n_queries": 1189,
+      "n_corpus": 240
+    },
+    "sts_ca": {
+      "spearman": 0.7126,
+      "spearman_ci": [
+        0.6648,
+        0.7585
+      ],
+      "n_pairs": 500
+    },
+    "tecla_classification": {
+      "macro_f1": 0.9251,
+      "n_train": 10000,
+      "n_test": 17007,
+      "n_classes": 4
+    }
+  },
+  "backend": "llama.cpp",
+  "server_model": "unsloth/embeddinggemma-2-GGUF:BF16"
+}

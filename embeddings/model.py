@@ -157,6 +157,9 @@ def main():
     p.add_argument("--query-prefix", default="")
     p.add_argument("--doc-prefix", default="")
     p.add_argument("--sts-prefix", default=None)
+    p.add_argument("--classification-prefix", default=None)
+    p.add_argument("--server-url", default=None)
+    p.add_argument("--server-model", default=None)
     p.add_argument("--trust-remote-code", action="store_true")
     p.add_argument("--device", default=None)
     p.add_argument("--batch-size", type=int, default=32)
@@ -171,7 +174,13 @@ def main():
     a = p.parse_args()
 
     skip = {s.strip() for s in a.skip.split(",") if s.strip()}
-    if a.cloud_provider:
+    if a.server_url:
+        if a.cloud_provider:
+            p.error("--server-url cannot be combined with --cloud-provider")
+        from llama_models import LlamaEmbedder
+
+        model = LlamaEmbedder(a.server_url, a.server_model or a.model, a.batch_size)
+    elif a.cloud_provider:
         from cloud_models import load_cloud_model
 
         model = load_cloud_model(a.cloud_provider, a.model, batch_size=a.batch_size)
@@ -182,11 +191,14 @@ def main():
     if a.max_seq_length is not None:
         if not hasattr(model, "max_seq_length"):
             raise ValueError(
-                "--max-seq-length is only supported for local SentenceTransformer models"
+                "--max-seq-length is only supported for local embedding models"
             )
         model.max_seq_length = a.max_seq_length
 
     sts_prefix = a.sts_prefix if a.sts_prefix is not None else a.query_prefix
+    classification_prefix = (
+        a.classification_prefix if a.classification_prefix is not None else a.doc_prefix
+    )
     tasks = [
         (
             "xquad_ca_retrieval",
@@ -197,7 +209,9 @@ def main():
         (
             "tecla_classification",
             "tecla",
-            lambda: eval_tecla(model, a.doc_prefix, a.batch_size, a.n_tecla_train),
+            lambda: eval_tecla(
+                model, classification_prefix, a.batch_size, a.n_tecla_train
+            ),
         ),
     ]
 
@@ -216,6 +230,8 @@ def main():
         ),
         "benchmarks": benchmarks,
     }
+    if a.server_url:
+        result.update(backend="llama.cpp", server_model=a.server_model or a.model)
     Path(a.output).parent.mkdir(parents=True, exist_ok=True)
     Path(a.output).write_text(json.dumps(result, indent=2, ensure_ascii=False))
 
