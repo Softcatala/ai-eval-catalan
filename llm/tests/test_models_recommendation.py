@@ -284,3 +284,71 @@ def test_qwen_recommendation_prefers_9b_for_8_and_16_gb():
     rows = recommendations_json(candidates, [8, 16])["data"]
     assert all(row["recommended"] == "qwen3.5-9b · Q4_K_M" for row in rows)
     assert rows[1]["alternatives"] == "qwen3-14b · Q4_K_M"
+
+
+@pytest.mark.parametrize(
+    "rtf, score, expected",
+    [
+        (0.2, 0.07, "balanced"),
+        (0.2001, 0.07, None),
+        (0.2, 0.0701, None),
+        (None, 0.06, None),
+        (0, 0.06, None),
+    ],
+)
+def test_asr_accuracy_and_speed_thresholds(rtf, score, expected):
+    candidates = {
+        "asr": [
+            {**candidate("best", 100, 0.05), "rtf": 0.4},
+            {**candidate("balanced", 100, score), "rtf": rtf},
+            {**candidate("faster_but_worse", 1, 0.071), "rtf": 0.01},
+        ]
+    }
+    report = recommendations_json(candidates, category="asr")
+    best, balanced = report["data"]
+    assert best == {
+        "priority": "Màxima precisió",
+        "recommended": "best",
+        "description": "Model amb la millor qualitat, 5,0% WER",
+    }
+    assert balanced["priority"] == "Precisió i velocitat"
+    assert balanced["recommended"] == expected
+    assert balanced["description"] == (
+        "Model amb qualitat 7,0% WER i 100,0% més ràpid que el primer"
+        if expected
+        else None
+    )
+
+
+def test_asr_cli_json_output(tmp_path):
+    output = tmp_path / "asrs_recommendations.json"
+    main(["--category", "asr", "--format", "json", "--output", str(output)])
+    candidates, _ = load_candidates(ROOT)
+    assert json.loads(output.read_text()) == recommendations_json(
+        candidates, category="asr"
+    )
+
+
+def test_export_strips_aina_prefix_and_preserves_repository_url(tmp_path, monkeypatch):
+    model = "projecte-aina/whisper-large-v3-ca-3catparla"
+    (tmp_path / "model.json").write_text(json.dumps({"model": model}))
+    output = tmp_path / "asrs.json"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "summarize_results",
+            "--results-dir",
+            str(tmp_path),
+            "--json-out",
+            str(output),
+        ],
+    )
+
+    from asr.summarize_results import main as summarize_asr
+
+    summarize_asr()
+
+    row = json.loads(output.read_text())["data"][0]
+    assert row["model"] == "whisper-large-v3-ca-3catparla"
+    assert row["repo_url"] == f"https://huggingface.co/{model}"

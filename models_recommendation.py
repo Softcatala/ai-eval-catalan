@@ -100,7 +100,7 @@ def load_candidates(root, memory_file=MEMORY_FILE):
             reason = None
             if score is None:
                 reason = "avaluació incompleta"
-            elif not finite_number(memory) or memory <= 0:
+            elif category != "asr" and (not finite_number(memory) or memory <= 0):
                 reason = "memòria desconeguda o invàlida"
             if reason:
                 skipped.append({"source": source, "model": model, "reason": reason})
@@ -124,7 +124,8 @@ def rank_candidates(candidates, category, budget, min_memory_gb=0):
         (
             model
             for model in candidates[category]
-            if min_memory_gb < model["memory_gb"] <= budget
+            if finite_number(model["memory_gb"])
+            and min_memory_gb < model["memory_gb"] <= budget
         ),
         key=lambda m: (
             m["score"] if category == "asr" else -m["score"],
@@ -242,14 +243,65 @@ def print_table(report):
             print(f"- {item['model']}: {item['reason']} ({item['source']})")
 
 
-def recommendations_json(candidates, capacities=DEFAULT_CAPACITIES, llm_uncertainty=2):
-    """Prefer the smallest LLM within the CLAM uncertainty margin."""
+def recommendations_json(
+    candidates, capacities=DEFAULT_CAPACITIES, llm_uncertainty=2, category="llm"
+):
+    """Export LLM recommendations by memory or ASR recommendations by quality/speed."""
 
     def model_label(model):
         if model is None:
             return None
         precision = model.get("precision")
-        return model["model"] + (f" · {precision}" if precision else "")
+        name = (
+            model["model"].rsplit("/", 1)[-1] if category == "asr" else model["model"]
+        )
+        return name + (f" · {precision}" if precision else "")
+
+    if category == "asr":
+        ranked = sorted(candidates["asr"], key=lambda m: (m["score"], m["model_id"]))
+        best = ranked[0] if ranked else None
+        balanced = None
+        if best and finite_number(best.get("rtf")) and best["rtf"] > 0:
+            balanced = next(
+                (
+                    model
+                    for model in ranked[1:]
+                    if model["score"] <= best["score"] + 0.02
+                    and finite_number(model.get("rtf"))
+                    and 0 < model["rtf"] <= best["rtf"] / 2
+                ),
+                None,
+            )
+        descriptions = (
+            f"Model amb la millor qualitat, {best['score']:.1%} WER" if best else None,
+            (
+                f"Model amb qualitat {balanced['score']:.1%} WER i "
+                f"{best['rtf'] / balanced['rtf'] - 1:.1%} més ràpid que el primer"
+            )
+            if balanced
+            else None,
+        )
+        return {
+            "text": {
+                "priority": "Prioritat",
+                "recommended": "Model recomanat",
+                "description": "Descripció",
+            },
+            "data": [
+                {
+                    "priority": priority,
+                    "recommended": model_label(model),
+                    "description": description.replace(".", ",")
+                    if description
+                    else None,
+                }
+                for model, priority, description in zip(
+                    (best, balanced),
+                    ("Màxima precisió", "Precisió i velocitat"),
+                    descriptions,
+                )
+            ],
+        }
 
     columns = {
         "capacity_gb": "Memòria de l’ordinador",
@@ -300,6 +352,9 @@ def main(argv=None):
         help="Llindar CLAM per preferir el model més petit; 0: només empats",
     )
     parser.add_argument("--format", choices=("table", "json"), default="table")
+    parser.add_argument(
+        "--category", choices=("llm", "asr"), default="llm", help="Categoria del JSON"
+    )
     parser.add_argument("--output", type=Path, help="Fitxer de sortida JSON")
     args = parser.parse_args(argv)
     if args.output and args.format == "table":
@@ -307,7 +362,9 @@ def main(argv=None):
     try:
         candidates, skipped = load_candidates(args.repo_root)
         if args.format == "json":
-            report = recommendations_json(candidates, args.memory, args.llm_uncertainty)
+            report = recommendations_json(
+                candidates, args.memory, args.llm_uncertainty, args.category
+            )
         else:
             report = {
                 "llm_uncertainty_points": args.llm_uncertainty,
