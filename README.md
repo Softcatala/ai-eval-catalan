@@ -17,11 +17,6 @@ Els resultats estan compartits a https://www.softcatala.org/ia-local/models-en-c
 | [JEV](docs/jev.md) | Avaluació de models de decisió sobre MASSIVE i TE-ca |
 | [Publicació de resultats](docs/publicacio.md) | Estructura del projecte, JSON de producció, recomanacions i informes HTML locals |
 
-Els resultats individuals es desen a `<categoria>/evals/`. La publicació automàtica
-actualitza els JSON de la branca `prod-data`, que alimenten la web de Softcatalà.
-Per inspeccionar els resultats localment, executa `make render-local` i obre
-`index_local.html`.
-
 ## Comprovacions de desenvolupament
 
 Des de l'arrel del repositori, pots executar les mateixes comprovacions que el workflow `.github/workflows/tests.yml`:

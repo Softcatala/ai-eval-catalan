@@ -10,7 +10,6 @@ del repositori:
 ```bash
 llama-server -hf ggml-org/Julia-1-GGUF:Q8_0 --port 9090
 make jev-eval
-make render-local
 ```
 
 Per a Clef i Clef Flash, afegeix `--batch-size 2048 --ubatch-size 2048` al servidor.
@@ -50,12 +49,14 @@ Per afegir tot el test (2.117 exemples) als fitxers existents, usa
 `--dataset teca --n-samples 0` sense `--output-dir`. Una nova passada conserva
 els resultats de l'altre benchmark. Les prediccions TE-ca es desen en `.teca.jsonl`.
 
-El rànquing JEV s'ordena per la mitjana aritmètica de les accuracy de MASSIVE
-i TE-ca, amb un pes del 50% per a cada dataset. Les dues accuracy es mostren
-separadament. Només es calcula la mitjana quan el model té les dues avaluacions;
+El rànquing JEV s'ordena per la mitjana aritmètica dels macro F1 de MASSIVE
+i TE-ca, amb un pes del 50% per a cada dataset. Els macro F1 i les accuracy
+es mostren separadament. Només es calcula la mitjana quan el model té les dues avaluacions;
 els models pendents apareixen al final sense puntuació global. L'agregador
 `python3 -m jev.summarize_results` llegeix tots dos benchmarks de `jev/evals/`
 i exigeix els tests complets (2.974 exemples MASSIVE i 2.117 TE-ca) i la mateixa
 configuració de llengua, llavor i ordre d'opcions.
+
+Per consultar els resultats en HTML, segueix la [guia d’informes locals](publicacio.md#informes-html-de-depuració).
 
 [Torna al README](../README.md)

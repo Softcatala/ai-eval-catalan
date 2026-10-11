@@ -42,6 +42,10 @@ uv run python model.py --cloud-provider google --model gemini-embedding-001 --ou
 make embeddings-eval
 ```
 
+Per incloure els models de núvol, usa `EMBEDDINGS_ARGS="--include-cloud"` i
+configura les claus corresponents. L’orquestrador omet les avaluacions completes;
+usa `EMBEDDINGS_ARGS="--force"` per repetir-les. Pots combinar totes dues opcions.
+
 Els resultats es desen com a JSON a `embeddings/evals/`.
 
 [Torna al README](../README.md)

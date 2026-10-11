@@ -58,18 +58,7 @@ checkout local ni descarregar el dataset per separat:
 
 ### Mida de model recomanada segons la memòria
 
-L'eina [`models_recommendation.py`](../models_recommendation.py), situada a l'arrel, recomana
-models locals de LLM, embeddings i ASR segons les avaluacions i la memòria
-disponible. Executeu `make recommendation` des de l'arrel o
-`make recommendation RECOMMENDATION_ARGS="--help"` per consultar les opcions.
-Reserva un 25% fix de la memòria i assumeix que cada model s'executa
-individualment. `--format table` (per defecte) mostra l'informe de consola amb
-alternatives a menys de 2 punts CLAM. Dins d’aquest marge respecte de la millor
-puntuació, es recomana el model que ocupa menys memòria. `--format json` aplica
-el mateix criteri i mostra una alternativa, considerant tots els LLM que caben.
-`--category asr --format json` exporta les recomanacions d'ASR segons el WER combinat.
-Tots els formats exclouen els models marcats com a `quantized_analysis_only`
-a `llm/models_config.py` o al JSON d'avaluació.
+Consulta la [guia de recomanacions](publicacio.md#recomanacions-de-models) per als criteris de selecció i les opcions de `make recommendation`.
 
 Per a models GGUF quantitzats amb **Q4_K_M**, aquestes són les mides orientatives
 segons la memòria disponible del sistema:
@@ -80,10 +69,6 @@ segons la memòria disponible del sistema:
 | 16 GB | 12–14B | 14B |
 | 32 GB | 24–27B | 30–32B, amb menys marge |
 
-La mida que cap a la memòria no implica que sigui la millor recomanació: si
-les puntuacions CLAM són dins del marge, l’eina prioritza menys consum de memòria
-i més marge per al context.
-
 Cal reservar aproximadament un 20–25% de la memòria per al sistema operatiu, el
 motor d'inferència i la memòria cau KV. Un context llarg consumeix més memòria;
 en aquest cas, convé triar un model de la franja inferior. Les xifres són
@@ -92,15 +77,16 @@ orientatives i poden variar segons l'arquitectura del model i la configuració d
 
 ### Criteri per als repositoris GGUF
 
-Per simplificar el manteniment, es prioritzen els repositoris d'`unsloth` per a
-models GGUF quantitzats. S'accepten excepcions quan no ofereixin el model o la
+La preferència de proveïdor i la verificació de quantitzacions es defineixen a
+[AGENTS.md](../AGENTS.md#model-provider-preference). S'accepten excepcions quan
+Unsloth no ofereixi el model o la
 variant exacta necessària (especialment `Q4_K_M`), o quan calgui conservar una
 avaluació reproduïble ja associada a un altre repositori. En cada cas s'ha de
 registrar el repositori, el fitxer GGUF i la quantització emprada.
 
 ### Instal·lació (LLM)
 
-Requereix [uv](https://docs.astral.sh/uv/) i [llama.cpp](https://github.com/ggml-org/llama.cpp). Per als models GGUF locals, engega un `llama-server` extern; per defecte les eines esperen l'endpoint OpenAI-compatible a `http://localhost:9090/v1`.
+Requereix [uv](https://docs.astral.sh/uv/) i [llama.cpp](https://github.com/ggml-org/llama.cpp). Per als models GGUF locals, cal un `llama-server` extern.
 
 #### Instal·lació de llama.cpp
 
@@ -188,7 +174,7 @@ make llm-eval LLM_ARGS="--models gemma3-12b --server-model gemma-3-12b-it-Q4_K_M
 **Avaluar amb l'API de Google AI o OpenAI:**
 
 ```bash
-uv run python model.py --model gemini --api-key "LA_TEVA_CLAU" --gemini-model gemini-3.6-flash
+uv run python model.py --model gemini --api-key "LA_TEVA_CLAU" --gemini-model gemini-3.8-flash
 OPENAI_API_KEY="LA_TEVA_CLAU" uv run python model.py --model openai --openai-model gpt-4o
 ```
 
