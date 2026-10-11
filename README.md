@@ -60,7 +60,7 @@ Quan es fa un push a la branca `main`, el workflow de GitHub Actions `.github/wo
 
 La web de [Softcatalà](https://www.softcatala.org) llegeix directament els fitxers de la branca `prod-data` per mostrar els resultats actualitzats.
 
-`llms_recommendations.json` mostra els dos millors LLM per franja de RAM, sense
+`llms_recommendations.json` mostra el LLM recomanat i una alternativa per capacitat de RAM, sense
 repeticions i amb un 25% de reserva. Conté `text` (etiquetes) i `data` (files amb
 `capacity_gb` (p. ex. `16 GB`), `recommended` i `alternatives`, amb nom i precisió).
 Per generar-lo localment:
@@ -147,8 +147,9 @@ disponible. Executeu `make recommendation` des de l'arrel o
 `uv run --project llm python models_recommendation.py --help` per consultar les opcions.
 Reserva un 25% fix de la memòria i assumeix que cada model s'executa
 individualment. `--format table` (per defecte) mostra l'informe de consola amb
-alternatives a menys de 2 punts CLAM. `--format json` genera el JSON de tres
-columnes amb els dos millors LLM de cada franja de memòria, sense aquest llindar.
+alternatives a menys de 2 punts CLAM. Dins d’aquest marge respecte de la millor
+puntuació, es recomana el model que ocupa menys memòria. `--format json` aplica
+el mateix criteri i mostra una alternativa, considerant tots els LLM que caben.
 Tots els formats exclouen els models marcats com a `quantized_analysis_only`
 a `llm/models_config.py` o al JSON d'avaluació.
 
@@ -160,6 +161,10 @@ segons la memòria disponible del sistema:
 | 8 GB | 7–8B | 9B, amb poc context |
 | 16 GB | 12–14B | 14B |
 | 32 GB | 24–27B | 30–32B, amb menys marge |
+
+La mida que cap a la memòria no implica que sigui la millor recomanació: si
+les puntuacions CLAM són dins del marge, l’eina prioritza menys consum de memòria
+i més marge per al context.
 
 Cal reservar aproximadament un 20–25% de la memòria per al sistema operatiu, el
 motor d'inferència i la memòria cau KV. Un context llarg consumeix més memòria;
