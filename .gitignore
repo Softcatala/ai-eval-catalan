@@ -14,5 +14,3 @@ jev/evals/**/*.jsonl
 jev/evals/**/*.summary.json
 jev/jevs.json
 jev/**/__pycache__/
-
-/graphics/
