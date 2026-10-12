@@ -176,6 +176,7 @@ MODELS = [
     {
         "display_name": "muse-glimmer-30b",
         "output": "evals/muse_glimmer_30b_q4_k_m.json",
+        "speed_benchmark_pending": True,
         "args": [
             "--model",
             "meta-models/Muse-Glimmer-30B-GGUF:Q4_K_M",
