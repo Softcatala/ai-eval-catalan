@@ -46,6 +46,7 @@ from mantinc import dataset_path as mantinc_dataset_path
 from mantinc import task_path as mantinc_task_path
 
 from llamaserver import LlamaServerModel
+from bedrock import BedrockRuntimeModel, runtime_lm_model
 
 # facebook/flores uses an old dataset script — trust it so datasets doesn't refuse to load it.
 os.environ.setdefault("HF_DATASETS_TRUST_REMOTE_CODE", "1")
@@ -69,11 +70,12 @@ try:
             for attempt in range(attempts):
                 try:
                     response = original(self, messages, *args, **kwargs)
-                    if isinstance(response, dict) and isinstance(
-                        response.get("choices"), list
+                    if isinstance(response, dict) and (
+                        isinstance(response.get("choices"), list)
+                        or isinstance(response.get("content"), list)
                     ):
                         return response
-                    raise ValueError("API response has no choices")
+                    raise ValueError("API response has no choices or content")
                 except (
                     requests.RequestException,
                     ValueError,
@@ -89,10 +91,11 @@ try:
                         f"[warn] API request skipped after {attempts} attempts: {error}"
                     )
                     return {
+                        "content": [{"type": "text", "text": ""}],
                         "choices": [
                             {"index": index, "text": ""}
                             for index in range(len(messages))
-                        ]
+                        ],
                     }
 
         return wrapped
@@ -691,6 +694,9 @@ def run_flores(
             max_retries=3,
         )
         lm_model_args = None
+    elif openai_model and base_url and "bedrock-runtime." in base_url:
+        lm_model = runtime_lm_model(openai_model, base_url)
+        lm_model_args = None
     elif openai_model:
         lm_model = "openai-chat-completions"
         _base = f"base_url={base_url}/chat/completions," if base_url else ""
@@ -838,6 +844,9 @@ def run_ifeval(
         os.environ["OPENAI_API_KEY"] = openrouter_api_key or ""
         os.environ["OPENAI_BASE_URL"] = _openrouter_base_url
         needs_env_restore = True
+    elif openai_model and base_url and "bedrock-runtime." in base_url:
+        lm_model = runtime_lm_model(openai_model, base_url)
+        lm_model_args = None
     elif openai_model:
         lm_model = "openai-chat-completions"
         _base = f"base_url={base_url}/chat/completions," if base_url else ""
@@ -929,6 +938,12 @@ def run_catalan_drift(
     **kwargs,
 ) -> dict:
     """Run Mantinc's Catalan Drift task with lm-evaluation-harness."""
+    language_model = Path(os.environ.get("LANGUAGE_ID_MODEL", "models/lid.176.ftz"))
+    if not language_model.is_file():
+        raise RuntimeError(
+            f"Language identification model not found: {language_model}; "
+            "set LANGUAGE_ID_MODEL before running Catalan Drift"
+        )
     task_dir = mantinc_task_path()
     return run_ifeval(
         model_name,
@@ -1194,7 +1209,12 @@ def main():
             )
         if not args.openai_model:
             raise ValueError("--openai-model is required when using --model openai")
-        model = OpenAIModel(
+        model_class = (
+            BedrockRuntimeModel
+            if args.openai_base_url and "bedrock-runtime." in args.openai_base_url
+            else OpenAIModel
+        )
+        model = model_class(
             api_key=openai_api_key,
             model_name=args.openai_model,
             base_url=args.openai_base_url,
