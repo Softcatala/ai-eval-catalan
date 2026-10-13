@@ -351,22 +351,6 @@ MODELS = [
         "params_b": None,
         "quantization": "",
     },
-    {
-        "display_name": "claude-opus-5-5",
-        "output": "evals/claude_opus_5_5.json",
-        "args": [
-            "--model",
-            "openai",
-            "--openai-model",
-            "global.anthropic.claude-opus-5-5",
-            "--openai-base-url",
-            f"https://bedrock-runtime.{os.environ.get('AWS_REGION') or os.environ.get('AWS_DEFAULT_REGION') or 'us-east-1'}.amazonaws.com",
-        ],
-        "cloud": True,
-        "needs_bedrock_token": True,
-        "params_b": None,
-        "quantization": "",
-    },
 ]
 
 DEFAULT_LOCAL_SERVER_URL = "http://localhost:9090/v1"
