@@ -277,20 +277,6 @@ MODELS = [
         "speed_benchmark_pending": True,
     },
     {
-        "display_name": "gemini-3-1-preview",
-        "output": "evals/gemini_3_1_preview.json",
-        "args": [
-            "--model",
-            "gemini",
-            "--gemini-model",
-            "gemini-3.1-pro-preview",
-        ],
-        "cloud": True,
-        "needs_api_key": True,
-        "params_b": None,
-        "quantization": "",
-    },
-    {
         "display_name": "gemini-3-8-flash",
         "output": "evals/gemini_3_8_flash.json",
         "args": [
@@ -298,6 +284,20 @@ MODELS = [
             "gemini",
             "--gemini-model",
             "gemini-3.8-flash",
+        ],
+        "cloud": True,
+        "needs_api_key": True,
+        "params_b": None,
+        "quantization": "",
+    },
+    {
+        "display_name": "gemini-4-argon",
+        "output": "evals/gemini_4_argon.json",
+        "args": [
+            "--model",
+            "gemini",
+            "--gemini-model",
+            "gemini-4-argon",
         ],
         "cloud": True,
         "needs_api_key": True,
