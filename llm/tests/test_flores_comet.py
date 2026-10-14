@@ -18,6 +18,19 @@ def test_comet_example_extracts_logged_flores_sample():
     }
 
 
+def test_comet_example_keeps_empty_translation():
+    sample = {
+        "doc": {"sentence_eng_Latn": "Source"},
+        "target": "Referència",
+        "filtered_resps": [[""]],
+    }
+    assert model._comet_example("catalan_bench_flores_en-ca", sample) == {
+        "src": "Source",
+        "ref": "Referència",
+        "mt": "",
+    }
+
+
 def test_comet_example_rejects_incomplete_sample():
     assert (
         model._comet_example(

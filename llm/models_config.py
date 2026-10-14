@@ -305,6 +305,20 @@ MODELS = [
         "quantization": "",
     },
     {
+        "display_name": "gemini-4-argon",
+        "output": "evals/gemini_4_argon.json",
+        "args": [
+            "--model",
+            "gemini",
+            "--gemini-model",
+            "gemini-4-argon",
+        ],
+        "cloud": True,
+        "needs_api_key": True,
+        "params_b": None,
+        "quantization": "",
+    },
+    {
         "display_name": "gpt-5.4-mini",
         "output": "evals/gpt_5_4_mini.json",
         "args": [

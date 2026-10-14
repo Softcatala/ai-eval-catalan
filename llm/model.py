@@ -532,7 +532,10 @@ def _comet_example(task: str, sample: dict) -> dict[str, str] | None:
     hypothesis = _sample_text(sample.get("filtered_resps")) or _sample_text(
         sample.get("resps")
     )
-    if not all((source, reference, hypothesis)):
+    # A logged empty response is a model failure that must still be scored.
+    if hypothesis is None and ("filtered_resps" in sample or "resps" in sample):
+        hypothesis = ""
+    if not source or not reference or hypothesis is None:
         return None
     return {"src": source, "ref": reference, "mt": hypothesis}
 
