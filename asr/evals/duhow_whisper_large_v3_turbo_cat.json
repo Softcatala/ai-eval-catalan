@@ -1,0 +1,19 @@
+{
+  "model": "duhow/whisper-large-v3-turbo-cat",
+  "params_b": null,
+  "memory_gb": null,
+  "hardware": "AMD RYZEN AI MAX+ PRO 395 w/ Radeon 8060S",
+  "evaluated_at": "2026-10-29T22:14:07+00:00",
+  "benchmarks": {
+    "fleurs_ca": {
+      "wer": 0.0983,
+      "cer": 0.0715,
+      "n": 400
+    },
+    "openslr69_ca": {
+      "wer": 0.048,
+      "cer": 0.017,
+      "n": 400
+    }
+  }
+}
