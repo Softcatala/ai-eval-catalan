@@ -112,14 +112,14 @@
             "model": "whisper-large-v3-turbo-cat",
             "repo_url": "https://huggingface.co/duhow/whisper-large-v3-turbo-cat",
             "cloud": false,
-            "params_b": null,
-            "memory_gb": null,
+            "params_b": 0.8,
+            "memory_gb": 1.6,
             "weighted_wer": 0.0731,
             "wer": 0.0983,
             "cer": 0.0715,
             "openslr_wer": 0.048,
             "openslr_cer": 0.017,
-            "rtf": null
+            "rtf": 0.0543
         },
         {
             "model": "whisper-medium",
