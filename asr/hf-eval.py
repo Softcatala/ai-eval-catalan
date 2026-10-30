@@ -80,6 +80,7 @@ WHISPER_MODELS = [
     "whisper-large-v3",
     "whisper-large-v3-turbo",
     "projecte-aina/whisper-large-v3-ca-3catparla",
+    "duhow/whisper-large-v3-turbo-cat",
 ]
 
 GEMMA_MODELS = [
@@ -113,7 +114,7 @@ class WhisperWrapper:
     def __init__(self, model_name: str, device: str):
         from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 
-        if "aina" not in model_name:
+        if "/" not in model_name:
             model_id = f"openai/{model_name}"
         else:
             model_id = model_name
