@@ -57,6 +57,11 @@ MODELS = [
         "output": "evals/whisper_large_v3_ca.json",
     },
     {
+        "label": "duhow/whisper-large-v3-turbo-cat",
+        "args": ["duhow/whisper-large-v3-turbo-cat"],
+        "output": "evals/duhow_whisper_large_v3_turbo_cat.json",
+    },
+    {
         "label": "omniASR_CTC_300M",
         "args": ["omniASR_CTC_300M"],
         "output": "evals/omni_ctc_300m.json",

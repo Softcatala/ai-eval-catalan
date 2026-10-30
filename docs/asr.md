@@ -36,6 +36,7 @@ uv run python hf-eval.py --list-models
 ```bash
 uv run python hf-eval.py whisper-large-v3 --device cuda --output evals/whisper_large_v3.json
 uv run python hf-eval.py whisper-small --output evals/whisper_small.json
+uv run python hf-eval.py duhow/whisper-large-v3-turbo-cat --device cuda --output evals/duhow_whisper_large_v3_turbo_cat.json
 ```
 
 **Avaluar un model d'API:**
